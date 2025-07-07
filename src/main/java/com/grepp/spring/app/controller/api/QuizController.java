@@ -53,8 +53,19 @@ public class QuizController {
     @PostMapping("/{studyId}/problems")
     public ResponseEntity<Map<String,Object>> RegistQuizzes(
         @PathVariable Long studyId,
-        @RequestBody(required = false) Map<String, Object> RegistQuizRequest
+        @RequestBody(required = false) Map<String, Object> registQuizRequest
         ) {
+
+        {
+            if (registQuizRequest == null || registQuizRequest.isEmpty()) {
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("code", "BAD_REQUEST");
+                errorResponse.put("message", "요청 본문이 비어있습니다.");
+                return ResponseEntity.badRequest().body(errorResponse);
+            }
+        }
+
+
         Map<String, Object> data = new HashMap<>();
         data.put("quizSetId", 301);
         data.put("registeredQuizCount", 2);
@@ -70,8 +81,18 @@ public class QuizController {
 
     @PostMapping("/grading")
     public ResponseEntity<Map<String,Object>> GradingQuizzes(
-        @RequestBody(required = false) Map<String, Object> GradingRequest
+        @RequestBody(required = false) Map<String, Object> gradingRequest
     ) {
+        {
+            if (gradingRequest == null || gradingRequest.isEmpty()) {
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("code", "BAD_REQUEST");
+                errorResponse.put("message", "요청 본문이 비어있습니다.");
+                return ResponseEntity.badRequest().body(errorResponse);
+            }
+        }
+
+
         Map<String, Object> data = new HashMap<>();
         data.put("week", 2);
         data.put("correctCount", 4);
