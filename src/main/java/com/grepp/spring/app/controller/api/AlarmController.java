@@ -3,6 +3,7 @@ package com.grepp.spring.app.controller.api;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import lombok.Getter;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,7 +26,8 @@ public class AlarmController {
         @PathVariable int applicationId
     ) {
         return ResponseEntity.status(200).body(
-            Map.of("code","SUCCESS",
+            Map.of(
+                "code","SUCCESS",
                 "message", "스터디 신청 수락 완료"
             )
         );
@@ -63,7 +65,6 @@ public class AlarmController {
         return ResponseEntity.status(200).body(
             Map.of(
                 "code", code,
-                "message", null,
                 "data", list
             )
         );
@@ -85,7 +86,8 @@ public class AlarmController {
         );
     }
 
-    public static enum AlarmType {
+    @Getter
+    private enum AlarmType {
         APPLY("스터디 가입 요청이 발생했습니다"),
         ACCEPT("스터디 가입 요청이 수락되었습니다"),
         REJECT("스터디 가입 요청이 거절되었습니다");
@@ -96,9 +98,6 @@ public class AlarmController {
             this.message = message;
         }
 
-        public String getMessage() {
-            return message;
-        }
     }
 
     private static class AlarmSendRequest {
