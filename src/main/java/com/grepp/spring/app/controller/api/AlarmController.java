@@ -1,5 +1,6 @@
 package com.grepp.spring.app.controller.api;
 
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,7 @@ public class AlarmController {
 
     // 스터디 신청 결과 알림
     @PatchMapping("/studies/{studyId}/applications/{applicationId}")
+    @ApiResponse(responseCode = "200")
     public ResponseEntity<?> sendApplicationResultAlarm(
         @PathVariable int studyId,
         @PathVariable int applicationId
@@ -35,6 +37,7 @@ public class AlarmController {
 
     // 알람 전송
     @PostMapping()
+    @ApiResponse(responseCode = "200")
     public ResponseEntity<?> sendAlarm(
         @RequestBody AlarmSendRequest req
     ) {
@@ -50,6 +53,7 @@ public class AlarmController {
 
     // 알람 목록
     @GetMapping()
+    @ApiResponse(responseCode = "200")
     public ResponseEntity<?> getAlarms() {
         String code = "SUCCESS";
         int alarmId1 = 1;
@@ -72,6 +76,7 @@ public class AlarmController {
 
     // 알람 읽음 처리
     @PatchMapping("/{alarmRecipientId}/read")
+    @ApiResponse(responseCode = "200")
     public ResponseEntity<?> readAlarm(
         @PathVariable int alarmRecipientId
     ) {
