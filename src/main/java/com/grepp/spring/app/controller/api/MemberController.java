@@ -3,7 +3,8 @@ package com.grepp.spring.app.controller.api;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.springframework.http.MediaType;
+
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,7 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "/api/v1/members")
 public class MemberController {
 
+    // 유저 정보 요청
     @GetMapping("/{memberId}")
+    @ApiResponse(responseCode = "200")
     public ResponseEntity<Map<String, Object>> getMember(@PathVariable Integer memberId) {
         Map<String, Object> response = new HashMap<>();
         response.put("code", "SUCCESS");
@@ -69,7 +72,9 @@ public class MemberController {
         return data;
     }
 
+    // 타이머 누적 시간 조회
     @GetMapping("/{memberId}/timer/all-timer")
+    @ApiResponse(responseCode = "200")
     public ResponseEntity<Map<String, Object>> createMember(@PathVariable Integer memberId) {
         Map<String, Object> response = new HashMap<>();
         response.put("code", "SUCCESS");
@@ -86,7 +91,9 @@ public class MemberController {
         return data;
     }
 
+    // 가입 스터디 조회
     @PutMapping("/{memberId}/studies")
+    @ApiResponse(responseCode = "200")
     public ResponseEntity<Map<String, Object>> updateMember(@PathVariable Integer memberId) {
         Map<String, Object> response = new HashMap<>();
         response.put("code", "SUCCESS");
@@ -129,7 +136,9 @@ public class MemberController {
         return data;
     }
 
+    // 타이머 시간 수정
     @PutMapping("/{memberId}/timer-settings")
+    @ApiResponse(responseCode = "200")
     public ResponseEntity<Map<String, Object>> updateTimerSettings(@PathVariable Integer memberId) {
         Map<String, Object> response = new HashMap<>();
         response.put("code", "SUCCESS");
@@ -137,5 +146,7 @@ public class MemberController {
         response.put("data", new HashMap<>());
         return ResponseEntity.ok(response);
     }
+
+
 
 }
