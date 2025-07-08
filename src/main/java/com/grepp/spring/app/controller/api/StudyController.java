@@ -163,7 +163,7 @@ public class StudyController {
             if ((req.getCategory() == null || req.getCategory() == study.studyCategory) &&
                 (req.getRegion() == null || req.getRegion() == study.region) &&
                 (req.getStatus() == null || req.getStatus() == StudyStatus.ACTIVATE) &&
-                (req.getTitle() == null || study.name.contains(req.getTitle()))) {
+                (req.getName() == null || study.name.contains(req.getName()))) {
                 filteredStudies.add(study);
             }
         }
@@ -336,7 +336,7 @@ public class StudyController {
 
     // 스터디 생성
     @PostMapping
-    public ResponseEntity<?> createStudy(StudyCreationRequest req) {
+    public ResponseEntity<?> createStudy(@RequestBody StudyCreationRequest req) {
         return ResponseEntity.status(200).body(
             Map.of("code", "SUCCESS", "message", "생성 완료했습니다.")
         );
@@ -371,6 +371,8 @@ public class StudyController {
         );
     }
 
+    @Data
+    @NoArgsConstructor
     private static class StudyCreationRequest {
         private String name;
         private StudyCategory category;
@@ -378,7 +380,7 @@ public class StudyController {
         private Region region;
         private String place;
         private boolean isOnline;
-        private StudySchedule schedules;
+        private List<StudySchedule> schedules;
         private LocalDate startDate;
         private LocalDate endDate;
         private String description;
@@ -389,9 +391,10 @@ public class StudyController {
         @Builder
         public StudyCreationRequest(String name, StudyCategory category, int maxMember,
             Region region,
-            String place, StudySchedule schedules, LocalDate startDate,
+            String place, List<StudySchedule> schedules, LocalDate startDate,
             LocalDate endDate,
-            String description, String externalLink, StudyType studyType) {
+            String description, String externalLink, StudyType studyType,
+            List<Goal> goals) {
             this.name = name;
             this.category = category;
             this.maxMember = maxMember;
@@ -404,10 +407,12 @@ public class StudyController {
             this.description = description;
             this.externalLink = externalLink;
             this.studyType = studyType;
+            this.goals = goals;
         }
     }
 
     @Data
+    @NoArgsConstructor
     private static class StudySchedule {
         DayOfWeek dayOfWeek;
         LocalTime startTime;
@@ -421,6 +426,8 @@ public class StudyController {
         }
     }
 
+    @Data
+    @NoArgsConstructor
     private static class Goal {
         int goalId;
         String content;
@@ -434,6 +441,7 @@ public class StudyController {
         }
     }
 
+    @Getter
     public static class StudyInfoResponse {
         private String studyName;
         private StudyCategory category;
@@ -483,7 +491,7 @@ public class StudyController {
         private StudyCategory category;
         private Region region;
         private StudyStatus status;
-        private String title;
+        private String name;
     }
 
     @Data
