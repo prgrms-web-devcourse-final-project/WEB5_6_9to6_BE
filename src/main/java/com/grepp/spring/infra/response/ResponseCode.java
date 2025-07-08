@@ -3,7 +3,7 @@ package com.grepp.spring.infra.response;
 import org.springframework.http.HttpStatus;
 
 public enum ResponseCode {
-    OK("0000", HttpStatus.OK, "정상적으로 완료되었습니다."),
+    SUCCESS("0000", HttpStatus.OK, "정상적으로 완료되었습니다."),
     ITEM_PURCHASE_SUCCESS("0002", HttpStatus.CREATED, "성공적으로 구매하였습니다."),
     BAD_REQUEST("4000", HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
     INVALID_FILENAME("4001", HttpStatus.BAD_REQUEST, "사용 할 수 없는 파일 이름입니다."),
