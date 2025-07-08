@@ -1,5 +1,6 @@
 package com.grepp.spring.app.controller.api;
 
+import com.grepp.spring.infra.response.CommonResponse;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -31,7 +32,7 @@ public class StudyController {
         String code = "SUCCESS";
         String message = "출석 완료";
 
-        return ResponseEntity.status(200).body(Map.of("code", code, "message", message));
+        return ResponseEntity.status(200).body(CommonResponse.noContent());
     }
 
     // 스터디 목록(검색)
@@ -167,7 +168,8 @@ public class StudyController {
                 filteredStudies.add(study);
             }
         }
-        return ResponseEntity.status(200).body(Map.of("code", code, "data", filteredStudies));
+
+        return ResponseEntity.status(200).body(CommonResponse.success(filteredStudies));
     }
 
     // 스터디 정보 조회
@@ -232,7 +234,7 @@ public class StudyController {
             .build();
 
         return ResponseEntity.status(200).body(
-            Map.of("code", code,"data", data)
+            CommonResponse.success(data)
         );
     }
 
@@ -244,10 +246,7 @@ public class StudyController {
         @RequestBody Map<String, Object> data
     ) {
         return ResponseEntity.status(200).body(
-            Map.of(
-                "code", "SUCCESS",
-                "message", "스터디 정보가 수정되었습니다."
-            )
+            CommonResponse.noContent()
         );
     }
 
@@ -255,11 +254,11 @@ public class StudyController {
     @GetMapping("/{studyId}/appliacnt-list")
     public ResponseEntity<?> getApplicantList(@PathVariable Long studyId) {
         String code = "SUCCESS";
-        int userId1 = 1;
+        long userId1 = 1;
         String userName1 = "김유저1";
         String introduction1 = "날 뽑아라";
 
-        int userId2 = 2;
+        long userId2 = 2;
         String userName2 = "김사용자1";
         String introduction2 = "그래, 잴 뽑아라";
 
@@ -269,7 +268,7 @@ public class StudyController {
         );
 
         return ResponseEntity.status(200).body(
-            Map.of("code", code, "data", data)
+            CommonResponse.success(data)
         );
     }
 
@@ -281,10 +280,7 @@ public class StudyController {
         Map<String, Boolean> matched = Map.of("matched", true);
 
         return ResponseEntity.status(200).body(
-            Map.of(
-                "code", "SUCCESS",
-                "data", matched
-            )
+            CommonResponse.success(matched)
         );
     }
 
@@ -292,10 +288,10 @@ public class StudyController {
     @GetMapping("/{studyId}/applications")
     public ResponseEntity<?> getApplications(@PathVariable Long studyId) {
         String code = "SUCCESS";
-        int applicationId1 = 1;
-        int applicationId2 = 2;
-        int memberId1 = 3;
-        int memberId2 = 4;
+        long applicationId1 = 1;
+        long applicationId2 = 2;
+        long memberId1 = 3;
+        long memberId2 = 4;
         String nickName1 = "김지원자1";
         String nickName2 = "김지원자2";
         String introduction1 = "날 뽑아라";
@@ -308,17 +304,17 @@ public class StudyController {
             Map.of("applicationId1", applicationId2, "memberId", memberId2, "introduction", introduction2, "state", state2)
         );
 
-        return ResponseEntity.status(200).body(Map.of("code", code, "data", data));
+        return ResponseEntity.status(200).body(CommonResponse.success(data));
     }
 
     // 스터디 맴버 조회
     @GetMapping("/{studyId}/members")
     public ResponseEntity<?> getMembers(@PathVariable Long studyId) {
         String code = "SUCCESS";
-        int studyMemberId1 = 11;
-        int studyMemberId2 = 22;
-        int memberId1 = 1;
-        int memberId2 = 2;
+        long studyMemberId1 = 11;
+        long studyMemberId2 = 22;
+        long memberId1 = 1;
+        long memberId2 = 2;
         String nickName1 = "김이박";
         String nickName2 = "박유저";
         StudyRole role1 = StudyRole.LEADER;
@@ -331,14 +327,14 @@ public class StudyController {
             Map.of("studyMemberId", studyMemberId2, "memberId", memberId2, "nickName", nickName2,"profileImage", profileImage2, "role", role2)
         );
 
-        return ResponseEntity.status(200).body(Map.of("code", code, "data", data));
+        return ResponseEntity.status(200).body(CommonResponse.success(data));
     }
 
     // 스터디 생성
     @PostMapping
     public ResponseEntity<?> createStudy(@RequestBody StudyCreationRequest req) {
         return ResponseEntity.status(200).body(
-            Map.of("code", "SUCCESS", "message", "생성 완료했습니다.")
+            CommonResponse.noContent()
         );
     }
 
@@ -346,8 +342,8 @@ public class StudyController {
     @GetMapping("/{studyId}/goals")
     public ResponseEntity<?> getGoals(@PathVariable Long studyId) {
         String code = "SUCCESS";
-        int goalId1 = 1;
-        int goalId2 = 2;
+        long goalId1 = 1;
+        long goalId2 = 2;
         String content1 = "영단어 10000000개 외우기";
         String content2 = "원어민과 통화 학습 10분";
         boolean isAccomplished1 = true;
@@ -360,14 +356,14 @@ public class StudyController {
             Map.of("goalId", goalId2, "content", content2, "isAccimplied", isAccomplished2, "achievedTime", achievedTime2)
         );
 
-        return ResponseEntity.status(200).body(Map.of("code", code, "data", data));
+        return ResponseEntity.status(200).body(CommonResponse.success(data));
     }
 
     // 스터디 목표 달성
     @PostMapping("/{studyId}/goal/{goalId}")
     public ResponseEntity<?> successGoal(@PathVariable Long studyId, @PathVariable Long goalId) {
         return ResponseEntity.status(200).body(
-            Map.of("code", "SUCCESS", "message", "목표 달성 완료")
+            CommonResponse.noContent()
         );
     }
 
@@ -429,12 +425,12 @@ public class StudyController {
     @Data
     @NoArgsConstructor
     private static class Goal {
-        int goalId;
+        long goalId;
         String content;
         DayOfWeek checkDay;
 
         @Builder
-        public Goal(int goalId, String content, DayOfWeek checkDay) {
+        public Goal(long goalId, String content, DayOfWeek checkDay) {
             this.goalId = goalId;
             this.content = content;
             this.checkDay = checkDay;

@@ -1,6 +1,7 @@
 package com.grepp.spring.app.controller.api;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +17,7 @@ public class MemberController {
     @ApiResponse(responseCode = "200")
     public ResponseEntity<Map<String, Object>> getMember(@PathVariable long memberId) {
 
-        Map<String, Object> response = new HashMap<>();
+        Map<String, Object> response = new LinkedHashMap<>();
         response.put("code", "SUCCESS");
         response.put("message", "마이페이지 정보를 성공적으로 불러왔습니다.");
         response.put("data", mockDataMemberId());
@@ -26,7 +27,7 @@ public class MemberController {
 
     private Map<String, Object> mockDataMemberId() {
 
-        Map<String, Object> data = new HashMap<>();
+        Map<String, Object> data = new LinkedHashMap<>();
         data.put("nickname", "멋쟁이라이언");
         data.put("winCount", 5);
         data.put("studyCount", 3);
@@ -75,7 +76,7 @@ public class MemberController {
     @ApiResponse(responseCode = "200")
     public ResponseEntity<Map<String, Object>> getMemberInfo(@PathVariable long memberId) {
 
-        Map<String, Object> response = new HashMap<>();
+        Map<String, Object> response = new LinkedHashMap<>();
         response.put("code", "SUCCESS");
         response.put("message", "");
         response.put("data", mockDataMemberIdInfo());
@@ -85,7 +86,7 @@ public class MemberController {
 
     private Map<String, Object> mockDataMemberIdInfo() {
 
-        Map<String, Object> data = new HashMap<>();
+        Map<String, Object> data = new LinkedHashMap<>();
         data.put("email", "test@test.com");
         data.put("nick_name", "test1");
         data.put("profile_image", "");
@@ -101,10 +102,10 @@ public class MemberController {
             @RequestBody Map<String, String> request) {
 
         String newPassword = request.get("password");
-        Map<String, Object> response = new HashMap<>();
+        Map<String, Object> response = new LinkedHashMap<>();
         response.put("code", "SUCCESS");
         response.put("message", "성공적으로 변경되었습니다.");
-        response.put("data", new HashMap<>());
+        response.put("data", new LinkedHashMap<>());
 
         return ResponseEntity.ok(response);
     }
@@ -117,7 +118,7 @@ public class MemberController {
 
         String inputPassword = request.get("password");
         boolean isMatched = "password".equals(inputPassword);
-        Map<String, Object> response = new HashMap<>();
+        Map<String, Object> response = new LinkedHashMap<>();
         response.put("code", "SUCCESS");
         response.put("message", "");
         response.put("data", Map.of("matched", true));
@@ -130,7 +131,7 @@ public class MemberController {
     @ApiResponse(responseCode = "200")
     public ResponseEntity<Map<String, Object>> getAllTimer(@PathVariable long memberId) {
 
-        Map<String, Object> response = new HashMap<>();
+        Map<String, Object> response = new LinkedHashMap<>();
         response.put("code", "SUCCESS");
         response.put("message", "타이머 누적 시간이 조회되었습니다.");
         response.put("data", mockDataAllTimer());
@@ -140,7 +141,7 @@ public class MemberController {
 
     private Map<String, Object> mockDataAllTimer() {
 
-        Map<String, Object> data = new HashMap<>();
+        Map<String, Object> data = new LinkedHashMap<>();
         data.put("userId", 1);
         data.put("nickname", "홍길동");
         data.put("totalStudyTime", 145800);
@@ -153,7 +154,7 @@ public class MemberController {
     @ApiResponse(responseCode = "200")
     public ResponseEntity<Map<String, Object>> getStudies(@PathVariable long memberId) {
 
-        Map<String, Object> response = new HashMap<>();
+        Map<String, Object> response = new LinkedHashMap<>();
         response.put("code", "SUCCESS");
         response.put("message", "가입한 스터디 목록을 조회했습니다.");
         response.put("data", mockDataMemberStudies());
@@ -163,7 +164,7 @@ public class MemberController {
 
     private Map<String, Object> mockDataMemberStudies() {
 
-        Map<String, Object> data = new HashMap<>();
+        Map<String, Object> data = new LinkedHashMap<>();
         data.put("memberId", 1);
         data.put("nickname", "홍길동");
         data.put("totalStudyTime", 145800);
@@ -200,10 +201,10 @@ public class MemberController {
     @ApiResponse(responseCode = "200")
     public ResponseEntity<Map<String, Object>> updateTimer(@PathVariable long memberId) {
 
-        Map<String, Object> response = new HashMap<>();
+        Map<String, Object> response = new LinkedHashMap<>();
         response.put("code", "SUCCESS");
         response.put("message", "성공적으로 수정하였습니다.");
-        response.put("data", new HashMap<>());
+        response.put("data", new LinkedHashMap<>());
 
         return ResponseEntity.ok(response);
     }
@@ -213,7 +214,7 @@ public class MemberController {
     @ApiResponse(responseCode = "200")
     public ResponseEntity<Map<String, Object>> getMemberAlarms(@PathVariable long memberId) {
 
-        Map<String, Object> response = new HashMap<>();
+        Map<String, Object> response = new LinkedHashMap<>();
         response.put("code", "SUCCESS");
         response.put("message", "");
         response.put("data", mockDataAlarm());
