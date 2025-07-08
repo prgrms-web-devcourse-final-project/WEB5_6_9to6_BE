@@ -31,6 +31,7 @@ public class MemberController {
         data.put("nickname", "멋쟁이라이언");
         data.put("winCount", 5);
         data.put("studyCount", 3);
+        data.put("rewardPoints", 3000);
         data.put("userStudies", List.of(
                 Map.of(
                         "studyCategory", "개발",
