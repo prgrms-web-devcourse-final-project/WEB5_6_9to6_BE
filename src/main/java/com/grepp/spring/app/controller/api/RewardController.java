@@ -1,7 +1,6 @@
 package com.grepp.spring.app.controller.api;
 
-import com.grepp.spring.infra.response.ApiResponse;
-import com.grepp.spring.infra.response.ResponseCode;
+import com.grepp.spring.infra.response.CommonResponse;
 import java.util.List;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
@@ -19,7 +18,7 @@ public class RewardController {
 
     // 아이템 상점 목록
     @GetMapping
-    public ResponseEntity<ApiResponse<Map<String, Object>>> getMockItems() {
+    public ResponseEntity<CommonResponse<Map<String, Object>>> getMockItems() {
         List<Map<String, Object>> items = List.of(
             Map.of("itemId", 1, "name", "블랙테마", "type", "theme", "price", 500),
             Map.of("itemId", 2, "name", "레드테마", "type", "theme", "price", 300),
@@ -28,22 +27,22 @@ public class RewardController {
         );
 
         Map<String, Object> data = Map.of("items", items);
-        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, data));
+        return ResponseEntity.ok(CommonResponse.success(data));
     }
 
     // 아이템 구매
     @PostMapping("/{itemId}/purchase")
-    public ResponseEntity<ApiResponse<Map<String, Object>>> purchaseItem() {
+    public ResponseEntity<CommonResponse<Map<String, Object>>> purchaseItem() {
         Map<String, Object> data = Map.of(); // 빈 객체 {}
 
         return ResponseEntity
             .status(HttpStatus.CREATED)
-            .body(ApiResponse.of(ResponseCode.ITEM_PURCHASE_SUCCESS, data));
+            .body(CommonResponse.success(data));
     }
 
     // 소유 아이템 목록
     @GetMapping("/own-items")
-    public ResponseEntity<ApiResponse<Map<String, Object>>> getOwnItems() {
+    public ResponseEntity<CommonResponse<Map<String, Object>>> getOwnItems() {
         Map<String, Object> data = Map.of(
             "member_id", 1,
             "item_id", 1,
@@ -54,16 +53,16 @@ public class RewardController {
         );
 
         return ResponseEntity
-            .ok(ApiResponse.of(ResponseCode.OK, data));
+            .ok(CommonResponse.success(data));
     }
 
     // 사용 아이템 변경
     @PatchMapping("/own-items/{ownItemId}")
-    public ResponseEntity<ApiResponse<Map<String, Object>>> changeOwnItems() {
+    public ResponseEntity<CommonResponse<Map<String, Object>>> changeOwnItems() {
         Map<String, Object> data = Map.of();
 
         return ResponseEntity
             .status(HttpStatus.CREATED)
-            .body(ApiResponse.of(ResponseCode.ITEM_PURCHASE_SUCCESS, data));
+            .body(CommonResponse.success(data));
     }
 }

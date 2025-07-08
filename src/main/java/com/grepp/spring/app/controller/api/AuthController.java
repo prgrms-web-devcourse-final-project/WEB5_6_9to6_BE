@@ -93,7 +93,7 @@ public class AuthController {
         String password = request.get("password");
 
         Map<String, Object> data = new HashMap<>();
-        data.put("valid", true);
+        data.put("verified", true);
 
         Map<String, Object> response = new LinkedHashMap<>();
         response.put("code", "0000");
@@ -188,6 +188,3 @@ public class AuthController {
     }
 
 }
-
-
-
