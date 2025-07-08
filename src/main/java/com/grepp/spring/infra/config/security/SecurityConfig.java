@@ -1,8 +1,9 @@
 package com.grepp.spring.infra.config.security;
 
-import com.grepp.spring.infra.auth.jwt.JwtAuthenticationEntryPoint;
 import com.grepp.spring.infra.auth.jwt.filter.JwtAuthenticationFilter;
 import com.grepp.spring.infra.auth.jwt.filter.JwtExceptionFilter;
+import com.grepp.spring.infra.auth.oauth2.OAuth2FailureHandler;
+import com.grepp.spring.infra.auth.oauth2.OAuth2SuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -27,9 +28,9 @@ public class SecurityConfig {
     
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final JwtExceptionFilter jwtExceptionFilter;
-    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-//    private final OAuth2SuccessHandler oAuth2SuccessHandler;
-//    private final OAuth2FailureHandler oAuth2FailureHandler;
+//    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
+    private final OAuth2FailureHandler oAuth2FailureHandler;
     
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -37,11 +38,11 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .formLogin(AbstractHttpConfigurer::disable)
             .httpBasic(AbstractHttpConfigurer::disable)
-//            .oauth2Login(
-//                oauth -> oauth
-//                    .successHandler(oAuth2SuccessHandler)
-//                    .failureHandler(oAuth2FailureHandler)
-//            )
+            .oauth2Login(
+                oauth -> oauth
+                    .successHandler(oAuth2SuccessHandler)
+                    .failureHandler(oAuth2FailureHandler)
+            )
             .cors(Customizer.withDefaults())
             .sessionManagement(
                 session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

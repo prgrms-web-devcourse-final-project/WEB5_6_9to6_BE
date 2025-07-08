@@ -3,6 +3,7 @@ package com.grepp.spring.app.model.member.entity;
 
 import com.grepp.spring.app.model.auth.code.Role;
 import com.grepp.spring.app.model.member.code.Gender;
+import com.grepp.spring.app.model.member.code.SocialType;
 import com.grepp.spring.infra.entity.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -29,6 +30,8 @@ public class Member extends BaseEntity {
     int rewardPoints;
     @Enumerated(EnumType.STRING)
     Role role;
+    @Enumerated(EnumType.STRING)
+    SocialType socialType;
     LocalDate birthday;
     @Enumerated(EnumType.STRING)
     Gender gender;
@@ -36,13 +39,14 @@ public class Member extends BaseEntity {
 
     @Builder
     public Member(long id, String email, String password, String nickname, int rewardPoints,
-        Role role, LocalDate birthday, Gender gender, int winRate) {
+        Role role, SocialType socialType, LocalDate birthday, Gender gender, int winRate) {
         this.id = id;
         this.email = email;
         this.password = password;
         this.nickname = nickname;
         this.rewardPoints = rewardPoints;
         this.role = role;
+        this.socialType = socialType;
         this.birthday = birthday;
         this.gender = gender;
         this.winRate = winRate;

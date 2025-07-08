@@ -45,6 +45,13 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     // Jackson (JSON 직렬화/역직렬화)
     implementation 'com.fasterxml.jackson.core:jackson-databind'
+
+    // OAuth2.0
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
+
+    // mail
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
 }
 
 node {
