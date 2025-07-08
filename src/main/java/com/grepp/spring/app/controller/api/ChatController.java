@@ -22,11 +22,11 @@ public class ChatController {
     // 채팅 메시지 전송
     @PostMapping("/{studyId}")
     @ApiResponse(responseCode = "200")
-    public ResponseEntity<Map<String, Object>> sendChatMessage(@PathVariable int studyId,
+    public ResponseEntity<Map<String, Object>> sendChatMessage(@PathVariable Long studyId,
         @RequestBody Map<String, Object> request) {
 
-        Integer senderId = ((Number) request.get("senderId")).intValue();
-        Integer receiverId = request.get("receiverId") != null ? ((Number) request.get("receiverId")).intValue() : null;
+        Long senderId = ((Number) request.get("senderId")).longValue();
+        Long receiverId = request.get("receiverId") != null ? ((Number) request.get("receiverId")).longValue() : null;
         String message = (String) request.get("message");
         String sendAt = (String) request.get("sendAt");
 
@@ -56,7 +56,7 @@ public class ChatController {
     // 현재 접속 중인 사용자 목록 조회
     @GetMapping("/{studyId}/participants")
     @ApiResponse(responseCode = "200")
-    public ResponseEntity<Map<String, Object>> getOnlineParticipants(@PathVariable int studyId) {
+    public ResponseEntity<Map<String, Object>> getOnlineParticipants(@PathVariable Long studyId) {
 
         List<Map<String, Object>> participants = new ArrayList<>();
 
@@ -84,7 +84,7 @@ public class ChatController {
     // 채팅 내역 조회
     @GetMapping("/{studyId}/history")
     @ApiResponse(responseCode = "200")
-    public ResponseEntity<Map<String, Object>> getChatHistory(@PathVariable int studyId) {
+    public ResponseEntity<Map<String, Object>> getChatHistory(@PathVariable Long studyId) {
 
         List<Map<String, Object>> chatHistory = new ArrayList<>();
 
