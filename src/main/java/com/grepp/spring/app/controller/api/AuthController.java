@@ -2,6 +2,7 @@ package com.grepp.spring.app.controller.api;
 
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,19 +19,22 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "/api/v1/auth", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AuthController {
 
+    private static final String VALID_EMAIL = "test@example.com";
+    private static final String VALID_CODE = "abc12";
+
     // 이메일 인증 요청
     @PostMapping("/email/send")
     @ApiResponse(responseCode = "200")
-    public ResponseEntity<Map<String, Object>> sendVerificationEmail(@RequestBody Map<String, Object> request) {
+    public ResponseEntity<Map<String, Object>> sendVerificationEmail(@RequestBody Map<String, String> request) {
 
-        String email = (String) request.get("email");
+        String email = request.get("email");
 
-        if (email == null || !email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
-            return errorResponse("bad_request", "이메일 형식이 올바르지 않습니다.", HttpStatus.BAD_REQUEST);
+        if (email == null || email.isBlank()) {
+            return errorResponse("bad_request", "이메일을 입력해주세요.", HttpStatus.BAD_REQUEST);
         }
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("code", "SUCCESS");
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("code", "0000");
         response.put("message", "인증 코드 전송.");
 
         return ResponseEntity.ok(response);
@@ -39,10 +43,10 @@ public class AuthController {
     // 이메일 인증 확인
     @PostMapping("/email/verify")
     @ApiResponse(responseCode = "200")
-    public ResponseEntity<Map<String, Object>> verifyEmailCode(@RequestBody Map<String, Object> request) {
+    public ResponseEntity<Map<String, Object>> verifyEmailCode(@RequestBody Map<String, String> request) {
 
-        String email = (String) request.get("email");
-        String code = (String) request.get("code");
+        String email = request.get("email");
+        String code = request.get("code");
 
         // 인증 코드 누락
         if (code == null || code.isBlank()) {
@@ -50,15 +54,15 @@ public class AuthController {
         }
 
         // 인증 코드가 틀리거나 만료됨
-        if (!"ABC12".equals(code)) {
+        if (!VALID_CODE.equals(code)) {
             return errorResponse("unauthorized", "인증 코드가 틀렸거나 만료되었습니다.", HttpStatus.UNAUTHORIZED);
         }
 
         Map<String, Object> data = new HashMap<>();
         data.put("verified", true);
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("code", "SUCCESS");
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("code", "0000");
         response.put("message", "인증 완료");
         response.put("data", data);
 
@@ -73,8 +77,8 @@ public class AuthController {
         Map<String, Object> data = new HashMap<>();
         data.put("available", true);
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("code", "SUCCESS");
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("code", "0000");
         response.put("message", "사용 가능 이메일");
         response.put("data", data);
 
@@ -89,10 +93,10 @@ public class AuthController {
         String password = request.get("password");
 
         Map<String, Object> data = new HashMap<>();
-        data.put("valid", true);
+        data.put("verified", true);
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("code", "SUCCESS");
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("code", "0000");
         response.put("message", "유효한 비밀번호입니다.");
         response.put("data", data);
 
@@ -134,8 +138,8 @@ public class AuthController {
         Map<String, Object> data = new HashMap<>();
         data.put("memberId", 123);
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("code", "SUCCESS");
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("code", "0000");
         response.put("message", "회원가입 완료.");
         response.put("data", data);
 
@@ -145,9 +149,9 @@ public class AuthController {
     // 로그인
     @PostMapping("/login")
     @ApiResponse(responseCode = "200")
-    public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, Object> request) {
-        String email = (String) request.get("email");
-        String password = (String) request.get("password");
+    public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+        String password = request.get("password");
 
         // 이메일 필수
         if (email == null || email.isBlank() || email.equalsIgnoreCase("null")) {
@@ -162,13 +166,13 @@ public class AuthController {
             return errorResponse("bad_request", "비밀번호를 입력해주세요.", HttpStatus.BAD_REQUEST);
         }
 
-        Map<String, Object> data = new HashMap<>();
+        Map<String, Object> data = new LinkedHashMap<>();
         data.put("memberId", 123);
         data.put("accessToken", "access-token-value");
         data.put("refreshToken", "refresh-token-value");
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("code", "SUCCESS");
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("code", "0000");
         response.put("message", "로그인 성공");
         response.put("data", data);
 
@@ -177,13 +181,10 @@ public class AuthController {
 
     // 공통 에러 응답 메서드
     private ResponseEntity<Map<String, Object>> errorResponse(String code, String message, HttpStatus status) {
-        Map<String, Object> error = new HashMap<>();
+        Map<String, Object> error = new LinkedHashMap<>();
         error.put("code", code);
         error.put("message", message);
         return ResponseEntity.status(status).body(error);
     }
 
 }
-
-
-
