@@ -2,7 +2,7 @@ package com.grepp.spring.app.controller.api;
 
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
@@ -38,7 +38,7 @@ public class ChatController {
             return errorResponse("server_error", "알 수 없는 오류가 발생했습니다. 잠시 후 다시 시도해주세요.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        Map<String, Object> response = new HashMap<>();
+        Map<String, Object> response = new LinkedHashMap<>();
         response.put("code", "0000");
         response.put("message", "채팅 메시지 전송 성공");
 
@@ -47,7 +47,7 @@ public class ChatController {
 
     // 공통 에러 응답 메서드
     private ResponseEntity<Map<String, Object>> errorResponse(String code, String message, HttpStatus status) {
-        Map<String, Object> error = new HashMap<>();
+        Map<String, Object> error = new LinkedHashMap<>();
         error.put("code", code);
         error.put("message", message);
         return ResponseEntity.status(status).body(error);
@@ -60,12 +60,12 @@ public class ChatController {
 
         List<Map<String, Object>> participants = new ArrayList<>();
 
-        Map<String, Object> member1 = new HashMap<>();
+        Map<String, Object> member1 = new LinkedHashMap<>();
         member1.put("memberId", 3);
         member1.put("nickname", "철수");
         member1.put("status", "ONLINE");
 
-        Map<String, Object> member2 = new HashMap<>();
+        Map<String, Object> member2 = new LinkedHashMap<>();
         member2.put("memberId", 5);
         member2.put("nickname", "영희");
         member2.put("status", "ONLINE");
@@ -73,7 +73,7 @@ public class ChatController {
         participants.add(member1);
         participants.add(member2);
 
-        Map<String, Object> response = new HashMap<>();
+        Map<String, Object> response = new LinkedHashMap<>();
         response.put("code", "0000");
         response.put("message", "접속자 목록 조회 성공");
         response.put("data", participants);
@@ -88,7 +88,7 @@ public class ChatController {
 
         List<Map<String, Object>> chatHistory = new ArrayList<>();
 
-        Map<String, Object> chat1 = new HashMap<>();
+        Map<String, Object> chat1 = new LinkedHashMap<>();
         chat1.put("chatId", 10);
         chat1.put("senderId", 3);
         chat1.put("receiverId", null); // 공개 채팅
@@ -96,7 +96,7 @@ public class ChatController {
         chat1.put("message", "안녕하세요!");
         chat1.put("sentAt", "2025-07-04T14:00:00");
 
-        Map<String, Object> chat2 = new HashMap<>();
+        Map<String, Object> chat2 = new LinkedHashMap<>();
         chat2.put("chatId", 11);
         chat2.put("senderId", 3);
         chat2.put("receiverId", 5); // 귓속말
@@ -107,7 +107,7 @@ public class ChatController {
         chatHistory.add(chat1);
         chatHistory.add(chat2);
 
-        Map<String, Object> response = new HashMap<>();
+        Map<String, Object> response = new LinkedHashMap<>();
         response.put("code", "0000");
         response.put("message", "채팅 내역 조회 성공");
         response.put("data", chatHistory);
