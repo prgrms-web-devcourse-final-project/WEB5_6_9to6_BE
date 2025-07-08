@@ -35,7 +35,7 @@ public class StudyController {
     }
 
     // 스터디 목록(검색)
-    @PostMapping()
+    @PostMapping("/search")
     public ResponseEntity<?> searchStudies(
         @RequestBody StudySearchRequest req
     ) {
@@ -335,7 +335,7 @@ public class StudyController {
     }
 
     // 스터디 생성
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<?> createStudy(StudyCreationRequest req) {
         return ResponseEntity.status(200).body(
             Map.of("code", "SUCCESS", "message", "생성 완료했습니다.")
