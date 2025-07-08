@@ -30,7 +30,7 @@ public class AuthController {
         }
 
         Map<String, Object> response = new HashMap<>();
-        response.put("code", "SUCCESS");
+        response.put("code", "0000");
         response.put("message", "인증 코드 전송.");
 
         return ResponseEntity.ok(response);
@@ -58,7 +58,7 @@ public class AuthController {
         data.put("verified", true);
 
         Map<String, Object> response = new HashMap<>();
-        response.put("code", "SUCCESS");
+        response.put("code", "0000");
         response.put("message", "인증 완료");
         response.put("data", data);
 
@@ -74,7 +74,7 @@ public class AuthController {
         data.put("available", true);
 
         Map<String, Object> response = new HashMap<>();
-        response.put("code", "SUCCESS");
+        response.put("code", "0000");
         response.put("message", "사용 가능 이메일");
         response.put("data", data);
 
@@ -92,7 +92,7 @@ public class AuthController {
         data.put("valid", true);
 
         Map<String, Object> response = new HashMap<>();
-        response.put("code", "SUCCESS");
+        response.put("code", "0000");
         response.put("message", "유효한 비밀번호입니다.");
         response.put("data", data);
 
@@ -135,7 +135,7 @@ public class AuthController {
         data.put("memberId", 123);
 
         Map<String, Object> response = new HashMap<>();
-        response.put("code", "SUCCESS");
+        response.put("code", "0000");
         response.put("message", "회원가입 완료.");
         response.put("data", data);
 
@@ -168,7 +168,7 @@ public class AuthController {
         data.put("refreshToken", "refresh-token-value");
 
         Map<String, Object> response = new HashMap<>();
-        response.put("code", "SUCCESS");
+        response.put("code", "0000");
         response.put("message", "로그인 성공");
         response.put("data", data);
 

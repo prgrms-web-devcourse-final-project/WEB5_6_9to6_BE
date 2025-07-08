@@ -39,7 +39,7 @@ public class ChatController {
         }
 
         Map<String, Object> response = new HashMap<>();
-        response.put("code", "SUCCESS");
+        response.put("code", "0000");
         response.put("message", "채팅 메시지 전송 성공");
 
         return ResponseEntity.ok(response);
@@ -74,7 +74,7 @@ public class ChatController {
         participants.add(member2);
 
         Map<String, Object> response = new HashMap<>();
-        response.put("code", "SUCCESS");
+        response.put("code", "0000");
         response.put("message", "접속자 목록 조회 성공");
         response.put("data", participants);
 
@@ -108,7 +108,7 @@ public class ChatController {
         chatHistory.add(chat2);
 
         Map<String, Object> response = new HashMap<>();
-        response.put("code", "SUCCESS");
+        response.put("code", "0000");
         response.put("message", "채팅 내역 조회 성공");
         response.put("data", chatHistory);
 
