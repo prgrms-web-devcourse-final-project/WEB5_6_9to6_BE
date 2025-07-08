@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
@@ -27,7 +28,7 @@ public class QuizController {
     @GetMapping("/{studyId}/problems")
     @ApiResponse(responseCode = "200")
     public ResponseEntity<Map<String, Object>> getQuizzes(@PathVariable Long studyId) {
-        Map<String, Object> response = new HashMap<>();
+        Map<String, Object> response = new LinkedHashMap<>();
         response.put("code", "SUCCESS");
         response.put("message", "서바이벌 문제 목록을 조회했습니다.");
 
@@ -36,12 +37,12 @@ public class QuizController {
 
         List<Map<String, Object>> quizzes = new ArrayList<>();
 
-        Map<String, Object> quiz1 = new HashMap<>();
+        Map<String, Object> quiz1 = new LinkedHashMap<>();
         quiz1.put("quizId", 1001);
         quiz1.put("question", "이진 탐색의 시간복잡도는?");
         quiz1.put("choices", Arrays.asList("O(n)", "O(log n)", "O(n log n)", "O(1)"));
 
-        Map<String, Object> quiz2 = new HashMap<>();
+        Map<String, Object> quiz2 = new LinkedHashMap<>();
         quiz2.put("quizId", 1002);
         quiz2.put("question", "DFS는 어떤 자료구조를 사용하나요?");
         quiz2.put("choices", Arrays.asList("큐", "스택", "힙", "그래프"));
@@ -71,11 +72,11 @@ public class QuizController {
             }
         }
 
-        Map<String, Object> data = new HashMap<>();
+        Map<String, Object> data = new LinkedHashMap<>();
         data.put("quizSetId", 301);
         data.put("registeredQuizCount", 2);
 
-        Map<String, Object> response = new HashMap<>();
+        Map<String, Object> response = new LinkedHashMap<>();
         response.put("code", "SUCCESS");
         response.put("message", "서바이벌 문제를 등록했습니다.");
         response.put("data", data);
@@ -97,11 +98,11 @@ public class QuizController {
             }
         }
 
-        Map<String, Object> data = new HashMap<>();
+        Map<String, Object> data = new LinkedHashMap<>();
         data.put("week", 2);
         data.put("correctCount", 4);
 
-        Map<String, Object> response = new HashMap<>();
+        Map<String, Object> response = new LinkedHashMap<>();
         response.put("code", "SUCCESS");
         response.put("message", "");
         response.put("data", data);
@@ -114,13 +115,13 @@ public class QuizController {
     @ApiResponse(responseCode = "200")
     public ResponseEntity<Map<String, Object>> getSurvival() {
 
-        Map<String, Object> response = new HashMap<>();
+        Map<String, Object> response = new LinkedHashMap<>();
         response.put("code", "SUCCESS");
         response.put("message", "서바이벌 목록을 조회했습니다..");
 
         List<Map<String, Object>> studies = new ArrayList<>();
 
-        Map<String, Object> study1 = new HashMap<>();
+        Map<String, Object> study1 = new LinkedHashMap<>();
         study1.put("studyId", 1);
         study1.put("title", "사법고시와 맞짱 뜨실분?");
         study1.put("currentMemberCount", 5);
@@ -154,11 +155,11 @@ public class QuizController {
     @ApiResponse(responseCode = "200")
     public ResponseEntity<Map<String, Object>> getSurvivalSchedule(@PathVariable Long studyId) {
 
-        Map<String, Object> response = new HashMap<>();
+        Map<String, Object> response = new LinkedHashMap<>();
         response.put("code", "SUCCESS");
         response.put("message", "서바이벌 일정을 조회했습니다.");
 
-        Map<String, Object> data = new HashMap<>();
+        Map<String, Object> data = new LinkedHashMap<>();
         data.put("studyId", 1);
         data.put("title", "7월 스터디 생존전");
         data.put("startDate", "2025-07-10");
@@ -180,7 +181,7 @@ public class QuizController {
         @RequestBody(required = false) Map<String, Object> QuizRequest
 
     ) {
-        Map<String, Object> response = new HashMap<>();
+        Map<String, Object> response = new LinkedHashMap<>();
         response.put("code", "SUCCESS");
         response.put("message", "서바이벌 결과가 성공적으로 등록되었습니다.");
 
