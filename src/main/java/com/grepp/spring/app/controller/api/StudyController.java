@@ -2,6 +2,7 @@ package com.grepp.spring.app.controller.api;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
@@ -169,34 +170,7 @@ public class StudyController {
         return ResponseEntity.status(200).body(Map.of("code", code, "data", filteredStudies));
     }
 
-    @Data
-    public static class StudyListResponse{
-        private StudyType studyType;
-        private String name;
-        private StudyCategory studyCategory;
-        private Region region;
-        private LocalDate startDate;
-        private int currentMember;
-        private int maxMember;
-        private List<StudySchedule> studySchedule;
-
-        @Builder
-        public StudyListResponse(StudyType studyType, String name, StudyCategory studyCategory,
-            Region region, LocalDate startDate, int currentMember, int maxMember,
-            List<StudySchedule> studySchedule) {
-            this.studyType = studyType;
-            this.name = name;
-            this.studyCategory = studyCategory;
-            this.region = region;
-            this.startDate = startDate;
-            this.currentMember = currentMember;
-            this.maxMember = maxMember;
-            this.studySchedule = studySchedule;
-        }
-    }
-
     // 스터디 정보 조회
-    // TODO 스터디 목표 필드 추가
     @GetMapping("/{studyId}")
     public ResponseEntity<?> getStudyInfo(@PathVariable Long studyId) {
         String code = "SUCCESS";
@@ -226,7 +200,18 @@ public class StudyController {
         String introduction = "안녕하세요. 토스 스터디입니다. 잠은 토스 점수에 해롭습니다."; // 스터디 소개글
         String notify = "휴식은 죽어서 하자"; // 스터디 공지
         String externalLink = "https://www.google.com/"; // 외부 강의 링크
-        // TODO 스터디 목표 추가
+        List<Goal> goals = List.of(
+            Goal.builder()
+                .goalId(1)
+                .content("아무나 붙잡고 영어로 대화 2분하기")
+                .checkDay(DayOfWeek.SAT)
+                .build(),
+            Goal.builder()
+                .goalId(2)
+                .content("미국대사관 가서 영어로 민원넣기")
+                .checkDay(DayOfWeek.SAT)
+                .build()
+        );
 
         StudyInfoResponse data = StudyInfoResponse.builder()
             .studyName(studyName)
@@ -243,6 +228,7 @@ public class StudyController {
             .introduction(introduction)
             .notify(notify)
             .externalLink(externalLink)
+            .goals(goals)
             .build();
 
         return ResponseEntity.status(200).body(
@@ -302,12 +288,124 @@ public class StudyController {
         );
     }
 
-    // 스터디 맴버 조회
+    // 스터디 신청 목록 조회
+    @GetMapping("/{studyId}/applications")
+    public ResponseEntity<?> getApplications(@PathVariable Long studyId) {
+        String code = "SUCCESS";
+        int applicationId1 = 1;
+        int applicationId2 = 2;
+        int memberId1 = 3;
+        int memberId2 = 4;
+        String nickName1 = "김지원자1";
+        String nickName2 = "김지원자2";
+        String introduction1 = "날 뽑아라";
+        String introduction2 = "아니, 날 뽑아라";
+        ApplyState state1 = ApplyState.WAIT;
+        ApplyState state2 = ApplyState.ACCEPT;
 
+        List<Map<String, Object>> data = List.of(
+            Map.of("applicationId1", applicationId1, "memberId", memberId1, "introduction", introduction1, "state", state1),
+            Map.of("applicationId1", applicationId2, "memberId", memberId2, "introduction", introduction2, "state", state2)
+        );
+
+        return ResponseEntity.status(200).body(Map.of("code", code, "data", data));
+    }
+
+    // 스터디 맴버 조회
+    @GetMapping("/{studyId}/members")
+    public ResponseEntity<?> getMembers(@PathVariable Long studyId) {
+        String code = "SUCCESS";
+        int studyMemberId1 = 11;
+        int studyMemberId2 = 22;
+        int memberId1 = 1;
+        int memberId2 = 2;
+        String nickName1 = "김이박";
+        String nickName2 = "박유저";
+        StudyRole role1 = StudyRole.LEADER;
+        StudyRole role2 = StudyRole.MEMBER;
+        String profileImage1 = "https://marketplace.canva.com/O7Muo/MAGaICO7Muo/1/tl/canva-cute-puppy-with-bone-illustration-MAGaICO7Muo.png";
+        String profileImage2 = "https://marketplace.canva.com/MQp8I/MAGdTAMQp8I/1/tl/canva-cute-kawaii-dinosaur-character-illustration-MAGdTAMQp8I.png";
+
+        List<Map<String, Object>> data = List.of(
+            Map.of("studyMemberId", studyMemberId1, "memberId", memberId1,"nickName", nickName1, "profileImage", profileImage1, "role", role1),
+            Map.of("studyMemberId", studyMemberId2, "memberId", memberId2, "nickName", nickName2,"profileImage", profileImage2, "role", role2)
+        );
+
+        return ResponseEntity.status(200).body(Map.of("code", code, "data", data));
+    }
 
     // 스터디 생성
+    @PostMapping()
+    public ResponseEntity<?> createStudy(StudyCreationRequest req) {
+        return ResponseEntity.status(200).body(
+            Map.of("code", "SUCCESS", "message", "생성 완료했습니다.")
+        );
+    }
+
     // 스터디 목표 조회
+    @GetMapping("/{studyId}/goals")
+    public ResponseEntity<?> getGoals(@PathVariable Long studyId) {
+        String code = "SUCCESS";
+        int goalId1 = 1;
+        int goalId2 = 2;
+        String content1 = "영단어 10000000개 외우기";
+        String content2 = "원어민과 통화 학습 10분";
+        boolean isAccomplished1 = true;
+        boolean isAccomplished2 = false;
+        LocalDateTime achievedTime1 = LocalDateTime.now();
+        LocalDateTime achievedTime2= LocalDateTime.now();
+
+        List<Map<String, Object>> data = List.of(
+            Map.of("goalId", goalId1, "content", content1, "isAccimplied", isAccomplished1, "achievedTime", achievedTime1),
+            Map.of("goalId", goalId2, "content", content2, "isAccimplied", isAccomplished2, "achievedTime", achievedTime2)
+        );
+
+        return ResponseEntity.status(200).body(Map.of("code", code, "data", data));
+    }
+
     // 스터디 목표 달성
+    @PostMapping("/{studyId}/goal/{goalId}")
+    public ResponseEntity<?> successGoal(@PathVariable Long studyId, @PathVariable Long goalId) {
+        return ResponseEntity.status(200).body(
+            Map.of("code", "SUCCESS", "message", "목표 달성 완료")
+        );
+    }
+
+    private static class StudyCreationRequest {
+        private String name;
+        private StudyCategory category;
+        private int maxMember;
+        private Region region;
+        private String place;
+        private boolean isOnline;
+        private StudySchedule schedules;
+        private LocalDate startDate;
+        private LocalDate endDate;
+        private String description;
+        private String externalLink;
+        private StudyType studyType;
+        private List<Goal> goals;
+
+        @Builder
+        public StudyCreationRequest(String name, StudyCategory category, int maxMember,
+            Region region,
+            String place, StudySchedule schedules, LocalDate startDate,
+            LocalDate endDate,
+            String description, String externalLink, StudyType studyType) {
+            this.name = name;
+            this.category = category;
+            this.maxMember = maxMember;
+            this.region = region;
+            this.place = place;
+            this.isOnline = (region == Region.ONLINE) ? true:false;
+            this.schedules = schedules;
+            this.startDate = startDate;
+            this.endDate = endDate;
+            this.description = description;
+            this.externalLink = externalLink;
+            this.studyType = studyType;
+        }
+    }
 
     @Data
     private static class StudySchedule {
@@ -320,6 +418,19 @@ public class StudyController {
             this.dayOfWeek = dayOfWeek;
             this.startTime = startTime;
             this.endTime = endTime;
+        }
+    }
+
+    private static class Goal {
+        int goalId;
+        String content;
+        DayOfWeek checkDay;
+
+        @Builder
+        public Goal(int goalId, String content, DayOfWeek checkDay) {
+            this.goalId = goalId;
+            this.content = content;
+            this.checkDay = checkDay;
         }
     }
 
@@ -338,6 +449,7 @@ public class StudyController {
         private String introduction;
         private String notify;
         private String externalLink;
+        private List<Goal> goals;
 
         @Builder
         public StudyInfoResponse(String studyName, StudyCategory category, StudyType type,
@@ -345,7 +457,7 @@ public class StudyController {
             StudyStatus studyStatus,
             List<StudySchedule> schedules, LocalDate startDate, LocalDate endDate,
             String introduction,
-            String notify, String externalLink) {
+            String notify, String externalLink, List<Goal> goals) {
             this.studyName = studyName;
             this.category = category;
             this.type = type;
@@ -360,6 +472,7 @@ public class StudyController {
             this.introduction = introduction;
             this.notify = notify;
             this.externalLink = externalLink;
+            this.goals = goals;
         }
     }
 
@@ -371,6 +484,41 @@ public class StudyController {
         private Region region;
         private StudyStatus status;
         private String title;
+    }
+
+    @Data
+    public static class StudyListResponse{
+        private StudyType studyType;
+        private String name;
+        private StudyCategory studyCategory;
+        private Region region;
+        private LocalDate startDate;
+        private int currentMember;
+        private int maxMember;
+        private List<StudySchedule> studySchedule;
+
+        @Builder
+        public StudyListResponse(StudyType studyType, String name, StudyCategory studyCategory,
+            Region region, LocalDate startDate, int currentMember, int maxMember,
+            List<StudySchedule> studySchedule) {
+            this.studyType = studyType;
+            this.name = name;
+            this.studyCategory = studyCategory;
+            this.region = region;
+            this.startDate = startDate;
+            this.currentMember = currentMember;
+            this.maxMember = maxMember;
+            this.studySchedule = studySchedule;
+        }
+    }
+
+
+    private enum StudyRole {
+        MEMBER, LEADER;
+    }
+
+    private enum ApplyState {
+        WAIT, ACCEPT, REJECT;
     }
 
     // 스터디 타입
