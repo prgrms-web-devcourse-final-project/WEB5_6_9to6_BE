@@ -1,5 +1,6 @@
 package com.grepp.spring.app.controller.api;
 
+import com.grepp.spring.infra.response.CommonResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,19 +22,16 @@ import org.springframework.web.bind.annotation.RestController;
 public class AlarmController {
 
     // 스터디 신청 결과 알림
-    @PatchMapping("/studies/{studyId}/applications/{applicationId}")
-    @ApiResponse(responseCode = "200")
-    public ResponseEntity<?> sendApplicationResultAlarm(
-        @PathVariable int studyId,
-        @PathVariable int applicationId
-    ) {
-        return ResponseEntity.status(200).body(
-            Map.of(
-                "code","SUCCESS",
-                "message", "스터디 신청 수락 완료"
-            )
-        );
-    }
+//    @PatchMapping("/studies/{studyId}/applications/{applicationId}")
+//    @ApiResponse(responseCode = "200")
+//    public ResponseEntity<?> sendApplicationResultAlarm(
+//        @PathVariable int studyId,
+//        @PathVariable int applicationId
+//    ) {
+//        return ResponseEntity.status(200).body(
+//            CommonResponse.noContent()
+//        );
+//    }
 
     // 알람 전송
     @PostMapping()
@@ -41,13 +39,8 @@ public class AlarmController {
     public ResponseEntity<?> sendAlarm(
         @RequestBody AlarmSendRequest req
     ) {
-        String code = "SUCCESS";
-        String message = "알림이 전송되었습니다.";
         return ResponseEntity.status(200).body(
-            Map.of(
-                "code", code,
-                "message", message
-            )
+            CommonResponse.noContent()
         );
     }
 
@@ -55,9 +48,9 @@ public class AlarmController {
     @GetMapping()
     @ApiResponse(responseCode = "200")
     public ResponseEntity<?> getAlarms() {
-        String code = "SUCCESS";
-        int alarmId1 = 1;
-        int alarmId2 = 2;
+
+        long alarmId1 = 1;
+        long alarmId2 = 2;
         LocalDateTime sentAt1 = LocalDateTime.now().minusDays(1);
         LocalDateTime sentAt2 = LocalDateTime.now();
 
@@ -67,10 +60,7 @@ public class AlarmController {
         );
 
         return ResponseEntity.status(200).body(
-            Map.of(
-                "code", code,
-                "data", list
-            )
+            CommonResponse.success(list)
         );
     }
 
@@ -78,16 +68,12 @@ public class AlarmController {
     @PatchMapping("/{alarmRecipientId}/read")
     @ApiResponse(responseCode = "200")
     public ResponseEntity<?> readAlarm(
-        @PathVariable int alarmRecipientId
+        @PathVariable long alarmRecipientId
     ) {
-        String code = "SUCCESS";
         String message = "알림을 읽음처리 하였습니다.";
 
         return ResponseEntity.status(200).body(
-            Map.of(
-                "code", code,
-                "message", message
-            )
+            CommonResponse.noContent()
         );
     }
 
@@ -106,9 +92,9 @@ public class AlarmController {
     }
 
     private static class AlarmSendRequest {
-        public int senderId;
-        public int receiverId;
-        public String type;
+        public long senderId;
+        public long receiverId;
+        public AlarmType type;
         public String message;
     }
 }
