@@ -29,7 +29,7 @@ public class QuizController {
     @ApiResponse(responseCode = "200")
     public ResponseEntity<Map<String, Object>> getQuizzes(@PathVariable Long studyId) {
         Map<String, Object> response = new LinkedHashMap<>();
-        response.put("code", "SUCCESS");
+        response.put("code", "0000");
         response.put("message", "서바이벌 문제 목록을 조회했습니다.");
 
         Map<String, Object> data = new HashMap<>();
@@ -72,13 +72,12 @@ public class QuizController {
             }
         }
 
-
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("quizSetId", 301);
         data.put("registeredQuizCount", 2);
 
         Map<String, Object> response = new LinkedHashMap<>();
-        response.put("code", "SUCCESS");
+        response.put("code", "0000");
         response.put("message", "서바이벌 문제를 등록했습니다.");
         response.put("data", data);
 
@@ -99,13 +98,12 @@ public class QuizController {
             }
         }
 
-
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("week", 2);
         data.put("correctCount", 4);
 
         Map<String, Object> response = new LinkedHashMap<>();
-        response.put("code", "SUCCESS");
+        response.put("code", "0000");
         response.put("message", "");
         response.put("data", data);
 
@@ -117,14 +115,11 @@ public class QuizController {
     @ApiResponse(responseCode = "200")
     public ResponseEntity<Map<String, Object>> getSurvival() {
 
-
         Map<String, Object> response = new LinkedHashMap<>();
-
-        response.put("code", "SUCCESS");
+        response.put("code", "0000");
         response.put("message", "서바이벌 목록을 조회했습니다..");
 
         List<Map<String, Object>> studies = new ArrayList<>();
-
 
         Map<String, Object> study1 = new LinkedHashMap<>();
         study1.put("studyId", 1);
@@ -153,7 +148,6 @@ public class QuizController {
 
         response.put("data", studies);
 
-
         return ResponseEntity.ok(response);
     }
 
@@ -162,7 +156,7 @@ public class QuizController {
     public ResponseEntity<Map<String, Object>> getSurvivalSchedule(@PathVariable Long studyId) {
 
         Map<String, Object> response = new LinkedHashMap<>();
-        response.put("code", "SUCCESS");
+        response.put("code", "0000");
         response.put("message", "서바이벌 일정을 조회했습니다.");
 
         Map<String, Object> data = new LinkedHashMap<>();
@@ -177,7 +171,6 @@ public class QuizController {
 
         response.put("data", data);
 
-
         return ResponseEntity.ok(response);
     }
 
@@ -188,16 +181,14 @@ public class QuizController {
         @RequestBody(required = false) Map<String, Object> QuizRequest
 
     ) {
-
         Map<String, Object> response = new LinkedHashMap<>();
-
-        response.put("code", "SUCCESS");
+        response.put("code", "0000");
         response.put("message", "서바이벌 결과가 성공적으로 등록되었습니다.");
 
 
         return ResponseEntity.ok(response);
-
     }
+
 
 }
 
