@@ -14,7 +14,7 @@ public class MemberController {
     // 유저 정보 요청(닉네임, 우승횟수, 스터디 수, 스터디 종류, 스터디별 출석률, 스터디별 목표달성률, 날짜별 일일 공부시간)
     @GetMapping("/{memberId}")
     @ApiResponse(responseCode = "200")
-    public ResponseEntity<Map<String, Object>> getMember(@PathVariable int memberId) {
+    public ResponseEntity<Map<String, Object>> getMember(@PathVariable long memberId) {
 
         Map<String, Object> response = new HashMap<>();
         response.put("code", "SUCCESS");
@@ -44,7 +44,7 @@ public class MemberController {
                         ),
                         "achievementRecords", List.of(
                                 Map.of("date", "2024-07-01", "isAchieved", true, "achievedAt", "2024-07-01T10:30:00"),
-                                Map.of("date", "2024-07-02", "isAchieved", false, "achievedAt", null),
+                                Map.of("date", "2024-07-02", "isAchieved", false, "achievedAt", "2024-07-01T10:30:00"),
                                 Map.of("date", "2024-07-03", "isAchieved", true, "achievedAt", "2024-07-03T15:45:10")
                         )
                 ),
@@ -73,7 +73,7 @@ public class MemberController {
     // 유저 정보 조회(이메일, 닉네임, 프로필)
     @GetMapping("/{memberId}/info")
     @ApiResponse(responseCode = "200")
-    public ResponseEntity<Map<String, Object>> getMemberInfo(@PathVariable int memberId) {
+    public ResponseEntity<Map<String, Object>> getMemberInfo(@PathVariable long memberId) {
 
         Map<String, Object> response = new HashMap<>();
         response.put("code", "SUCCESS");
@@ -97,7 +97,7 @@ public class MemberController {
     // 개인 정보 수정 (비밀번호를 변경한다고 했을 때)
     @PutMapping("/{memberId}/info")
     @ApiResponse(responseCode = "200")
-    public ResponseEntity<Map<String, Object>> updatePassword(@PathVariable int memberId,
+    public ResponseEntity<Map<String, Object>> updatePassword(@PathVariable long memberId,
             @RequestBody Map<String, String> request) {
 
         String newPassword = request.get("password");
@@ -112,7 +112,7 @@ public class MemberController {
     // 기존 비밀번호 확인
     @PostMapping("/{memberId}/password/verify")
     @ApiResponse(responseCode = "200")
-    public ResponseEntity<Map<String, Object>> verifyPassword(@PathVariable int memberId,
+    public ResponseEntity<Map<String, Object>> verifyPassword(@PathVariable long memberId,
             @RequestBody Map<String, String> request) {
 
         String inputPassword = request.get("password");
@@ -120,7 +120,7 @@ public class MemberController {
         Map<String, Object> response = new HashMap<>();
         response.put("code", "SUCCESS");
         response.put("message", "");
-        response.put("data", Map.of("matched", isMatched));
+        response.put("data", Map.of("matched", true));
 
         return ResponseEntity.ok(response);
     }
@@ -128,7 +128,7 @@ public class MemberController {
     // 타이머 누적 시간 조회
     @GetMapping("/{memberId}/timer/all-timer")
     @ApiResponse(responseCode = "200")
-    public ResponseEntity<Map<String, Object>> getAllTimer(@PathVariable int memberId) {
+    public ResponseEntity<Map<String, Object>> getAllTimer(@PathVariable long memberId) {
 
         Map<String, Object> response = new HashMap<>();
         response.put("code", "SUCCESS");
@@ -151,7 +151,7 @@ public class MemberController {
     // 가입 스터디 조회
     @GetMapping("/{memberId}/studies")
     @ApiResponse(responseCode = "200")
-    public ResponseEntity<Map<String, Object>> getStudies(@PathVariable int memberId) {
+    public ResponseEntity<Map<String, Object>> getStudies(@PathVariable long memberId) {
 
         Map<String, Object> response = new HashMap<>();
         response.put("code", "SUCCESS");
@@ -198,7 +198,7 @@ public class MemberController {
     // 타이머 시간 수정
     @PutMapping("/{memberId}/timer-settings")
     @ApiResponse(responseCode = "200")
-    public ResponseEntity<Map<String, Object>> updateTimer(@PathVariable int memberId) {
+    public ResponseEntity<Map<String, Object>> updateTimer(@PathVariable long memberId) {
 
         Map<String, Object> response = new HashMap<>();
         response.put("code", "SUCCESS");
@@ -211,7 +211,7 @@ public class MemberController {
     // 알람 목록 조회
     @GetMapping("/{memberId}/alarms")
     @ApiResponse(responseCode = "200")
-    public ResponseEntity<Map<String, Object>> getMemberAlarms(@PathVariable Integer memberId) {
+    public ResponseEntity<Map<String, Object>> getMemberAlarms(@PathVariable long memberId) {
 
         Map<String, Object> response = new HashMap<>();
         response.put("code", "SUCCESS");
