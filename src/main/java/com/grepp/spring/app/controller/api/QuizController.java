@@ -72,6 +72,7 @@ public class QuizController {
             }
         }
 
+
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("quizSetId", 301);
         data.put("registeredQuizCount", 2);
@@ -98,6 +99,7 @@ public class QuizController {
             }
         }
 
+
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("week", 2);
         data.put("correctCount", 4);
@@ -115,11 +117,14 @@ public class QuizController {
     @ApiResponse(responseCode = "200")
     public ResponseEntity<Map<String, Object>> getSurvival() {
 
+
         Map<String, Object> response = new LinkedHashMap<>();
+
         response.put("code", "SUCCESS");
         response.put("message", "서바이벌 목록을 조회했습니다..");
 
         List<Map<String, Object>> studies = new ArrayList<>();
+
 
         Map<String, Object> study1 = new LinkedHashMap<>();
         study1.put("studyId", 1);
@@ -148,6 +153,7 @@ public class QuizController {
 
         response.put("data", studies);
 
+
         return ResponseEntity.ok(response);
     }
 
@@ -171,6 +177,7 @@ public class QuizController {
 
         response.put("data", data);
 
+
         return ResponseEntity.ok(response);
     }
 
@@ -181,7 +188,9 @@ public class QuizController {
         @RequestBody(required = false) Map<String, Object> QuizRequest
 
     ) {
+
         Map<String, Object> response = new LinkedHashMap<>();
+
         response.put("code", "SUCCESS");
         response.put("message", "서바이벌 결과가 성공적으로 등록되었습니다.");
 
