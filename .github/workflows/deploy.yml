@@ -19,8 +19,20 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
-      - name: Build with Maven
-        run: mvn -B package --file pom.xml -DskipTests
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew clean build -x test
+
+      - name: Copy jar to EC2
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_KEY }}
+          source: "build/libs/*.jar"
+          target: "/home/ec2-user/app"
 
       - name: Deploy to EC2 with SSH
         uses: appleboy/ssh-action@master
@@ -32,17 +44,17 @@ jobs:
           timeout: 30s
           command_timeout: 5m
           script: |
-            echo "📦 기존 Java 프로세스 종료"
+            echo "1. 기존 Java 프로세스 종료"
             pkill -f 'java' || true
 
-            echo "🚀 새 JAR 실행"
+            echo "2. 새 JAR 실행"
             nohup java -jar -Dspring.profiles.active=prod /home/ec2-user/app/*.jar > /home/ec2-user/app/app.log 2>&1 &
 
-            echo "🕓 애플리케이션 부팅 대기..."
+            echo "3. 애플리케이션 부팅 대기..."
             sleep 5
 
-            echo "📜 최근 로그 20줄 확인:"
+            echo "4. 최근 로그 20줄 확인:"
             tail -n 20 /home/ec2-user/app/app.log || true
 
-            echo "✅ 배포 완료"
+            echo "5. 배포 완료"
             exit 0
