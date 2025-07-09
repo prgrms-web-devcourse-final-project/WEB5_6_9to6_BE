@@ -7,7 +7,7 @@ import com.grepp.spring.app.model.auth.code.AuthToken;
 import com.grepp.spring.app.model.auth.domain.Principal;
 import com.grepp.spring.app.model.auth.dto.EmailDuplicatedCheckRequest;
 import com.grepp.spring.app.model.auth.dto.EmailDuplicatedCheckResponse;
-import com.grepp.spring.app.model.auth.dto.SendEmailRequest;
+import com.grepp.spring.app.model.auth.dto.EmailSendRequest;
 import com.grepp.spring.app.model.auth.dto.SignupRequest;
 import com.grepp.spring.app.model.auth.dto.SocialSignupRequest;
 import com.grepp.spring.app.model.auth.dto.TokenDto;
@@ -86,7 +86,7 @@ public class AuthController {
     // 이메일 인증 요청
     @PostMapping("/email/send")
     @ApiResponse(responseCode = "200")
-    public ResponseEntity<CommonResponse<SuccessCode>> sendVerificationEmail(@Valid @RequestBody SendEmailRequest req) {
+    public ResponseEntity<CommonResponse<SuccessCode>> sendVerificationEmail(@Valid @RequestBody EmailSendRequest req) {
         authService.sendVerifyCode(req.getEmail());
         return ResponseEntity.ok(CommonResponse.noContent(SuccessCode.SEND_MAIL));
     }
@@ -95,9 +95,9 @@ public class AuthController {
     @PostMapping("/email/verify")
     @ApiResponse(responseCode = "200")
     public ResponseEntity<?> verifyEmailCode(@Valid @RequestBody VerifyCodeCheckRequest req) {
-        VerifyCodeCheckResponse check
+        VerifyCodeCheckResponse verified
             = new VerifyCodeCheckResponse(authService.checkVerifyCode(req.getEmail(), req.getCode()));
-        return ResponseEntity.ok(CommonResponse.success(check));
+        return ResponseEntity.ok(CommonResponse.success(verified));
     }
 
     // 이메일 중복 확인
