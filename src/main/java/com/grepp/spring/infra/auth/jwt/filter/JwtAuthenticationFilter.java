@@ -5,6 +5,7 @@ import com.grepp.spring.app.model.auth.token.RefreshTokenService;
 import com.grepp.spring.app.model.auth.token.UserBlackListRepository;
 import com.grepp.spring.app.model.auth.token.entity.RefreshToken;
 import com.grepp.spring.app.model.auth.token.entity.UserBlackList;
+import com.grepp.spring.app.model.member.MemberRepository;
 import com.grepp.spring.infra.auth.jwt.JwtTokenProvider;
 import com.grepp.spring.infra.auth.jwt.TokenCookieFactory;
 import com.grepp.spring.infra.auth.jwt.dto.AccessTokenDto;
@@ -20,6 +21,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,12 +30,14 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     
     private final RefreshTokenService refreshTokenService;
     private final UserBlackListRepository userBlackListRepository;
     private final JwtTokenProvider jwtTokenProvider;
-    
+    private final MemberRepository memberRepository;
+
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         List<String> excludePath = new ArrayList<>();
@@ -92,7 +96,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     
     private void addToken(HttpServletResponse response, Claims claims, RefreshToken refreshToken) {
         String username = claims.getSubject();
-        long id = 1; // fixme : Member DB 연결
+        long id = memberRepository.findIdByEmail(username);
+        log.info("id: {}", id);
         AccessTokenDto newAccessToken = jwtTokenProvider.generateAccessToken(username,
             (String) claims.get("roles"), id);
         Authentication authentication = jwtTokenProvider.getAuthentication(newAccessToken.getToken());

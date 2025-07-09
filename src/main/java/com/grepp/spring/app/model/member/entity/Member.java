@@ -43,13 +43,19 @@ public class Member extends BaseEntity {
         this.id = id;
         this.email = email;
         this.password = password;
-        this.nickname = nickname;
+        this.nickname = nickname; // s
         this.rewardPoints = rewardPoints;
         this.role = role;
         this.socialType = socialType;
+        this.birthday = birthday; // s
+        this.gender = gender; // s
+        this.winRate = winRate;
+    }
+
+    public void updateSocialInfo(String nickname, LocalDate birthday, Gender gender) {
+        this.nickname = nickname;
         this.birthday = birthday;
         this.gender = gender;
-        this.winRate = winRate;
     }
 
 }

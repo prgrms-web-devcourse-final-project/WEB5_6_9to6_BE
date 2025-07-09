@@ -80,13 +80,20 @@ public class JwtTokenProvider {
     
     // JWT 토큰을 복호화하여 인증 정보 조회
     public Authentication getAuthentication(String accessToken) {
+        // 1. 토큰에서 claims 정보를 파싱합니다.
         Claims claims = parseClaims(accessToken);
-        
+
+        // 2. claims에서 memberId를 추출합니다.
+        Long memberId = claims.get("memberId", Long.class); // Long 타입으로 안전하게 추출
+        log.info("memberId: {}", memberId);
+
         Collection<? extends GrantedAuthority> authorities =
             userDetailsService.findUserAuthorities(claims.getSubject());
-        
-        Principal principal = new Principal(claims.getSubject(), "", authorities);
+
+        // 3. 새로운 생성자를 사용해 memberId를 Principal 객체에 담아줍니다.
+        Principal principal = new Principal(memberId, claims.getSubject(), "", authorities);
         principal.setAccessToken(accessToken);
+
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
     
