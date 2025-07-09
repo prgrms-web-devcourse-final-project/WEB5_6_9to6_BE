@@ -19,6 +19,7 @@ public class RewardItemService {
         List<RewardItem> items = rewardItemRepository.findAll();
 
         return items.stream()
+            .filter(RewardItem::isActivated)
             .map(RewardItemDto::fromEntity)
             .collect(Collectors.toList());
 
