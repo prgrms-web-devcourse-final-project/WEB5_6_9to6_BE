@@ -1,0 +1,48 @@
+name: Deploy Spring Boot to EC2
+
+on:
+  push:
+    branches:
+      - mockup
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Build with Maven
+        run: mvn -B package --file pom.xml -DskipTests
+
+      - name: Deploy to EC2 with SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_KEY }}
+          port: 22
+          timeout: 30s
+          command_timeout: 5m
+          script: |
+            echo "📦 기존 Java 프로세스 종료"
+            pkill -f 'java' || true
+
+            echo "🚀 새 JAR 실행"
+            nohup java -jar -Dspring.profiles.active=prod /home/ec2-user/app/*.jar > /home/ec2-user/app/app.log 2>&1 &
+
+            echo "🕓 애플리케이션 부팅 대기..."
+            sleep 5
+
+            echo "📜 최근 로그 20줄 확인:"
+            tail -n 20 /home/ec2-user/app/app.log || true
+
+            echo "✅ 배포 완료"
+            exit 0
