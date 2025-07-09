@@ -1,65 +1,87 @@
 plugins {
+    // Spring Boot 플러그인: Spring Boot 애플리케이션 빌드 및 실행 지원
     id 'org.springframework.boot' version '3.5.3'
+    // 의존성 관리 플러그인: Spring Boot 의존성 버전 관리
     id 'io.spring.dependency-management' version '1.1.7'
+    // Java 플러그인: Java 프로젝트 빌드 지원
     id 'java'
-    id 'com.github.node-gradle.node' version '7.1.0'
 }
 
 group = 'com.grepp'
 version = '0.0.1-SNAPSHOT'
 
 java {
+    // Java 툴체인 버전 설정
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)
     }
 }
 
 bootRun {
+    // Spring 프로파일 환경 변수 설정 (기본값: local)
     environment SPRING_PROFILES_ACTIVE: environment.SPRING_PROFILES_ACTIVE ?: 'local'
 }
 
 repositories {
+    // Maven Central 저장소 설정
     mavenCentral()
 }
 
 dependencies {
-    implementation('org.springframework.boot:spring-boot-starter-web')
-    implementation('org.springframework.boot:spring-boot-starter-validation')
-    implementation('org.springframework.boot:spring-boot-starter-data-jpa')
-    runtimeOnly('org.postgresql:postgresql')
-    implementation('io.github.wimdeblauwe:error-handling-spring-boot-starter:4.6.0')
-    implementation('org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.6')
-    compileOnly('org.projectlombok:lombok')
-    annotationProcessor('org.projectlombok:lombok')
-    testCompileOnly('org.projectlombok:lombok')
-    testAnnotationProcessor('org.projectlombok:lombok')
-    developmentOnly('org.springframework.boot:spring-boot-docker-compose')
-    testImplementation('org.springframework.boot:spring-boot-starter-test')
-    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-}
+    // Spring Boot Core 의존성
+    implementation('org.springframework.boot:spring-boot-starter-web') // 웹 애플리케이션 개발을 위한 스타터
+    implementation('org.springframework.boot:spring-boot-starter-validation') // 유효성 검증을 위한 스타터
+    implementation('org.springframework.boot:spring-boot-starter-data-jpa') // JPA를 사용한 데이터 액세스를 위한 스타터
+    implementation 'org.springframework.boot:spring-boot-starter-security' // Spring Security를 위한 스타터
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf' // Thymeleaf 템플릿 엔진을 위한 스타터
 
-node {
-    download.set(true)
-    version.set('22.16.0')
-}
+    // 데이터베이스 드라이버
+    runtimeOnly('org.postgresql:postgresql') // PostgreSQL JDBC 드라이버
 
-tasks.register('npmRunBuild', NpmTask) {
-    args = ['run', 'build']
-    dependsOn npmInstall
+    // 유틸리티 및 헬퍼 라이브러리
+    compileOnly('org.projectlombok:lombok') // 롬복: 보일러플레이트 코드 자동 생성
+    annotationProcessor('org.projectlombok:lombok') // 롬복 어노테이션 프로세서
 
-    inputs.files(fileTree('node_modules'))
-    inputs.files(fileTree('src/main/webapp'))
-    inputs.file('.env')
-    inputs.file('package.json')
-    inputs.file('tsconfig.json')
-    inputs.file('webpack.config.js')
-    outputs.dir(layout.buildDirectory.dir('resources/main/static'))
+    // 오류 처리
+    implementation('io.github.wimdeblauwe:error-handling-spring-boot-starter:4.6.0') // 사용자 정의 오류 처리를 위한 스타터
+
+    // API 문서화
+    implementation('org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.6') // OpenAPI(Swagger) 문서 생성을 위한 스타터
+
+    // JWT (JSON Web Token)
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.6' // JWT API
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6' // JWT 구현체
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6' // JWT Jackson 바인딩
+
+    // Redis 관련
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis' // Spring Data Redis를 위한 스타터
+
+    // Jackson (JSON 직렬화/역직렬화)
+    implementation 'com.fasterxml.jackson.core:jackson-databind' // JSON 데이터 바인딩
+
+    // OAuth2.0 클라이언트
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client' // OAuth2.0 클라이언트 지원을 위한 스타터
+
+    // 메일 서비스
+    implementation 'org.springframework.boot:spring-boot-starter-mail' // 메일 전송을 위한 스타터
+
+    // Spring Cloud GCP Secret Manager 통합
+    implementation 'com.google.cloud:spring-cloud-gcp-starter-secretmanager:5.3.0'
+
+    // 개발 도구 (선택 사항, 주석 처리됨)
+    // developmentOnly('org.springframework.boot:spring-boot-docker-compose') // Docker Compose 통합
+
+    // 테스트 의존성
+    testImplementation('org.springframework.boot:spring-boot-starter-test') // Spring Boot 테스트를 위한 스타터
+    testCompileOnly('org.projectlombok:lombok') // 테스트 시 롬복 사용
+    testAnnotationProcessor('org.projectlombok:lombok') // 테스트 시 롬복 어노테이션 프로세서
 }
 
 processResources {
-    dependsOn npmRunBuild
+    // 리소스 처리 전에 npmRunBuild 태스크 실행
 }
 
 tasks.withType(Test) {
+    // JUnit Platform을 사용하여 테스트 실행
     useJUnitPlatform()
 }

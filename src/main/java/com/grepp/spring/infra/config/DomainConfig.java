@@ -7,8 +7,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 
 @Configuration
-@EntityScan("com.grepp.studium")
-@EnableJpaRepositories("com.grepp.spring")
+@EntityScan("com.grepp.spring.app.model")
+@EnableJpaRepositories("com.grepp.spring.app.model")
 @EnableTransactionManagement
 public class DomainConfig {
 }
