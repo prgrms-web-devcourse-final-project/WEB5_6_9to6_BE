@@ -24,6 +24,7 @@ public class RewardController {
 
     // 아이템 상점 목록
     @GetMapping
+    @ApiResponse(responseCode = "200")
     public ResponseEntity<CommonResponse<Map<String, Object>>> getMockItems() {
         List<Map<String, Object>> items = List.of(
             Map.of("itemId", 1, "name", "블랙테마", "type", "theme", "price", 500),
@@ -38,7 +39,8 @@ public class RewardController {
 
     // 아이템 구매
     @PostMapping("/{itemId}/purchase")
-    public ResponseEntity<CommonResponse<Map<String, Object>>> purchaseItem() {
+    @ApiResponse(responseCode = "200")
+    public ResponseEntity<CommonResponse<Map<String, Object>>> purchaseItem(@PathVariable Long itemId) {
         Map<String, Object> data = Map.of(); // 빈 객체 {}
 
         return ResponseEntity
@@ -48,6 +50,7 @@ public class RewardController {
 
     // 소유 아이템 목록
     @GetMapping("/own-items")
+    @ApiResponse(responseCode = "200")
     public ResponseEntity<CommonResponse<Map<String, Object>>> getOwnItems() {
         Map<String, Object> data = Map.of(
             "member_id", 1,
@@ -64,7 +67,8 @@ public class RewardController {
 
     // 사용 아이템 변경
     @PatchMapping("/own-items/{ownItemId}")
-    public ResponseEntity<CommonResponse<Map<String, Object>>> changeOwnItems() {
+    @ApiResponse(responseCode = "200")
+    public ResponseEntity<CommonResponse<Map<String, Object>>> changeOwnItems(@PathVariable Long ownItemId) {
         Map<String, Object> data = Map.of();
 
         return ResponseEntity
