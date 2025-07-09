@@ -26,8 +26,10 @@ public class OwnItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long OwnItemId;
 
+    private Long memberId;
+
     @NotNull
-    private boolean IsUsed;
+    private boolean isUsed;
 
     @NotNull
     private boolean activated;

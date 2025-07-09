@@ -52,4 +52,11 @@ public class Member extends BaseEntity {
         this.winRate = winRate;
     }
 
+    public void deductRewardPoints(int amount) {
+        if (rewardPoints < amount) {
+            throw new IllegalArgumentException("포인트가 부족합니다.");
+        }
+        rewardPoints -= amount;
+    }
+
 }
