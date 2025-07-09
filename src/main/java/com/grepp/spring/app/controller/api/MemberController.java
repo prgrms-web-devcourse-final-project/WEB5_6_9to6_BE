@@ -1,12 +1,17 @@
 package com.grepp.spring.app.controller.api;
 
-import java.util.HashMap;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import org.springframework.web.bind.annotation.*;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(value = "/api/v1/members")
@@ -18,7 +23,7 @@ public class MemberController {
     public ResponseEntity<Map<String, Object>> getMember(@PathVariable long memberId) {
 
         Map<String, Object> response = new LinkedHashMap<>();
-        response.put("code", "SUCCESS");
+        response.put("code", "0000");
         response.put("message", "마이페이지 정보를 성공적으로 불러왔습니다.");
         response.put("data", mockDataMemberId());
 
@@ -31,6 +36,7 @@ public class MemberController {
         data.put("nickname", "멋쟁이라이언");
         data.put("winCount", 5);
         data.put("studyCount", 3);
+        data.put("rewardPoints", 3000);
         data.put("userStudies", List.of(
                 Map.of(
                         "studyCategory", "개발",
@@ -77,7 +83,7 @@ public class MemberController {
     public ResponseEntity<Map<String, Object>> getMemberInfo(@PathVariable long memberId) {
 
         Map<String, Object> response = new LinkedHashMap<>();
-        response.put("code", "SUCCESS");
+        response.put("code", "0000");
         response.put("message", "");
         response.put("data", mockDataMemberIdInfo());
 
@@ -103,7 +109,7 @@ public class MemberController {
 
         String newPassword = request.get("password");
         Map<String, Object> response = new LinkedHashMap<>();
-        response.put("code", "SUCCESS");
+        response.put("code", "0000");
         response.put("message", "성공적으로 변경되었습니다.");
         response.put("data", new LinkedHashMap<>());
 
@@ -119,7 +125,7 @@ public class MemberController {
         String inputPassword = request.get("password");
         boolean isMatched = "password".equals(inputPassword);
         Map<String, Object> response = new LinkedHashMap<>();
-        response.put("code", "SUCCESS");
+        response.put("code", "0000");
         response.put("message", "");
         response.put("data", Map.of("matched", true));
 
@@ -132,7 +138,7 @@ public class MemberController {
     public ResponseEntity<Map<String, Object>> getAllTimer(@PathVariable long memberId) {
 
         Map<String, Object> response = new LinkedHashMap<>();
-        response.put("code", "SUCCESS");
+        response.put("code", "0000");
         response.put("message", "타이머 누적 시간이 조회되었습니다.");
         response.put("data", mockDataAllTimer());
 
@@ -155,7 +161,7 @@ public class MemberController {
     public ResponseEntity<Map<String, Object>> getStudies(@PathVariable long memberId) {
 
         Map<String, Object> response = new LinkedHashMap<>();
-        response.put("code", "SUCCESS");
+        response.put("code", "0000");
         response.put("message", "가입한 스터디 목록을 조회했습니다.");
         response.put("data", mockDataMemberStudies());
 
@@ -202,7 +208,7 @@ public class MemberController {
     public ResponseEntity<Map<String, Object>> updateTimer(@PathVariable long memberId) {
 
         Map<String, Object> response = new LinkedHashMap<>();
-        response.put("code", "SUCCESS");
+        response.put("code", "0000");
         response.put("message", "성공적으로 수정하였습니다.");
         response.put("data", new LinkedHashMap<>());
 
@@ -215,7 +221,7 @@ public class MemberController {
     public ResponseEntity<Map<String, Object>> getMemberAlarms(@PathVariable long memberId) {
 
         Map<String, Object> response = new LinkedHashMap<>();
-        response.put("code", "SUCCESS");
+        response.put("code", "0000");
         response.put("message", "");
         response.put("data", mockDataAlarm());
 
