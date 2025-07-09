@@ -56,3 +56,4 @@ jobs:
           script: |
             pkill -f 'java' || true
             nohup java -jar -Dspring.profiles.active=prod /home/ec2-user/app/*.jar > /home/ec2-user/app/app.log 2>&1 &
+            exit 0
