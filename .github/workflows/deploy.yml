@@ -32,7 +32,7 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_KEY }}
           source: "build/libs/*.jar"
-          target: "/home/ec2-user/app"
+          target: "/home/ubuntu"
 
       - name: Deploy to EC2 with SSH
         continue-on-error: true
@@ -49,13 +49,13 @@ jobs:
             pkill -f 'java' || true
           
             echo "2. 새 JAR 실행"
-            nohup java -jar -Dspring.profiles.active=prod $(ls -t /home/ec2-user/app/*.jar | head -n 1) > /home/ec2-user/app/app.log 2>&1 &
+            nohup java -jar -Dspring.profiles.active=prod $(ls -t /home/ubuntu/*.jar | head -n 1) > /home/ubuntu/app.log 2>&1 &
           
             echo "3. 애플리케이션 부팅 대기..."
             sleep 5
           
             echo "4. 최근 로그 20줄 확인:"
-            tail -n 20 /home/ec2-user/app/app.log || true
+            tail -n 20 /home/ubuntu/app.log || true
           
             echo "5. 배포 완료"
             exit 0
