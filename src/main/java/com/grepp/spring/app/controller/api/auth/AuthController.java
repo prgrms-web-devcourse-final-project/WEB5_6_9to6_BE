@@ -4,6 +4,7 @@ import com.grepp.spring.app.controller.api.auth.payload.LoginRequest;
 import com.grepp.spring.app.controller.api.auth.payload.TokenResponse;
 import com.grepp.spring.app.model.auth.AuthService;
 import com.grepp.spring.app.model.auth.code.AuthToken;
+import com.grepp.spring.app.model.auth.dto.EmailDuplicatedCheckRequest;
 import com.grepp.spring.app.model.auth.dto.EmailDuplicatedCheckResponse;
 import com.grepp.spring.app.model.auth.dto.SendEmailRequest;
 import com.grepp.spring.app.model.auth.dto.SignupRequest;
@@ -97,9 +98,9 @@ public class AuthController {
     // 이메일 중복 확인
     @GetMapping("/email/duplicate")
     @ApiResponse(responseCode = "200")
-    public ResponseEntity<CommonResponse<EmailDuplicatedCheckResponse>> checkEmailDuplicate(@RequestParam String email) {
+    public ResponseEntity<CommonResponse<EmailDuplicatedCheckResponse>> checkEmailDuplicate(@RequestBody EmailDuplicatedCheckRequest req) {
         EmailDuplicatedCheckResponse duplicated
-            = new EmailDuplicatedCheckResponse(memberService.isDuplicatedEmail(email));
+            = new EmailDuplicatedCheckResponse(memberService.isDuplicatedEmail(req.getEmail()));
         return ResponseEntity.ok(CommonResponse.success(duplicated));
     }
 

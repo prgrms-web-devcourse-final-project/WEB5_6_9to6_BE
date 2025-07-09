@@ -5,8 +5,6 @@ plugins {
     id 'io.spring.dependency-management' version '1.1.7'
     // Java 플러그인: Java 프로젝트 빌드 지원
     id 'java'
-    // Node.js 및 npm 태스크 실행을 위한 플러그인
-    id 'com.github.node-gradle.node' version '7.1.0'
 }
 
 group = 'com.grepp'
@@ -79,33 +77,8 @@ dependencies {
     testAnnotationProcessor('org.projectlombok:lombok') // 테스트 시 롬복 어노테이션 프로세서
 }
 
-node {
-    // Node.js 다운로드 설정
-    download.set(true)
-    // Node.js 버전 설정
-    version.set('22.16.0')
-}
-
-tasks.register('npmRunBuild', NpmTask) {
-    // npm 'build' 스크립트 실행
-    args = ['run', 'build']
-    // npm install 태스크에 의존
-    dependsOn npmInstall
-
-    // 입력 파일 및 디렉토리 설정
-    inputs.files(fileTree('node_modules'))
-    inputs.files(fileTree('src/main/webapp'))
-    inputs.file('.env')
-    inputs.file('package.json')
-    inputs.file('tsconfig.json')
-    inputs.file('webpack.config.js')
-    // 출력 디렉토리 설정
-    outputs.dir(layout.buildDirectory.dir('resources/main/static'))
-}
-
 processResources {
     // 리소스 처리 전에 npmRunBuild 태스크 실행
-    dependsOn npmRunBuild
 }
 
 tasks.withType(Test) {
