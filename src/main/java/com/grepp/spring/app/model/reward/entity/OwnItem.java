@@ -28,6 +28,8 @@ public class OwnItem {
 
     private Long memberId;
 
+    private Long memberId;
+
     @NotNull
     private boolean isUsed;
 
