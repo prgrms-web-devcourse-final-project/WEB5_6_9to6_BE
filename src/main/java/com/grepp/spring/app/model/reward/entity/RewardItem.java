@@ -25,7 +25,7 @@ public class RewardItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long item_id;
+    private Long itemId;
 
     @NotNull
     private String name;

@@ -1,11 +1,15 @@
 package com.grepp.spring.app.controller.api;
 
+import com.grepp.spring.app.controller.api.reward.payload.RewardItemResponseDto;
+import com.grepp.spring.app.model.reward.dto.RewardItemDto;
+import com.grepp.spring.app.model.reward.service.RewardItemService;
 import com.grepp.spring.infra.response.CommonResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.RequiredArgsConstructor;
 import org.hibernate.annotations.Fetch;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -20,20 +24,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(value = "/api/v1/reward-items", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequiredArgsConstructor
 public class RewardController {
+
+    private final RewardItemService rewardItemService;
 
     // 아이템 상점 목록
     @GetMapping
-    public ResponseEntity<CommonResponse<Map<String, Object>>> getMockItems() {
-        List<Map<String, Object>> items = List.of(
-            Map.of("itemId", 1, "name", "블랙테마", "type", "theme", "price", 500),
-            Map.of("itemId", 2, "name", "레드테마", "type", "theme", "price", 300),
-            Map.of("itemId", 3, "name", "베레모", "type", "hat", "price", 1000),
-            Map.of("itemId", 4, "name", "정장", "type", "clothes", "price", 800)
-        );
+    public ResponseEntity<CommonResponse<RewardItemResponseDto>> getRewardItems() {
+List<RewardItemDto> dtos = rewardItemService.getItemList();
+        RewardItemResponseDto responseDto = new RewardItemResponseDto(dtos);
 
-        Map<String, Object> data = Map.of("items", items);
-        return ResponseEntity.ok(CommonResponse.success(data));
+  return ResponseEntity.ok(CommonResponse.success(responseDto));
     }
 
     // 아이템 구매
