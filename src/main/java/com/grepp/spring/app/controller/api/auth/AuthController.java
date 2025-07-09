@@ -5,6 +5,8 @@ import com.grepp.spring.app.controller.api.auth.payload.TokenResponse;
 import com.grepp.spring.app.model.auth.AuthService;
 import com.grepp.spring.app.model.auth.code.AuthToken;
 import com.grepp.spring.app.model.auth.dto.TokenDto;
+import com.grepp.spring.app.model.member.MemberService;
+import com.grepp.spring.app.model.member.dto.JoinRequest;
 import com.grepp.spring.infra.auth.jwt.TokenCookieFactory;
 import com.grepp.spring.infra.response.CommonResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -30,6 +32,41 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthService authService;
+    private final MemberService memberService;
+
+    // 회원가입
+    @PostMapping("/signup")
+    public ResponseEntity<?> test(
+        @RequestBody JoinRequest req) {
+        memberService.join(req);
+        return ResponseEntity.ok(CommonResponse.noContent());
+    }
+
+    // 로그인
+    @PostMapping("/login")
+    @ApiResponse(responseCode = "200")
+    public ResponseEntity<CommonResponse<TokenResponse>> login(
+        @RequestBody LoginRequest loginRequest,
+        HttpServletResponse response
+    ) {
+        TokenDto tokenDto = authService.signin(loginRequest);
+
+        ResponseCookie accessToken = TokenCookieFactory.create(AuthToken.ACCESS_TOKEN.name(),
+            tokenDto.getAccessToken(), tokenDto.getExpiresIn());
+        ResponseCookie refreshToken = TokenCookieFactory.create(AuthToken.REFRESH_TOKEN.name(),
+            tokenDto.getRefreshToken(), tokenDto.getExpiresIn());
+
+        response.addHeader("Set-Cookie", accessToken.toString());
+        response.addHeader("Set-Cookie", refreshToken.toString());
+
+        return ResponseEntity.ok(CommonResponse.success(
+            TokenResponse.builder().
+                accessToken(tokenDto.getAccessToken())
+                .grantType(tokenDto.getGrantType())
+                .expiresIn(tokenDto.getExpiresIn())
+                .build())
+        );
+    }
 
     // 이메일 인증 요청
     @PostMapping("/email/send")
@@ -81,17 +118,12 @@ public class AuthController {
     // 이메일 중복 확인
     @GetMapping("/email/duplicate")
     @ApiResponse(responseCode = "200")
-    public ResponseEntity<Map<String, Object>> checkEmailDuplicate(@RequestParam String email) {
+    public ResponseEntity<CommonResponse> checkEmailDuplicate(@RequestParam String email) {
 
-        Map<String, Object> data = new HashMap<>();
-        data.put("available", true);
+        boolean matched = memberService.isDuplicatedEmail(email);
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("code", "SUCCESS");
-        response.put("message", "사용 가능 이메일");
-        response.put("data", data);
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(CommonResponse.success(matched));
     }
 
     // 비밀번호 유효성 검사
@@ -110,106 +142,6 @@ public class AuthController {
         response.put("data", data);
 
         return ResponseEntity.ok(response);
-    }
-
-    // 회원가입
-    @PostMapping("/signup")
-    @ApiResponse(responseCode = "200")
-    public ResponseEntity<Map<String, Object>> signup(@RequestBody Map<String, Object> request) {
-
-        String email = (String) request.get("email");
-        String password = (String) request.get("password");
-        String nickname = (String) request.get("nickname");
-        String birthDate = (String) request.get("birth_date");
-        String gender = (String) request.get("gender");
-
-        // 이메일 필수 + 형식 검사
-        if (email == null || email.isBlank()) {
-            return errorResponse("bad_request", "이메일을 입력해주세요.", HttpStatus.BAD_REQUEST);
-        }
-        if (!email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
-            return errorResponse("bad_request", "이메일 형식이 올바르지 않습니다.", HttpStatus.BAD_REQUEST);
-        }
-        // 나머지 값 필수
-        if (password == null || password.isBlank()) {
-            return errorResponse("bad_request", "비밀번호를 입력해주세요.", HttpStatus.BAD_REQUEST);
-        }
-        if (nickname == null || nickname.isBlank()) {
-            return errorResponse("bad_request", "닉네임을 입력해주세요.", HttpStatus.BAD_REQUEST);
-        }
-        if (birthDate == null || birthDate.isBlank()) {
-            return errorResponse("bad_request", "생년월일을 입력해주세요.", HttpStatus.BAD_REQUEST);
-        }
-        if (gender == null || gender.isBlank()) {
-            return errorResponse("bad_request", "성별을 입력해주세요.", HttpStatus.BAD_REQUEST);
-        }
-
-        Map<String, Object> data = new HashMap<>();
-        data.put("memberId", 123);
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("code", "SUCCESS");
-        response.put("message", "회원가입 완료.");
-        response.put("data", data);
-
-        return ResponseEntity.ok(response);
-    }
-
-    // 로그인
-//    @PostMapping("/login")
-//    @ApiResponse(responseCode = "200")
-//    public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, Object> request) {
-//        String email = (String) request.get("email");
-//        String password = (String) request.get("password");
-//
-//        // 이메일 필수
-//        if (email == null || email.isBlank() || email.equalsIgnoreCase("null")) {
-//            return errorResponse("bad_request", "이메일을 입력해주세요.", HttpStatus.BAD_REQUEST);
-//        }
-//        // 이메일 형식 검증
-//        if (!email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
-//            return errorResponse("bad_request", "이메일 형식이 올바르지 않습니다.", HttpStatus.BAD_REQUEST);
-//        }
-//        // 비밀번호 필수
-//        if (password == null || password.isBlank()) {
-//            return errorResponse("bad_request", "비밀번호를 입력해주세요.", HttpStatus.BAD_REQUEST);
-//        }
-//
-//        Map<String, Object> data = new HashMap<>();
-//        data.put("memberId", 123);
-//        data.put("accessToken", "access-token-value");
-//        data.put("refreshToken", "refresh-token-value");
-//
-//        Map<String, Object> response = new HashMap<>();
-//        response.put("code", "SUCCESS");
-//        response.put("message", "로그인 성공");
-//        response.put("data", data);
-//
-//        return ResponseEntity.ok(response);
-//    }
-    @PostMapping("/login")
-    @ApiResponse(responseCode = "200")
-    public ResponseEntity<CommonResponse<TokenResponse>> login(
-        @RequestBody LoginRequest loginRequest,
-        HttpServletResponse response
-    ) {
-        TokenDto tokenDto = authService.signin(loginRequest);
-
-        ResponseCookie accessToken = TokenCookieFactory.create(AuthToken.ACCESS_TOKEN.name(),
-            tokenDto.getAccessToken(), tokenDto.getExpiresIn());
-        ResponseCookie refreshToken = TokenCookieFactory.create(AuthToken.REFRESH_TOKEN.name(),
-            tokenDto.getRefreshToken(), tokenDto.getExpiresIn());
-
-        response.addHeader("Set-Cookie", accessToken.toString());
-        response.addHeader("Set-Cookie", refreshToken.toString());
-
-        return ResponseEntity.ok(CommonResponse.success(
-            TokenResponse.builder().
-            accessToken(tokenDto.getAccessToken())
-            .grantType(tokenDto.getGrantType())
-            .expiresIn(tokenDto.getExpiresIn())
-            .build())
-        );
     }
 
     // 공통 에러 응답 메서드

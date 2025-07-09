@@ -1,31 +1,21 @@
 package com.grepp.spring.app.controller.api;
 
-import com.grepp.spring.app.model.member.MemberRepository;
-import com.grepp.spring.app.model.member.MemberService;
-import com.grepp.spring.app.model.member.dto.JoinRequest;
-import com.grepp.spring.infra.response.CommonResponse;
-import java.util.HashMap;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(value = "/api/v1/members")
-@RequiredArgsConstructor
 public class MemberController {
-
-    private final MemberService memberService;
-
-    @PostMapping("/test")
-    public ResponseEntity<?> test(
-        @RequestBody JoinRequest req) {
-        memberService.join(req);
-        return ResponseEntity.ok(CommonResponse.noContent());
-    }
 
     // 유저 정보 요청(닉네임, 우승횟수, 스터디 수, 스터디 종류, 스터디별 출석률, 스터디별 목표달성률, 날짜별 일일 공부시간)
     @GetMapping("/{memberId}")
