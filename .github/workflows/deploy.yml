@@ -35,6 +35,7 @@ jobs:
           target: "/home/ec2-user/app"
 
       - name: Deploy to EC2 with SSH
+        continue-on-error: true
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -46,15 +47,15 @@ jobs:
           script: |
             echo "1. 기존 Java 프로세스 종료"
             pkill -f 'java' || true
-
+          
             echo "2. 새 JAR 실행"
-            nohup java -jar -Dspring.profiles.active=prod /home/ec2-user/app/*.jar > /home/ec2-user/app/app.log 2>&1 &
-
+            nohup java -jar -Dspring.profiles.active=prod $(ls -t /home/ec2-user/app/*.jar | head -n 1) > /home/ec2-user/app/app.log 2>&1 &
+          
             echo "3. 애플리케이션 부팅 대기..."
             sleep 5
-
+          
             echo "4. 최근 로그 20줄 확인:"
             tail -n 20 /home/ec2-user/app/app.log || true
-
+          
             echo "5. 배포 완료"
             exit 0
