@@ -40,7 +40,7 @@ List<RewardItemDto> dtos = rewardItemService.getItemList();
 
     // 아이템 구매
     @PostMapping("/{itemId}/purchase")
-    public ResponseEntity<CommonResponse<Map<String, Object>>> purchaseItem() {
+    public ResponseEntity<CommonResponse<Map<String, Object>>> purchaseItem(@PathVariable long itemId) {
         Map<String, Object> data = Map.of(); // 빈 객체 {}
 
         return ResponseEntity
@@ -66,7 +66,9 @@ List<RewardItemDto> dtos = rewardItemService.getItemList();
 
     // 사용 아이템 변경
     @PatchMapping("/own-items/{ownItemId}")
-    public ResponseEntity<CommonResponse<Map<String, Object>>> changeOwnItems() {
+    public ResponseEntity<CommonResponse<Map<String, Object>>> changeOwnItems(
+        @PathVariable long ownItemId
+    ) {
         Map<String, Object> data = Map.of();
 
         return ResponseEntity
