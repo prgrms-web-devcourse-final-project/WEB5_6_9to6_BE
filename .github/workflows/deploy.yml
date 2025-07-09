@@ -57,4 +57,9 @@ jobs:
 
             echo "4. Recent logs"
             sleep 5
-            docker logs my-app-container --tail 20
+          
+            echo "4. 최근 로그 20줄 확인:"
+            tail -n 20 /home/ubuntu/app.log || true
+          
+            echo "5. 배포 완료"
+            exit 0
