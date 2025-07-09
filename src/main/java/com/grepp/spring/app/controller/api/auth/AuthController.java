@@ -4,13 +4,15 @@ import com.grepp.spring.app.controller.api.auth.payload.LoginRequest;
 import com.grepp.spring.app.controller.api.auth.payload.TokenResponse;
 import com.grepp.spring.app.model.auth.AuthService;
 import com.grepp.spring.app.model.auth.code.AuthToken;
+import com.grepp.spring.app.model.auth.dto.EmailDuplicatedCheckResponse;
+import com.grepp.spring.app.model.auth.dto.SignupRequest;
 import com.grepp.spring.app.model.auth.dto.TokenDto;
 import com.grepp.spring.app.model.member.MemberService;
-import com.grepp.spring.app.model.member.dto.JoinRequest;
 import com.grepp.spring.infra.auth.jwt.TokenCookieFactory;
 import com.grepp.spring.infra.response.CommonResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -36,8 +38,8 @@ public class AuthController {
 
     // 회원가입
     @PostMapping("/signup")
-    public ResponseEntity<?> test(
-        @RequestBody JoinRequest req) {
+    public ResponseEntity<?> signup(
+        @Valid @RequestBody SignupRequest req) {
         memberService.join(req);
         return ResponseEntity.ok(CommonResponse.noContent());
     }
@@ -119,30 +121,28 @@ public class AuthController {
     @GetMapping("/email/duplicate")
     @ApiResponse(responseCode = "200")
     public ResponseEntity<CommonResponse> checkEmailDuplicate(@RequestParam String email) {
-
-        boolean matched = memberService.isDuplicatedEmail(email);
-
-
-        return ResponseEntity.ok(CommonResponse.success(matched));
+        EmailDuplicatedCheckResponse duplicated
+            = new EmailDuplicatedCheckResponse(memberService.isDuplicatedEmail(email));
+        return ResponseEntity.ok(CommonResponse.success(duplicated));
     }
 
     // 비밀번호 유효성 검사
-    @PostMapping("/password/verify")
-    @ApiResponse(responseCode = "200")
-    public ResponseEntity<Map<String, Object>> validatePassword(@RequestBody Map<String, String> request) {
-
-        String password = request.get("password");
-
-        Map<String, Object> data = new HashMap<>();
-        data.put("valid", true);
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("code", "SUCCESS");
-        response.put("message", "유효한 비밀번호입니다.");
-        response.put("data", data);
-
-        return ResponseEntity.ok(response);
-    }
+//    @PostMapping("/password/verify")
+//    @ApiResponse(responseCode = "200")
+//    public ResponseEntity<Map<String, Object>> validatePassword(@RequestBody Map<String, String> request) {
+//
+//        String password = request.get("password");
+//
+//        Map<String, Object> data = new HashMap<>();
+//        data.put("valid", true);
+//
+//        Map<String, Object> response = new HashMap<>();
+//        response.put("code", "SUCCESS");
+//        response.put("message", "유효한 비밀번호입니다.");
+//        response.put("data", data);
+//
+//        return ResponseEntity.ok(response);
+//    }
 
     // 공통 에러 응답 메서드
     private ResponseEntity<Map<String, Object>> errorResponse(String code, String message, HttpStatus status) {

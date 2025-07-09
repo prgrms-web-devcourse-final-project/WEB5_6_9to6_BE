@@ -1,9 +1,7 @@
 // JoinRequest.java
-package com.grepp.spring.app.model.member.dto;
+package com.grepp.spring.app.model.auth.dto;
 
-import com.grepp.spring.app.model.auth.code.Role;
 import com.grepp.spring.app.model.member.code.Gender;
-import com.grepp.spring.app.model.member.entity.Member;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -12,7 +10,7 @@ import lombok.Builder;
 import lombok.Data;
 
 @Data
-public class JoinRequest {
+public class SignupRequest {
 
     @NotBlank(message = "이메일은 필수 입력 값입니다.")
     @Email(message = "이메일 형식에 맞지 않습니다.")
@@ -28,7 +26,7 @@ public class JoinRequest {
     private Gender gender;
 
     @Builder
-    public JoinRequest(String email, String password, String nickname,
+    public SignupRequest(String email, String password, String nickname,
         LocalDate birthday, Gender gender) {
         this.email = email;
         this.password = password;

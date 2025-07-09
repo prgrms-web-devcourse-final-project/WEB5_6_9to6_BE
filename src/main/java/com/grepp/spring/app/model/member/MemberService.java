@@ -1,7 +1,8 @@
 package com.grepp.spring.app.model.member;
 
 import com.grepp.spring.app.model.auth.code.Role;
-import com.grepp.spring.app.model.member.dto.JoinRequest;
+import com.grepp.spring.app.model.member.code.SocialType;
+import com.grepp.spring.app.model.auth.dto.SignupRequest;
 import com.grepp.spring.app.model.member.entity.Member;
 import com.grepp.spring.infra.error.exceptions.AlreadyExistException;
 import com.grepp.spring.infra.response.ResponseCode;
@@ -18,7 +19,7 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public Member join(JoinRequest req) {
+    public Member join(SignupRequest req) {
         if (memberRepository.findByEmail(req.getEmail()).isPresent()) {
             throw new AlreadyExistException(ResponseCode.ALREADY_EXIST);
         }
@@ -31,10 +32,14 @@ public class MemberService {
             .role(Role.ROLE_USER)
             .birthday(req.getBirthday())
             .gender(req.getGender())
+            .socialType(SocialType.LOCAL)
             .winRate(0)
             .build();
 
         return memberRepository.save(member);
     }
 
+    public boolean isDuplicatedEmail(String email) {
+        return memberRepository.findByEmail(email).isPresent();
+    }
 }
