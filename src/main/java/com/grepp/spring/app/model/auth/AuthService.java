@@ -7,8 +7,12 @@ import com.grepp.spring.app.model.auth.token.UserBlackListRepository;
 import com.grepp.spring.app.model.auth.token.entity.RefreshToken;
 import com.grepp.spring.infra.auth.jwt.JwtTokenProvider;
 import com.grepp.spring.infra.auth.jwt.dto.AccessTokenDto;
+import com.grepp.spring.infra.mail.MailService;
+import java.time.Duration;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -27,6 +31,8 @@ public class AuthService {
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenService refreshTokenService;
     private final UserBlackListRepository userBlackListRepository;
+    private final MailService mailService;
+    private final RedisTemplate<String, Object> redisTemplate;
     
     public TokenDto signin(LoginRequest loginRequest) {
         UsernamePasswordAuthenticationToken authenticationToken =
@@ -61,5 +67,15 @@ public class AuthService {
                    .expiresIn(jwtTokenProvider.getAccessTokenExpiration())
                    .build();
     }
-    
+
+    public void sendVerifyCode(String email) {
+        String title = "이메일 인증 요청";
+        String verifyCode = RandomStringUtils.randomNumeric(6);
+        redisTemplate.opsForValue().set("verifyCode:" + email, verifyCode, Duration.ofMinutes(5));
+        mailService.sendSimpleMail(email, title, verifyCode);
+    }
+
+    public boolean checkVerifyCode(String email, String code) {
+        return redisTemplate.opsForValue().get("verifyCode:" + email).equals(code);
+    }
 }

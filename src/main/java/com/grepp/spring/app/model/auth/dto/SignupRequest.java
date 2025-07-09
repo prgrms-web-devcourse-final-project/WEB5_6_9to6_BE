@@ -8,8 +8,10 @@ import jakarta.validation.constraints.Pattern;
 import java.time.LocalDate;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class SignupRequest {
 
     @NotBlank(message = "이메일은 필수 입력 값입니다.")
