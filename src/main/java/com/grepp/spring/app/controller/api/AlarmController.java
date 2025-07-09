@@ -97,5 +97,4 @@ public class AlarmController {
         public AlarmType type;
         public String message;
     }
-
 }
