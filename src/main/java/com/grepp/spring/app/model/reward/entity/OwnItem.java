@@ -35,7 +35,7 @@ public class OwnItem {
     private boolean activated;
 
     @ManyToOne
-    @JoinColumn(name = "reward_item")
+    @JoinColumn(name = "item_id")
     private RewardItem rewardItem;
 
 

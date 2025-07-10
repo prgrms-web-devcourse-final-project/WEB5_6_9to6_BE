@@ -24,7 +24,7 @@ public class OwnItemRepositoryImpl implements OwnItemRepositoryCustom {
                 r.itemId,
                 o.ownItemId,
                 r.name,
-                r.itemtype,
+                r.itemType,
                 o.isUsed
             ))
             .from(o)

@@ -26,11 +26,11 @@ public class ItemSetMapping {
     private Long mappingId;
 
     @ManyToOne
-    @JoinColumn(name = "item_set")
+    @JoinColumn(name = "set_id")
     private ItemSet itemSet;
 
     @ManyToOne
-    @JoinColumn(name = "reward_item")
+    @JoinColumn(name = "item_id")
     private RewardItem rewardItem;
 
 }
