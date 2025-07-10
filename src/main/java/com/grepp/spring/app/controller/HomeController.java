@@ -12,4 +12,9 @@ public class HomeController {
         return "home/index";
     }
 
+    @GetMapping("/first-oauth")
+    public String firstOAuth() {
+        return "oauth-first/first-oauth";
+    }
+
 }

@@ -81,7 +81,20 @@ public class Member extends BaseEntity{
         this.nickname = nickname;
     }
 
+    public void updateSocialInfo(String nickname, LocalDate birthday, Gender gender) {
+        this.nickname = nickname;
+        this.birthday = birthday;
+        this.gender = gender;
+    }
+
     public void updatePassword(String password) {
         this.password = password;
+    }
+
+    public void deductRewardPoints(int amount) {
+        if (rewardPoints < amount) {
+            throw new IllegalArgumentException("포인트가 부족합니다.");
+        }
+        rewardPoints -= amount;
     }
 }

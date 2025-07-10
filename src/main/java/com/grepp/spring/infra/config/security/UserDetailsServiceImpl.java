@@ -24,6 +24,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) {
         Member member = memberRepository.findByEmail(username)
                             .orElseThrow(() -> new UsernameNotFoundException(username));
+        if(!member.isActivated()) {
+            throw new UsernameNotFoundException(username);
+        }
+
         List<SimpleGrantedAuthority> authorities = findUserAuthorities(username);
         return Principal.createPrincipal(member, authorities);
     }

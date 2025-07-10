@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
@@ -31,6 +32,8 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
         
         try {
             filterChain.doFilter(request, response);
+        }catch (AuthenticationException ex) {
+        handlerExceptionResolver.resolveException(request, response, null, ex);
         } catch (CommonException ex) {
             throwAuthEx(request, response, ex.code());
         } catch (JwtException ex) {
