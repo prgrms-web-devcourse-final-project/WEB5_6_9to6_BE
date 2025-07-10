@@ -54,7 +54,7 @@ public class AuthService {
         // black list 에 있다면 해제
         userBlackListRepository.deleteById(email);
 
-        long id = memberRepository.findIdByEmail(email); //
+        long id = memberRepository.findIdByEmail(email);
         
         // 3. 인증 정보를 기반으로 JWT 토큰 생성
         AccessTokenDto accessToken = jwtTokenProvider.generateAccessToken(email, roles, id);

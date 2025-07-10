@@ -30,6 +30,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -122,13 +123,10 @@ public class AuthController {
         return ResponseEntity.ok(CommonResponse.noContent());
     }
 
-    // 예외 핸들러 - 클래스 범위
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<Map<String, Object>> handleIllegalArgumentException(Exception ex) {
-        Map<String, Object> error = new HashMap<>();
-        error.put("code", "4000");
-        error.put("message", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    // 예외 핸들러
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<CommonResponse<ResponseCode>> handleIllegalArgumentException(Exception ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(CommonResponse.error(ResponseCode.UNAUTHORIZED));
     }
 
 }
