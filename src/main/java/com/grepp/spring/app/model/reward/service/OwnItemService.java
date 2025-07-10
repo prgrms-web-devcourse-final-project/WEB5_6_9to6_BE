@@ -5,15 +5,12 @@ import com.grepp.spring.app.model.member.MemberRepository;
 import com.grepp.spring.app.model.member.entity.Member;
 import com.grepp.spring.app.model.reward.code.ItemType;
 import com.grepp.spring.app.model.reward.dto.OwnItemDto;
-import com.grepp.spring.app.model.reward.dto.RewardItemDto;
 import com.grepp.spring.app.model.reward.entity.OwnItem;
 import com.grepp.spring.app.model.reward.entity.RewardItem;
 import com.grepp.spring.app.model.reward.repository.OwnItemRepository;
 import com.grepp.spring.app.model.reward.repository.RewardItemRepository;
 import jakarta.transaction.Transactional;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

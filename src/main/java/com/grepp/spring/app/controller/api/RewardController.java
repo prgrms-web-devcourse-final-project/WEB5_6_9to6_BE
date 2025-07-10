@@ -2,8 +2,10 @@ package com.grepp.spring.app.controller.api;
 
 import com.grepp.spring.app.controller.api.reward.payload.OwnItemResponse;
 import com.grepp.spring.app.controller.api.reward.payload.RewardItemResponseDto;
+import com.grepp.spring.app.controller.api.reward.payload.SaveImageRequestDto;
 import com.grepp.spring.app.model.reward.dto.OwnItemDto;
 import com.grepp.spring.app.model.reward.dto.RewardItemDto;
+import com.grepp.spring.app.model.reward.service.ItemSetService;
 import com.grepp.spring.app.model.reward.service.OwnItemService;
 import com.grepp.spring.app.model.reward.service.RewardItemService;
 import com.grepp.spring.infra.response.CommonResponse;
@@ -33,6 +35,7 @@ public class RewardController {
 
     private final RewardItemService rewardItemService;
     private final OwnItemService ownItemService;
+    private final ItemSetService itemSetService;
 
     // 아이템 상점 목록
     @GetMapping
@@ -115,8 +118,10 @@ List<RewardItemDto> dtos = rewardItemService.getItemList();
     @PostMapping("/saveimage")
     @ApiResponse(responseCode = "200")
     public ResponseEntity<CommonResponse<Map<String, Object>>> PostItemImages(
-        @RequestBody(required = false) Map<String, Object> PostItemRequest) {
+        @RequestBody SaveImageRequestDto saveImageRequest) {
         Map<String, Object> data = Map.of();
+
+        itemSetService.saveImage(saveImageRequest);
 
         return ResponseEntity
             .status(HttpStatus.CREATED)
