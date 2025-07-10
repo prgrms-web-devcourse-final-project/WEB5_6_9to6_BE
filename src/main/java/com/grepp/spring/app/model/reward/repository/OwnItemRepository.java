@@ -1,5 +1,6 @@
 package com.grepp.spring.app.model.reward.repository;
 
+
 import com.grepp.spring.app.model.reward.dto.OwnItemDto;
 import com.grepp.spring.app.model.reward.entity.OwnItem;
 import java.util.List;

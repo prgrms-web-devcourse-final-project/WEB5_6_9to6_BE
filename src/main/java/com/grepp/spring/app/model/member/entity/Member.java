@@ -83,9 +83,9 @@ public class Member extends BaseEntity{
         rewardPoints -= amount;
     }
 
+
 }
     private Role role;
 
 }
-
 
