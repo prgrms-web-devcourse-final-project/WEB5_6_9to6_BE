@@ -13,7 +13,7 @@ import com.grepp.spring.app.model.auth.dto.SocialMemberInfoRegistRequest;
 import com.grepp.spring.app.model.auth.dto.TokenDto;
 import com.grepp.spring.app.model.auth.dto.VerifyCodeCheckRequest;
 import com.grepp.spring.app.model.auth.dto.VerifyCodeCheckResponse;
-import com.grepp.spring.app.model.member.MemberService;
+import com.grepp.spring.app.model.member.service.MemberService;
 import com.grepp.spring.infra.auth.jwt.TokenCookieFactory;
 import com.grepp.spring.infra.response.CommonResponse;
 import com.grepp.spring.infra.response.ResponseCode;
@@ -112,7 +112,7 @@ public class AuthController {
         Authentication authentication
     ) {
         Principal principal = (Principal) authentication.getPrincipal();
-        long memberId = principal.getMemberId();
+        Long memberId = principal.getMemberId();
         log.info("memberId: {}", memberId);
         memberService.updateMemberInfoById(memberId, req);
         return ResponseEntity.ok(CommonResponse.noContent());
