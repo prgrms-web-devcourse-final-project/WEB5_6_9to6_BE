@@ -21,9 +21,7 @@ import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Getter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class Member extends BaseEntity{
 
     @Id
@@ -60,5 +58,31 @@ public class Member extends BaseEntity{
     @Enumerated(EnumType.STRING)
     private Role role;
 
-}
+    @Column
+    private String avatarImage;
 
+    @Builder
+    public Member(Long id, String email, String password, String nickname, LocalDate birthday,
+        Gender gender, Integer rewardPoints, Integer winRate, SocialType socialType, Role role,
+        String avatarImage) {
+        this.id = id;
+        this.email = email;
+        this.password = password;
+        this.nickname = nickname;
+        this.birthday = birthday;
+        this.gender = gender;
+        this.rewardPoints = rewardPoints;
+        this.winRate = winRate;
+        this.socialType = socialType;
+        this.role = role;
+        this.avatarImage = avatarImage;
+    }
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void updatePassword(String password) {
+        this.password = password;
+    }
+}
