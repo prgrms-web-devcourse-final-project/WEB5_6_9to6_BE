@@ -43,12 +43,12 @@ public class Member extends BaseEntity {
         this.id = id;
         this.email = email;
         this.password = password;
-        this.nickname = nickname; // s
+        this.nickname = nickname;
         this.rewardPoints = rewardPoints;
         this.role = role;
         this.socialType = socialType;
-        this.birthday = birthday; // s
-        this.gender = gender; // s
+        this.birthday = birthday;
+        this.gender = gender;
         this.winRate = winRate;
     }
 
