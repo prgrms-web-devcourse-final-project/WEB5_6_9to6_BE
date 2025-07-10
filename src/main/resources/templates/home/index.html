@@ -19,6 +19,11 @@
         <a href="/oauth2/authorization/kakao">카카오 로그인</a>
         <a href="/oauth2/authorization/google">구글 로그인</a>
     </div>
+    <div>
+        <form th:action="@{/auth/logout}" method="post">
+            <button type="submit">로그아웃</button>
+        </form>
+    </div>
 </div>
 </body>
 </html>
