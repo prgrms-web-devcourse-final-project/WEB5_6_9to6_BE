@@ -92,9 +92,6 @@ public class AuthController {
     public ResponseEntity<?> verifyEmailCode(@Valid @RequestBody VerifyCodeCheckRequest req) {
         VerifyCodeCheckResponse verified
             = new VerifyCodeCheckResponse(authService.checkVerifyCode(req.getEmail(), req.getCode()));
-//        boolean mock = false;
-//        if(Objects.equals(req.getCode(), "123456")) mock = true;
-//        VerifyCodeCheckResponse verified = new VerifyCodeCheckResponse(mock);
         return ResponseEntity.ok(CommonResponse.success(verified));
     }
 
@@ -107,6 +104,7 @@ public class AuthController {
         return ResponseEntity.ok(CommonResponse.success(duplicated));
     }
 
+    // 첫 소셜 로그인 유저 추가 정보 입력
     @PutMapping("/oauth/first-regist")
     @ApiResponse(responseCode = "200")
     public ResponseEntity<CommonResponse<?>> oauthRegistMember(
@@ -114,7 +112,7 @@ public class AuthController {
         Authentication authentication
     ) {
         Principal principal = (Principal) authentication.getPrincipal();
-        Long memberId = principal.getMemberId();
+        long memberId = principal.getMemberId();
         log.info("memberId: {}", memberId);
         memberService.updateMemberInfoById(memberId, req);
         return ResponseEntity.ok(CommonResponse.noContent());

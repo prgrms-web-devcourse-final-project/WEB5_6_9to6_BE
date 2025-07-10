@@ -21,18 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "/api/v1/alarms", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AlarmController {
 
-    // 스터디 신청 결과 알림
-//    @PatchMapping("/studies/{studyId}/applications/{applicationId}")
-//    @ApiResponse(responseCode = "200")
-//    public ResponseEntity<?> sendApplicationResultAlarm(
-//        @PathVariable int studyId,
-//        @PathVariable int applicationId
-//    ) {
-//        return ResponseEntity.status(200).body(
-//            CommonResponse.noContent()
-//        );
-//    }
-
     // 알람 전송
     @PostMapping()
     @ApiResponse(responseCode = "200")
