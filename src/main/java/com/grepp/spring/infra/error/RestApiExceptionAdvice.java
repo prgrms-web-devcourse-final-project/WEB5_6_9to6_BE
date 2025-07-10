@@ -33,7 +33,7 @@ public class RestApiExceptionAdvice {
 //                   .badRequest()
 //                   .body(CommonResponse.error(ResponseCode.BAD_REQUEST, errors));
 //    }
-    
+
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<CommonResponse<String>>
     methodNotSupportedHandler(HttpRequestMethodNotSupportedException ex) {
@@ -42,14 +42,14 @@ public class RestApiExceptionAdvice {
                    .badRequest()
                    .body(CommonResponse.error(ResponseCode.BAD_REQUEST, ex.getMessage()));
     }
-    
+
     @ExceptionHandler(CommonException.class)
     public ResponseEntity<CommonResponse<String>> restApiExceptionHandler(CommonException ex) {
         return ResponseEntity
                    .status(ex.code().status())
                    .body(CommonResponse.error(ex.code()));
     }
-    
+
     @ExceptionHandler(AuthorizationDeniedException.class)
     public ResponseEntity<CommonResponse<String>>  authorizationDeniedHandler(AuthorizationDeniedException ex, Model model){
         log.error(ex.getMessage(), ex);
@@ -57,7 +57,7 @@ public class RestApiExceptionAdvice {
                    .status(HttpStatus.UNAUTHORIZED)
                    .body(CommonResponse.error(ResponseCode.UNAUTHORIZED));
     }
-    
+
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<CommonResponse<String>> runtimeExceptionHandler(RuntimeException ex) {
         log.error(ex.getMessage(), ex);
