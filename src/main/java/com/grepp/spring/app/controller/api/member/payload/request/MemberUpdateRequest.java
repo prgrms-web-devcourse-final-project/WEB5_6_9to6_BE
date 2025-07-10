@@ -1,4 +1,4 @@
-package com.grepp.spring.app.model.member.dto.request;
+package com.grepp.spring.app.controller.api.member.payload.request;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,8 +1,8 @@
-package com.grepp.spring.app.controller.api;
+package com.grepp.spring.app.controller.api.member;
 
 import com.grepp.spring.app.model.member.dto.response.MemberInfoResponse;
-import com.grepp.spring.app.model.member.dto.request.MemberUpdateRequest;
-import com.grepp.spring.app.model.member.dto.request.PasswordVerifyRequest;
+import com.grepp.spring.app.controller.api.member.payload.request.MemberUpdateRequest;
+import com.grepp.spring.app.controller.api.member.payload.request.PasswordVerifyRequest;
 import com.grepp.spring.app.model.member.dto.response.PasswordVerifyResponse;
 import com.grepp.spring.app.model.member.service.MemberService;
 import com.grepp.spring.infra.response.CommonResponse;
