@@ -4,22 +4,26 @@ import com.grepp.spring.app.controller.api.auth.payload.LoginRequest;
 import com.grepp.spring.app.controller.api.auth.payload.TokenResponse;
 import com.grepp.spring.app.model.auth.AuthService;
 import com.grepp.spring.app.model.auth.code.AuthToken;
+
 import com.grepp.spring.app.model.auth.domain.Principal;
 import com.grepp.spring.app.model.auth.dto.EmailDuplicatedCheckRequest;
 import com.grepp.spring.app.model.auth.dto.EmailDuplicatedCheckResponse;
 import com.grepp.spring.app.model.auth.dto.EmailSendRequest;
 import com.grepp.spring.app.model.auth.dto.SignupRequest;
 import com.grepp.spring.app.model.auth.dto.SocialMemberInfoRegistRequest;
+
 import com.grepp.spring.app.model.auth.dto.TokenDto;
 import com.grepp.spring.app.model.auth.dto.VerifyCodeCheckRequest;
 import com.grepp.spring.app.model.auth.dto.VerifyCodeCheckResponse;
 import com.grepp.spring.app.model.member.MemberService;
 import com.grepp.spring.infra.auth.jwt.TokenCookieFactory;
+
 import com.grepp.spring.infra.error.exceptions.AlreadyExistException;
 import com.grepp.spring.infra.response.CommonResponse;
 import com.grepp.spring.infra.response.ResponseCode;
 import com.grepp.spring.infra.response.SuccessCode;
 import com.grepp.spring.infra.util.NotFoundException;
+
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -41,6 +45,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+
 import org.springframework.web.bind.annotation.RestController;
 
 

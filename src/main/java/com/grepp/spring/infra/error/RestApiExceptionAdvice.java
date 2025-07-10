@@ -122,5 +122,7 @@ public class RestApiExceptionAdvice {
             .status(500)
             .body(CommonResponse.error(ResponseCode.MAIL_SEND_FAIL));
     }
+
     
+
 }
