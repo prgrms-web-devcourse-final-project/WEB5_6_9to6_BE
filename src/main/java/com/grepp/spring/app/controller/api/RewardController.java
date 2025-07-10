@@ -1,6 +1,7 @@
 package com.grepp.spring.app.controller.api;
 
 
+import com.grepp.spring.app.controller.api.reward.payload.PurchaseRequest;
 import com.grepp.spring.app.controller.api.reward.payload.OwnItemResponse;
 import com.grepp.spring.app.controller.api.reward.payload.RewardItemResponseDto;
 import com.grepp.spring.app.model.reward.dto.OwnItemDto;
@@ -34,9 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class RewardController {
 
     private final RewardItemService rewardItemService;
-
     private final OwnItemService ownItemService;
-
 
     // 아이템 상점 목록
     @GetMapping
@@ -50,10 +49,10 @@ List<RewardItemDto> dtos = rewardItemService.getItemList();
     // 아이템 구매
     @PostMapping("/{itemId}/purchase")
     public ResponseEntity<CommonResponse<Map<String, Object>>> purchaseItem(
-        @PathVariable Long itemId,
+        @PathVariable long itemId,
         @AuthenticationPrincipal User userDetails
     ) {
-        Long userId = Long.valueOf(userDetails.getUsername());
+        long userId = Long.parseLong(userDetails.getUsername());
 
         ownItemService.purchaseItem(userId,itemId);
 
