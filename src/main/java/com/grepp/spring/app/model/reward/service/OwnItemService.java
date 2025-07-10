@@ -9,7 +9,9 @@ import com.grepp.spring.app.model.reward.entity.RewardItem;
 import com.grepp.spring.app.model.reward.repository.OwnItemRepository;
 import com.grepp.spring.app.model.reward.repository.RewardItemRepository;
 import jakarta.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -49,6 +51,17 @@ public class OwnItemService {
         OwnItem ownItem = OwnItem.builder().memberId(memberId).isUsed(false).activated(true).rewardItem(rewardItem).build();
         ownItemRepository.save(ownItem);
 
+
+
+
+    }
+
+    public void getOwnItems(Long memberId, Long itemId) {
+        List<OwnItem> items = ownItemRepository.findAll();
+
+        return items.stream()
+            .map(RewardItemDto::fromEntity)
+            .collect(Collectors.toList());
 
 
 
