@@ -104,6 +104,7 @@ public class AuthController {
         return ResponseEntity.ok(CommonResponse.success(duplicated));
     }
 
+    // 첫 소셜 로그인 유저 추가 정보 입력
     @PutMapping("/oauth/first-regist")
     @ApiResponse(responseCode = "200")
     public ResponseEntity<CommonResponse<?>> oauthRegistMember(
