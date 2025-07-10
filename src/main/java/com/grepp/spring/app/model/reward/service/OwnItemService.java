@@ -1,8 +1,8 @@
 package com.grepp.spring.app.model.reward.service;
 
 
-import com.grepp.spring.app.model.member.MemberRepository;
 import com.grepp.spring.app.model.member.entity.Member;
+import com.grepp.spring.app.model.member.repository.MemberRepository;
 import com.grepp.spring.app.model.reward.code.ItemType;
 import com.grepp.spring.app.model.reward.dto.ItemSetDto;
 import com.grepp.spring.app.model.reward.dto.OwnItemDto;

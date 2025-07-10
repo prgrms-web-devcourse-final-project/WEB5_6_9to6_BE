@@ -5,7 +5,7 @@ import com.grepp.spring.app.model.auth.dto.TokenDto;
 import com.grepp.spring.app.model.auth.token.RefreshTokenService;
 import com.grepp.spring.app.model.auth.token.UserBlackListRepository;
 import com.grepp.spring.app.model.auth.token.entity.RefreshToken;
-import com.grepp.spring.app.model.member.MemberRepository;
+import com.grepp.spring.app.model.member.repository.MemberRepository;
 import com.grepp.spring.infra.auth.jwt.JwtTokenProvider;
 import com.grepp.spring.infra.auth.jwt.dto.AccessTokenDto;
 import com.grepp.spring.infra.mail.MailService;
