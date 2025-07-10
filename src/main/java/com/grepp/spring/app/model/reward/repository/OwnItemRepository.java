@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface OwnItemRepository extends JpaRepository<OwnItem,Long> {
+public interface OwnItemRepository extends JpaRepository<OwnItem,Long>, OwnItemRepositoryCustom {
     List<OwnItemDto> findOwnItemsByMemberId(Long memberId);
 
 }

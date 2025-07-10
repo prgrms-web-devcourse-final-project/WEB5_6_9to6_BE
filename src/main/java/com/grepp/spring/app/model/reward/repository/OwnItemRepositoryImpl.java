@@ -2,13 +2,16 @@ package com.grepp.spring.app.model.reward.repository;
 
 
 import com.grepp.spring.app.model.reward.dto.OwnItemDto;
+import com.grepp.spring.app.model.reward.dto.QOwnItemDto;
+import com.grepp.spring.app.model.reward.entity.QOwnItem;
+import com.grepp.spring.app.model.reward.entity.QRewardItem;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
 
-@Repository
+
 @RequiredArgsConstructor
-public interface OwnItemRepositoryImpl {
+public class OwnItemRepositoryImpl implements OwnItemRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
 
