@@ -1,13 +1,14 @@
 package com.grepp.spring.app.controller.api;
 
+
 import com.grepp.spring.app.controller.api.reward.payload.ImageResponse;
-import com.grepp.spring.app.controller.api.reward.payload.OwnItemResponse;
-import com.grepp.spring.app.controller.api.reward.payload.RewardItemResponseDto;
 import com.grepp.spring.app.controller.api.reward.payload.SaveImageRequestDto;
 import com.grepp.spring.app.model.reward.dto.ItemSetDto;
+import com.grepp.spring.app.controller.api.reward.payload.PurchaseRequest;
+import com.grepp.spring.app.controller.api.reward.payload.OwnItemResponse;
+import com.grepp.spring.app.controller.api.reward.payload.RewardItemResponseDto;
 import com.grepp.spring.app.model.reward.dto.OwnItemDto;
 import com.grepp.spring.app.model.reward.dto.RewardItemDto;
-import com.grepp.spring.app.model.reward.service.ItemSetService;
 import com.grepp.spring.app.model.reward.service.OwnItemService;
 import com.grepp.spring.app.model.reward.service.RewardItemService;
 import com.grepp.spring.infra.response.CommonResponse;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.annotations.Fetch;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -53,10 +55,11 @@ List<RewardItemDto> dtos = rewardItemService.getItemList();
     // 아이템 구매
     @PostMapping("/{itemId}/purchase")
     public ResponseEntity<CommonResponse<Map<String, Object>>> purchaseItem(
-        @PathVariable Long itemId,
+        @PathVariable long itemId,
         @AuthenticationPrincipal User userDetails
     ) {
-        Long userId = Long.valueOf(userDetails.getUsername());
+        long userId = Long.parseLong(userDetails.getUsername());
+
 
         ownItemService.purchaseItem(userId,itemId);
 
