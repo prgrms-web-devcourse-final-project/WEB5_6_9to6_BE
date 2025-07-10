@@ -1,6 +1,5 @@
 package com.grepp.spring.app.controller.api;
 
-
 import com.grepp.spring.app.controller.api.reward.payload.PurchaseRequest;
 import com.grepp.spring.app.controller.api.reward.payload.OwnItemResponse;
 import com.grepp.spring.app.controller.api.reward.payload.RewardItemResponseDto;
@@ -82,6 +81,8 @@ List<RewardItemDto> dtos = rewardItemService.getItemList();
         @PathVariable long ownItemId
     ) {
         Map<String, Object> data = Map.of();
+
+        ownItemService.changeOwnItems(ownItemId);
 
         return ResponseEntity
             .status(HttpStatus.CREATED)
