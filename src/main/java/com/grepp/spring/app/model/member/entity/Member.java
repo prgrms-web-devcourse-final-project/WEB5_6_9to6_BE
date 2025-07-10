@@ -25,7 +25,7 @@ import org.hibernate.annotations.ColumnDefault;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Member extends BaseEntity {
+public class Member extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -58,6 +58,7 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private SocialType socialType;
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role;
 
@@ -75,6 +76,12 @@ public class Member extends BaseEntity {
         this.birthday = birthday;
         this.gender = gender;
         this.winRate = winRate;
+    }
+
+    public void updateSocialInfo(String nickname, LocalDate birthday, Gender gender) {
+        this.nickname = nickname;
+        this.birthday = birthday;
+        this.gender = gender;
     }
 
     public void deductRewardPoints(int amount) {

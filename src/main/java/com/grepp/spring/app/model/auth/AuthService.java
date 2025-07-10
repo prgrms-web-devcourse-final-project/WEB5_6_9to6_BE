@@ -5,6 +5,7 @@ import com.grepp.spring.app.model.auth.dto.TokenDto;
 import com.grepp.spring.app.model.auth.token.RefreshTokenService;
 import com.grepp.spring.app.model.auth.token.UserBlackListRepository;
 import com.grepp.spring.app.model.auth.token.entity.RefreshToken;
+import com.grepp.spring.app.model.member.MemberRepository;
 import com.grepp.spring.infra.auth.jwt.JwtTokenProvider;
 import com.grepp.spring.infra.auth.jwt.dto.AccessTokenDto;
 import com.grepp.spring.infra.mail.MailService;
@@ -33,6 +34,7 @@ public class AuthService {
     private final UserBlackListRepository userBlackListRepository;
     private final MailService mailService;
     private final RedisTemplate<String, Object> redisTemplate;
+    private final MemberRepository memberRepository;
     
     public TokenDto signin(LoginRequest loginRequest) {
         UsernamePasswordAuthenticationToken authenticationToken =
@@ -52,7 +54,7 @@ public class AuthService {
         // black list 에 있다면 해제
         userBlackListRepository.deleteById(email);
 
-        long id = 1; // fixme : Member DB 연결해 저장된 email의 id와 email 검증
+        long id = memberRepository.findIdByEmail(email);
         
         // 3. 인증 정보를 기반으로 JWT 토큰 생성
         AccessTokenDto accessToken = jwtTokenProvider.generateAccessToken(email, roles, id);

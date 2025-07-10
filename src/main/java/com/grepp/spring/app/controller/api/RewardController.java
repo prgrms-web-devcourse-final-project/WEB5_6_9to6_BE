@@ -13,6 +13,7 @@ import com.grepp.spring.app.model.reward.service.RewardItemService;
 import com.grepp.spring.infra.response.CommonResponse;
 import com.grepp.spring.infra.response.SuccessCode;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -69,8 +71,11 @@ List<RewardItemDto> dtos = rewardItemService.getItemList();
 
     // 소유 아이템 목록
     @GetMapping("/own-items")
-    public ResponseEntity<CommonResponse<List<OwnItemResponse>>> getOwnItems(@AuthenticationPrincipal User userDetails) {
-        Long memberId = Long.valueOf(userDetails.getUsername()); // 실제 로그인 유저 ID 사용
+    public ResponseEntity<CommonResponse<List<OwnItemResponse>>> getOwnItems(
+        Authentication authentication) {
+
+        Principal principal = (Principal) authentication.getPrincipal();
+        Long memberId = principal.getmemberId(); // 실제 로그인 유저 ID 사용
         List<OwnItemDto> dtos = ownItemService.getOwnItems(memberId);
 
          List<OwnItemResponse> responses = dtos.stream()
