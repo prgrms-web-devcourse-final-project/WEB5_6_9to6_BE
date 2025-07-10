@@ -1,10 +1,12 @@
 package com.grepp.spring.app.model.member;
 
 import com.grepp.spring.app.model.auth.code.Role;
+import com.grepp.spring.app.model.auth.dto.SocialMemberInfoRegistRequest;
 import com.grepp.spring.app.model.member.code.SocialType;
 import com.grepp.spring.app.model.auth.dto.SignupRequest;
 import com.grepp.spring.app.model.member.entity.Member;
 import com.grepp.spring.infra.error.exceptions.AlreadyExistException;
+import com.grepp.spring.infra.error.exceptions.NotFoundException;
 import com.grepp.spring.infra.response.ResponseCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -39,7 +41,20 @@ public class MemberService {
         return memberRepository.save(member);
     }
 
+    @Transactional(readOnly = true)
     public boolean isDuplicatedEmail(String email) {
         return memberRepository.findByEmail(email).isPresent();
+    }
+
+    @Transactional
+    public void updateMemberInfoById(long memberId , SocialMemberInfoRegistRequest req) {
+        Member member = memberRepository.findById(memberId)
+            .orElseThrow(() -> new NotFoundException(ResponseCode.NOT_FOUND.message()));
+
+        member.updateSocialInfo(
+            req.getNickname(),
+            req.getBirthday(),
+            req.getGender()
+        );
     }
 }

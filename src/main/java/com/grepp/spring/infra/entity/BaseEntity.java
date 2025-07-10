@@ -21,4 +21,7 @@ public class BaseEntity {
     public void unActivated(){
         this.activated = false;
     }
+    public Boolean isActivated() {
+        return activated;
+    }
 }

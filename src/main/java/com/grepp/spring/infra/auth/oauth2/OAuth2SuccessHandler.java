@@ -3,6 +3,7 @@ package com.grepp.spring.infra.auth.oauth2;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.grepp.spring.app.model.auth.AuthService;
 import com.grepp.spring.app.model.auth.code.AuthToken;
+import com.grepp.spring.app.model.auth.code.Role;
 import com.grepp.spring.app.model.auth.dto.TokenDto;
 import com.grepp.spring.app.model.member.MemberRepository;
 import com.grepp.spring.app.model.member.code.SocialType;
@@ -73,6 +74,23 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         // 처음 로그인한다면 Member 저장
         Optional<Member> existMember = memberRepository.findByEmail(userInfo.getEmail());
         if (existMember.isEmpty()) {
+
+            SocialType provider =  switch (userInfo.getProvider()) {
+                case "google" -> SocialType.GOOGLE;
+                case "kakao" -> SocialType.KAKAO;
+                default -> SocialType.LOCAL;
+            };
+
+            Member member = Member.builder()
+                .email(userInfo.getEmail())
+                .password("{noop} dummy-password")
+                .role(Role.ROLE_USER)
+                .rewardPoints(100)
+                .winRate(0)
+                .socialType(provider)
+                .build();
+            memberRepository.save(member);
+
             TokenDto token = authService.processTokenSignin(userInfo.getEmail(), roles);
 
             ResponseCookie accTkCookie = TokenCookieFactory.create(

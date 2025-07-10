@@ -23,37 +23,57 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 public class RestApiExceptionAdvice {
 
+//    @ExceptionHandler(MethodArgumentNotValidException.class)
+//    public ResponseEntity<CommonResponse<Map<String, String>>>
+//    validatorHandler(MethodArgumentNotValidException ex) {
+//        log.error(ex.getMessage(), ex);
+//        Map<String, String> errors = new LinkedHashMap<>();
+//        ex.getFieldErrors().forEach(e -> errors.put(e.getField(), e.getDefaultMessage()));
+//        return ResponseEntity
+//                   .badRequest()
+//                   .body(CommonResponse.error(ResponseCode.BAD_REQUEST, errors));
+//    }
+    
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<CommonResponse<String>>
     methodNotSupportedHandler(HttpRequestMethodNotSupportedException ex) {
         log.error(ex.getMessage(), ex);
         return ResponseEntity
-            .badRequest()
-            .body(CommonResponse.error(ResponseCode.BAD_REQUEST, ex.getMessage()));
+                   .badRequest()
+                   .body(CommonResponse.error(ResponseCode.BAD_REQUEST, ex.getMessage()));
     }
-
+    
     @ExceptionHandler(CommonException.class)
     public ResponseEntity<CommonResponse<String>> restApiExceptionHandler(CommonException ex) {
         return ResponseEntity
-            .status(ex.code().status())
-            .body(CommonResponse.error(ex.code()));
+                   .status(ex.code().status())
+                   .body(CommonResponse.error(ex.code()));
     }
-
+    
     @ExceptionHandler(AuthorizationDeniedException.class)
     public ResponseEntity<CommonResponse<String>>  authorizationDeniedHandler(AuthorizationDeniedException ex, Model model){
         log.error(ex.getMessage(), ex);
         return ResponseEntity
-            .status(HttpStatus.UNAUTHORIZED)
-            .body(CommonResponse.error(ResponseCode.UNAUTHORIZED));
+                   .status(HttpStatus.UNAUTHORIZED)
+                   .body(CommonResponse.error(ResponseCode.UNAUTHORIZED));
     }
-
+    
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<CommonResponse<String>> runtimeExceptionHandler(RuntimeException ex) {
         log.error(ex.getMessage(), ex);
         return ResponseEntity
-            .internalServerError()
-            .body(CommonResponse.error(ResponseCode.INTERNAL_SERVER_ERROR));
+                   .internalServerError()
+                   .body(CommonResponse.error(ResponseCode.INTERNAL_SERVER_ERROR));
     }
+
+//    @ExceptionHandler(AlreadyExistException.class)
+//    public ResponseEntity<CommonResponse<String>> alreadyExistExceptionHandler(AlreadyExistException ex) {
+//        log.error(ex.getMessage(), ex);
+//        ResponseCode code = ResponseCode.ALREADY_EXIST;
+//        return ResponseEntity
+//            .status(code.status())
+//            .body(CommonResponse.error(code));
+//    }
 
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<CommonResponse<ResponseCode>> handleIllegalArgumentException(Exception ex) {
@@ -102,5 +122,7 @@ public class RestApiExceptionAdvice {
             .status(500)
             .body(CommonResponse.error(ResponseCode.MAIL_SEND_FAIL));
     }
+
+    
 
 }
