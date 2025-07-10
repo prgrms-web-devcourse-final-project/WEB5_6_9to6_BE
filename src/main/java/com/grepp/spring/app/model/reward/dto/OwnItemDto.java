@@ -2,15 +2,17 @@ package com.grepp.spring.app.model.reward.dto;
 
 import com.grepp.spring.app.model.reward.code.ItemType;
 import com.querydsl.core.annotations.QueryProjection;
+import lombok.Getter;
 
+@Getter
 public class OwnItemDto {
 
 
-    private Long itemId;
-    private Long ownItemId;
-    private String name;
-    private ItemType itemtype;
-    private boolean isUsed;
+    private final Long itemId;
+    private final Long ownItemId;
+    private final String name;
+    private final ItemType itemtype;
+    private final boolean isUsed;
 
     @QueryProjection
     public OwnItemDto(Long itemId, Long ownItemId, String name, ItemType itemtype, boolean isUsed) {

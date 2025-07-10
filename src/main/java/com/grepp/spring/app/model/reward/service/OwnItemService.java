@@ -3,6 +3,7 @@ package com.grepp.spring.app.model.reward.service;
 
 import com.grepp.spring.app.model.member.MemberRepository;
 import com.grepp.spring.app.model.member.entity.Member;
+import com.grepp.spring.app.model.reward.dto.OwnItemDto;
 import com.grepp.spring.app.model.reward.dto.RewardItemDto;
 import com.grepp.spring.app.model.reward.entity.OwnItem;
 import com.grepp.spring.app.model.reward.entity.RewardItem;
@@ -56,13 +57,12 @@ public class OwnItemService {
 
     }
 
-    public void getOwnItems(Long memberId, Long itemId) {
-        List<OwnItem> items = ownItemRepository.findAll();
+    public List<OwnItemDto> getOwnItems(Long memberId) {
+        // 회원 조회
+        Member member = memberRepository.findById(memberId)
+            .orElseThrow(() -> new RuntimeException("Member not found"));
 
-        return items.stream()
-            .map(RewardItemDto::fromEntity)
-            .collect(Collectors.toList());
-
+        return ownItemRepository.findOwnItemsByMemberId(memberId);
 
 
     }
