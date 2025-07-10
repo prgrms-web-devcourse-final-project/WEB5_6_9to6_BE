@@ -59,6 +59,10 @@ public class Member extends BaseEntity{
     private SocialType socialType;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    @Column(nullable = false)
     private Role role;
   
     @Builder
@@ -95,4 +99,21 @@ public class Member extends BaseEntity{
 }
 
 }
+
+    public void updateSocialInfo(String nickname, LocalDate birthday, Gender gender) {
+        this.nickname = nickname;
+        this.birthday = birthday;
+        this.gender = gender;
+    }
+
+    public void deductRewardPoints(int amount) {
+        if (rewardPoints < amount) {
+            throw new IllegalArgumentException("포인트가 부족합니다.");
+        }
+        rewardPoints -= amount;
+    }
+
+
+}
+
 
