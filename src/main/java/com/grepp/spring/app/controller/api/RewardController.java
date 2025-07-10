@@ -65,7 +65,6 @@ List<RewardItemDto> dtos = rewardItemService.getItemList();
 
         ownItemService.purchaseItem(userId,itemId);
 
-
         Map<String, Object> data = new HashMap<>();
         return ResponseEntity
             .status(HttpStatus.CREATED)
@@ -93,7 +92,6 @@ List<RewardItemDto> dtos = rewardItemService.getItemList();
         Map<String, Object> data = Map.of();
 
         ownItemService.changeOwnItems(ownItemId);
-
         return ResponseEntity
             .status(HttpStatus.CREATED)
             .body(CommonResponse.success(data));
