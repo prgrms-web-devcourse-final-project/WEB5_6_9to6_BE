@@ -3,6 +3,7 @@ package com.grepp.spring.app.model.reward.service;
 
 import com.grepp.spring.app.model.member.MemberRepository;
 import com.grepp.spring.app.model.member.entity.Member;
+import com.grepp.spring.app.model.reward.code.ItemType;
 import com.grepp.spring.app.model.reward.dto.OwnItemDto;
 import com.grepp.spring.app.model.reward.dto.RewardItemDto;
 import com.grepp.spring.app.model.reward.entity.OwnItem;
@@ -67,4 +68,27 @@ public class OwnItemService {
 
     }
 
+    @Transactional
+    public void changeOwnItems(long ownItemId) {
+        OwnItem currentItem = ownItemRepository.findById(ownItemId)
+            .orElseThrow(()-> new RuntimeException("OwnItem not found"));
+
+
+        // 현재 아이템의 타입 판별
+            ItemType itemType = currentItem.getRewardItem().getItemType();
+        OwnItem beforeItem= ownItemRepository.findFirstByRewardItem_ItemTypeAndIsUsedTrue(itemType)
+            .orElse(null);
+
+
+
+        if (beforeItem!= null){
+
+            beforeItem.use(false);
+
+
+        }else { // 이전 아이템이 없을 경우
+        }
+
+        currentItem.use(true);
+    }
 }
