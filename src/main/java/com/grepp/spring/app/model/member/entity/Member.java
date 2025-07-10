@@ -85,6 +85,8 @@ public class Member extends BaseEntity{
 
 
 }
+
+}
     private Role role;
 
 }

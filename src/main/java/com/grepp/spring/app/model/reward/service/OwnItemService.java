@@ -4,6 +4,7 @@ package com.grepp.spring.app.model.reward.service;
 import com.grepp.spring.app.model.member.MemberRepository;
 import com.grepp.spring.app.model.member.entity.Member;
 import com.grepp.spring.app.model.reward.code.ItemType;
+import com.grepp.spring.app.model.reward.dto.ItemSetDto;
 import com.grepp.spring.app.model.reward.dto.OwnItemDto;
 import com.grepp.spring.app.model.reward.dto.RewardItemDto;
 import com.grepp.spring.app.model.reward.entity.OwnItem;
@@ -24,6 +25,47 @@ public class OwnItemService {
     private final OwnItemRepository ownItemRepository;
     private final RewardItemRepository rewardItemRepository;
     private final MemberRepository memberRepository;
+
+
+    public ItemSetDto getUseItemList(Long memberId) {
+
+        //1. 멤버가 들고 있는 아이템만 뽑아서 들고오기
+        List<OwnItem> ownItems = ownItemRepository.findByMemberIdAndIsUsedTrue(memberId);
+        //2. 들고온 아이템 itemset 형태로 변환
+        return  convertToItemSet(ownItems);
+
+
+
+    }
+    public ItemSetDto convertToItemSet(List<OwnItem> ownItems) {
+        Long hat = null, hair = null, face = null, top = null, bottom = null;
+
+        for (OwnItem ownItem : ownItems) {
+            RewardItem rewardItem = ownItem.getRewardItem();
+            if (rewardItem == null || rewardItem.getItemType() == null) continue;
+
+            Long rewardItemId = rewardItem.getItemId();
+
+            switch (rewardItem.getItemType()) {
+                case hat -> hat = rewardItemId;
+                case hair -> hair = rewardItemId;
+                case face -> face = rewardItemId;
+                case top -> top = rewardItemId;
+                case bottom -> bottom = rewardItemId;
+            }
+        }
+
+        return ItemSetDto.builder()
+            .hat(hat)
+            .hair(hair)
+            .face(face)
+            .top(top)
+            .bottom(bottom) // 이미지 생성 로직 필요 시 따로 처리
+            .build();
+    }
+
+
+
 
 
     @Transactional
