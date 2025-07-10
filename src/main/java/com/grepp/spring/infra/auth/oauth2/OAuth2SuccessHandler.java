@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.grepp.spring.app.model.auth.AuthService;
 import com.grepp.spring.app.model.auth.code.AuthToken;
 import com.grepp.spring.app.model.auth.dto.TokenDto;
-import com.grepp.spring.app.model.member.MemberRepository;
+import com.grepp.spring.app.model.member.repository.MemberRepository;
 import com.grepp.spring.app.model.member.code.SocialType;
 import com.grepp.spring.app.model.member.entity.Member;
 import com.grepp.spring.infra.auth.jwt.JwtTokenProvider;
