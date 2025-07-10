@@ -42,4 +42,5 @@ public class OwnItem {
     public void use(boolean used) {
         this.isUsed = used;
     }
+
 }

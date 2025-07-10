@@ -1,6 +1,5 @@
 package com.grepp.spring.app.controller.api.reward.payload;
 
-
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

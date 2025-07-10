@@ -1,4 +1,4 @@
-// Member.java
+
 package com.grepp.spring.app.model.member.entity;
 
 import com.grepp.spring.app.model.auth.code.Role;
@@ -62,7 +62,9 @@ public class Member extends BaseEntity{
     @Enumerated(EnumType.STRING)
     private Role role;
 
-
+    @Column(nullable = false)
+    private Role role;
+  
     @Builder
     public Member(long id, String email, String password, String nickname, int rewardPoints,
         Role role, SocialType socialType, LocalDate birthday, Gender gender, int winRate) {
@@ -77,6 +79,26 @@ public class Member extends BaseEntity{
         this.gender = gender;
         this.winRate = winRate;
     }
+  
+    public void updateSocialInfo(String nickname, LocalDate birthday, Gender gender) {
+        this.nickname = nickname;
+        this.birthday = birthday;
+        this.gender = gender;
+    }
+
+    public void deductRewardPoints(int amount) {
+        if (rewardPoints < amount) {
+            throw new IllegalArgumentException("포인트가 부족합니다.");
+        }
+        rewardPoints -= amount;
+    }
+
+
+}
+
+}
+
+}
 
     public void updateSocialInfo(String nickname, LocalDate birthday, Gender gender) {
         this.nickname = nickname;
@@ -93,4 +115,5 @@ public class Member extends BaseEntity{
 
 
 }
+
 
