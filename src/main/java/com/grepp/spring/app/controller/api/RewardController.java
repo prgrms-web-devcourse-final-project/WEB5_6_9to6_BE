@@ -1,7 +1,10 @@
 package com.grepp.spring.app.controller.api;
 
+
 import com.grepp.spring.app.controller.api.reward.payload.PurchaseRequest;
+import com.grepp.spring.app.controller.api.reward.payload.OwnItemResponse;
 import com.grepp.spring.app.controller.api.reward.payload.RewardItemResponseDto;
+import com.grepp.spring.app.model.reward.dto.OwnItemDto;
 import com.grepp.spring.app.model.reward.dto.RewardItemDto;
 import com.grepp.spring.app.model.reward.service.OwnItemService;
 import com.grepp.spring.app.model.reward.service.RewardItemService;
@@ -62,18 +65,15 @@ List<RewardItemDto> dtos = rewardItemService.getItemList();
 
     // 소유 아이템 목록
     @GetMapping("/own-items")
-    public ResponseEntity<CommonResponse<Map<String, Object>>> getOwnItems() {
-        Map<String, Object> data = Map.of(
-            "member_id", 1,
-            "item_id", 1,
-            "own_item_id", 1,
-            "name", "블랙 테마",
-            "type", "테마",
-            "is_used", true
-        );
+    public ResponseEntity<CommonResponse<List<OwnItemResponse>>> getOwnItems(@AuthenticationPrincipal User userDetails) {
+        Long memberId = Long.valueOf(userDetails.getUsername()); // 실제 로그인 유저 ID 사용
+        List<OwnItemDto> dtos = ownItemService.getOwnItems(memberId);
 
-        return ResponseEntity
-            .ok(CommonResponse.success(data));
+         List<OwnItemResponse> responses = dtos.stream()
+            .map(OwnItemResponse::from)
+            .toList();
+
+         return ResponseEntity.ok(CommonResponse.success(responses));
     }
 
     // 사용 아이템 변경

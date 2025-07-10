@@ -3,13 +3,16 @@ package com.grepp.spring.app.model.reward.service;
 
 import com.grepp.spring.app.model.member.MemberRepository;
 import com.grepp.spring.app.model.member.entity.Member;
+import com.grepp.spring.app.model.reward.dto.OwnItemDto;
 import com.grepp.spring.app.model.reward.dto.RewardItemDto;
 import com.grepp.spring.app.model.reward.entity.OwnItem;
 import com.grepp.spring.app.model.reward.entity.RewardItem;
 import com.grepp.spring.app.model.reward.repository.OwnItemRepository;
 import com.grepp.spring.app.model.reward.repository.RewardItemRepository;
 import jakarta.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +26,7 @@ public class OwnItemService {
 
 
     @Transactional
-    public void purchaseItem(long memberId, long itemId){
+    public void purchaseItem(Long memberId, Long itemId){
 
         // 1. 아이템 조회
         RewardItem rewardItem = rewardItemRepository.findById(itemId)
@@ -50,6 +53,16 @@ public class OwnItemService {
         ownItemRepository.save(ownItem);
 
 
+
+
+    }
+
+    public List<OwnItemDto> getOwnItems(Long memberId) {
+        // 회원 조회
+        Member member = memberRepository.findById(memberId)
+            .orElseThrow(() -> new RuntimeException("Member not found"));
+
+        return ownItemRepository.findOwnItemsByMemberId(memberId);
 
 
     }
