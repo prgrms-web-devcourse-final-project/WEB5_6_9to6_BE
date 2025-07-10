@@ -1,14 +1,10 @@
 package com.grepp.spring.app.model.reward.entity;
 
-import com.grepp.spring.app.model.reward.code.ItemType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,30 +12,31 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "reward_item")
+@Table(name = "item_set")
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class RewardItem {
+public class ItemSet {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long itemId;
+    private Long setId;
 
-    @NotNull
-    private String name;
+    private Long hat;
+    private Long hair;
+    private Long face;
+    private Long top;
+    private Long bottom;
 
-    @NotNull
-    private int price;
-
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    private ItemType itemtype;
-
-    @NotNull
-    private boolean activated;
     private String image;
+
+
+
+
+
+
+
 
 
 }
