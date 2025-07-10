@@ -1,5 +1,6 @@
 package com.grepp.spring.app.controller.api;
 
+
 import com.grepp.spring.app.controller.api.reward.payload.OwnItemResponse;
 import com.grepp.spring.app.controller.api.reward.payload.RewardItemResponseDto;
 import com.grepp.spring.app.model.reward.dto.OwnItemDto;
@@ -13,6 +14,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.annotations.Fetch;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +34,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class RewardController {
 
     private final RewardItemService rewardItemService;
+
     private final OwnItemService ownItemService;
+
 
     // 아이템 상점 목록
     @GetMapping
