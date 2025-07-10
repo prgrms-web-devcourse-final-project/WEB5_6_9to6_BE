@@ -23,7 +23,7 @@ public class OwnItemService {
 
 
     @Transactional
-    public void purchaseItem(Long memberId, Long itemId){
+    public void purchaseItem(long memberId, long itemId){
 
         // 1. 아이템 조회
         RewardItem rewardItem = rewardItemRepository.findById(itemId)

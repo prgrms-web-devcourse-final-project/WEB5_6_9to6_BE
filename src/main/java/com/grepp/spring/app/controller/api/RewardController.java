@@ -46,10 +46,10 @@ List<RewardItemDto> dtos = rewardItemService.getItemList();
     // 아이템 구매
     @PostMapping("/{itemId}/purchase")
     public ResponseEntity<CommonResponse<Map<String, Object>>> purchaseItem(
-        @PathVariable Long itemId,
+        @PathVariable long itemId,
         @AuthenticationPrincipal User userDetails
     ) {
-        Long userId = Long.valueOf(userDetails.getUsername());
+        long userId = Long.parseLong(userDetails.getUsername());
 
         ownItemService.purchaseItem(userId,itemId);
 
