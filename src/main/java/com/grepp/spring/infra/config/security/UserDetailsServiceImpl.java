@@ -1,7 +1,7 @@
 package com.grepp.spring.infra.config.security;
 
 import com.grepp.spring.app.model.auth.domain.Principal;
-import com.grepp.spring.app.model.member.MemberRepository;
+import com.grepp.spring.app.model.member.repository.MemberRepository;
 import com.grepp.spring.app.model.member.entity.Member;
 import java.util.ArrayList;
 import java.util.List;
