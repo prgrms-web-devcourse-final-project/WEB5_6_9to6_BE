@@ -38,8 +38,8 @@ public class OwnItem {
     @JoinColumn(name = "reward_item")
     private RewardItem rewardItem;
 
-
     public void use(boolean used) {
         this.isUsed = used;
     }
+
 }
