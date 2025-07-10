@@ -15,14 +15,17 @@ import com.grepp.spring.app.model.auth.dto.VerifyCodeCheckRequest;
 import com.grepp.spring.app.model.auth.dto.VerifyCodeCheckResponse;
 import com.grepp.spring.app.model.member.MemberService;
 import com.grepp.spring.infra.auth.jwt.TokenCookieFactory;
+import com.grepp.spring.infra.error.exceptions.AlreadyExistException;
 import com.grepp.spring.infra.response.CommonResponse;
 import com.grepp.spring.infra.response.ResponseCode;
 import com.grepp.spring.infra.response.SuccessCode;
+import com.grepp.spring.infra.util.NotFoundException;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -31,6 +34,7 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -98,6 +102,9 @@ public class AuthController {
     public ResponseEntity<?> verifyEmailCode(@Valid @RequestBody VerifyCodeCheckRequest req) {
         VerifyCodeCheckResponse verified
             = new VerifyCodeCheckResponse(authService.checkVerifyCode(req.getEmail(), req.getCode()));
+//        boolean mock = false;
+//        if(Objects.equals(req.getCode(), "123456")) mock = true;
+//        VerifyCodeCheckResponse verified = new VerifyCodeCheckResponse(mock);
         return ResponseEntity.ok(CommonResponse.success(verified));
     }
 
@@ -121,12 +128,6 @@ public class AuthController {
         log.info("memberId: {}", memberId);
         memberService.updateMemberInfoById(memberId, req);
         return ResponseEntity.ok(CommonResponse.noContent());
-    }
-
-    // 예외 핸들러
-    @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<CommonResponse<ResponseCode>> handleIllegalArgumentException(Exception ex) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(CommonResponse.error(ResponseCode.UNAUTHORIZED));
     }
 
 }
