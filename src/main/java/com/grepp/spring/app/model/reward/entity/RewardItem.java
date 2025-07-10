@@ -42,6 +42,4 @@ public class RewardItem {
     private String image;
 
 
-
-
 }

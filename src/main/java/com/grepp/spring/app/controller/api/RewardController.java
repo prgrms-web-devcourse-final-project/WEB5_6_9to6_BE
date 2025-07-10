@@ -14,7 +14,6 @@ import com.grepp.spring.infra.response.CommonResponse;
 import com.grepp.spring.infra.response.SuccessCode;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -53,10 +52,11 @@ List<RewardItemDto> dtos = rewardItemService.getItemList();
     // 아이템 구매
     @PostMapping("/{itemId}/purchase")
     public ResponseEntity<CommonResponse<Map<String, Object>>> purchaseItem(
-        @PathVariable Long itemId,
+        @PathVariable long itemId,
         @AuthenticationPrincipal User userDetails
     ) {
-        Long userId = Long.valueOf(userDetails.getUsername());
+        long userId = Long.parseLong(userDetails.getUsername());
+
 
         ownItemService.purchaseItem(userId,itemId);
 

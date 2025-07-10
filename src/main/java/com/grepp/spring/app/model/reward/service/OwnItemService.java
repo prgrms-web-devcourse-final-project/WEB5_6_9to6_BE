@@ -23,6 +23,7 @@ public class OwnItemService {
     private final RewardItemRepository rewardItemRepository;
     private final MemberRepository memberRepository;
 
+
     public ItemSetDto getUseItemList(Long memberId) {
 
         //1. 멤버가 들고 있는 아이템만 뽑아서 들고오기
