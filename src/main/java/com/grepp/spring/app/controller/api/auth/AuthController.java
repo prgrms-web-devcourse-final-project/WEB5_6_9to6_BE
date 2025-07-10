@@ -4,48 +4,33 @@ import com.grepp.spring.app.controller.api.auth.payload.LoginRequest;
 import com.grepp.spring.app.controller.api.auth.payload.TokenResponse;
 import com.grepp.spring.app.model.auth.AuthService;
 import com.grepp.spring.app.model.auth.code.AuthToken;
-
 import com.grepp.spring.app.model.auth.domain.Principal;
 import com.grepp.spring.app.model.auth.dto.EmailDuplicatedCheckRequest;
 import com.grepp.spring.app.model.auth.dto.EmailDuplicatedCheckResponse;
 import com.grepp.spring.app.model.auth.dto.EmailSendRequest;
 import com.grepp.spring.app.model.auth.dto.SignupRequest;
 import com.grepp.spring.app.model.auth.dto.SocialMemberInfoRegistRequest;
-
 import com.grepp.spring.app.model.auth.dto.TokenDto;
 import com.grepp.spring.app.model.auth.dto.VerifyCodeCheckRequest;
 import com.grepp.spring.app.model.auth.dto.VerifyCodeCheckResponse;
 import com.grepp.spring.app.model.member.MemberService;
 import com.grepp.spring.infra.auth.jwt.TokenCookieFactory;
-
-import com.grepp.spring.infra.error.exceptions.AlreadyExistException;
 import com.grepp.spring.infra.response.CommonResponse;
 import com.grepp.spring.infra.response.ResponseCode;
 import com.grepp.spring.infra.response.SuccessCode;
-import com.grepp.spring.infra.util.NotFoundException;
-
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -97,7 +82,7 @@ public class AuthController {
     @PostMapping("/email/send")
     @ApiResponse(responseCode = "200")
     public ResponseEntity<CommonResponse<SuccessCode>> sendVerificationEmail(@Valid @RequestBody EmailSendRequest req) {
-//        authService.sendVerifyCode(req.getEmail());
+        authService.sendVerifyCode(req.getEmail());
         return ResponseEntity.ok(CommonResponse.noContent(SuccessCode.SEND_MAIL));
     }
 
@@ -105,11 +90,11 @@ public class AuthController {
     @PostMapping("/email/verify")
     @ApiResponse(responseCode = "200")
     public ResponseEntity<?> verifyEmailCode(@Valid @RequestBody VerifyCodeCheckRequest req) {
-//        VerifyCodeCheckResponse verified
-//            = new VerifyCodeCheckResponse(authService.checkVerifyCode(req.getEmail(), req.getCode()));
-        boolean mock = false;
-        if(Objects.equals(req.getCode(), "123456")) mock = true;
-        VerifyCodeCheckResponse verified = new VerifyCodeCheckResponse(mock);
+        VerifyCodeCheckResponse verified
+            = new VerifyCodeCheckResponse(authService.checkVerifyCode(req.getEmail(), req.getCode()));
+//        boolean mock = false;
+//        if(Objects.equals(req.getCode(), "123456")) mock = true;
+//        VerifyCodeCheckResponse verified = new VerifyCodeCheckResponse(mock);
         return ResponseEntity.ok(CommonResponse.success(verified));
     }
 
