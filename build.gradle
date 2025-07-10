@@ -17,6 +17,8 @@ java {
     }
 }
 
+def querydslDir = "$buildDir/generated/querydsl"
+
 bootRun {
     // Spring 프로파일 환경 변수 설정 (기본값: local)
     environment SPRING_PROFILES_ACTIVE: environment.SPRING_PROFILES_ACTIVE ?: 'local'
@@ -34,6 +36,16 @@ dependencies {
     implementation('org.springframework.boot:spring-boot-starter-data-jpa') // JPA를 사용한 데이터 액세스를 위한 스타터
     implementation 'org.springframework.boot:spring-boot-starter-security' // Spring Security를 위한 스타터
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf' // Thymeleaf 템플릿 엔진을 위한 스타터
+    implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta' // QUeryDSL JPA
+
+
+    // JPA API 의존성
+    annotationProcessor 'jakarta.persistence:jakarta.persistence-api:3.1.0'
+    annotationProcessor 'jakarta.annotation:jakarta.annotation-api:2.1.1'
+    annotationProcessor 'com.querydsl:querydsl-apt:5.0.0:jakarta'
+
+    // QueryProjection 생성용
+    implementation "com.querydsl:querydsl-core:5.0.0"
 
     // 데이터베이스 드라이버
     runtimeOnly('org.postgresql:postgresql') // PostgreSQL JDBC 드라이버
@@ -77,6 +89,10 @@ dependencies {
     testAnnotationProcessor('org.projectlombok:lombok') // 테스트 시 롬복 어노테이션 프로세서
 }
 
+sourceSets {
+    main.java.srcDirs += querydslDir
+}
+
 processResources {
     // 리소스 처리 전에 npmRunBuild 태스크 실행
 }
@@ -84,4 +100,5 @@ processResources {
 tasks.withType(Test) {
     // JUnit Platform을 사용하여 테스트 실행
     useJUnitPlatform()
+
 }
