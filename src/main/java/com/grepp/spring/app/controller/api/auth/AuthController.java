@@ -97,7 +97,7 @@ public class AuthController {
     @PostMapping("/email/send")
     @ApiResponse(responseCode = "200")
     public ResponseEntity<CommonResponse<SuccessCode>> sendVerificationEmail(@Valid @RequestBody EmailSendRequest req) {
-        authService.sendVerifyCode(req.getEmail());
+//        authService.sendVerifyCode(req.getEmail());
         return ResponseEntity.ok(CommonResponse.noContent(SuccessCode.SEND_MAIL));
     }
 
@@ -105,11 +105,11 @@ public class AuthController {
     @PostMapping("/email/verify")
     @ApiResponse(responseCode = "200")
     public ResponseEntity<?> verifyEmailCode(@Valid @RequestBody VerifyCodeCheckRequest req) {
-        VerifyCodeCheckResponse verified
-            = new VerifyCodeCheckResponse(authService.checkVerifyCode(req.getEmail(), req.getCode()));
-//        boolean mock = false;
-//        if(Objects.equals(req.getCode(), "123456")) mock = true;
-//        VerifyCodeCheckResponse verified = new VerifyCodeCheckResponse(mock);
+//        VerifyCodeCheckResponse verified
+//            = new VerifyCodeCheckResponse(authService.checkVerifyCode(req.getEmail(), req.getCode()));
+        boolean mock = false;
+        if(Objects.equals(req.getCode(), "123456")) mock = true;
+        VerifyCodeCheckResponse verified = new VerifyCodeCheckResponse(mock);
         return ResponseEntity.ok(CommonResponse.success(verified));
     }
 
