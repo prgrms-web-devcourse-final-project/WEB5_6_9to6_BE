@@ -80,6 +80,8 @@ List<RewardItemDto> dtos = rewardItemService.getItemList();
     ) {
         Map<String, Object> data = Map.of();
 
+        ownItemService.changeOwnItems(ownItemId);
+
         return ResponseEntity
             .status(HttpStatus.CREATED)
             .body(CommonResponse.success(data));

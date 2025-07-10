@@ -35,11 +35,13 @@ public class RewardItem {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    private ItemType itemtype;
+    private ItemType itemType;
 
     @NotNull
     private boolean activated;
     private String image;
+
+
 
 
 }
