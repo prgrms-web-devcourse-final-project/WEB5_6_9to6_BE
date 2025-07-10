@@ -112,7 +112,7 @@ public class AuthController {
         Authentication authentication
     ) {
         Principal principal = (Principal) authentication.getPrincipal();
-        long memberId = principal.getMemberId();
+        Long memberId = principal.getMemberId();
         log.info("memberId: {}", memberId);
         memberService.updateMemberInfoById(memberId, req);
         return ResponseEntity.ok(CommonResponse.noContent());

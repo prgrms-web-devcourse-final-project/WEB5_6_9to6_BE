@@ -15,11 +15,15 @@ public class MailService {
 
     private final JavaMailSender mailSender;
 
+    @Value("${spring.mail.from}")
+    private String fromAddress;
+
     public void sendSimpleMail(String to, String subject, String content) {
         SimpleMailMessage message = new SimpleMailMessage();
 
         try {
             message.setTo(to);
+            message.setFrom(fromAddress);
             message.setSubject(subject);
             message.setText(content);
 
@@ -29,7 +33,6 @@ public class MailService {
             log.error("Mail sent to {} failed", to, e);
             throw new MailSendFailureException(ResponseCode.MAIL_SEND_FAIL, e);
         }
-
     }
 
 
