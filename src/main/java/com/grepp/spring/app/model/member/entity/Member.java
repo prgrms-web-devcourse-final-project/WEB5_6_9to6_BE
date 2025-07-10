@@ -1,3 +1,4 @@
+// Member.java
 package com.grepp.spring.app.model.member.entity;
 
 import com.grepp.spring.app.model.auth.code.Role;
@@ -58,7 +59,9 @@ public class Member extends BaseEntity{
     private SocialType socialType;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private Role role;
+
 
     @Builder
     public Member(long id, String email, String password, String nickname, int rewardPoints,
@@ -74,7 +77,7 @@ public class Member extends BaseEntity{
         this.gender = gender;
         this.winRate = winRate;
     }
-  
+
     public void updateSocialInfo(String nickname, LocalDate birthday, Gender gender) {
         this.nickname = nickname;
         this.birthday = birthday;
@@ -88,10 +91,6 @@ public class Member extends BaseEntity{
         rewardPoints -= amount;
     }
 
-
-}
-
-}
 
 }
 
