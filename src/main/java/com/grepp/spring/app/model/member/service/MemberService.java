@@ -106,12 +106,10 @@ public class MemberService {
     // 기존 비밀번호 일치 여부
     @Transactional(readOnly = true)
     public boolean verifyPassword(Long memberId, String inputPassword) {
-        // 1. memberId로 회원을 조회하고, 없으면 예외를 발생시킵니다.
+
         Member member = memberRepository.findById(memberId)
             .orElseThrow(() -> new EntityNotFoundException("해당 ID의 회원을 찾을 수 없습니다"));
 
-        // 2. 입력된 비밀번호(평문)와 DB에 저장된 암호화된 비밀번호를 비교합니다.
-        // passwordEncoder.matches(평문, 암호화된_문자열)
         return passwordEncoder.matches(inputPassword, member.getPassword());
     }
 }
