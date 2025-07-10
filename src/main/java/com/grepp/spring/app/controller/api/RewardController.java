@@ -1,5 +1,9 @@
 package com.grepp.spring.app.controller.api;
 
+
+import com.grepp.spring.app.controller.api.reward.payload.ImageResponse;
+import com.grepp.spring.app.controller.api.reward.payload.SaveImageRequestDto;
+import com.grepp.spring.app.model.reward.dto.ItemSetDto;
 import com.grepp.spring.app.controller.api.reward.payload.PurchaseRequest;
 import com.grepp.spring.app.controller.api.reward.payload.OwnItemResponse;
 import com.grepp.spring.app.controller.api.reward.payload.RewardItemResponseDto;
@@ -8,11 +12,13 @@ import com.grepp.spring.app.model.reward.dto.RewardItemDto;
 import com.grepp.spring.app.model.reward.service.OwnItemService;
 import com.grepp.spring.app.model.reward.service.RewardItemService;
 import com.grepp.spring.infra.response.CommonResponse;
+import com.grepp.spring.infra.response.SuccessCode;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.annotations.Fetch;
 import org.springframework.http.HttpStatus;
@@ -35,6 +41,7 @@ public class RewardController {
 
     private final RewardItemService rewardItemService;
     private final OwnItemService ownItemService;
+    private final ItemSetService itemSetService;
 
     // 아이템 상점 목록
     @GetMapping
@@ -52,6 +59,7 @@ List<RewardItemDto> dtos = rewardItemService.getItemList();
         @AuthenticationPrincipal User userDetails
     ) {
         long userId = Long.parseLong(userDetails.getUsername());
+
 
         ownItemService.purchaseItem(userId,itemId);
 
@@ -89,36 +97,30 @@ List<RewardItemDto> dtos = rewardItemService.getItemList();
             .body(CommonResponse.success(data));
     }
 
-    @PatchMapping("/{itemId}/image")
+    @GetMapping("/{itemId}/image")
     @ApiResponse(responseCode = "200")
-    public ResponseEntity<Map<String, Object>> getItemImages(@PathVariable Long itemId) {
-        Map<String, Object> response = new LinkedHashMap<>();
+    public ResponseEntity<CommonResponse<ImageResponse>> getItemImages(@PathVariable Long itemId,
+        @AuthenticationPrincipal User userDetails) {
 
+        Long memberId = Long.valueOf(userDetails.getUsername());
 
-        // 짝수일 경우 서버에 이미지 존재
-        if (itemId% 2==0) {
+        ItemSetDto itemSetDto = ownItemService.getUseItemList(memberId);
+        Optional<ImageResponse> image = itemSetService.ExistItemSet(itemSetDto);
 
-            response.put("code", "0000");
-            response.put("message", "이미지를 조회했습니다.");
-            Map<String, Object> data;
-            data = Map.of("wholeImageUrl", "https://example.com/images/whole-outfit-" + itemId + ".png");
-
-            response.put("data", data);
-            return ResponseEntity.ok(response);
-        } else { // 홀수 일 때 서버에 이미지 없음
-
-            response.put("code", "0001");
-            response.put("message", "서버에 이미지가 없습니다.");
-
-            return ResponseEntity.ok(response);
-        }
+        return image.map(img ->
+            ResponseEntity.ok(CommonResponse.success(img))  // 조합 존재 → 이미지 반환
+        ).orElseGet(() ->
+            ResponseEntity.ok(CommonResponse.noContent(SuccessCode.NO_IMAGE_FOUND)) // 조합 없음
+        );
     }
 
     @PostMapping("/saveimage")
     @ApiResponse(responseCode = "200")
     public ResponseEntity<CommonResponse<Map<String, Object>>> PostItemImages(
-        @RequestBody(required = false) Map<String, Object> PostItemRequest) {
+        @RequestBody SaveImageRequestDto saveImageRequest) {
         Map<String, Object> data = Map.of();
+
+        itemSetService.saveImage(saveImageRequest);
 
         return ResponseEntity
             .status(HttpStatus.CREATED)

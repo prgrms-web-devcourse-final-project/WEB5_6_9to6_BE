@@ -2,6 +2,7 @@ package com.grepp.spring.app.model.reward.repository;
 
 
 
+
 import com.grepp.spring.app.model.reward.code.ItemType;
 import com.grepp.spring.app.model.reward.entity.OwnItem;
 import java.util.Optional;
@@ -16,6 +17,7 @@ public interface OwnItemRepository extends JpaRepository<OwnItem,Long>, OwnItemR
 
 
     Optional<OwnItem> findFirstByRewardItem_ItemTypeAndIsUsedTrue(ItemType itemType);
+    List<OwnItem> findByMemberIdAndIsUsedTrue(Long memberId);
     List<OwnItemDto> findOwnItemsByMemberId(Long memberId);
 
 

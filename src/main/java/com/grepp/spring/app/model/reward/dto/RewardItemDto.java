@@ -16,7 +16,7 @@ public record RewardItemDto(
             rewardItem.getItemId(),
             rewardItem.getName(),
             rewardItem.getPrice(),
-            rewardItem.getItemtype()
+            rewardItem.getItemType()
         );
     }
 
