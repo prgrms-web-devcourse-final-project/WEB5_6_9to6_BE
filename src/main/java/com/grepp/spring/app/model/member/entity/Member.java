@@ -58,7 +58,34 @@ public class Member extends BaseEntity{
     private SocialType socialType;
 
     @Enumerated(EnumType.STRING)
+    Gender gender;
+    int winRate;
+
+    @Builder
+    public Member(long id, String email, String password, String nickname, int rewardPoints,
+        Role role, SocialType socialType, LocalDate birthday, Gender gender, int winRate) {
+        this.id = id;
+        this.email = email;
+        this.password = password;
+        this.nickname = nickname;
+        this.rewardPoints = rewardPoints;
+        this.role = role;
+        this.socialType = socialType;
+        this.birthday = birthday;
+        this.gender = gender;
+        this.winRate = winRate;
+    }
+
+    public void deductRewardPoints(int amount) {
+        if (rewardPoints < amount) {
+            throw new IllegalArgumentException("포인트가 부족합니다.");
+        }
+        rewardPoints -= amount;
+    }
+
+}
     private Role role;
 
 }
+
 
