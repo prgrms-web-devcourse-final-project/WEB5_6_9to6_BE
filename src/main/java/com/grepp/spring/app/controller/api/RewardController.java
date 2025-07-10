@@ -1,7 +1,11 @@
 package com.grepp.spring.app.controller.api;
 
+
+import com.grepp.spring.app.controller.api.reward.payload.OwnItemResponse;
 import com.grepp.spring.app.controller.api.reward.payload.RewardItemResponseDto;
+import com.grepp.spring.app.model.reward.dto.OwnItemDto;
 import com.grepp.spring.app.model.reward.dto.RewardItemDto;
+import com.grepp.spring.app.model.reward.service.OwnItemService;
 import com.grepp.spring.app.model.reward.service.RewardItemService;
 import com.grepp.spring.infra.response.CommonResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -14,6 +18,8 @@ import org.hibernate.annotations.Fetch;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,6 +35,9 @@ public class RewardController {
 
     private final RewardItemService rewardItemService;
 
+    private final OwnItemService ownItemService;
+
+
     // 아이템 상점 목록
     @GetMapping
     public ResponseEntity<CommonResponse<RewardItemResponseDto>> getRewardItems() {
@@ -40,9 +49,16 @@ List<RewardItemDto> dtos = rewardItemService.getItemList();
 
     // 아이템 구매
     @PostMapping("/{itemId}/purchase")
-    public ResponseEntity<CommonResponse<Map<String, Object>>> purchaseItem(@PathVariable long itemId) {
-        Map<String, Object> data = Map.of(); // 빈 객체 {}
+    public ResponseEntity<CommonResponse<Map<String, Object>>> purchaseItem(
+        @PathVariable Long itemId,
+        @AuthenticationPrincipal User userDetails
+    ) {
+        Long userId = Long.valueOf(userDetails.getUsername());
 
+        ownItemService.purchaseItem(userId,itemId);
+
+
+        Map<String, Object> data = new HashMap<>();
         return ResponseEntity
             .status(HttpStatus.CREATED)
             .body(CommonResponse.success(data));
@@ -50,18 +66,15 @@ List<RewardItemDto> dtos = rewardItemService.getItemList();
 
     // 소유 아이템 목록
     @GetMapping("/own-items")
-    public ResponseEntity<CommonResponse<Map<String, Object>>> getOwnItems() {
-        Map<String, Object> data = Map.of(
-            "member_id", 1,
-            "item_id", 1,
-            "own_item_id", 1,
-            "name", "블랙 테마",
-            "type", "테마",
-            "is_used", true
-        );
+    public ResponseEntity<CommonResponse<List<OwnItemResponse>>> getOwnItems(@AuthenticationPrincipal User userDetails) {
+        Long memberId = Long.valueOf(userDetails.getUsername()); // 실제 로그인 유저 ID 사용
+        List<OwnItemDto> dtos = ownItemService.getOwnItems(memberId);
 
-        return ResponseEntity
-            .ok(CommonResponse.success(data));
+         List<OwnItemResponse> responses = dtos.stream()
+            .map(OwnItemResponse::from)
+            .toList();
+
+         return ResponseEntity.ok(CommonResponse.success(responses));
     }
 
     // 사용 아이템 변경

@@ -24,10 +24,12 @@ public class OwnItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long OwnItemId;
+    private Long ownItemId;
+
+    private Long memberId;
 
     @NotNull
-    private boolean IsUsed;
+    private boolean isUsed;
 
     @NotNull
     private boolean activated;
