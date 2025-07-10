@@ -8,7 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data @NoArgsConstructor
-public class SocialSignupRequest {
+public class SocialMemberInfoRegistRequest {
 
     @NotBlank(message = "닉네임이 비어있습니다.")
     private String nickname;
@@ -19,7 +19,7 @@ public class SocialSignupRequest {
     @NotNull(message = "성별이 비어있습니다.")
     private Gender gender;
 
-    public SocialSignupRequest(String nickname, LocalDate birthday, Gender gender) {
+    public SocialMemberInfoRegistRequest(String nickname, LocalDate birthday, Gender gender) {
         this.nickname = nickname;
         this.birthday = birthday;
         this.gender = gender;

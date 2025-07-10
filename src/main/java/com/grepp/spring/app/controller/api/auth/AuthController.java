@@ -9,7 +9,7 @@ import com.grepp.spring.app.model.auth.dto.EmailDuplicatedCheckRequest;
 import com.grepp.spring.app.model.auth.dto.EmailDuplicatedCheckResponse;
 import com.grepp.spring.app.model.auth.dto.EmailSendRequest;
 import com.grepp.spring.app.model.auth.dto.SignupRequest;
-import com.grepp.spring.app.model.auth.dto.SocialSignupRequest;
+import com.grepp.spring.app.model.auth.dto.SocialMemberInfoRegistRequest;
 import com.grepp.spring.app.model.auth.dto.TokenDto;
 import com.grepp.spring.app.model.auth.dto.VerifyCodeCheckRequest;
 import com.grepp.spring.app.model.auth.dto.VerifyCodeCheckResponse;
@@ -109,10 +109,10 @@ public class AuthController {
         return ResponseEntity.ok(CommonResponse.success(duplicated));
     }
 
-    @PutMapping("/oauth/signup")
+    @PutMapping("/oauth/first-regist")
     @ApiResponse(responseCode = "200")
     public ResponseEntity<CommonResponse<?>> oauthRegistMember(
-        @Valid @RequestBody SocialSignupRequest req,
+        @Valid @RequestBody SocialMemberInfoRegistRequest req,
         Authentication authentication
     ) {
         Principal principal = (Principal) authentication.getPrincipal();
