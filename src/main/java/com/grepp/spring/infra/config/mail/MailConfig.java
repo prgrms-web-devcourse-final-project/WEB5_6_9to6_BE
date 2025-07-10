@@ -1,5 +1,6 @@
 package com.grepp.spring.infra.config.mail;
 
+
 import java.util.Properties;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;

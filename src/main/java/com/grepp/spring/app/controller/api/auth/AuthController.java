@@ -4,10 +4,12 @@ import com.grepp.spring.app.controller.api.auth.payload.LoginRequest;
 import com.grepp.spring.app.controller.api.auth.payload.TokenResponse;
 import com.grepp.spring.app.model.auth.AuthService;
 import com.grepp.spring.app.model.auth.code.AuthToken;
+import com.grepp.spring.app.model.auth.domain.Principal;
 import com.grepp.spring.app.model.auth.dto.EmailDuplicatedCheckRequest;
 import com.grepp.spring.app.model.auth.dto.EmailDuplicatedCheckResponse;
-import com.grepp.spring.app.model.auth.dto.SendEmailRequest;
+import com.grepp.spring.app.model.auth.dto.EmailSendRequest;
 import com.grepp.spring.app.model.auth.dto.SignupRequest;
+import com.grepp.spring.app.model.auth.dto.SocialMemberInfoRegistRequest;
 import com.grepp.spring.app.model.auth.dto.TokenDto;
 import com.grepp.spring.app.model.auth.dto.VerifyCodeCheckRequest;
 import com.grepp.spring.app.model.auth.dto.VerifyCodeCheckResponse;
@@ -19,25 +21,23 @@ import com.grepp.spring.infra.response.SuccessCode;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import java.util.HashMap;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
 @RequestMapping(value = "/api/v1/auth", produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
+@Slf4j
 public class AuthController {
 
     private final AuthService authService;
@@ -81,7 +81,7 @@ public class AuthController {
     // 이메일 인증 요청
     @PostMapping("/email/send")
     @ApiResponse(responseCode = "200")
-    public ResponseEntity<CommonResponse<SuccessCode>> sendVerificationEmail(@Valid @RequestBody SendEmailRequest req) {
+    public ResponseEntity<CommonResponse<SuccessCode>> sendVerificationEmail(@Valid @RequestBody EmailSendRequest req) {
         authService.sendVerifyCode(req.getEmail());
         return ResponseEntity.ok(CommonResponse.noContent(SuccessCode.SEND_MAIL));
     }
@@ -90,13 +90,13 @@ public class AuthController {
     @PostMapping("/email/verify")
     @ApiResponse(responseCode = "200")
     public ResponseEntity<?> verifyEmailCode(@Valid @RequestBody VerifyCodeCheckRequest req) {
-        VerifyCodeCheckResponse check
+        VerifyCodeCheckResponse verified
             = new VerifyCodeCheckResponse(authService.checkVerifyCode(req.getEmail(), req.getCode()));
-        return ResponseEntity.ok(CommonResponse.success(check));
+        return ResponseEntity.ok(CommonResponse.success(verified));
     }
 
     // 이메일 중복 확인
-    @GetMapping("/email/duplicate")
+    @PostMapping("/email/duplicate")
     @ApiResponse(responseCode = "200")
     public ResponseEntity<CommonResponse<EmailDuplicatedCheckResponse>> checkEmailDuplicate(@RequestBody EmailDuplicatedCheckRequest req) {
         EmailDuplicatedCheckResponse duplicated
@@ -104,21 +104,18 @@ public class AuthController {
         return ResponseEntity.ok(CommonResponse.success(duplicated));
     }
 
-    // 공통 에러 응답 메서드
-    private ResponseEntity<Map<String, Object>> errorResponse(String code, String message, HttpStatus status) {
-        Map<String, Object> error = new HashMap<>();
-        error.put("code", code);
-        error.put("message", message);
-        return ResponseEntity.status(status).body(error);
-    }
-
-    // 예외 핸들러 - 클래스 범위
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<Map<String, Object>> handleIllegalArgumentException(Exception ex) {
-        Map<String, Object> error = new HashMap<>();
-        error.put("code", "4000");
-        error.put("message", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    // 첫 소셜 로그인 유저 추가 정보 입력
+    @PutMapping("/oauth/first-regist")
+    @ApiResponse(responseCode = "200")
+    public ResponseEntity<CommonResponse<?>> oauthRegistMember(
+        @Valid @RequestBody SocialMemberInfoRegistRequest req,
+        Authentication authentication
+    ) {
+        Principal principal = (Principal) authentication.getPrincipal();
+        long memberId = principal.getMemberId();
+        log.info("memberId: {}", memberId);
+        memberService.updateMemberInfoById(memberId, req);
+        return ResponseEntity.ok(CommonResponse.noContent());
     }
 
 }
