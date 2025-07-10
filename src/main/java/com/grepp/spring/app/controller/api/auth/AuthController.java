@@ -109,7 +109,7 @@ public class AuthController {
     }
 
     // 이메일 중복 확인
-    @GetMapping("/email/duplicate")
+    @PostMapping("/email/duplicate")
     @ApiResponse(responseCode = "200")
     public ResponseEntity<CommonResponse<EmailDuplicatedCheckResponse>> checkEmailDuplicate(@RequestBody EmailDuplicatedCheckRequest req) {
         EmailDuplicatedCheckResponse duplicated
