@@ -7,6 +7,6 @@ import lombok.NoArgsConstructor;
 @Data @NoArgsConstructor @AllArgsConstructor
 public class VerifyCodeCheckResponse {
 
-    private boolean check;
+    private boolean verified;
 
 }
