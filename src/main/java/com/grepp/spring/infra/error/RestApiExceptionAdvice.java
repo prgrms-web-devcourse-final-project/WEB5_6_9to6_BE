@@ -123,6 +123,6 @@ public class RestApiExceptionAdvice {
             .body(CommonResponse.error(ResponseCode.MAIL_SEND_FAIL));
     }
 
-    
+
 
 }
