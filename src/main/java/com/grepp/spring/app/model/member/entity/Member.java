@@ -57,9 +57,8 @@ public class Member extends BaseEntity{
     @Enumerated(EnumType.STRING)
     private SocialType socialType;
 
-    @Enumerated(EnumType.STRING)
-    Gender gender;
-    int winRate;
+    @Column(nullable = false)
+    private Role role;
 
     @Builder
     public Member(long id, String email, String password, String nickname, int rewardPoints,
@@ -93,7 +92,6 @@ public class Member extends BaseEntity{
 }
 
 }
-    private Role role;
 
 }
 
