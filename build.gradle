@@ -19,6 +19,8 @@ java {
     }
 }
 
+def querydslDir = "$buildDir/generated/querydsl"
+
 bootRun {
     // Spring 프로파일 환경 변수 설정 (기본값: local)
     environment SPRING_PROFILES_ACTIVE: environment.SPRING_PROFILES_ACTIVE ?: 'local'
