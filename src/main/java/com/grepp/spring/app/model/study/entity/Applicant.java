@@ -29,7 +29,6 @@ public class Applicant extends BaseEntity {
     private ApplicantState state;
 
     private String introduction;
-
     private Long memberId;
 
     @ManyToOne @JsonIgnore
@@ -45,9 +44,4 @@ public class Applicant extends BaseEntity {
         this.memberId = memberId;
         this.study = study;
     }
-
-    protected void setStudy(Study study) {
-        this.study = study;
-    }
-
 }
