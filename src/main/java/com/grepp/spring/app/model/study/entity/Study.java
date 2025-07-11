@@ -73,6 +73,6 @@ public class Study {
     @OneToMany(mappedBy = "study", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<StudySchedule> schedules = new ArrayList<>();
 
-    @OneToMany(mappedBy = "study")
+    @OneToMany(mappedBy = "study", cascade = CascadeType.ALL)
     private List<StudyMember> studyMembers = new ArrayList<>();
 }
