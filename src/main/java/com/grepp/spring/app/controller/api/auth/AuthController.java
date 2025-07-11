@@ -92,20 +92,17 @@ public class AuthController {
     public ResponseEntity<?> verifyEmailCode(@Valid @RequestBody VerifyCodeCheckRequest req) {
         VerifyCodeCheckResponse verified
             = new VerifyCodeCheckResponse(authService.checkVerifyCode(req.getEmail(), req.getCode()));
-//        boolean mock = false;
-//        if(Objects.equals(req.getCode(), "123456")) mock = true;
-//        VerifyCodeCheckResponse verified = new VerifyCodeCheckResponse(mock);
         return ResponseEntity.ok(CommonResponse.success(verified));
     }
 
     // 이메일 중복 확인
-    @PostMapping("/email/duplicate")
-    @ApiResponse(responseCode = "200")
-    public ResponseEntity<CommonResponse<EmailDuplicatedCheckResponse>> checkEmailDuplicate(@RequestBody EmailDuplicatedCheckRequest req) {
-        EmailDuplicatedCheckResponse duplicated
-            = new EmailDuplicatedCheckResponse(memberService.isDuplicatedEmail(req.getEmail()));
-        return ResponseEntity.ok(CommonResponse.success(duplicated));
-    }
+//    @PostMapping("/email/duplicate")
+//    @ApiResponse(responseCode = "200")
+//    public ResponseEntity<CommonResponse<EmailDuplicatedCheckResponse>> checkEmailDuplicate(@RequestBody EmailDuplicatedCheckRequest req) {
+//        EmailDuplicatedCheckResponse duplicated
+//            = new EmailDuplicatedCheckResponse(memberService.isDuplicatedEmail(req.getEmail()));
+//        return ResponseEntity.ok(CommonResponse.success(duplicated));
+//    }
 
     @PutMapping("/oauth/first-regist")
     @ApiResponse(responseCode = "200")

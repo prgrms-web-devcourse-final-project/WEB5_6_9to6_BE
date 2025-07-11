@@ -41,11 +41,6 @@ public class MemberService {
         return memberRepository.save(member);
     }
 
-    @Transactional(readOnly = true)
-    public boolean isDuplicatedEmail(String email) {
-        return memberRepository.findByEmail(email).isPresent();
-    }
-
     @Transactional
     public void updateMemberInfoById(long memberId , SocialMemberInfoRegistRequest req) {
         Member member = memberRepository.findById(memberId)
