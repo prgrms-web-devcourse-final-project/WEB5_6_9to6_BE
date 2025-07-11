@@ -1,5 +1,6 @@
 package com.grepp.spring.app.model.study.entity;
 
+import com.grepp.spring.app.model.member.entity.StudyMember;
 import com.grepp.spring.app.model.study.code.Category;
 import com.grepp.spring.app.model.study.code.Region;
 import com.grepp.spring.app.model.study.code.Status;
@@ -11,9 +12,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -25,7 +24,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name="study")
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -58,7 +56,6 @@ public class Study {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @Lob
     private String notice;
 
     private String description;
@@ -70,10 +67,12 @@ public class Study {
 
     private boolean activated;
 
-
     @OneToMany(mappedBy = "study", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<StudyGoal> goals = new ArrayList<>();
 
     @OneToMany(mappedBy = "study", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<StudySchedule> schedules = new ArrayList<>();
+
+    @OneToMany(mappedBy = "study")
+    private List<StudyMember> studyMembers = new ArrayList<>();
 }
