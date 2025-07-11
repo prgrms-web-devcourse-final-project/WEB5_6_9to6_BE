@@ -34,10 +34,10 @@ public class Member extends BaseEntity{
     @Column
     private String password;
 
-    @Column(nullable = false)
+    @Column
     private String nickname;
 
-    @Column(nullable = false)
+    @Column
     private LocalDate birthday;
 
     @Enumerated(EnumType.STRING)
