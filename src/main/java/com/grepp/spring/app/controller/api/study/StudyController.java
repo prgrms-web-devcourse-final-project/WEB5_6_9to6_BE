@@ -1,5 +1,6 @@
-package com.grepp.spring.app.controller.api;
+package com.grepp.spring.app.controller.api.study;
 
+import com.grepp.spring.app.model.member.service.MemberService;
 import com.grepp.spring.infra.response.CommonResponse;
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -11,9 +12,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,18 +26,25 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping(value = "/api/v1/studies", produces = MediaType.APPLICATION_JSON_VALUE)
 public class StudyController {
 
+    private final MemberService memberService;
+
     // 출석체크
     @PostMapping("/{studyId}/attendance")
-    public ResponseEntity<?> attend(@PathVariable Long studyId) {
-        String code = "SUCCESS";
-        String message = "출석 완료";
+    public ResponseEntity<?> attend(
+        @PathVariable Long studyId,
+        Authentication authentication
+    ) {
+        String email = authentication.getName();
+        Long studyMemberId = memberService.findStudyMemberId(email, studyId);
 
-        return ResponseEntity.status(200).body(CommonResponse.noContent());
+        memberService.markAttendance(studyMemberId);
+
+        return ResponseEntity.ok(CommonResponse.success("출석 체크 완료."));
     }
-
     // 스터디 목록(검색)
     @PostMapping("/search")
     public ResponseEntity<?> searchStudies(

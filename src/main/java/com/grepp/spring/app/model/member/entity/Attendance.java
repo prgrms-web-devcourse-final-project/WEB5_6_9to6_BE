@@ -1,0 +1,43 @@
+package com.grepp.spring.app.model.member.entity;
+
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.time.LocalDate;
+
+@Entity
+@Table(name = "attendance")
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
+public class Attendance {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "attendance_id")
+    private Long id;
+
+    @Column(name = "attendance_date", nullable = false)
+    private LocalDate attendanceDate;
+
+    @Column(name = "is_attended", nullable = false)
+    private boolean isAttended;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "study_member_id", nullable = false)
+    private StudyMember studyMember;
+
+    @Column(nullable = false)
+    private boolean activated;
+
+    // 출석 체크
+    public void markAsAttended() {
+        this.isAttended = true;
+    }
+
+    // 비활성화 처리
+    public void deactivate() {
+        this.activated = false;
+    }
+}

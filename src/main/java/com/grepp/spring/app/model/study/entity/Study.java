@@ -58,7 +58,6 @@ public class Study {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @Lob
     private String notice;
 
     private String description;

@@ -1,5 +1,6 @@
 package com.grepp.spring.infra.error;
 
+import com.grepp.spring.infra.error.exceptions.AlreadyCheckedAttendanceException;
 import com.grepp.spring.infra.error.exceptions.AlreadyExistException;
 import com.grepp.spring.infra.error.exceptions.CommonException;
 import com.grepp.spring.infra.error.exceptions.MailSendFailureException;
@@ -123,6 +124,12 @@ public class RestApiExceptionAdvice {
             .body(CommonResponse.error(ResponseCode.MAIL_SEND_FAIL));
     }
 
-    
+    @ExceptionHandler(AlreadyCheckedAttendanceException.class)
+    public ResponseEntity<CommonResponse<String>> handleAlreadyCheckedAttendance(AlreadyCheckedAttendanceException ex) {
+        log.error(ex.getMessage(), ex);
+        return ResponseEntity
+            .status(HttpStatus.CONFLICT)
+            .body(CommonResponse.error(ResponseCode.ALREADY_EXIST.code(), ex.getMessage()));
+    }
 
 }
