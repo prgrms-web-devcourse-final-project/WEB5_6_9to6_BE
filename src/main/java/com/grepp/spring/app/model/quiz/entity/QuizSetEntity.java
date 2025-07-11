@@ -6,6 +6,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "quiz_set")
 @Getter
@@ -16,14 +19,17 @@ public class QuizSetEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long quizSetId;
+    private Long quizSetId;
 
     @Column(nullable = false)
-    private long studyId;
+    private Long studyId;
 
     @Column(nullable = false)
-    private int week;
+    private Integer week;
 
     @Column(nullable = false)
-    private boolean activated;
+    private Boolean activated;
+
+    @OneToMany(mappedBy = "quizSet", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<QuizEntity> quizzes = new ArrayList<>();
 }

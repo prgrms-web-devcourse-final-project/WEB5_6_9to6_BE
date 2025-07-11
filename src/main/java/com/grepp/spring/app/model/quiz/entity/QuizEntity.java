@@ -16,18 +16,21 @@ public class QuizEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long quizId;
+    private Long quizId;
 
-    @Column(nullable = false)
-    private long quizSetId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "quizSetId")
+    private QuizSetEntity quizSet;
 
     @Column(nullable = true)
     private String question;
 
     @Column(nullable = true)
-    private int answer;
+    private Integer answer;
 
     @Column(nullable = false)
-    private boolean activated;
+    private Boolean activated;
 
+    @OneToOne(mappedBy = "quiz", fetch = FetchType.LAZY)
+    private ChoiceEntity choice;
 }

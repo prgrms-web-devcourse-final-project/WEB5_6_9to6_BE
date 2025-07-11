@@ -16,17 +16,18 @@ public class QuizRecordEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long quizRecordId;
+    private Long quizRecordId;
 
     @Column(nullable = false)
-    private long studyMemberId;
+    private Long studyMemberId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "quizSetId")
+    private QuizSetEntity quizSet;
 
     @Column(nullable = false)
-    private long quizSetId;
+    private Boolean isPassed;
 
     @Column(nullable = false)
-    private boolean isPassed;
-
-    @Column(nullable = false)
-    private boolean activated;
+    private Boolean activated;
 }

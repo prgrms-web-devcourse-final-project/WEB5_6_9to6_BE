@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-
 @Entity
 @Table(name = "choice")
 @Getter
@@ -17,10 +16,7 @@ public class ChoiceEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long choiceId;
-
-    @Column(nullable = false)
-    private long quizId;
+    private Long choiceId;
 
     @Column(nullable = false)
     private String choice1;
@@ -35,6 +31,9 @@ public class ChoiceEntity {
     private String choice4;
 
     @Column(nullable = false)
-    private boolean activated;
+    private Boolean activated;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "quizId")
+    private QuizEntity quiz;
 }
