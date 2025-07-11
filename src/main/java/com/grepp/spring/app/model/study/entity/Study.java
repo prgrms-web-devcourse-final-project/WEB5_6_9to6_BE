@@ -5,6 +5,7 @@ import com.grepp.spring.app.model.study.code.Region;
 import com.grepp.spring.app.model.study.code.Status;
 import com.grepp.spring.app.model.study.code.StudyType;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -58,7 +59,6 @@ public class Study {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @Lob
     private String notice;
 
     private String description;

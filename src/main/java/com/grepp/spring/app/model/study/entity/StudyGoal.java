@@ -10,16 +10,13 @@ import java.util.List;
 @Entity
 @Table(name = "study_goal")
 @Getter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class StudyGoal {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long goalId;
 
-    @Lob
     private String content;
 
     @Enumerated(EnumType.STRING)
@@ -33,4 +30,15 @@ public class StudyGoal {
 
     @OneToMany(mappedBy = "studyGoal", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<GoalAchievement> achievements = new ArrayList<>();
+
+    @Builder
+    public StudyGoal(Long goalId, String content, GoalType goalType, boolean activated, Study study,
+        List<GoalAchievement> achievements) {
+        this.goalId = goalId;
+        this.content = content;
+        this.goalType = goalType;
+        this.activated = activated;
+        this.study = study;
+        this.achievements = achievements;
+    }
 }
