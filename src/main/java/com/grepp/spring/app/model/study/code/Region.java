@@ -7,7 +7,8 @@ public enum Region {
     DAEJEON("대전"),
     GANGWON("강원"),
     SEJONG("세종"),
-    CHUNGBUK("충북");
+    CHUNGBUK("충북"),
+    ONLINE("온라인");
 
     private final String koreanName;
 
