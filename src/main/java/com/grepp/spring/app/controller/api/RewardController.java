@@ -1,10 +1,9 @@
 package com.grepp.spring.app.controller.api;
 
-
 import com.grepp.spring.app.controller.api.reward.payload.ImageResponse;
 import com.grepp.spring.app.controller.api.reward.payload.SaveImageRequestDto;
+import com.grepp.spring.app.model.auth.domain.Principal;
 import com.grepp.spring.app.model.reward.dto.ItemSetDto;
-import com.grepp.spring.app.controller.api.reward.payload.PurchaseRequest;
 import com.grepp.spring.app.controller.api.reward.payload.OwnItemResponse;
 import com.grepp.spring.app.controller.api.reward.payload.RewardItemResponseDto;
 import com.grepp.spring.app.model.reward.dto.OwnItemDto;
@@ -16,15 +15,14 @@ import com.grepp.spring.infra.response.CommonResponse;
 import com.grepp.spring.infra.response.SuccessCode;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.annotations.Fetch;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -57,13 +55,12 @@ List<RewardItemDto> dtos = rewardItemService.getItemList();
     @PostMapping("/{itemId}/purchase")
     public ResponseEntity<CommonResponse<Map<String, Object>>> purchaseItem(
         @PathVariable long itemId,
-        @AuthenticationPrincipal User userDetails
+        Authentication authentication
     ) {
-        long userId = Long.parseLong(userDetails.getUsername());
+        Principal principal = (Principal) authentication.getPrincipal();
+        long memberId = principal.getMemberId();
 
-
-        ownItemService.purchaseItem(userId,itemId);
-
+        ownItemService.purchaseItem(memberId,itemId);
 
         Map<String, Object> data = new HashMap<>();
         return ResponseEntity
@@ -73,8 +70,11 @@ List<RewardItemDto> dtos = rewardItemService.getItemList();
 
     // 소유 아이템 목록
     @GetMapping("/own-items")
-    public ResponseEntity<CommonResponse<List<OwnItemResponse>>> getOwnItems(@AuthenticationPrincipal User userDetails) {
-        Long memberId = Long.valueOf(userDetails.getUsername()); // 실제 로그인 유저 ID 사용
+    public ResponseEntity<CommonResponse<List<OwnItemResponse>>> getOwnItems(
+        Authentication authentication) {
+
+        Principal principal = (Principal) authentication.getPrincipal();
+        long memberId = principal.getMemberId(); // 실제 로그인 유저 ID 사용
         List<OwnItemDto> dtos = ownItemService.getOwnItems(memberId);
 
          List<OwnItemResponse> responses = dtos.stream()
@@ -92,7 +92,6 @@ List<RewardItemDto> dtos = rewardItemService.getItemList();
         Map<String, Object> data = Map.of();
 
         ownItemService.changeOwnItems(ownItemId);
-
         return ResponseEntity
             .status(HttpStatus.CREATED)
             .body(CommonResponse.success(data));
@@ -101,9 +100,9 @@ List<RewardItemDto> dtos = rewardItemService.getItemList();
     @GetMapping("/{itemId}/image")
     @ApiResponse(responseCode = "200")
     public ResponseEntity<CommonResponse<ImageResponse>> getItemImages(@PathVariable Long itemId,
-        @AuthenticationPrincipal User userDetails) {
-
-        Long memberId = Long.valueOf(userDetails.getUsername());
+        Authentication authentication) {
+        Principal principal = (Principal) authentication.getPrincipal();
+        long memberId = principal.getMemberId(); // 실제 로그인 유저 ID 사용
 
         ItemSetDto itemSetDto = ownItemService.getUseItemList(memberId);
         Optional<ImageResponse> image = itemSetService.ExistItemSet(itemSetDto);

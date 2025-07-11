@@ -1,4 +1,4 @@
-package com.grepp.spring.app.model.member;
+package com.grepp.spring.app.model.member.repository;
 
 import com.grepp.spring.app.model.member.entity.Member;
 import java.util.Optional;
