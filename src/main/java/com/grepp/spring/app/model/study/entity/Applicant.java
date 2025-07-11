@@ -1,11 +1,13 @@
 package com.grepp.spring.app.model.study.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.grepp.spring.app.model.member.entity.Member;
 import com.grepp.spring.app.model.study.code.ApplicantState;
 import com.grepp.spring.infra.entity.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -35,13 +37,13 @@ public class Applicant extends BaseEntity {
     private Study study;
 
     @Builder
-    public Applicant(Long id, ApplicantState state, String introduction, Study study,
-        Long memberId) {
+    public Applicant(Long id, ApplicantState state, String introduction, Long memberId,
+        Study study) {
         this.id = id;
         this.state = state;
         this.introduction = introduction;
-        this.study = study;
         this.memberId = memberId;
+        this.study = study;
     }
 
     protected void setStudy(Study study) {
