@@ -1,11 +1,11 @@
 package com.grepp.spring.app.controller.api;
 
 import com.grepp.spring.app.controller.api.reward.payload.ImageResponse;
-import com.grepp.spring.app.controller.api.reward.payload.SaveImageRequestDto;
+import com.grepp.spring.app.controller.api.reward.payload.SaveImageRequest;
 import com.grepp.spring.app.model.auth.domain.Principal;
 import com.grepp.spring.app.model.reward.dto.ItemSetDto;
 import com.grepp.spring.app.controller.api.reward.payload.OwnItemResponse;
-import com.grepp.spring.app.controller.api.reward.payload.RewardItemResponseDto;
+import com.grepp.spring.app.controller.api.reward.payload.RewardItemResponse;
 import com.grepp.spring.app.model.reward.dto.OwnItemDto;
 import com.grepp.spring.app.model.reward.dto.RewardItemDto;
 import com.grepp.spring.app.model.reward.service.ItemSetService;
@@ -14,6 +14,7 @@ import com.grepp.spring.app.model.reward.service.RewardItemService;
 import com.grepp.spring.infra.response.CommonResponse;
 import com.grepp.spring.infra.response.SuccessCode;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,8 +24,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -44,9 +43,9 @@ public class RewardController {
 
     // 아이템 상점 목록
     @GetMapping
-    public ResponseEntity<CommonResponse<RewardItemResponseDto>> getRewardItems() {
+    public ResponseEntity<CommonResponse<RewardItemResponse>> getRewardItems() {
 List<RewardItemDto> dtos = rewardItemService.getItemList();
-        RewardItemResponseDto responseDto = new RewardItemResponseDto(dtos);
+        RewardItemResponse responseDto = new RewardItemResponse(dtos);
 
   return ResponseEntity.ok(CommonResponse.success(responseDto));
     }
@@ -54,7 +53,7 @@ List<RewardItemDto> dtos = rewardItemService.getItemList();
     // 아이템 구매
     @PostMapping("/{itemId}/purchase")
     public ResponseEntity<CommonResponse<Map<String, Object>>> purchaseItem(
-        @PathVariable long itemId,
+         @PathVariable long itemId,
         Authentication authentication
     ) {
         Principal principal = (Principal) authentication.getPrincipal();
@@ -117,7 +116,7 @@ List<RewardItemDto> dtos = rewardItemService.getItemList();
     @PostMapping("/saveimage")
     @ApiResponse(responseCode = "200")
     public ResponseEntity<CommonResponse<Map<String, Object>>> PostItemImages(
-        @RequestBody SaveImageRequestDto saveImageRequest) {
+        @Valid @RequestBody SaveImageRequest saveImageRequest) {
         Map<String, Object> data = Map.of();
 
         itemSetService.saveImage(saveImageRequest);
