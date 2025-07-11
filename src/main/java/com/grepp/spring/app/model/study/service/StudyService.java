@@ -1,4 +1,4 @@
-package com.grepp.spring.app.model.study;
+package com.grepp.spring.app.model.study.service;
 
 import com.grepp.spring.app.model.member.dto.response.ApplicantsResponse;
 import com.grepp.spring.app.model.study.repository.StudyRepository;
