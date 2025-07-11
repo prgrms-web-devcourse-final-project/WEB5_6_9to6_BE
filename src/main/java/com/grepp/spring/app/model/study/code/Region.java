@@ -1,6 +1,7 @@
 package com.grepp.spring.app.model.study.code;
 
 public enum Region {
+    ONLINE("온라인"),
     SEOUL("서울"),
     INCHEON("인천"),
     GYEONGGI("경기"),

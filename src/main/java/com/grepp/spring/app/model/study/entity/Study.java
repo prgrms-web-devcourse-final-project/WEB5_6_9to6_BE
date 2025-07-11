@@ -25,7 +25,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name="study")
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "study_goal")
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

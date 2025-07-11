@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "study_schedule")
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
