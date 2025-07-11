@@ -8,7 +8,9 @@ import com.grepp.spring.app.model.auth.token.entity.RefreshToken;
 import com.grepp.spring.app.model.member.MemberRepository;
 import com.grepp.spring.infra.auth.jwt.JwtTokenProvider;
 import com.grepp.spring.infra.auth.jwt.dto.AccessTokenDto;
+import com.grepp.spring.infra.error.exceptions.AlreadyExistException;
 import com.grepp.spring.infra.mail.MailService;
+import com.grepp.spring.infra.response.ResponseCode;
 import java.time.Duration;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -71,6 +73,9 @@ public class AuthService {
     }
 
     public void sendVerifyCode(String email) {
+        if(isPresentEmail(email)) {
+            throw new AlreadyExistException(ResponseCode.ALREADY_EXIST);
+        }
         String title = "이메일 인증 요청";
         String verifyCode = RandomStringUtils.randomNumeric(6);
         redisTemplate.opsForValue().set("verifyCode:" + email, verifyCode, Duration.ofMinutes(5));
@@ -80,4 +85,10 @@ public class AuthService {
     public boolean checkVerifyCode(String email, String code) {
         return redisTemplate.opsForValue().get("verifyCode:" + email).equals(code);
     }
+
+    @Transactional(readOnly = true)
+    protected boolean isPresentEmail(String email) {
+       return memberRepository.findByEmail(email).isPresent();
+    }
+
 }
