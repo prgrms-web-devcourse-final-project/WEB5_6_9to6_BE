@@ -15,7 +15,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class QuizService {
+public class QuizGetService {
 
     private final QuizSetRepository quizSetRepository;
 
