@@ -58,7 +58,6 @@ public class Study {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @Lob
     private String notice;
 
     private String description;
@@ -76,13 +75,4 @@ public class Study {
 
     @OneToMany(mappedBy = "study", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<StudySchedule> schedules = new ArrayList<>();
-
-    @Builder.Default
-    @OneToMany(mappedBy = "study", cascade = CascadeType.ALL)
-    private List<Applicant> applicants = new ArrayList<>();
-
-    public void addApplicant(Applicant applicant) {
-        this.applicants.add(applicant);
-        applicant.setStudy(this);
-    }
 }
