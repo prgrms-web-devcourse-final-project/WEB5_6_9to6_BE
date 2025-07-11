@@ -1,5 +1,6 @@
 package com.grepp.spring.app.model.member.entity;
 
+import com.grepp.spring.app.model.member.code.StudyRole;
 import com.grepp.spring.app.model.study.entity.Study;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -41,8 +42,4 @@ public class StudyMember {
 
     @Enumerated(EnumType.STRING)
     private StudyRole studyRole;
-
-    public enum StudyRole {
-        member, leader
-    }
 }
