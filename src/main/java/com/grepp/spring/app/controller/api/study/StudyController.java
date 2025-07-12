@@ -3,6 +3,7 @@ package com.grepp.spring.app.controller.api.study;
 import com.grepp.spring.app.controller.api.study.payload.StudySearchRequest;
 import com.grepp.spring.app.controller.api.study.payload.StudyUpdateRequest;
 import com.grepp.spring.app.model.member.dto.response.ApplicantsResponse;
+import com.grepp.spring.app.model.member.dto.response.StudyMemberResponse;
 import com.grepp.spring.app.model.member.service.MemberService;
 import com.grepp.spring.app.model.study.dto.StudyInfoResponse;
 import com.grepp.spring.app.model.study.dto.StudyListResponse;
@@ -92,39 +93,25 @@ public class StudyController {
     // 스터디 신청 api 구현 필요(추후 추가 예정)
 
     // 유저가 스터디 맴버인지 조회
-    // NOTE 이건 진짜 유저 정보가 필요할 것같은데?
     @GetMapping("/{studyId}/members/me/check")
     public ResponseEntity<?> isMember(@PathVariable Long studyId) {
-        String code = "SUCCESS";
-        Map<String, Boolean> matched = Map.of("matched", true);
+        Long memberId = SecurityUtil.getCurrentMemberId();
+
+        boolean isMember = studyService.isUserStudyMember(memberId, studyId);
+
+        Map<String, Boolean> data = Map.of("isMember", isMember);
 
         return ResponseEntity.status(200).body(
-            CommonResponse.success(matched)
+            CommonResponse.success(data)
         );
     }
 
 
-    // 스터디 맴버 조회
+    // 스터디 맴버 리스트 조회
     @GetMapping("/{studyId}/members")
     public ResponseEntity<?> getMembers(@PathVariable Long studyId) {
-        String code = "SUCCESS";
-        long studyMemberId1 = 11;
-        long studyMemberId2 = 22;
-        long memberId1 = 1;
-        long memberId2 = 2;
-        String nickName1 = "김이박";
-        String nickName2 = "박유저";
-        StudyRole role1 = StudyRole.LEADER;
-        StudyRole role2 = StudyRole.MEMBER;
-        String profileImage1 = "https://marketplace.canva.com/O7Muo/MAGaICO7Muo/1/tl/canva-cute-puppy-with-bone-illustration-MAGaICO7Muo.png";
-        String profileImage2 = "https://marketplace.canva.com/MQp8I/MAGdTAMQp8I/1/tl/canva-cute-kawaii-dinosaur-character-illustration-MAGdTAMQp8I.png";
-
-        List<Map<String, Object>> data = List.of(
-            Map.of("studyMemberId", studyMemberId1, "memberId", memberId1,"nickName", nickName1, "profileImage", profileImage1, "role", role1),
-            Map.of("studyMemberId", studyMemberId2, "memberId", memberId2, "nickName", nickName2,"profileImage", profileImage2, "role", role2)
-        );
-
-        return ResponseEntity.status(200).body(CommonResponse.success(data));
+        List<StudyMemberResponse> members = studyService.getStudyMembers(studyId);
+        return ResponseEntity.ok(CommonResponse.success(members));
     }
 
     // 스터디 생성

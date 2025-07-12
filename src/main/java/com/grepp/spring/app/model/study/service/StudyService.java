@@ -3,6 +3,8 @@ package com.grepp.spring.app.model.study.service;
 import com.grepp.spring.app.controller.api.study.payload.StudySearchRequest;
 import com.grepp.spring.app.controller.api.study.payload.StudyUpdateRequest;
 import com.grepp.spring.app.model.member.dto.response.ApplicantsResponse;
+import com.grepp.spring.app.model.member.dto.response.StudyMemberResponse;
+import com.grepp.spring.app.model.member.entity.Member;
 import com.grepp.spring.app.model.member.entity.StudyMember;
 import com.grepp.spring.app.model.member.repository.StudyMemberRepository;
 import com.grepp.spring.app.model.study.code.DayOfWeek;
@@ -129,4 +131,30 @@ public class StudyService {
         }
     }
 
+    public boolean isUserStudyMember(Long memberId, Long studyId) {
+        return studyMemberRepository.existsByMember_IdAndStudy_StudyId(memberId, studyId);
+    }
+
+    // 스터디 멤버 조회
+    public List<StudyMemberResponse> getStudyMembers(Long studyId) {
+        if (!studyRepository.existsById(studyId)) {
+            throw new NotFoundException("스터디가 존재하지 않습니다.");
+        }
+
+        List<StudyMember> studyMembers = studyMemberRepository.findAllByStudyIdWithMember(studyId);
+
+        return studyMembers.stream()
+            .map(studyMember -> {
+                Member member = studyMember.getMember();
+                return StudyMemberResponse.builder()
+                    .studyMemberId(studyMember.getStudyMemberId())
+                    .memberId(member.getId())
+                    .nickName(member.getNickname())
+                    .profileImage(member.getAvatarImage())
+                    .role(studyMember.getStudyRole())
+                    .email(member.getEmail())
+                    .build();
+            })
+            .toList();
+    }
 }
