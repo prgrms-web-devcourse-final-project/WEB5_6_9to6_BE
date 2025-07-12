@@ -6,9 +6,9 @@ import com.grepp.spring.app.model.study.dto.StudyListResponse;
 import com.grepp.spring.app.model.study.entity.Study;
 import com.grepp.spring.app.model.study.service.StudyService;
 import com.grepp.spring.infra.response.CommonResponse;
+import com.grepp.spring.infra.util.SecurityUtil;
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +19,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/v1/studies", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -230,30 +232,16 @@ public class StudyController {
     // 스터디 목표 조회
     @GetMapping("/{studyId}/goals")
     public ResponseEntity<?> getGoals(@PathVariable Long studyId) {
-        String code = "SUCCESS";
-        long goalId1 = 1;
-        long goalId2 = 2;
-        String content1 = "영단어 10000000개 외우기";
-        String content2 = "원어민과 통화 학습 10분";
-        boolean isAccomplished1 = true;
-        boolean isAccomplished2 = false;
-        LocalDateTime achievedTime1 = LocalDateTime.now();
-        LocalDateTime achievedTime2= LocalDateTime.now();
-
-        List<Map<String, Object>> data = List.of(
-            Map.of("goalId", goalId1, "content", content1, "isAccimplied", isAccomplished1, "achievedTime", achievedTime1),
-            Map.of("goalId", goalId2, "content", content2, "isAccimplied", isAccomplished2, "achievedTime", achievedTime2)
-        );
-
-        return ResponseEntity.status(200).body(CommonResponse.success(data));
+        return ResponseEntity.status(200).body(CommonResponse.success(studyService.findGoals(studyId)));
     }
 
     // 스터디 목표 달성
     @PostMapping("/{studyId}/goal/{goalId}")
     public ResponseEntity<?> successGoal(@PathVariable Long studyId, @PathVariable Long goalId) {
-        return ResponseEntity.status(200).body(
-            CommonResponse.noContent()
-        );
+        Long memberId = SecurityUtil.getCurrentMemberId();
+        log.info("memberId: {}", memberId);
+        studyService.registGoal(List.of(studyId, memberId, goalId));
+        return ResponseEntity.status(200).body(CommonResponse.noContent());
     }
 
     @Data
