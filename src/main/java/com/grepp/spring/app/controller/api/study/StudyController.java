@@ -92,14 +92,16 @@ public class StudyController {
     // 스터디 신청 api 구현 필요(추후 추가 예정)
 
     // 유저가 스터디 맴버인지 조회
-    // NOTE 이건 진짜 유저 정보가 필요할 것같은데?
     @GetMapping("/{studyId}/members/me/check")
     public ResponseEntity<?> isMember(@PathVariable Long studyId) {
-        String code = "SUCCESS";
-        Map<String, Boolean> matched = Map.of("matched", true);
+        Long memberId = SecurityUtil.getCurrentMemberId();
+
+        boolean isMember = studyService.isUserStudyMember(memberId, studyId);
+
+        Map<String, Boolean> data = Map.of("isMember", isMember);
 
         return ResponseEntity.status(200).body(
-            CommonResponse.success(matched)
+            CommonResponse.success(data)
         );
     }
 

@@ -129,4 +129,7 @@ public class StudyService {
         }
     }
 
+    public boolean isUserStudyMember(Long memberId, Long studyId) {
+        return studyMemberRepository.existsByMember_IdAndStudy_StudyId(memberId, studyId);
+    }
 }
