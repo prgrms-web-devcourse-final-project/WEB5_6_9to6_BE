@@ -18,12 +18,12 @@ import java.util.List;
 @RequestMapping(value = "/api/v1/quiz", produces = MediaType.APPLICATION_JSON_VALUE)
 public class QuizController {
 
+
     private final QuizGetService quizGetService;
     private final QuizGradingService quizGradingService;
 
     @GetMapping("/{studyId}/problems")
     public ResponseEntity<CommonResponse<List<QuizListResponse>>> getAllQuizProblems(@PathVariable Long studyId) {
-
         List<QuizListResponse> data = quizGetService.getQuizzesByStudyId(studyId);
         return ResponseEntity.ok(CommonResponse.success(data));
     }
