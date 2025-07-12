@@ -14,7 +14,6 @@ public class AttendanceResponse {
     private LocalDate attendanceDate;
     private String dayOfWeek;
     private boolean isAttend;
-    private Long studyMemberId;
 
     // 엔티티 → DTO 변환용 생성자
     public AttendanceResponse(Attendance attendance) {
@@ -22,7 +21,6 @@ public class AttendanceResponse {
         this.attendanceDate = attendance.getAttendanceDate();
         this.dayOfWeek = attendance.getAttendanceDate().getDayOfWeek().name(); // 요일 추출
         this.isAttend = attendance.isAttended();
-        this.studyMemberId = attendance.getStudyMember().getStudyMemberId();
     }
 
     @Builder
@@ -31,6 +29,5 @@ public class AttendanceResponse {
         this.attendanceDate = attendanceDate;
         this.dayOfWeek = dayOfWeek;
         this.isAttend = isAttend;
-        this.studyMemberId = studyMemberId;
     }
 }
