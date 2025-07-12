@@ -1,7 +1,9 @@
 package com.grepp.spring.app.model.timer.service;
 
+import com.grepp.spring.app.controller.api.timer.payload.StudyTimeRecordRequest;
 import com.grepp.spring.app.model.member.repository.StudyMemberRepository;
 import com.grepp.spring.app.model.timer.dto.DailyStudyLogResponse;
+import com.grepp.spring.app.model.timer.entity.Timer;
 import com.grepp.spring.app.model.timer.repository.TimerQueryRepository;
 import com.grepp.spring.app.model.timer.repository.TimerRepository;
 import com.grepp.spring.infra.error.exceptions.NotFoundException;
@@ -51,7 +53,12 @@ public class TimerService {
             .toList();
     }
 
-    public void recordStudyTime(Long studyId, Long studyMemberId) {
-
+    public void recordStudyTime(Long studyId, Long studyMemberId, StudyTimeRecordRequest req) {
+        Timer timer = Timer.builder()
+            .studyId(studyId)
+            .studyMemberId(studyMemberId)
+            .dailyStudyTime(req.getStudyTime())
+            .build();
+        timerRepository.save(timer);
     }
 }

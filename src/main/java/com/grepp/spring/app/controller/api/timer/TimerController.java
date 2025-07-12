@@ -1,5 +1,6 @@
 package com.grepp.spring.app.controller.api.timer;
 
+import com.grepp.spring.app.controller.api.timer.payload.StudyTimeRecordRequest;
 import com.grepp.spring.app.model.timer.dto.DailyStudyLogResponse;
 import com.grepp.spring.app.model.timer.service.TimerService;
 import com.grepp.spring.infra.response.CommonResponse;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,9 +28,10 @@ public class TimerController {
     // 스터디별 공부시간 등록
     @PostMapping("/{studyId}/{studyMemberId}")
     public ResponseEntity<CommonResponse<SuccessCode>> recordStudyTime(
-        @PathVariable Long studyId, @PathVariable Long studyMemberId
+        @PathVariable Long studyId, @PathVariable Long studyMemberId,
+        @RequestBody StudyTimeRecordRequest req
     ) {
-       timerService.recordStudyTime(studyId, studyMemberId);
+       timerService.recordStudyTime(studyId, studyMemberId, req);
        return ResponseEntity.ok(CommonResponse.success(SuccessCode.SUCCESS));
     }
 

@@ -22,8 +22,10 @@ public class Timer extends BaseEntity {
     Integer dailyStudyTime;
 
     @Builder
-    public Timer(Long id, Integer dailyStudyTime) {
+    public Timer(Long id, Long studyId, Long studyMemberId, Integer dailyStudyTime) {
         this.id = id;
+        this.studyId = studyId;
+        this.studyMemberId = studyMemberId;
         this.dailyStudyTime = dailyStudyTime;
     }
 
