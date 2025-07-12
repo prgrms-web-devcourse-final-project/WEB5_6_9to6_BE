@@ -14,10 +14,10 @@ public enum ResponseCode {
     NOT_FOUND("4040", HttpStatus.NOT_FOUND, "NOT FOUND"),
     ALREADY_EXIST("4090", HttpStatus.CONFLICT, "해당 데이터는 이미 존재합니다."),
     POINT_NOT_ENOUGH("4091",HttpStatus.CONFLICT,"포인트가 부족합니다."),
+    ALREADY_ATTENDED("4092",  HttpStatus.CONFLICT, "이미 출석했습니다."),
     INTERNAL_SERVER_ERROR("5000", HttpStatus.INTERNAL_SERVER_ERROR, "서버에러 입니다."),
     MAIL_SEND_FAIL("5001", HttpStatus.INTERNAL_SERVER_ERROR, "메일 전송에 실패하였습니다."),
     SECURITY_INCIDENT("6000", HttpStatus.OK, "비정상적인 로그인 시도가 감지되었습니다.");
-
 
     private final String code;
     private final HttpStatus status;

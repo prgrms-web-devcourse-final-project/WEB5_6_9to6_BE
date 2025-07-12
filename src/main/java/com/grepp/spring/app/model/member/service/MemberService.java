@@ -6,12 +6,18 @@ import com.grepp.spring.app.model.auth.dto.SocialMemberInfoRegistRequest;
 import com.grepp.spring.app.model.member.code.SocialType;
 import com.grepp.spring.app.controller.api.member.payload.request.MemberUpdateRequest;
 import com.grepp.spring.app.model.member.dto.response.MemberInfoResponse;
+import com.grepp.spring.app.model.member.entity.Attendance;
 import com.grepp.spring.app.model.member.entity.Member;
+import com.grepp.spring.app.model.member.entity.StudyMember;
 import com.grepp.spring.app.model.member.repository.MemberRepository;
+import com.grepp.spring.app.model.member.repository.StudyAttendanceRepository;
+import com.grepp.spring.app.model.member.repository.StudyMemberRepository;
+import com.grepp.spring.infra.error.exceptions.AlreadyCheckedAttendanceException;
 import com.grepp.spring.infra.error.exceptions.AlreadyExistException;
 import com.grepp.spring.infra.error.exceptions.NotFoundException;
 import com.grepp.spring.infra.response.ResponseCode;
 import jakarta.persistence.EntityNotFoundException;
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -23,6 +29,8 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+    private final StudyMemberRepository studyMemberRepository;
+    private final StudyAttendanceRepository studyAttendanceRepository;
 
     @Transactional
     public Member join(SignupRequest req) {
@@ -111,5 +119,43 @@ public class MemberService {
             .orElseThrow(() -> new EntityNotFoundException("해당 ID의 회원을 찾을 수 없습니다"));
 
         return passwordEncoder.matches(inputPassword, member.getPassword());
+    }
+
+    public Long findStudyMemberId(String email, Long studyId) {
+        // email → member
+        Member member = memberRepository.findByEmail(email)
+            .orElseThrow(() -> new RuntimeException("해당 이메일의 회원이 존재하지 않습니다: " + email));
+
+        // memberId → studyMember
+        StudyMember studyMember = studyMemberRepository.findByMember_IdAndStudy_StudyId(member.getId(), studyId)
+            .orElseThrow(() -> new RuntimeException("스터디 멤버를 찾을 수 없습니다."));
+
+        return studyMember.getStudyMemberId();
+    }
+
+    public void markAttendance(Long studyMemberId) {
+        StudyMember studyMember = studyMemberRepository.findById(studyMemberId)
+            .orElseThrow(() -> new RuntimeException("스터디 멤버를 찾을 수 없습니다."));
+
+        LocalDate today = LocalDate.now();
+
+        // 이미 오늘 출석했는지 확인
+        boolean alreadyAttended = studyAttendanceRepository
+            .findByStudyMemberAndAttendanceDate(studyMember, today)
+            .isPresent();
+
+        if (alreadyAttended) {
+            throw new AlreadyCheckedAttendanceException("이미 오늘 출석했습니다.");
+        }
+
+        // 출석 등록
+        Attendance attendance = Attendance.builder()
+            .studyMember(studyMember)
+            .attendanceDate(today)
+            .activated(true)
+            .isAttended(true)
+            .build();
+
+        studyAttendanceRepository.save(attendance);
     }
 }
