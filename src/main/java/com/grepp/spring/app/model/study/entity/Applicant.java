@@ -29,7 +29,9 @@ public class Applicant extends BaseEntity {
     private ApplicantState state;
 
     private String introduction;
-    private Long memberId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", insertable = false, updatable = false)
+    private Member member;
 
     @ManyToOne @JsonIgnore
     @JoinColumn(name = "study_id")
@@ -41,7 +43,6 @@ public class Applicant extends BaseEntity {
         this.id = id;
         this.state = state;
         this.introduction = introduction;
-        this.memberId = memberId;
         this.study = study;
     }
 }

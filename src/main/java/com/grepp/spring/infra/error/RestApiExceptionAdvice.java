@@ -142,6 +142,4 @@ public class RestApiExceptionAdvice {
             .body(CommonResponse.error(ResponseCode.ALREADY_EXIST.code(), ex.getMessage()));
     }
 
-
-
 }
