@@ -3,6 +3,7 @@ package com.grepp.spring.app.model.timer.service;
 import com.grepp.spring.app.controller.api.timer.payload.StudyTimeRecordRequest;
 import com.grepp.spring.app.model.member.repository.StudyMemberRepository;
 import com.grepp.spring.app.model.timer.dto.DailyStudyLogResponse;
+import com.grepp.spring.app.model.timer.dto.TotalStudyTimeResponse;
 import com.grepp.spring.app.model.timer.entity.Timer;
 import com.grepp.spring.app.model.timer.repository.TimerQueryRepository;
 import com.grepp.spring.app.model.timer.repository.TimerRepository;
@@ -24,17 +25,21 @@ public class TimerService {
     private final TimerQueryRepository timerQueryRepository;
     private final StudyMemberRepository studyMemberRepository;
 
-    public Long getAllStudyTime(Long memberId) {
+    public TotalStudyTimeResponse getAllStudyTime(Long memberId) {
         List<Long> studyMemberIds = studyMemberRepository.findAllStudies(memberId);
-
         if (studyMemberIds == null || studyMemberIds.isEmpty()) {
-            log.info("studyMemberIds is null or empty");
-            return 0L;
+            log.info("참여 중인 스터디가 없습니다. memberId: {}", memberId);
+            return TotalStudyTimeResponse.builder()
+                .totalStudyTime(0L)
+                .build();
         }
-        log.info("studyMemberIds: {}", studyMemberIds);
+
+        log.info("조회된 studyMemberIds: {}", studyMemberIds);
         Long totalStudyTime = timerRepository.findTotalStudyTimeByStudyMemberIds(studyMemberIds);
 
-        return totalStudyTime != null ? totalStudyTime : 0L;
+        return TotalStudyTimeResponse.builder()
+            .totalStudyTime(totalStudyTime != null ? totalStudyTime : 0L)
+            .build();
     }
 
     public List<DailyStudyLogResponse> findDailyStudyLogsByStudyMemberId(Long studyId, Long memberId) {
