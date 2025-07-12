@@ -5,6 +5,7 @@ import com.grepp.spring.app.model.member.code.Gender;
 import com.grepp.spring.app.model.member.code.SocialType;
 import com.grepp.spring.infra.entity.BaseEntity;
 import jakarta.persistence.CascadeType;
+import com.grepp.spring.infra.error.exceptions.InsufficientRewardPointsException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -100,7 +101,7 @@ public class Member extends BaseEntity{
 
     public void deductRewardPoints(int amount) {
         if (rewardPoints < amount) {
-            throw new IllegalArgumentException("포인트가 부족합니다.");
+            throw new InsufficientRewardPointsException();
         }
         rewardPoints -= amount;
     }

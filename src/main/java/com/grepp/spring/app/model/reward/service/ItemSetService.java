@@ -1,12 +1,13 @@
 package com.grepp.spring.app.model.reward.service;
 
 import com.grepp.spring.app.controller.api.reward.payload.ImageResponse;
-import com.grepp.spring.app.controller.api.reward.payload.SaveImageRequestDto;
+import com.grepp.spring.app.controller.api.reward.payload.SaveImageRequest;
 import com.grepp.spring.app.model.reward.dto.ItemSetDto;
 import com.grepp.spring.app.model.reward.entity.ItemSet;
 import com.grepp.spring.app.model.reward.entity.RewardItem;
 import com.grepp.spring.app.model.reward.repository.ItemSetRepository;
 import com.grepp.spring.app.model.reward.repository.RewardItemRepository;
+import com.grepp.spring.infra.util.NotFoundException;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,17 +32,13 @@ public class ItemSetService {
     }
 
     @Transactional
-    public void saveImage(SaveImageRequestDto dto) {
-
-        if (dto.getWholeImageUrl() == null) {
-            throw new IllegalArgumentException("이미지가 없습니다.");
-        }
+    public void saveImage(SaveImageRequest dto) {
 
         // 1. category별 itemId 추출
         Map<String, Long> categoryToItemId = dto.getClothes().stream()
             .filter(clothesDto -> clothesDto.getItemIds() != null && !clothesDto.getItemIds().isEmpty())
             .collect(Collectors.toMap(
-                SaveImageRequestDto.ClothesDto::getCategory,
+                SaveImageRequest.ClothesDto::getCategory,
                 clothesDto -> clothesDto.getItemIds().get(0)
             ));
 
@@ -58,7 +55,7 @@ public class ItemSetService {
             .toList();
 
         if (!notFoundIds.isEmpty()) {
-            throw new IllegalArgumentException("존재하지 않는 아이템 ID: " + notFoundIds);
+            throw new NotFoundException("존재하지 않는 아이템 ID: " + notFoundIds);
         }
         // 3. ItemSet 저장
         ItemSet itemSet = ItemSet.builder()
