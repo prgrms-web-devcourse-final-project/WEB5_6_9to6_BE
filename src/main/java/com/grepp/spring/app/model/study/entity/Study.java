@@ -1,5 +1,6 @@
 package com.grepp.spring.app.model.study.entity;
 
+import com.grepp.spring.app.model.member.entity.StudyMember;
 import com.grepp.spring.app.model.study.code.Category;
 import com.grepp.spring.app.model.study.code.Region;
 import com.grepp.spring.app.model.study.code.Status;
@@ -11,25 +12,19 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name="study")
 @Getter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class Study {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -58,7 +53,6 @@ public class Study {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @Lob
     private String notice;
 
     private String description;
@@ -70,10 +64,34 @@ public class Study {
 
     private boolean activated;
 
-
     @OneToMany(mappedBy = "study", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<StudyGoal> goals = new ArrayList<>();
 
     @OneToMany(mappedBy = "study", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<StudySchedule> schedules = new ArrayList<>();
+
+    @OneToMany(mappedBy = "study", cascade = CascadeType.ALL)
+    private List<StudyMember> studyMembers = new ArrayList<>();
+
+    @Builder
+    public Study(String name, Category category, int maxMembers, Region region,
+        String place, boolean isOnline, LocalDate startDate, LocalDate endDate,
+        LocalDateTime createdAt, Status status, String notice, String description,
+        String externalLink, StudyType studyType, boolean activated) {
+        this.name = name;
+        this.category = category;
+        this.maxMembers = maxMembers;
+        this.region = region;
+        this.place = place;
+        this.isOnline = isOnline;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.createdAt = createdAt;
+        this.status = status;
+        this.notice = notice;
+        this.description = description;
+        this.externalLink = externalLink;
+        this.studyType = studyType;
+        this.activated = activated;
+    }
 }

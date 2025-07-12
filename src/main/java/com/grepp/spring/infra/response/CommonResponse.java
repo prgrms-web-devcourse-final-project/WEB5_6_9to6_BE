@@ -30,4 +30,8 @@ public record CommonResponse<T>(
     public static <T> CommonResponse<T> error(ResponseCode code, T data) {
         return new CommonResponse<>(code.code(), code.message(), data);
     }
+
+    public static <T> CommonResponse<T> error(String code, String message) {
+        return new CommonResponse<>(code, message, null);
+    }
 }

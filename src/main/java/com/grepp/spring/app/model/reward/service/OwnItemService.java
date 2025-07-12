@@ -11,6 +11,10 @@ import com.grepp.spring.app.model.reward.entity.RewardItem;
 import com.grepp.spring.app.model.reward.repository.OwnItemRepository;
 import com.grepp.spring.app.model.reward.repository.OwnItemRepositoryImpl;
 import com.grepp.spring.app.model.reward.repository.RewardItemRepository;
+import com.grepp.spring.infra.error.exceptions.AlreadyExistException;
+import com.grepp.spring.infra.error.exceptions.InsufficientRewardPointsException;
+import com.grepp.spring.infra.response.ResponseCode;
+import com.grepp.spring.infra.util.NotFoundException;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -45,11 +49,11 @@ public class OwnItemService {
             Long rewardItemId = rewardItem.getItemId();
 
             switch (rewardItem.getItemType()) {
-                case hat -> hat = rewardItemId;
-                case hair -> hair = rewardItemId;
-                case face -> face = rewardItemId;
-                case top -> top = rewardItemId;
-                case bottom -> bottom = rewardItemId;
+                case HAT -> hat = rewardItemId;
+                case HAIR -> hair = rewardItemId;
+                case FACE -> face = rewardItemId;
+                case TOP -> top = rewardItemId;
+                case BOTTOM -> bottom = rewardItemId;
             }
         }
 
@@ -71,17 +75,17 @@ public class OwnItemService {
 
         // 1. 아이템 조회
         RewardItem rewardItem = rewardItemRepository.findById(itemId)
-            .orElseThrow(() -> new RuntimeException("RewardItem not found"));
+            .orElseThrow(() -> new NotFoundException("RewardItem not found"));
 
 
         // 2. 회원 조회
         Member member = memberRepository.findById(memberId)
-            .orElseThrow(() -> new RuntimeException("Member not found"));
+            .orElseThrow(() -> new NotFoundException("Member not found"));
 
         // 3. 아이템 소유 여부 확인
         if( ownItemRepository.existsByRewardItem_ItemId(itemId))
         {
-            throw new IllegalArgumentException("아이템 중복 구매 불가능합니다.");
+            throw new AlreadyExistException(ResponseCode.ALREADY_EXIST);
         }
 
 
@@ -91,7 +95,7 @@ public class OwnItemService {
         int memberPoint = member.getRewardPoints();
 
         if (memberPoint < itemPrice) {
-            throw new IllegalArgumentException("포인트가 부족합니다.");
+            throw new InsufficientRewardPointsException();
         }
 
         // 5. 포인트 차감
@@ -109,7 +113,7 @@ public class OwnItemService {
     public List<OwnItemDto> getOwnItems(Long memberId) {
         // 회원 조회
         Member member = memberRepository.findById(memberId)
-            .orElseThrow(() -> new RuntimeException("Member not found"));
+            .orElseThrow(() -> new NotFoundException("Member not found"));
 
         return ownItemRepository.findOwnItemsByMemberId(memberId);
 
@@ -119,7 +123,7 @@ public class OwnItemService {
     @Transactional
     public void changeOwnItems(long ownItemId) {
         OwnItem currentItem = ownItemRepository.findById(ownItemId)
-            .orElseThrow(()-> new RuntimeException("OwnItem not found"));
+            .orElseThrow(()-> new NotFoundException("OwnItem not found"));
 
 
         // 현재 아이템의 타입 판별
@@ -130,11 +134,8 @@ public class OwnItemService {
 
 
         if (beforeItem!= null){
-
             beforeItem.use(false);
 
-
-        }else { // 이전 아이템이 없을 경우
         }
 
         currentItem.use(true);

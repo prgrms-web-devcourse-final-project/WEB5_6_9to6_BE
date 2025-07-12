@@ -4,6 +4,8 @@ import com.grepp.spring.app.model.auth.code.Role;
 import com.grepp.spring.app.model.member.code.Gender;
 import com.grepp.spring.app.model.member.code.SocialType;
 import com.grepp.spring.infra.entity.BaseEntity;
+import com.grepp.spring.infra.error.exceptions.InsufficientRewardPointsException;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -11,7 +13,10 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -34,10 +39,10 @@ public class Member extends BaseEntity{
     @Column
     private String password;
 
-    @Column(nullable = false)
+    @Column
     private String nickname;
 
-    @Column(nullable = false)
+    @Column
     private LocalDate birthday;
 
     @Enumerated(EnumType.STRING)
@@ -59,6 +64,9 @@ public class Member extends BaseEntity{
 
     @Column
     private String avatarImage;
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<StudyMember> studyMembers = new ArrayList<>();
 
     @Builder
     public Member(Long id, String email, String password, String nickname, LocalDate birthday,
@@ -93,7 +101,7 @@ public class Member extends BaseEntity{
 
     public void deductRewardPoints(int amount) {
         if (rewardPoints < amount) {
-            throw new IllegalArgumentException("포인트가 부족합니다.");
+            throw new InsufficientRewardPointsException();
         }
         rewardPoints -= amount;
     }
