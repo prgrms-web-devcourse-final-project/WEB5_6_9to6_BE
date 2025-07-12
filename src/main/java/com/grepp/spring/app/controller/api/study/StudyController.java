@@ -51,6 +51,9 @@ public class StudyController {
 
         return ResponseEntity.ok(CommonResponse.success("출석 체크 완료."));
     }
+    
+    // 출석체크 조회 api 필요
+    
     // 스터디 목록(검색)
     @PostMapping("/search")
     public ResponseEntity<CommonResponse<List<StudyListResponse>>> searchStudies(
