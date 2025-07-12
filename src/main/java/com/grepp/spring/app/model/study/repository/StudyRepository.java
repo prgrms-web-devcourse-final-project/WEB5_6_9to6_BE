@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface StudyRepository extends JpaRepository<Study, Long> {
+public interface StudyRepository extends JpaRepository<Study, Long>, StudyRepositoryCustom {
 
     @Query("SELECT new com.grepp.spring.app.model.member.dto.response."
         + "ApplicantsResponse(a.id, a.member.id, a.member.nickname,"

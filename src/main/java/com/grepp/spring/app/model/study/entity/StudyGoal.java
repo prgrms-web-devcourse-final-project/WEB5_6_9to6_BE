@@ -8,11 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "study_goal")
 @Getter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class StudyGoal {
 
     @Id
@@ -32,4 +29,12 @@ public class StudyGoal {
 
     @OneToMany(mappedBy = "studyGoal", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<GoalAchievement> achievements = new ArrayList<>();
+
+    @Builder
+    public StudyGoal(String content, GoalType goalType, boolean activated, Study study) {
+        this.content = content;
+        this.goalType = goalType;
+        this.activated = activated;
+        this.study = study;
+    }
 }
