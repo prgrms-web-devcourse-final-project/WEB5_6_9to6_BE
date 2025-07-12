@@ -1,10 +1,10 @@
 package com.grepp.spring.app.controller.api.study;
 
 import com.grepp.spring.app.controller.api.study.payload.StudySearchRequest;
+import com.grepp.spring.app.controller.api.study.payload.StudyUpdateRequest;
 import com.grepp.spring.app.model.member.service.MemberService;
 import com.grepp.spring.app.model.study.dto.StudyInfoResponse;
 import com.grepp.spring.app.model.study.dto.StudyListResponse;
-import com.grepp.spring.app.model.study.entity.Study;
 import com.grepp.spring.app.model.study.service.StudyService;
 import com.grepp.spring.infra.response.CommonResponse;
 import java.io.Serializable;
@@ -13,13 +13,10 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -72,15 +69,13 @@ public class StudyController {
     }
 
     // 스터디 정보 수정
-    // TODO 목데이터 추가
     @PutMapping("/{studyId}")
     public ResponseEntity<?> updateStudyInfo(
         @PathVariable Long studyId,
-        @RequestBody Map<String, Object> data
+        @RequestBody StudyUpdateRequest data
     ) {
-        return ResponseEntity.status(200).body(
-            CommonResponse.noContent()
-        );
+        studyService.updateStudy(studyId, data);
+        return ResponseEntity.ok(CommonResponse.noContent());
     }
 
     // 스터디 신청 목록 조회

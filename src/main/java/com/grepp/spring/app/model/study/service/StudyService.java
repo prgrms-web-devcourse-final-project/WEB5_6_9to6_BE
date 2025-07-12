@@ -1,11 +1,14 @@
 package com.grepp.spring.app.model.study.service;
 
 import com.grepp.spring.app.controller.api.study.payload.StudySearchRequest;
+import com.grepp.spring.app.controller.api.study.payload.StudyUpdateRequest;
 import com.grepp.spring.app.model.member.dto.response.ApplicantsResponse;
 import com.grepp.spring.app.model.member.repository.StudyMemberRepository;
+import com.grepp.spring.app.model.study.code.DayOfWeek;
 import com.grepp.spring.app.model.study.dto.StudyInfoResponse;
 import com.grepp.spring.app.model.study.dto.StudyListResponse;
 import com.grepp.spring.app.model.study.entity.Study;
+import com.grepp.spring.app.model.study.entity.StudyGoal;
 import com.grepp.spring.app.model.study.repository.StudyRepository;
 import com.grepp.spring.infra.error.exceptions.NotFoundException;
 import java.util.List;
@@ -20,9 +23,6 @@ public class StudyService {
 
     private final StudyRepository studyRepository;
     private final StudyMemberRepository studyMemberRepository;
-
-    //필터 조건에 따라 스터디 목록 + 현재 인원 수 조회
-
 
     // 필터 조건에 따라 스터디 목록 + 현재 인원 수 조회
     public List<StudyListResponse> searchStudiesWithMemberCount(StudySearchRequest req) {
@@ -54,6 +54,42 @@ public class StudyService {
         studyWithGoals.getSchedules().addAll(studyWithSchedules.getSchedules());
 
         return StudyInfoResponse.fromEntity(studyWithGoals);
+    }
+
+    @Transactional
+    public void updateStudy(Long studyId, StudyUpdateRequest req) {
+        Study study = studyRepository.findById(studyId)
+            .orElseThrow(() -> new IllegalArgumentException("스터디가 존재하지 않습니다."));
+
+        // 기본 정보 업데이트
+        study.updateBaseInfo(
+            req.getName(),
+            req.getCategory(),
+            req.getMaxMembers(),
+            req.getRegion(),
+            req.getPlace(),
+            req.isOnline(),
+            req.getDescription(),
+            req.getExternalLink(),
+            req.getStatus()
+        );
+        study.setEndDate(req.getEndDate());
+
+        // 기존 일정 제거 후 다시 생성
+        study.getSchedules().clear();
+        for (DayOfWeek day : req.getSchedules()) {
+            study.addSchedule(day, req.getStartTime(), req.getEndTime());
+        }
+
+        // 목표 업데이트 (목표 ID 기준으로 수정)
+        for (StudyUpdateRequest.GoalUpdateDTO g : req.getGoals()) {
+            StudyGoal goal = study.getGoals().stream()
+                .filter(existing -> existing.getGoalId().equals(g.getGoalId()))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 목표입니다."));
+
+            goal.update(g.getContent(), g.getType());
+        }
     }
 
 }
