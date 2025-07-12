@@ -8,8 +8,6 @@ import java.time.LocalDate;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
 public class Attendance {
 
     @Id
@@ -29,6 +27,15 @@ public class Attendance {
 
     @Column(nullable = false)
     private boolean activated;
+
+
+    @Builder
+    public Attendance(LocalDate attendanceDate, boolean isAttended, StudyMember studyMember, boolean activated) {
+        this.attendanceDate = attendanceDate;
+        this.isAttended = isAttended;
+        this.studyMember = studyMember;
+        this.activated = activated;
+    }
 
     // 출석 체크
     public void markAsAttended() {

@@ -6,9 +6,7 @@ import lombok.*;
 
 @Entity
 @Getter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class StudySchedule {
 
     @Id
@@ -25,4 +23,12 @@ public class StudySchedule {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "study_id", nullable = false)
     private Study study;
+
+    @Builder
+    public StudySchedule(DayOfWeek dayOfWeek, String startTime, String endTime, Study study) {
+        this.dayOfWeek = dayOfWeek;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.study = study;
+    }
 }

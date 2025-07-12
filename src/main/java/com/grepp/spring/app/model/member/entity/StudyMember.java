@@ -19,9 +19,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class StudyMember {
 
     @Id
@@ -40,6 +38,14 @@ public class StudyMember {
 
     @Enumerated(EnumType.STRING)
     private StudyRole studyRole;
+
+    @Builder
+    public StudyMember(Member member, Study study, boolean activated, StudyRole studyRole) {
+        this.member = member;
+        this.study = study;
+        this.activated = activated;
+        this.studyRole = studyRole;
+    }
 
     public enum StudyRole {
         member, leader
