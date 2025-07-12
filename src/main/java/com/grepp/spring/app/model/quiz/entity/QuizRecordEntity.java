@@ -8,7 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "quiz_record")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class QuizRecordEntity {
