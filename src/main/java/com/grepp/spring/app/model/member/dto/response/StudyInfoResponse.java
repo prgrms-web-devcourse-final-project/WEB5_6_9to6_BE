@@ -1,14 +1,13 @@
-package com.grepp.spring.app.model.member.dto;
+package com.grepp.spring.app.model.member.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.grepp.spring.app.model.study.dto.ScheduleDto;
 import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 @Builder
-public class StudySummaryDto {
+public class StudyInfoResponse {
 
     private Long studyId;
     private String title;
@@ -24,8 +23,10 @@ public class StudySummaryDto {
     @JsonProperty("end_date")
     private String endDate;
 
-    private List<ScheduleDto> scheduleList;
+    private List<String> schedules;
+
+    private String startTime;
+    private String endTime;
 
     private String studyType;
-
 }
