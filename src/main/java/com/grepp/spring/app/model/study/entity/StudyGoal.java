@@ -19,7 +19,6 @@ public class StudyGoal {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long goalId;
 
-    @Lob
     private String content;
 
     @Enumerated(EnumType.STRING)
