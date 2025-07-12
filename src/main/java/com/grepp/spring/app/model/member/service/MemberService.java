@@ -12,6 +12,7 @@ import com.grepp.spring.app.model.member.entity.Attendance;
 import com.grepp.spring.app.model.member.entity.Member;
 import com.grepp.spring.app.model.member.entity.StudyMember;
 import com.grepp.spring.app.model.member.repository.MemberRepository;
+import com.grepp.spring.app.model.timer.repository.TimerRepository;
 import com.grepp.spring.app.model.member.repository.StudyAttendanceRepository;
 import com.grepp.spring.app.model.member.repository.StudyMemberRepository;
 import com.grepp.spring.app.model.study.dto.ScheduleDto;
@@ -24,16 +25,19 @@ import jakarta.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MemberService {
 
     private final MemberRepository memberRepository;
     private final StudyMemberRepository studyMemberRepository;
+    private final TimerRepository timerRepository;
     private final PasswordEncoder passwordEncoder;
     private final StudyAttendanceRepository studyAttendanceRepository;
 

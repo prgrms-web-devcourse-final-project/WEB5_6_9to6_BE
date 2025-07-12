@@ -20,3 +20,4 @@ public class SecurityUtil {
         return principal.getMemberId();
     }
 }
+
