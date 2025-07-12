@@ -2,6 +2,7 @@ package com.grepp.spring.app.controller.api.study;
 
 import com.grepp.spring.app.controller.api.study.payload.StudySearchRequest;
 import com.grepp.spring.app.controller.api.study.payload.StudyUpdateRequest;
+import com.grepp.spring.app.model.member.dto.response.ApplicantsResponse;
 import com.grepp.spring.app.model.member.service.MemberService;
 import com.grepp.spring.app.model.study.dto.StudyInfoResponse;
 import com.grepp.spring.app.model.study.dto.StudyListResponse;
@@ -81,27 +82,14 @@ public class StudyController {
         return ResponseEntity.ok(CommonResponse.noContent());
     }
 
-    // 스터디 신청 목록 조회
-    @GetMapping("/{studyId}/appliacnt-list")
-    public ResponseEntity<?> getApplicantList(@PathVariable Long studyId) {
-        String code = "SUCCESS";
-        long userId1 = 1;
-        String userName1 = "김유저1";
-        String introduction1 = "날 뽑아라";
-
-        long userId2 = 2;
-        String userName2 = "김사용자1";
-        String introduction2 = "그래, 잴 뽑아라";
-
-        List<Map<String, ? extends Serializable>> data = List.of(
-            Map.of("userId", userId1, "userName", userName1, "introduction", introduction1),
-            Map.of("userId", userId2, "userName", userName2, "introduction", introduction2)
-        );
-
-        return ResponseEntity.status(200).body(
-            CommonResponse.success(data)
-        );
+    // 스터디 신청자 목록 조회
+    @GetMapping("/{studyId}/applications")
+    public ResponseEntity<?> getApplications(@PathVariable Long studyId) {
+        List<ApplicantsResponse> applicants = studyService.getApplicants(studyId);
+        return ResponseEntity.ok(CommonResponse.success(applicants));
     }
+
+    // 스터디 신청 api 구현 필요(추후 추가 예정)
 
     // 유저가 스터디 맴버인지 조회
     // NOTE 이건 진짜 유저 정보가 필요할 것같은데?
@@ -115,28 +103,6 @@ public class StudyController {
         );
     }
 
-    // 스터디 신청 목록 조회
-    @GetMapping("/{studyId}/applications")
-    public ResponseEntity<?> getApplications(@PathVariable Long studyId) {
-        String code = "SUCCESS";
-        long applicationId1 = 1;
-        long applicationId2 = 2;
-        long memberId1 = 3;
-        long memberId2 = 4;
-        String nickName1 = "김지원자1";
-        String nickName2 = "김지원자2";
-        String introduction1 = "날 뽑아라";
-        String introduction2 = "아니, 날 뽑아라";
-        ApplyState state1 = ApplyState.WAIT;
-        ApplyState state2 = ApplyState.ACCEPT;
-
-        List<Map<String, Object>> data = List.of(
-            Map.of("applicationId1", applicationId1, "memberId", memberId1, "introduction", introduction1, "state", state1),
-            Map.of("applicationId1", applicationId2, "memberId", memberId2, "introduction", introduction2, "state", state2)
-        );
-
-        return ResponseEntity.status(200).body(CommonResponse.success(data));
-    }
 
     // 스터디 맴버 조회
     @GetMapping("/{studyId}/members")
