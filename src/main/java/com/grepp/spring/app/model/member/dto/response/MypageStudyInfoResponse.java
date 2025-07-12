@@ -25,7 +25,7 @@ public class MypageStudyInfoResponse {
 
     @Builder
     public MypageStudyInfoResponse(String title, int currentMemberCount, int maxMemberCount,
-        String category, String region, String place, String startDate, String endDate,
+        String category, String region, String place,
         List<String> schedules, String startTime, String endTime, String studyType,
         List<AchievementRecordResponse> achievementRecords) {
         this.title = title;
