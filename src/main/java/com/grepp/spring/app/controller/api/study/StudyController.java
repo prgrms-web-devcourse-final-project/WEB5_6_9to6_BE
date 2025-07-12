@@ -2,6 +2,7 @@ package com.grepp.spring.app.controller.api.study;
 
 import com.grepp.spring.app.controller.api.study.payload.StudySearchRequest;
 import com.grepp.spring.app.model.member.service.MemberService;
+import com.grepp.spring.app.model.study.dto.StudyInfoResponse;
 import com.grepp.spring.app.model.study.dto.StudyListResponse;
 import com.grepp.spring.app.model.study.entity.Study;
 import com.grepp.spring.app.model.study.service.StudyService;
@@ -52,7 +53,7 @@ public class StudyController {
         return ResponseEntity.ok(CommonResponse.success("출석 체크 완료."));
     }
     
-    // 출석체크 조회 api 필요
+    // 출석체크 조회 api 필요(추후 추가 예정)
     
     // 스터디 목록(검색)
     @PostMapping("/search")
@@ -63,71 +64,11 @@ public class StudyController {
         return ResponseEntity.ok(CommonResponse.success(responseList));
     }
 
-
     // 스터디 정보 조회
     @GetMapping("/{studyId}")
     public ResponseEntity<?> getStudyInfo(@PathVariable Long studyId) {
-        String code = "SUCCESS";
-        StudySchedule schedule1 = StudySchedule.builder()
-            .dayOfWeek(DayOfWeek.MON)
-            .startTime(LocalTime.of(19, 0)) // 오후 7시
-            .endTime(LocalTime.of(21, 0))   // 오후 9시
-            .build();
-
-        StudySchedule schedule2 = StudySchedule.builder()
-            .dayOfWeek(DayOfWeek.TUE)
-            .startTime(LocalTime.of(19, 0)) // 오후 7시
-            .endTime(LocalTime.of(21, 0))   // 오후 9시
-            .build();
-
-        String studyName = "스터디 1"; // 스터디 이름
-        StudyCategory category = StudyCategory.LANGUAGE; // 스터디 카테고리
-        StudyType type = StudyType.DEFAULT; // 스터디 타입
-        int currentMember = 5; // 현재 인원
-        int maxMember = 10; // 최대인원
-        Region region = Region.ONLINE; // 지역
-        String location = null; // 장소
-        StudyStatus studyStatus = StudyStatus.ACTIVATE; // 스터디 활동 상태
-        List<StudySchedule> schedules = List.of(schedule1, schedule2); // 스터디 일정
-        LocalDate startDate = LocalDate.now(); // 시작날짜
-        LocalDate endDate = LocalDate.now().plusMonths(2); // 종료날짜
-        String introduction = "안녕하세요. 토스 스터디입니다. 잠은 토스 점수에 해롭습니다."; // 스터디 소개글
-        String notify = "휴식은 죽어서 하자"; // 스터디 공지
-        String externalLink = "https://www.google.com/"; // 외부 강의 링크
-        List<Goal> goals = List.of(
-            Goal.builder()
-                .goalId(1)
-                .content("아무나 붙잡고 영어로 대화 2분하기")
-                .checkDay(DayOfWeek.SAT)
-                .build(),
-            Goal.builder()
-                .goalId(2)
-                .content("미국대사관 가서 영어로 민원넣기")
-                .checkDay(DayOfWeek.SAT)
-                .build()
-        );
-
-        StudyInfoResponse data = StudyInfoResponse.builder()
-            .studyName(studyName)
-            .category(category)
-            .type(type)
-            .currentMember(currentMember)
-            .maxMember(maxMember)
-            .region(region)
-            .location(location)
-            .studyStatus(studyStatus)
-            .schedules(schedules)
-            .startDate(startDate)
-            .endDate(endDate)
-            .introduction(introduction)
-            .notify(notify)
-            .externalLink(externalLink)
-            .goals(goals)
-            .build();
-
-        return ResponseEntity.status(200).body(
-            CommonResponse.success(data)
-        );
+        StudyInfoResponse data = studyService.getStudyInfo(studyId);
+        return ResponseEntity.ok(CommonResponse.success(data));
     }
 
     // 스터디 정보 수정
@@ -326,49 +267,6 @@ public class StudyController {
             this.goalId = goalId;
             this.content = content;
             this.checkDay = checkDay;
-        }
-    }
-
-    @Getter
-    public static class StudyInfoResponse {
-        private String studyName;
-        private StudyCategory category;
-        private StudyType type;
-        private int currentMember;
-        private int maxMember;
-        private Region region;
-        private String location;
-        private StudyStatus studyStatus;
-        private List<StudySchedule> schedules;
-        private LocalDate startDate;
-        private LocalDate endDate;
-        private String introduction;
-        private String notify;
-        private String externalLink;
-        private List<Goal> goals;
-
-        @Builder
-        public StudyInfoResponse(String studyName, StudyCategory category, StudyType type,
-            int currentMember, int maxMember, Region region, String location,
-            StudyStatus studyStatus,
-            List<StudySchedule> schedules, LocalDate startDate, LocalDate endDate,
-            String introduction,
-            String notify, String externalLink, List<Goal> goals) {
-            this.studyName = studyName;
-            this.category = category;
-            this.type = type;
-            this.currentMember = currentMember;
-            this.maxMember = maxMember;
-            this.region = region;
-            this.location = location;
-            this.studyStatus = studyStatus;
-            this.schedules = schedules;
-            this.startDate = startDate;
-            this.endDate = endDate;
-            this.introduction = introduction;
-            this.notify = notify;
-            this.externalLink = externalLink;
-            this.goals = goals;
         }
     }
 
