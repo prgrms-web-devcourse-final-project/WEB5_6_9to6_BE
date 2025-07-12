@@ -45,10 +45,20 @@ public class TimerController {
     }
 
     // 스터디별 7일간의 스터디별 공부시간 확인
-    @GetMapping("/{studyId}/study-time")
-    public ResponseEntity<CommonResponse<List<DailyStudyLogResponse>>> getTimerAtStudy(@PathVariable Long studyId) {
+    @GetMapping("/{studyId}/study-daily-time")
+    public ResponseEntity<CommonResponse<List<DailyStudyLogResponse>>> getDailyTimeAtStudy(@PathVariable Long studyId) {
         Long memberId = SecurityUtil.getCurrentMemberId();
         List<DailyStudyLogResponse> response = timerService.findDailyStudyLogsByStudyMemberId(studyId, memberId);
+        return ResponseEntity.ok(CommonResponse.success(response));
+    }
+
+    // 스터디별 7일간의 누적 공부 시간 확인
+    @GetMapping("/{studyId}/study-all-time")
+    public ResponseEntity<CommonResponse<TotalStudyTimeResponse>> getAllTimeAtStudy(@PathVariable Long studyId) {
+        Long memberId = SecurityUtil.getCurrentMemberId();
+
+        TotalStudyTimeResponse response = timerService.getStudyTimeForPeriod(studyId, memberId);
+
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 

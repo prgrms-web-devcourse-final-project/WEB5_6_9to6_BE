@@ -58,6 +58,23 @@ public class TimerService {
             .toList();
     }
 
+    public TotalStudyTimeResponse getStudyTimeForPeriod(Long studyId, Long memberId) {
+        Long studyMemberId = studyMemberRepository.findIdByStudyMemberIdAndMemberId(studyId, memberId)
+            .orElseThrow(() -> new NotFoundException("Study Member Not Found"));
+
+        // 7일 기간 설정
+        LocalDateTime endOfDay = LocalDateTime.now();
+        LocalDateTime startOfDay = endOfDay.toLocalDate().minusDays(6).atStartOfDay();
+
+        // 1. 위에서 만든 새로운 리포지토리 메서드를 호출하여 총합(Long)을 가져옵니다.
+        Long totalTime = timerQueryRepository.findTotalStudyTimeInPeriod(studyMemberId, studyId, startOfDay, endOfDay);
+
+        // 2. DTO에 담아 반환합니다.
+        return TotalStudyTimeResponse.builder()
+            .totalStudyTime(totalTime)
+            .build();
+    }
+
     public void recordStudyTime(Long studyId, Long studyMemberId, StudyTimeRecordRequest req) {
         Timer timer = Timer.builder()
             .studyId(studyId)
