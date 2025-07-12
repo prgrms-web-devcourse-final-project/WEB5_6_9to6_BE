@@ -3,7 +3,9 @@ package com.grepp.spring.infra.error;
 import com.grepp.spring.infra.error.exceptions.AlreadyCheckedAttendanceException;
 import com.grepp.spring.infra.error.exceptions.AlreadyExistException;
 import com.grepp.spring.infra.error.exceptions.CommonException;
+import com.grepp.spring.infra.error.exceptions.InsufficientRewardPointsException;
 import com.grepp.spring.infra.error.exceptions.MailSendFailureException;
+import com.grepp.spring.infra.error.exceptions.RewardApiException;
 import com.grepp.spring.infra.response.CommonResponse;
 import com.grepp.spring.infra.response.ResponseCode;
 import com.grepp.spring.infra.util.NotFoundException;
@@ -124,6 +126,14 @@ public class RestApiExceptionAdvice {
             .body(CommonResponse.error(ResponseCode.MAIL_SEND_FAIL));
     }
 
+    @ExceptionHandler(InsufficientRewardPointsException.class)
+    public ResponseEntity<CommonResponse<ResponseCode>> handleInsufficientPoints(InsufficientRewardPointsException ex) {
+        log.error(ex.getMessage(), ex);
+        return ResponseEntity
+            .status(HttpStatus.CONFLICT)
+            .body(CommonResponse.error(ResponseCode.POINT_NOT_ENOUGH));
+    }
+
     @ExceptionHandler(AlreadyCheckedAttendanceException.class)
     public ResponseEntity<CommonResponse<String>> handleAlreadyCheckedAttendance(AlreadyCheckedAttendanceException ex) {
         log.error(ex.getMessage(), ex);
@@ -131,5 +141,7 @@ public class RestApiExceptionAdvice {
             .status(HttpStatus.CONFLICT)
             .body(CommonResponse.error(ResponseCode.ALREADY_EXIST.code(), ex.getMessage()));
     }
+
+
 
 }
