@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "study_goal")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class StudyGoal {
@@ -32,13 +31,10 @@ public class StudyGoal {
     private List<GoalAchievement> achievements = new ArrayList<>();
 
     @Builder
-    public StudyGoal(Long goalId, String content, GoalType goalType, boolean activated, Study study,
-        List<GoalAchievement> achievements) {
-        this.goalId = goalId;
+    public StudyGoal(String content, GoalType goalType, boolean activated, Study study) {
         this.content = content;
         this.goalType = goalType;
         this.activated = activated;
         this.study = study;
-        this.achievements = achievements;
     }
 }

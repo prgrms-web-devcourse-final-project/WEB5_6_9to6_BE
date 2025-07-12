@@ -1,5 +1,6 @@
 package com.grepp.spring.app.model.reward.entity;
 
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -8,7 +9,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,9 +21,7 @@ uniqueConstraints = @UniqueConstraint(
 )
 )
 @Getter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class ItemSet {
 
     @Id
@@ -40,11 +38,20 @@ public class ItemSet {
     private String image;
 
 
-
-
-
-
-
-
-
+    @Builder
+    public ItemSet(Long setId, Long hat, Long hair, Long face, Long top, Long bottom, String image) {
+        this.setId = setId;
+        this.hat = hat;
+        this.hair = hair;
+        this.face = face;
+        this.top = top;
+        this.bottom = bottom;
+        this.image = image;
+    }
 }
+
+
+
+
+
+
