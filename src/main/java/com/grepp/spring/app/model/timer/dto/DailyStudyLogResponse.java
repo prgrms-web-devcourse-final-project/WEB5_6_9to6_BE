@@ -9,10 +9,10 @@ import lombok.NoArgsConstructor;
 public class DailyStudyLogResponse {
 
     private LocalDate studyDate;
-    private Long totalStudyTime;
+    private Long dailyTotalStudyTime;
 
-    public DailyStudyLogResponse(LocalDate studyDate, Long totalStudyTime) {
+    public DailyStudyLogResponse(LocalDate studyDate, Long dailyTotalStudyTime) {
         this.studyDate = studyDate;
-        this.totalStudyTime = totalStudyTime;
+        this.dailyTotalStudyTime = dailyTotalStudyTime;
     }
 }

@@ -6,10 +6,10 @@ import lombok.Getter;
 @Getter
 public class StudyWeekTimeResponse {
 
-    Long totalStudyTime;
+    Long weekTotalStudyTime;
 
     @Builder
     public StudyWeekTimeResponse(Long totalStudyTime) {
-        this.totalStudyTime = totalStudyTime;
+        this.weekTotalStudyTime = totalStudyTime;
     }
 }
