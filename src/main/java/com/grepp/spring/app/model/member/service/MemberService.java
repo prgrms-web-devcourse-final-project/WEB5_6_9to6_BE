@@ -1,23 +1,28 @@
 package com.grepp.spring.app.model.member.service;
 
+import com.grepp.spring.app.controller.api.member.payload.request.MemberUpdateRequest;
 import com.grepp.spring.app.model.auth.code.Role;
 import com.grepp.spring.app.model.auth.dto.SignupRequest;
 import com.grepp.spring.app.model.auth.dto.SocialMemberInfoRegistRequest;
 import com.grepp.spring.app.model.member.code.SocialType;
-import com.grepp.spring.app.controller.api.member.payload.request.MemberUpdateRequest;
+import com.grepp.spring.app.model.member.dto.StudySummaryDto;
 import com.grepp.spring.app.model.member.dto.response.MemberInfoResponse;
+import com.grepp.spring.app.model.member.dto.response.MemberStudyListResponse;
 import com.grepp.spring.app.model.member.entity.Attendance;
 import com.grepp.spring.app.model.member.entity.Member;
 import com.grepp.spring.app.model.member.entity.StudyMember;
 import com.grepp.spring.app.model.member.repository.MemberRepository;
 import com.grepp.spring.app.model.member.repository.StudyAttendanceRepository;
 import com.grepp.spring.app.model.member.repository.StudyMemberRepository;
+import com.grepp.spring.app.model.study.dto.ScheduleDto;
+import com.grepp.spring.app.model.study.entity.Study;
 import com.grepp.spring.infra.error.exceptions.AlreadyCheckedAttendanceException;
 import com.grepp.spring.infra.error.exceptions.AlreadyExistException;
 import com.grepp.spring.infra.error.exceptions.NotFoundException;
 import com.grepp.spring.infra.response.ResponseCode;
 import jakarta.persistence.EntityNotFoundException;
 import java.time.LocalDate;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -28,8 +33,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
-    private final PasswordEncoder passwordEncoder;
     private final StudyMemberRepository studyMemberRepository;
+    private final PasswordEncoder passwordEncoder;
     private final StudyAttendanceRepository studyAttendanceRepository;
 
     @Transactional
@@ -120,6 +125,49 @@ public class MemberService {
 
         return passwordEncoder.matches(inputPassword, member.getPassword());
     }
+
+    // 사용자가 가입한 스터디 리스트 조회
+    @Transactional(readOnly = true)
+    public MemberStudyListResponse getMemberStudyList(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+            .orElseThrow(() -> new RuntimeException("존재하지 않는 회원입니다."));
+
+        List<StudySummaryDto> studyList = studyMemberRepository.findByMemberId(memberId)
+            .stream()
+            .map(sm -> {
+                Study study = sm.getStudy();
+
+                List<ScheduleDto> schedules = study.getSchedules().stream()
+                    .map(s -> ScheduleDto.builder()
+                        .dayOfWeek(s.getDayOfWeek().name())
+                        .startTime(s.getStartTime())
+                        .endTime(s.getEndTime())
+                        .build())
+                    .toList();
+
+                return StudySummaryDto.builder()
+                    .studyId(study.getStudyId())
+                    .title(study.getName())
+                    .currentMemberCount(study.getStudyMembers().size())
+                    .maxMemberCount(study.getMaxMembers())
+                    .category(study.getCategory().name())
+                    .region(study.getRegion().name())
+                    .place(study.getPlace())
+                    .startDate(study.getStartDate().toString())
+                    .endDate(study.getEndDate().toString())
+                    .scheduleList(schedules)
+                    .studyType(study.getStudyType().name())
+                    .build();
+            })
+            .toList();
+
+        return MemberStudyListResponse.builder()
+            .memberId(member.getId())
+            .nickname(member.getNickname())
+            .studies(studyList)
+            .build();
+    }
+
 
     public Long findStudyMemberId(String email, Long studyId) {
         // email → member
