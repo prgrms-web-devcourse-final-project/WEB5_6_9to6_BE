@@ -2,9 +2,9 @@ package com.grepp.spring.app.model.quiz.service;
 
 import com.grepp.spring.app.controller.api.quiz.payload.QuizListResponse;
 import com.grepp.spring.app.model.quiz.dto.QuizDto;
-import com.grepp.spring.app.model.quiz.entity.ChoiceEntity;
-import com.grepp.spring.app.model.quiz.entity.QuizEntity;
-import com.grepp.spring.app.model.quiz.entity.QuizSetEntity;
+import com.grepp.spring.app.model.quiz.entity.Choice;
+import com.grepp.spring.app.model.quiz.entity.Quiz;
+import com.grepp.spring.app.model.quiz.entity.QuizSet;
 import com.grepp.spring.app.model.quiz.repository.QuizSetRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,14 +22,14 @@ public class QuizGetService {
     // 스터디에 해당하는 퀴즈 정보 가져옴
     @Transactional(readOnly = true)
     public List<QuizListResponse> getQuizzesByStudyId(Long studyId) {
-        List<QuizSetEntity> quizSets = quizSetRepository.findQuizSetsByStudyId(studyId);
+        List<QuizSet> quizSets = quizSetRepository.findQuizSetsByStudyId(studyId);
 
         List<QuizListResponse> result = new ArrayList<>();
 
-        for (QuizSetEntity quizSet : quizSets) {
+        for (QuizSet quizSet : quizSets) {
 
             List<QuizDto> quizDtos = new ArrayList<>();
-            for (QuizEntity quiz : quizSet.getQuizzes()) {
+            for (Quiz quiz : quizSet.getQuizzes()) {
                 QuizDto dto = mapToQuizDto(quiz);
                 quizDtos.add(dto);
             }
@@ -40,8 +40,8 @@ public class QuizGetService {
         return result;
     }
 
-    private QuizDto mapToQuizDto(QuizEntity quiz) {
-        ChoiceEntity choice = quiz.getChoice();
+    private QuizDto mapToQuizDto(Quiz quiz) {
+        Choice choice = quiz.getChoice();
         List<String> choices;
 
         if (choice != null) {
@@ -56,7 +56,7 @@ public class QuizGetService {
         }
 
         return new QuizDto(
-                quiz.getQuizId(),
+                quiz.getId(),
                 quiz.getQuestion(),
                 choices
         );

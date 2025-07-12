@@ -10,15 +10,15 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class QuizEntity {
+public class Quiz {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long quizId;
+    private Long Id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "quizSetId")
-    private QuizSetEntity quizSet;
+    private QuizSet quizSet;
 
     @Column(nullable = true)
     private String question;
@@ -31,11 +31,11 @@ public class QuizEntity {
     private boolean activated;
 
     @OneToOne(mappedBy = "quiz", fetch = FetchType.LAZY)
-    private ChoiceEntity choice;
+    private Choice choice;
 
     @Builder
-    public QuizEntity(Long quizId, QuizSetEntity quizSet, String question, Integer answer, boolean activated, ChoiceEntity choice) {
-        this.quizId = quizId;
+    public Quiz(Long quizId, QuizSet quizSet, String question, Integer answer, boolean activated, Choice choice) {
+        this.Id = quizId;
         this.quizSet = quizSet;
         this.question = question;
         this.answer = answer;
