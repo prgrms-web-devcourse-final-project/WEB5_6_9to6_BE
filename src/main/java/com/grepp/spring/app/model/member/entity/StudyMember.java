@@ -19,11 +19,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "study_member")
 @Getter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class StudyMember {
 
     @Id
@@ -44,3 +41,4 @@ public class StudyMember {
     private StudyRole studyRole;
 
 }
+

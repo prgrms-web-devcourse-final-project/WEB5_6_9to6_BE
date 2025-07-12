@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -15,4 +16,8 @@ public interface StudyMemberRepository extends JpaRepository<StudyMember, Long> 
 
     @Query("select sm.studyMemberId from StudyMember sm where sm.studyMemberId = :studyMemberId and sm.member.id = :memberId")
     Optional<Long> findIdByStudyMemberIdAndMemberId(Long studyMemberId, Long memberId);
+
+    Optional<StudyMember> findByMember_IdAndStudy_StudyId(Long memberId, Long studyId);
+
+    int countByStudy_StudyId(Long studyId);
 }

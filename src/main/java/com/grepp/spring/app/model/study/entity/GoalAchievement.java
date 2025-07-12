@@ -6,11 +6,8 @@ import java.time.LocalDateTime;
 import lombok.*;
 
 @Entity
-@Table(name = "goal_achievement")
 @Getter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class GoalAchievement {
 
     @Id
@@ -30,4 +27,15 @@ public class GoalAchievement {
     private boolean activated;
 
     private LocalDateTime achievedAt;
+
+    @Builder
+    public GoalAchievement(StudyGoal studyGoal, StudyMember studyMember,
+        boolean isAccomplished, boolean activated,
+        LocalDateTime achievedAt) {
+        this.studyGoal = studyGoal;
+        this.studyMember = studyMember;
+        this.isAccomplished = isAccomplished;
+        this.activated = activated;
+        this.achievedAt = achievedAt;
+    }
 }

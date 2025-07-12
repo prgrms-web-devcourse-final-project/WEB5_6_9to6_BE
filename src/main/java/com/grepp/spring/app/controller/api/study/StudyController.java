@@ -1,5 +1,10 @@
-package com.grepp.spring.app.controller.api;
+package com.grepp.spring.app.controller.api.study;
 
+import com.grepp.spring.app.controller.api.study.payload.StudySearchRequest;
+import com.grepp.spring.app.model.member.service.MemberService;
+import com.grepp.spring.app.model.study.dto.StudyListResponse;
+import com.grepp.spring.app.model.study.entity.Study;
+import com.grepp.spring.app.model.study.service.StudyService;
 import com.grepp.spring.infra.response.CommonResponse;
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -7,13 +12,16 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,154 +31,35 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping(value = "/api/v1/studies", produces = MediaType.APPLICATION_JSON_VALUE)
 public class StudyController {
 
+    private final MemberService memberService;
+    private final StudyService studyService;
+
     // 출석체크
     @PostMapping("/{studyId}/attendance")
-    public ResponseEntity<?> attend(@PathVariable Long studyId) {
-        String code = "SUCCESS";
-        String message = "출석 완료";
+    public ResponseEntity<?> attend(
+        @PathVariable Long studyId,
+        Authentication authentication
+    ) {
+        String email = authentication.getName();
+        Long studyMemberId = memberService.findStudyMemberId(email, studyId);
 
-        return ResponseEntity.status(200).body(CommonResponse.noContent());
+        memberService.markAttendance(studyMemberId);
+
+        return ResponseEntity.ok(CommonResponse.success("출석 체크 완료."));
     }
-
     // 스터디 목록(검색)
     @PostMapping("/search")
-    public ResponseEntity<?> searchStudies(
+    public ResponseEntity<CommonResponse<List<StudyListResponse>>> searchStudies(
         @RequestBody StudySearchRequest req
     ) {
-        String code = "SUCCESS";
-        StudySchedule std1Schedule = StudySchedule.builder()
-            .dayOfWeek(DayOfWeek.MON)
-            .startTime(LocalTime.of(12, 0))
-            .endTime(LocalTime.of(13, 0))
-            .build();
-        StudyListResponse std1 = StudyListResponse.builder()
-            .studyType(StudyType.DEFAULT)
-            .name("토익 100점 스터디")
-            .studyCategory(StudyCategory.LANGUAGE)
-            .region(Region.ONLINE)
-            .startDate(LocalDate.now())
-            .currentMember(4)
-            .maxMember(10)
-            .studySchedule(List.of(std1Schedule))
-            .build(); // 일반, 어학, 온라인, 7월
-
-        List<StudySchedule> std2Schedule = List.of(
-            StudySchedule.builder()
-                .dayOfWeek(DayOfWeek.MON)
-                .startTime(LocalTime.of(18, 0))
-                .endTime(LocalTime.of(20, 0))
-                .build(),
-            StudySchedule.builder()
-                .dayOfWeek(DayOfWeek.FRI)
-                .startTime(LocalTime.of(18, 0))
-                .endTime(LocalTime.of(20, 0))
-                .build()
-        );
-        StudyListResponse std2 = StudyListResponse.builder()
-            .studyType(StudyType.DEFAULT)
-            .name("토스 만점 스터디")
-            .studyCategory(StudyCategory.LANGUAGE)
-            .region(Region.SEOUL)
-            .startDate(LocalDate.now().minusMonths(1))
-            .currentMember(5)
-            .maxMember(6)
-            .studySchedule(std2Schedule)
-            .build(); // 일반, 어학, 서울, 8월
-
-        List<StudySchedule> std3Schedule = List.of(
-            StudySchedule.builder()
-                .dayOfWeek(DayOfWeek.THU)
-                .startTime(LocalTime.of(18, 0))
-                .endTime(LocalTime.of(20, 0))
-                .build(),
-            StudySchedule.builder()
-                .dayOfWeek(DayOfWeek.SAT)
-                .startTime(LocalTime.of(18, 0))
-                .endTime(LocalTime.of(20, 0))
-                .build()
-        );
-        StudyListResponse std3 = StudyListResponse.builder()
-            .studyType(StudyType.DEFAULT)
-            .name("node.js 마스터 스터디")
-            .studyCategory(StudyCategory.PROGRAMMING)
-            .region(Region.SEOUL)
-            .startDate(LocalDate.now().minusMonths(2))
-            .currentMember(7)
-            .maxMember(7)
-            .studySchedule(std3Schedule)
-            .build(); // 일반, 프로그래밍, 서울, 9월
-
-        List<StudySchedule> std4Schedule = List.of(
-            StudySchedule.builder()
-                .dayOfWeek(DayOfWeek.MON)
-                .startTime(LocalTime.of(18, 0))
-                .endTime(LocalTime.of(20, 0))
-                .build(),
-            StudySchedule.builder()
-                .dayOfWeek(DayOfWeek.WED)
-                .startTime(LocalTime.of(18, 0))
-                .endTime(LocalTime.of(20, 0))
-                .build()
-        );
-        StudyListResponse std4 = StudyListResponse.builder()
-            .studyType(StudyType.DEFAULT)
-            .name("코틀린 안드로이드 개발 스터디")
-            .studyCategory(StudyCategory.PROGRAMMING)
-            .region(Region.JEJU)
-            .startDate(LocalDate.now().minusMonths(3))
-            .currentMember(3)
-            .maxMember(10)
-            .build(); // 일반, 프로그래밍, 제주, 10월
-
-        StudySchedule std5Schedule = StudySchedule.builder()
-            .dayOfWeek(DayOfWeek.TUE)
-            .startTime(LocalTime.of(12, 0))
-            .endTime(LocalTime.of(13, 0))
-            .build();
-        StudyListResponse std5 = StudyListResponse.builder()
-            .studyType(StudyType.SURVIVAL)
-            .name("토익 서바이벌")
-            .studyCategory(StudyCategory.LANGUAGE)
-            .region(Region.ONLINE)
-            .startDate(LocalDate.now().minusMonths(2))
-            .currentMember(14)
-            .maxMember(30)
-            .studySchedule(List.of(std5Schedule))
-            .build(); // 서바이벌, 어학, 9월 시작
-
-        StudySchedule std6Schedule = StudySchedule.builder()
-            .dayOfWeek(DayOfWeek.SUN)
-            .startTime(LocalTime.of(12, 0))
-            .endTime(LocalTime.of(13, 0))
-            .build();
-        StudyListResponse std6 = StudyListResponse.builder()
-            .studyType(StudyType.SURVIVAL)
-            .name("JLPT N2 서바이벌")
-            .studyCategory(StudyCategory.LANGUAGE)
-            .region(Region.ONLINE)
-            .startDate(LocalDate.now().minusMonths(1))
-            .currentMember(27)
-            .maxMember(30)
-            .studySchedule(List.of(std6Schedule))
-            .build(); // 서바이벌, 어학, 8월 시작
-
-        // 검색
-        List<StudyListResponse> filteredStudies = new java.util.ArrayList<>();
-        List<StudyListResponse> allStudies = List.of(std1, std2, std3, std4, std5, std6);
-        for (StudyListResponse study : allStudies) {
-            if ((req.getCategory() == null || req.getCategory() == study.studyCategory) &&
-                (req.getRegion() == null || req.getRegion() == study.region) &&
-                (req.getStatus() == null || req.getStatus() == StudyStatus.ACTIVATE) &&
-                (req.getName() == null || study.name.contains(req.getName()))) {
-                filteredStudies.add(study);
-            }
-        }
-
-        return ResponseEntity.status(200).body(CommonResponse.success(filteredStudies));
+        List<StudyListResponse> responseList = studyService.searchStudiesWithMemberCount(req);
+        return ResponseEntity.ok(CommonResponse.success(responseList));
     }
+
 
     // 스터디 정보 조회
     @GetMapping("/{studyId}")
@@ -480,41 +369,33 @@ public class StudyController {
         }
     }
 
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    private static class StudySearchRequest { // 스터디 검색 요청
-        private StudyCategory category;
-        private Region region;
-        private StudyStatus status;
-        private String name;
-    }
 
-    @Data
-    public static class StudyListResponse{
-        private StudyType studyType;
-        private String name;
-        private StudyCategory studyCategory;
-        private Region region;
-        private LocalDate startDate;
-        private int currentMember;
-        private int maxMember;
-        private List<StudySchedule> studySchedule;
 
-        @Builder
-        public StudyListResponse(StudyType studyType, String name, StudyCategory studyCategory,
-            Region region, LocalDate startDate, int currentMember, int maxMember,
-            List<StudySchedule> studySchedule) {
-            this.studyType = studyType;
-            this.name = name;
-            this.studyCategory = studyCategory;
-            this.region = region;
-            this.startDate = startDate;
-            this.currentMember = currentMember;
-            this.maxMember = maxMember;
-            this.studySchedule = studySchedule;
-        }
-    }
+//    @Data
+//    public static class StudyListResponse{
+//        private StudyType studyType;
+//        private String name;
+//        private StudyCategory studyCategory;
+//        private Region region;
+//        private LocalDate startDate;
+//        private int currentMember;
+//        private int maxMember;
+//        private List<StudySchedule> studySchedule;
+//
+//        @Builder
+//        public StudyListResponse(StudyType studyType, String name, StudyCategory studyCategory,
+//            Region region, LocalDate startDate, int currentMember, int maxMember,
+//            List<StudySchedule> studySchedule) {
+//            this.studyType = studyType;
+//            this.name = name;
+//            this.studyCategory = studyCategory;
+//            this.region = region;
+//            this.startDate = startDate;
+//            this.currentMember = currentMember;
+//            this.maxMember = maxMember;
+//            this.studySchedule = studySchedule;
+//        }
+//    }
 
 
     private enum StudyRole {
