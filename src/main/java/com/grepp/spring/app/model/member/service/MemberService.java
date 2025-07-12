@@ -8,20 +8,29 @@ import com.grepp.spring.app.controller.api.member.payload.request.MemberUpdateRe
 import com.grepp.spring.app.model.member.dto.response.MemberInfoResponse;
 import com.grepp.spring.app.model.member.entity.Member;
 import com.grepp.spring.app.model.member.repository.MemberRepository;
+import com.grepp.spring.app.model.member.repository.StudyMemberRepository;
+import com.grepp.spring.app.model.member.repository.TimerRepository;
+import com.grepp.spring.app.model.member.repository.TimerSettingRepository;
 import com.grepp.spring.infra.error.exceptions.AlreadyExistException;
 import com.grepp.spring.infra.error.exceptions.NotFoundException;
 import com.grepp.spring.infra.response.ResponseCode;
 import jakarta.persistence.EntityNotFoundException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final TimerRepository timerRepository;
+    private final TimerSettingRepository timerSettingRepository;
+    private final StudyMemberRepository studyMemberRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
@@ -111,5 +120,23 @@ public class MemberService {
             .orElseThrow(() -> new EntityNotFoundException("해당 ID의 회원을 찾을 수 없습니다"));
 
         return passwordEncoder.matches(inputPassword, member.getPassword());
+    }
+
+
+    public Long getAllStudyTime(Long memberId) {
+        List<Long> studyMemberIds = studyMemberRepository.findAllStudies(memberId);
+
+        if (studyMemberIds == null || studyMemberIds.isEmpty()) {
+            log.info("studyMemberIds is null or empty");
+            return 0L;
+        }
+        log.info("studyMemberIds: {}", studyMemberIds);
+        Long totalStudyTime = timerRepository.findTotalStudyTimeByStudyMemberIds(studyMemberIds);
+
+        return totalStudyTime != null ? totalStudyTime : 0L;
+    }
+
+    // TODO 정확하게 정의하고 하기 지금 스터디 페이지에도 안나와 있음
+    public void updateTimerSetting(Long memberId) {
     }
 }

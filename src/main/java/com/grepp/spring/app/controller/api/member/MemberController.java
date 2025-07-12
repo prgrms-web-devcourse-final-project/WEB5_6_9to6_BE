@@ -11,6 +11,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/v1/members")
@@ -202,36 +204,17 @@ public class MemberController {
     // 타이머 누적 시간 조회
     @GetMapping("/{memberId}/timer/all-timer")
     @ApiResponse(responseCode = "200")
-    public ResponseEntity<Map<String, Object>> getAllTimer(@PathVariable Long memberId) {
-
-        Map<String, Object> response = new LinkedHashMap<>();
-        response.put("code", "0000");
-        response.put("message", "타이머 누적 시간이 조회되었습니다.");
-        response.put("data", mockDataAllTimer());
-
-        return ResponseEntity.ok(response);
-    }
-
-    private Map<String, Object> mockDataAllTimer() {
-
-        Map<String, Object> data = new LinkedHashMap<>();
-        data.put("userId", 1);
-        data.put("nickname", "홍길동");
-        data.put("totalStudyTime", 145800);
-
-        return data;
+    public ResponseEntity<CommonResponse<Long>> getAllTimer(@PathVariable Long memberId) {
+        log.info("getAllTimer memberId: {}", memberId);
+        return ResponseEntity.ok(CommonResponse.success(memberService.getAllStudyTime(memberId)));
     }
 
     // 타이머 시간 수정
     @PutMapping("/{memberId}/timer-settings")
     @ApiResponse(responseCode = "200")
-    public ResponseEntity<Map<String, Object>> updateTimer(@PathVariable Long memberId) {
+    public ResponseEntity<?> updateTimer(@PathVariable Long memberId) {
 
-        Map<String, Object> response = new LinkedHashMap<>();
-        response.put("code", "0000");
-        response.put("message", "성공적으로 수정하였습니다.");
-        response.put("data", new LinkedHashMap<>());
-
-        return ResponseEntity.ok(response);
+        memberService.updateTimerSetting(memberId);
+        return ResponseEntity.ok(null); // fixme
     }
 }
