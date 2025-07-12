@@ -1,16 +1,14 @@
 package com.grepp.spring.app.controller.api.quiz.payload;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
-@Setter
-@NoArgsConstructor
+@AllArgsConstructor
 public class SurvivalResultRequest {
     private Long studyMemberId;
     private int correctProblemCount;
     private int totalProblemCount;
-    private boolean survived;
+    private boolean isSurvived;
     private int week;
 }
