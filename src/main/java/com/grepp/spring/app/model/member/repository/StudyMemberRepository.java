@@ -9,4 +9,6 @@ import org.springframework.stereotype.Repository;
 public interface StudyMemberRepository extends JpaRepository<StudyMember, Long> {
 
     Optional<StudyMember> findByMember_IdAndStudy_StudyId(Long memberId, Long studyId);
+
+    int countByStudy_StudyId(Long studyId);
 }
