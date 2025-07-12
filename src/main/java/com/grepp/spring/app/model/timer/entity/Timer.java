@@ -1,4 +1,4 @@
-package com.grepp.spring.app.model.member.entity;
+package com.grepp.spring.app.model.timer.entity;
 
 import com.grepp.spring.infra.entity.BaseEntity;
 import jakarta.persistence.Entity;
@@ -16,7 +16,9 @@ public class Timer extends BaseEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
+    Long studyId;
     Long studyMemberId;
+
     Integer dailyStudyTime;
 
     @Builder

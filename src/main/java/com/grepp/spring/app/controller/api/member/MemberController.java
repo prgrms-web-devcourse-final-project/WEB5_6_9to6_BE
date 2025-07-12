@@ -199,22 +199,4 @@ public class MemberController {
             )
         );
     }
-
-
-    // 타이머 누적 시간 조회
-    @GetMapping("/{memberId}/timer/all-timer")
-    @ApiResponse(responseCode = "200")
-    public ResponseEntity<CommonResponse<Long>> getAllTimer(@PathVariable Long memberId) {
-        log.info("getAllTimer memberId: {}", memberId);
-        return ResponseEntity.ok(CommonResponse.success(memberService.getAllStudyTime(memberId)));
-    }
-
-    // 타이머 시간 수정
-    @PutMapping("/{memberId}/timer-settings")
-    @ApiResponse(responseCode = "200")
-    public ResponseEntity<?> updateTimer(@PathVariable Long memberId) {
-
-        memberService.updateTimerSetting(memberId);
-        return ResponseEntity.ok(null); // fixme
-    }
 }
