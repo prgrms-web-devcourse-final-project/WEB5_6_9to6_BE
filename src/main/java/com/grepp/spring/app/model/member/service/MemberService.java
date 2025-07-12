@@ -12,18 +12,17 @@ import com.grepp.spring.app.model.member.entity.Attendance;
 import com.grepp.spring.app.model.member.entity.Member;
 import com.grepp.spring.app.model.member.entity.StudyMember;
 import com.grepp.spring.app.model.member.repository.MemberRepository;
+import com.grepp.spring.app.model.member.repository.StudyAttendanceRepository;
 import com.grepp.spring.app.model.member.repository.StudyMemberRepository;
 import com.grepp.spring.app.model.study.dto.ScheduleDto;
 import com.grepp.spring.app.model.study.entity.Study;
-import com.grepp.spring.app.model.member.repository.StudyAttendanceRepository;
-import com.grepp.spring.app.model.member.repository.StudyMemberRepository;
 import com.grepp.spring.infra.error.exceptions.AlreadyCheckedAttendanceException;
 import com.grepp.spring.infra.error.exceptions.AlreadyExistException;
 import com.grepp.spring.infra.error.exceptions.NotFoundException;
 import com.grepp.spring.infra.response.ResponseCode;
 import jakarta.persistence.EntityNotFoundException;
-import java.util.List;
 import java.time.LocalDate;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -36,7 +35,6 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final StudyMemberRepository studyMemberRepository;
     private final PasswordEncoder passwordEncoder;
-    private final StudyMemberRepository studyMemberRepository;
     private final StudyAttendanceRepository studyAttendanceRepository;
 
     @Transactional
