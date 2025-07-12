@@ -2,6 +2,7 @@ package com.grepp.spring.app.model.study.entity;
 
 import com.grepp.spring.app.model.member.entity.StudyMember;
 import com.grepp.spring.app.model.study.code.Category;
+import com.grepp.spring.app.model.study.code.DayOfWeek;
 import com.grepp.spring.app.model.study.code.Region;
 import com.grepp.spring.app.model.study.code.Status;
 import com.grepp.spring.app.model.study.code.StudyType;
@@ -93,5 +94,33 @@ public class Study {
         this.externalLink = externalLink;
         this.studyType = studyType;
         this.activated = activated;
+    }
+
+    // 스터디 정보 수정
+    public void updateBaseInfo(String name, Category category, int maxMembers,
+        Region region, String place, boolean isOnline,
+        String description, String externalLink,
+        Status status) {
+        this.name = name;
+        this.category = category;
+        this.maxMembers = maxMembers;
+        this.region = region;
+        this.place = place;
+        this.isOnline = isOnline;
+        this.description = description;
+        this.externalLink = externalLink;
+        this.status = status;
+    }
+
+    // 스터디 일정 추가
+    public void addSchedule(DayOfWeek dayOfWeek, String start, String end) {
+        this.schedules.add(
+            new StudySchedule(dayOfWeek, start, end, this)
+        );
+    }
+
+    // endDate 수정
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
     }
 }

@@ -1,26 +1,27 @@
 package com.grepp.spring.app.model.study.service;
 
 import com.grepp.spring.app.controller.api.study.payload.StudySearchRequest;
+import com.grepp.spring.app.controller.api.study.payload.StudyUpdateRequest;
 import com.grepp.spring.app.model.member.dto.response.ApplicantsResponse;
 import com.grepp.spring.app.model.member.entity.StudyMember;
 import com.grepp.spring.app.model.member.repository.StudyMemberRepository;
+import com.grepp.spring.app.model.study.code.DayOfWeek;
+import com.grepp.spring.app.model.study.dto.StudyInfoResponse;
 import com.grepp.spring.app.model.study.dto.StudyListResponse;
-import com.grepp.spring.app.model.study.entity.Study;
-import com.grepp.spring.app.model.study.repository.StudyRepository;
 import com.grepp.spring.app.model.study.entity.GoalAchievement;
+import com.grepp.spring.app.model.study.entity.Study;
 import com.grepp.spring.app.model.study.entity.StudyGoal;
 import com.grepp.spring.app.model.study.reponse.GoalsResponse;
 import com.grepp.spring.app.model.study.repository.GoalAchievementRepository;
 import com.grepp.spring.app.model.study.repository.StudyGoalRepository;
+import com.grepp.spring.app.model.study.repository.StudyRepository;
 import com.grepp.spring.infra.error.exceptions.NotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -65,6 +66,7 @@ public class StudyService {
         goalAchievementRepository.save(newAchievement);
     }
 
+
     // 스터디 지원자 목록 조회
     @Transactional(readOnly = true)
     public List<ApplicantsResponse> getApplicants(Long studyId) {
@@ -74,6 +76,57 @@ public class StudyService {
     @Transactional(readOnly = true)
     public List<GoalsResponse> findGoals(Long studyId) {
         return studyGoalRepository.findGoalsById(studyId);
+    }
+
+
+    @Transactional(readOnly = true)
+    public StudyInfoResponse getStudyInfo(Long studyId) {
+        Study studyWithGoals = studyRepository.findByIdWithGoals(studyId)
+            .orElseThrow(() -> new NotFoundException("스터디가 존재하지 않습니다."));
+
+        Study studyWithSchedules = studyRepository.findByIdWithSchedules(studyId)
+            .orElseThrow(() -> new NotFoundException("스터디가 존재하지 않습니다."));
+
+        // goals fetch join 과 schedules fetch join 을 합치기
+        studyWithGoals.getSchedules().addAll(studyWithSchedules.getSchedules());
+
+        return StudyInfoResponse.fromEntity(studyWithGoals);
+    }
+
+    @Transactional
+    public void updateStudy(Long studyId, StudyUpdateRequest req) {
+        Study study = studyRepository.findById(studyId)
+            .orElseThrow(() -> new IllegalArgumentException("스터디가 존재하지 않습니다."));
+
+        // 기본 정보 업데이트
+        study.updateBaseInfo(
+            req.getName(),
+            req.getCategory(),
+            req.getMaxMembers(),
+            req.getRegion(),
+            req.getPlace(),
+            req.isOnline(),
+            req.getDescription(),
+            req.getExternalLink(),
+            req.getStatus()
+        );
+        study.setEndDate(req.getEndDate());
+
+        // 기존 일정 제거 후 다시 생성
+        study.getSchedules().clear();
+        for (DayOfWeek day : req.getSchedules()) {
+            study.addSchedule(day, req.getStartTime(), req.getEndTime());
+        }
+
+        // 목표 업데이트 (목표 ID 기준으로 수정)
+        for (StudyUpdateRequest.GoalUpdateDTO g : req.getGoals()) {
+            StudyGoal goal = study.getGoals().stream()
+                .filter(existing -> existing.getGoalId().equals(g.getGoalId()))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 목표입니다."));
+
+            goal.update(g.getContent(), g.getType());
+        }
     }
 
 }
