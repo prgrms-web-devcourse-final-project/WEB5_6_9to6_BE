@@ -3,6 +3,7 @@ package com.grepp.spring.app.model.timer.service;
 import com.grepp.spring.app.controller.api.timer.payload.StudyTimeRecordRequest;
 import com.grepp.spring.app.model.member.repository.StudyMemberRepository;
 import com.grepp.spring.app.model.timer.dto.DailyStudyLogResponse;
+import com.grepp.spring.app.model.timer.dto.StudyWeekTimeResponse;
 import com.grepp.spring.app.model.timer.dto.TotalStudyTimeResponse;
 import com.grepp.spring.app.model.timer.entity.Timer;
 import com.grepp.spring.app.model.timer.repository.TimerQueryRepository;
@@ -58,19 +59,16 @@ public class TimerService {
             .toList();
     }
 
-    public TotalStudyTimeResponse getStudyTimeForPeriod(Long studyId, Long memberId) {
+    public StudyWeekTimeResponse getStudyTimeForPeriod(Long studyId, Long memberId) {
         Long studyMemberId = studyMemberRepository.findIdByStudyMemberIdAndMemberId(studyId, memberId)
             .orElseThrow(() -> new NotFoundException("Study Member Not Found"));
 
-        // 7일 기간 설정
         LocalDateTime endOfDay = LocalDateTime.now();
         LocalDateTime startOfDay = endOfDay.toLocalDate().minusDays(6).atStartOfDay();
 
-        // 1. 위에서 만든 새로운 리포지토리 메서드를 호출하여 총합(Long)을 가져옵니다.
         Long totalTime = timerQueryRepository.findTotalStudyTimeInPeriod(studyMemberId, studyId, startOfDay, endOfDay);
 
-        // 2. DTO에 담아 반환합니다.
-        return TotalStudyTimeResponse.builder()
+        return StudyWeekTimeResponse.builder()
             .totalStudyTime(totalTime)
             .build();
     }

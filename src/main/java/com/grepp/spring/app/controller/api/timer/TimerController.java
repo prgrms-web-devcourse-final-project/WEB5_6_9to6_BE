@@ -2,6 +2,7 @@ package com.grepp.spring.app.controller.api.timer;
 
 import com.grepp.spring.app.controller.api.timer.payload.StudyTimeRecordRequest;
 import com.grepp.spring.app.model.timer.dto.DailyStudyLogResponse;
+import com.grepp.spring.app.model.timer.dto.StudyWeekTimeResponse;
 import com.grepp.spring.app.model.timer.dto.TotalStudyTimeResponse;
 import com.grepp.spring.app.model.timer.service.TimerService;
 import com.grepp.spring.infra.response.CommonResponse;
@@ -54,11 +55,10 @@ public class TimerController {
 
     // 스터디별 7일간의 누적 공부 시간 확인
     @GetMapping("/{studyId}/study-all-time")
-    public ResponseEntity<CommonResponse<TotalStudyTimeResponse>> getAllTimeAtStudy(@PathVariable Long studyId) {
+    public ResponseEntity<CommonResponse<StudyWeekTimeResponse>> getAllTimeAtStudy(@PathVariable Long studyId) {
         Long memberId = SecurityUtil.getCurrentMemberId();
 
-        TotalStudyTimeResponse response = timerService.getStudyTimeForPeriod(studyId, memberId);
-
+        StudyWeekTimeResponse response = timerService.getStudyTimeForPeriod(studyId, memberId);
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 
