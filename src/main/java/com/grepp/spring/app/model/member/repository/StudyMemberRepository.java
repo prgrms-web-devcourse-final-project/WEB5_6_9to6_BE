@@ -1,6 +1,7 @@
 package com.grepp.spring.app.model.member.repository;
 
 import com.grepp.spring.app.model.member.entity.StudyMember;
+import io.lettuce.core.dynamic.annotation.Param;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -25,4 +26,7 @@ public interface StudyMemberRepository extends JpaRepository<StudyMember, Long> 
     int countByStudy_StudyId(Long studyId);
 
     boolean existsByMember_IdAndStudy_StudyId(Long memberId, Long studyId);
+
+    @Query("SELECT sm FROM StudyMember sm JOIN FETCH sm.member WHERE sm.study.studyId = :studyId")
+    List<StudyMember> findAllByStudyIdWithMember(@Param("studyId") Long studyId);
 }
