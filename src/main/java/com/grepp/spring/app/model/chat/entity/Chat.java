@@ -9,11 +9,15 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+
 
 @Entity
 @Table(name="chat")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class Chat extends BaseEntity {
 
     @Id
@@ -29,4 +33,12 @@ public class Chat extends BaseEntity {
     private String content;
 
 
+    @Builder
+    public Chat(long id, ChatRoom chatRoom, long receiverId, long senderId, String content) {
+        this.id = id;
+        this.chatRoom = chatRoom;
+        this.receiverId = receiverId;
+        this.senderId = senderId;
+        this.content = content;
+    }
 }

@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -18,6 +19,14 @@ public class ChatRoom extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+
+
     private long studyId;
+
+    @Builder
+    public ChatRoom(long id, long studyId) {
+        this.id = id;
+        this.studyId = studyId;
+    }
 
 }
