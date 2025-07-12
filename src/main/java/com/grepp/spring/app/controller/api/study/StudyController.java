@@ -3,10 +3,13 @@ package com.grepp.spring.app.controller.api.study;
 import com.grepp.spring.app.controller.api.study.payload.StudySearchRequest;
 import com.grepp.spring.app.controller.api.study.payload.StudyUpdateRequest;
 import com.grepp.spring.app.model.member.dto.response.ApplicantsResponse;
+import com.grepp.spring.app.model.member.dto.response.AttendanceResponse;
 import com.grepp.spring.app.model.member.dto.response.StudyMemberResponse;
+import com.grepp.spring.app.model.member.entity.Attendance;
 import com.grepp.spring.app.model.member.service.MemberService;
 import com.grepp.spring.app.model.study.dto.StudyInfoResponse;
 import com.grepp.spring.app.model.study.dto.StudyListResponse;
+import com.grepp.spring.app.model.study.dto.WeeklyAttendanceResponse;
 import com.grepp.spring.app.model.study.service.StudyService;
 import com.grepp.spring.infra.response.CommonResponse;
 import com.grepp.spring.infra.util.SecurityUtil;
@@ -43,7 +46,7 @@ public class StudyController {
 
     // 출석체크
     @PostMapping("/{studyId}/attendance")
-    public ResponseEntity<?> attend(
+    public ResponseEntity<?> attendance(
         @PathVariable Long studyId,
         Authentication authentication
     ) {
@@ -55,7 +58,22 @@ public class StudyController {
         return ResponseEntity.ok(CommonResponse.success("출석 체크 완료."));
     }
 
-    // 출석체크 조회 api 필요(추후 추가 예정)
+    // 주간 출석체크 조회(이번주)
+// 주간 출석체크 조회(이번주)
+    @GetMapping("/{studyId}/attendance")
+    public ResponseEntity<?> weeklyAttendance(
+        @PathVariable Long studyId,
+        Authentication authentication
+    ) {
+        String email = authentication.getName();
+        Long studyMemberId = memberService.findStudyMemberId(email, studyId);
+
+        // 이번 주 출석 내역 조회
+        List<Attendance> attendanceList = memberService.getWeeklyAttendanceEntities(studyMemberId);
+
+        WeeklyAttendanceResponse response = new WeeklyAttendanceResponse(studyMemberId, attendanceList);
+        return ResponseEntity.ok(CommonResponse.success(response));
+    }
 
     // 스터디 목록(검색)
     @PostMapping("/search")
@@ -105,7 +123,6 @@ public class StudyController {
             CommonResponse.success(data)
         );
     }
-
 
     // 스터디 맴버 리스트 조회
     @GetMapping("/{studyId}/members")
@@ -207,43 +224,6 @@ public class StudyController {
         }
     }
 
-
-
-//    @Data
-//    public static class StudyListResponse{
-//        private StudyType studyType;
-//        private String name;
-//        private StudyCategory studyCategory;
-//        private Region region;
-//        private LocalDate startDate;
-//        private int currentMember;
-//        private int maxMember;
-//        private List<StudySchedule> studySchedule;
-//
-//        @Builder
-//        public StudyListResponse(StudyType studyType, String name, StudyCategory studyCategory,
-//            Region region, LocalDate startDate, int currentMember, int maxMember,
-//            List<StudySchedule> studySchedule) {
-//            this.studyType = studyType;
-//            this.name = name;
-//            this.studyCategory = studyCategory;
-//            this.region = region;
-//            this.startDate = startDate;
-//            this.currentMember = currentMember;
-//            this.maxMember = maxMember;
-//            this.studySchedule = studySchedule;
-//        }
-//    }
-
-
-    private enum StudyRole {
-        MEMBER, LEADER;
-    }
-
-    private enum ApplyState {
-        WAIT, ACCEPT, REJECT;
-    }
-
     // 스터디 타입
     private enum StudyType {
         DEFAULT, SURVIVAL
@@ -259,10 +239,6 @@ public class StudyController {
         ONLINE, SEOUL, JEJU;
     }
 
-    // 스터디 활동 상태
-    private enum StudyStatus {
-        READY, ACTIVATE
-    }
 
     // 진행 요일
     private enum DayOfWeek {
