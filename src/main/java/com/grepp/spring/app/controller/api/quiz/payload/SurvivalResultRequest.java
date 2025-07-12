@@ -7,8 +7,5 @@ import lombok.Getter;
 @AllArgsConstructor
 public class SurvivalResultRequest {
     private Long studyMemberId;
-    private int correctProblemCount;
-    private int totalProblemCount;
     private boolean isSurvived;
-    private int week;
 }
