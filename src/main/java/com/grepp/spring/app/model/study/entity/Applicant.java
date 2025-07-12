@@ -29,19 +29,22 @@ public class Applicant extends BaseEntity {
     private ApplicantState state;
 
     private String introduction;
-    private Long memberId;
 
-    @ManyToOne @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "study_id")
+    @JsonIgnore
     private Study study;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
+
     @Builder
-    public Applicant(Long id, ApplicantState state, String introduction, Long memberId,
-        Study study) {
+    public Applicant(Long id, ApplicantState state, String introduction, Study study, Member member) {
         this.id = id;
         this.state = state;
         this.introduction = introduction;
-        this.memberId = memberId;
         this.study = study;
+        this.member = member;
     }
 }
