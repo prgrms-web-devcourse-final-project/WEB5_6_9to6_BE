@@ -2,7 +2,7 @@ package com.grepp.spring.app.model.quiz.service;
 
 import com.grepp.spring.app.controller.api.quiz.payload.QuizGradingRequest;
 import com.grepp.spring.app.controller.api.quiz.payload.QuizGradingResponse;
-import com.grepp.spring.app.model.quiz.entity.QuizEntity;
+import com.grepp.spring.app.model.quiz.entity.Quiz;
 import com.grepp.spring.app.model.quiz.repository.QuizRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ public class QuizGradingService {
 
     @Transactional(readOnly = true)
     public QuizGradingResponse grade(QuizGradingRequest request) {
-        List<QuizEntity> quizzes = quizRepository.findQuizzesByWeek(request.getWeek());
+        List<Quiz> quizzes = quizRepository.findQuizzesByWeek(request.getWeek());
 
         if (quizzes.size() != request.getAnswerSheet().size()) {
             throw new IllegalArgumentException("답안 수가 퀴즈 수와 일치하지 않습니다.");
@@ -26,7 +26,7 @@ public class QuizGradingService {
         int correctCount = 0;
 
         for (int i = 0; i < quizzes.size(); i++) {
-            QuizEntity quiz = quizzes.get(i);
+            Quiz quiz = quizzes.get(i);
             int submittedAnswerIndex = request.getAnswerSheet().get(i);
             int correctAnswerIndex = quiz.getAnswer();
 
