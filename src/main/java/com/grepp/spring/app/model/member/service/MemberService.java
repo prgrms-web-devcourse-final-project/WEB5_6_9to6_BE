@@ -27,7 +27,6 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final TimerRepository timerRepository;
-    private final TimerSettingRepository timerSettingRepository;
     private final StudyMemberRepository studyMemberRepository;
     private final PasswordEncoder passwordEncoder;
 
