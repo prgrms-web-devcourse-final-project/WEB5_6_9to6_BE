@@ -5,30 +5,35 @@
   <title>스터디 채팅방</title>
   <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+  <style>
+    #chat-box p {
+      margin: 5px 0;
+      font-size: 14px;
+      color: black;
+    }
+  </style>
 </head>
-<style>
-  #chat-box p {
-    margin: 5px 0;
-    font-size: 14px;
-    color: black;
-  }
-</style>
-
 <body>
 
 <h2>스터디 채팅방 (ID: <span id="study-id"></span>)</h2>
 <div id="chat-box" style="border: 1px solid #ccc; height: 300px; overflow-y: scroll;"></div>
-<input type="text" id="message" placeholder="메시지 입력" />
+
+<!-- 귓속말 대상 선택 드롭다운 (receiverId에 이메일을 담음) -->
+<select id="receiver-select" style="margin-top: 10px;">
+  <option value="">전체에게</option>
+  <option value="alice@example.com">회원 1 (Alice)</option>
+  <option value="bob@example.com">회원 2 (Bob)</option>
+  <option value="carol@example.com">회원 3 (Carol)</option>
+</select>
+
+<br />
+<input type="text" id="message" placeholder="메시지 입력" style="width: 300px;" />
 <button onclick="sendMessage()">보내기</button>
 
 <script>
-  // studyId 가져오기, 기본값 1
+  // studyId 가져오기 (URL 쿼리에서), 기본값 1
   const studyId = new URLSearchParams(window.location.search).get("studyId") || 1;
   document.getElementById("study-id").textContent = studyId;
-
-  // userId 는 로그인한 사용자의 ID를 받아와야 합니다.
-  // 테스트용으로 임의 할당 (실제 환경에서는 서버에서 렌더링하거나 로그인 후 받아오세요)
-  const userId = 123; // TODO: 실제 로그인 유저 ID로 변경 필요
 
   let stompClient = null;
 
@@ -39,28 +44,28 @@
     stompClient.connect({}, () => {
       console.log("웹소켓 연결됨");
 
-      // 전체 스터디 채팅방 메시지 구독
+      // 전체 채팅 구독
       stompClient.subscribe(`/subscribe/${studyId}`, (message) => {
         const data = JSON.parse(message.body);
         showMessage(data);
       });
 
-      // 개인 메시지 (귓속말) 구독
-      stompClient.subscribe(`/user/${userId}/queue/messages`, (message) => {
+      // 귓속말 메시지 구독
+      stompClient.subscribe(`/user/queue/messages`, (message) => {
+
         const data = JSON.parse(message.body);
         showMessage(data);
       });
     });
   }
 
-  // 메시지를 화면에 표시하는 함수 (간단 구현)
   function showMessage(data) {
     const chatBox = document.getElementById("chat-box");
     const messageElement = document.createElement("p");
 
-    // 귓속말인지 구분해서 스타일 조정 가능
-    if (data.receiverId && data.receiverId === userId) {
-      messageElement.style.color = "blue"; // 귓속말 메시지 파란색 표시 예시
+    if (data.receiverId) {
+      // 귓속말 표시
+      messageElement.style.color = "blue";
       messageElement.textContent = `(귓속말) ${data.senderId}: ${data.content}`;
     } else {
       messageElement.textContent = `${data.senderId}: ${data.content}`;
@@ -71,21 +76,25 @@
   }
 
   function sendMessage() {
-    const message = document.getElementById("message").value;
-    if (!message.trim()) return;
+    const message = document.getElementById("message").value.trim();
+    if (!message) return;
 
-    // TODO: 귓속말 기능 추가 시 receiverId 포함시키기
+    const select = document.getElementById("receiver-select");
+    const receiverId = select.value === "" ? null : select.value; // 이메일을 그대로 넣음
+
     const payload = {
-      message: message,
-      // receiverId: null // 귓속말 대상 ID 넣기
+      content: message,
+      receiverNickName: "아 하기싫다!",
+      receiverId: receiverId // ✅ 필드 이름은 receiverId지만 값은 이메일
     };
+
+    console.log("보내는 메시지:", JSON.stringify(payload));
 
     stompClient.send(`/publish/chat/${studyId}`, {}, JSON.stringify(payload));
     document.getElementById("message").value = "";
   }
 
   connect();
-
 </script>
 
 </body>

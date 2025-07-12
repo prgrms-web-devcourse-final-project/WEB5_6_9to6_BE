@@ -1,10 +1,13 @@
 package com.grepp.spring.app.model.chat.entity;
 
+import com.grepp.spring.app.model.study.entity.Study;
 import com.grepp.spring.infra.entity.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -19,14 +22,14 @@ public class ChatRoom extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-
-
-    private long studyId;
+    @OneToOne
+    @JoinColumn(name = "study_id")
+    private Study study;
 
     @Builder
-    public ChatRoom(long id, long studyId) {
+    public ChatRoom(long id, Study study) {
         this.id = id;
-        this.studyId = studyId;
+        this.study = study;
     }
 
 }

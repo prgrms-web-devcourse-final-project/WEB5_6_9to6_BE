@@ -1,6 +1,7 @@
 package com.grepp.spring.app.model.chat.entity;
 
 import com.grepp.spring.infra.entity.BaseEntity;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -28,17 +29,22 @@ public class Chat extends BaseEntity {
     @JoinColumn(name = "room_id")
     private ChatRoom chatRoom;
 
-    private long receiverId;
+    @Column(nullable = true)
+    private String receiverId;
+    private String receiverNickname;
     private long senderId;
+    private String senderNickname;
     private String content;
 
 
     @Builder
-    public Chat(long id, ChatRoom chatRoom, long receiverId, long senderId, String content) {
+    public Chat(long id, ChatRoom chatRoom, String receiverId, String receiverNickname, long senderId, String senderNickname, String content) {
         this.id = id;
         this.chatRoom = chatRoom;
         this.receiverId = receiverId;
+        this.receiverNickname = receiverNickname;
         this.senderId = senderId;
+        this.senderNickname = senderNickname;
         this.content = content;
     }
 }
