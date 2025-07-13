@@ -1,6 +1,8 @@
 package com.grepp.spring.app.model.member.repository;
 
+import com.grepp.spring.app.model.member.entity.Attendance;
 import com.grepp.spring.app.model.member.entity.Member;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;

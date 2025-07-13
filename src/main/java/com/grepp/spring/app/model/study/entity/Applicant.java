@@ -39,10 +39,6 @@ public class Applicant extends BaseEntity {
     @JsonIgnore
     private Study study;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
-
     @Builder
     public Applicant(Long id, ApplicantState state, String introduction, Study study, Member member) {
         this.id = id;

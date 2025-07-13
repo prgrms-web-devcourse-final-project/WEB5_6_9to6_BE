@@ -9,6 +9,7 @@ import com.grepp.spring.app.model.chat.entity.ChatRoom;
 import com.grepp.spring.app.model.chat.repository.ChatRepository;
 import com.grepp.spring.app.model.chat.repository.ChatRoomRepository;
 import com.grepp.spring.app.model.member.repository.MemberRepository;
+import com.grepp.spring.app.model.study.entity.Study;
 import com.grepp.spring.infra.config.WebSocket.WebSocketSessionTracker;
 import com.grepp.spring.infra.util.NotFoundException;
 import jakarta.transaction.Transactional;
@@ -58,6 +59,14 @@ public class ChatService {
             .sorted(Comparator.comparing(Chat::getCreatedAt).reversed()) // 가장 최근이 먼저
             .map(ChatHistoryResponse::from)
             .collect(Collectors.toList());
+    }
+
+    // 채팅방 생성
+    public ChatRoom createChatRoom(Study study) {
+        ChatRoom chatRoom = ChatRoom.builder()
+            .study(study)
+            .build();
+        return chatRoomRepository.save(chatRoom);
     }
 
     public List<ParticipantResponse> getOnlineParticipants(Long studyId) {

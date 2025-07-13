@@ -5,6 +5,7 @@ import com.grepp.spring.app.model.auth.code.Role;
 import com.grepp.spring.app.model.auth.dto.SignupRequest;
 import com.grepp.spring.app.model.auth.dto.SocialMemberInfoRegistRequest;
 import com.grepp.spring.app.model.member.code.SocialType;
+import com.grepp.spring.app.model.member.dto.response.AttendanceResponse;
 import com.grepp.spring.app.model.member.dto.response.AchievementRecordResponse;
 import com.grepp.spring.app.model.member.dto.response.MypageStudyInfoResponse;
 import com.grepp.spring.app.model.member.dto.response.StudyInfoResponse;
@@ -15,6 +16,8 @@ import com.grepp.spring.app.model.member.entity.Attendance;
 import com.grepp.spring.app.model.member.entity.Member;
 import com.grepp.spring.app.model.member.entity.StudyMember;
 import com.grepp.spring.app.model.member.repository.MemberRepository;
+import com.grepp.spring.app.model.study.dto.WeeklyAttendanceResponse;
+import com.grepp.spring.app.model.timer.repository.TimerRepository;
 import com.grepp.spring.app.model.member.repository.StudyAttendanceRepository;
 import com.grepp.spring.app.model.member.repository.StudyMemberRepository;
 import com.grepp.spring.app.model.study.entity.GoalAchievement;
@@ -27,8 +30,10 @@ import com.grepp.spring.infra.error.exceptions.AlreadyExistException;
 import com.grepp.spring.infra.error.exceptions.NotFoundException;
 import com.grepp.spring.infra.response.ResponseCode;
 import jakarta.persistence.EntityNotFoundException;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -253,6 +258,7 @@ public class MemberService {
         return studyMember.getStudyMemberId();
     }
 
+    // 출석 체크 등록
     public void markAttendance(Long studyMemberId) {
         StudyMember studyMember = studyMemberRepository.findById(studyMemberId)
             .orElseThrow(() -> new RuntimeException("스터디 멤버를 찾을 수 없습니다."));
@@ -278,4 +284,18 @@ public class MemberService {
 
         studyAttendanceRepository.save(attendance);
     }
+
+    // 주간 출석체크 조회
+    public List<Attendance> getWeeklyAttendanceEntities(Long studyMemberId) {
+        LocalDate today = LocalDate.now();
+        LocalDate startOfWeek = today.with(DayOfWeek.MONDAY);
+        LocalDate endOfWeek = today.with(DayOfWeek.SUNDAY);
+
+        return studyAttendanceRepository.findByStudyMember_StudyMemberIdAndAttendanceDateBetween(
+            studyMemberId,
+            startOfWeek,
+            endOfWeek
+        );
+    }
+
 }
