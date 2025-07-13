@@ -5,8 +5,6 @@ import com.grepp.spring.app.controller.api.auth.payload.TokenResponse;
 import com.grepp.spring.app.model.auth.AuthService;
 import com.grepp.spring.app.model.auth.code.AuthToken;
 import com.grepp.spring.app.model.auth.domain.Principal;
-import com.grepp.spring.app.model.auth.dto.EmailDuplicatedCheckRequest;
-import com.grepp.spring.app.model.auth.dto.EmailDuplicatedCheckResponse;
 import com.grepp.spring.app.model.auth.dto.EmailSendRequest;
 import com.grepp.spring.app.model.auth.dto.SignupRequest;
 import com.grepp.spring.app.model.auth.dto.SocialMemberInfoRegistRequest;
@@ -95,16 +93,7 @@ public class AuthController {
         return ResponseEntity.ok(CommonResponse.success(verified));
     }
 
-    // 이메일 중복 확인
-    @PostMapping("/email/duplicate")
-    @ApiResponse(responseCode = "200")
-    public ResponseEntity<CommonResponse<EmailDuplicatedCheckResponse>> checkEmailDuplicate(@RequestBody EmailDuplicatedCheckRequest req) {
-        EmailDuplicatedCheckResponse duplicated
-            = new EmailDuplicatedCheckResponse(memberService.isDuplicatedEmail(req.getEmail()));
-        return ResponseEntity.ok(CommonResponse.success(duplicated));
-    }
 
-    // 첫 소셜 로그인 유저 추가 정보 입력
     @PutMapping("/oauth/first-regist")
     @ApiResponse(responseCode = "200")
     public ResponseEntity<CommonResponse<?>> oauthRegistMember(
@@ -119,6 +108,3 @@ public class AuthController {
     }
 
 }
-
-
-

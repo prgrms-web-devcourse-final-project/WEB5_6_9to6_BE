@@ -73,24 +73,27 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         // 처음 로그인한다면 Member 저장
         Optional<Member> existMember = memberRepository.findByEmail(userInfo.getEmail());
-        if (existMember.isEmpty()) {
+        if (existMember.isEmpty() || (existMember.isPresent() && existMember.get().getBirthday() == null)) {
 
-            SocialType provider =  switch (userInfo.getProvider()) {
-                case "google" -> SocialType.GOOGLE;
-                case "kakao" -> SocialType.KAKAO;
-                default -> SocialType.LOCAL;
-            };
+            if (existMember.isEmpty()) {
+                SocialType provider =  switch (userInfo.getProvider()) {
+                    case "google" -> SocialType.GOOGLE;
+                    case "kakao" -> SocialType.KAKAO;
+                    default -> SocialType.LOCAL;
+                };
 
-            Member member = Member.builder()
-                .email(userInfo.getEmail())
-                .password("{noop} dummy-password")
-                .role(Role.ROLE_USER)
-                .rewardPoints(100)
-                .winCount(0)
-                .socialType(provider)
-                .build();
-            memberRepository.save(member);
+                Member member = Member.builder()
+                    .email(userInfo.getEmail())
+                    .password("{noop} dummy-password")
+                    .role(Role.ROLE_USER)
+                    .rewardPoints(100)
+                    .winCount(0)
+                    .socialType(provider)
+                    .build();
+                memberRepository.save(member);
+            }
 
+            // 토큰 발급 및 리다이렉트
             TokenDto token = authService.processTokenSignin(userInfo.getEmail(), roles);
 
             ResponseCookie accTkCookie = TokenCookieFactory.create(
@@ -105,7 +108,6 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             response.addHeader("Set-Cookie", accTkCookie.toString());
             response.addHeader("Set-Cookie", rfTkCookie.toString());
 
-            // fixme
             getRedirectStrategy().sendRedirect(request, response, signupRedirectUrl);
             return;
         }
