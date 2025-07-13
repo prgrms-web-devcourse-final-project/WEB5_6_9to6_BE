@@ -5,7 +5,6 @@ import com.grepp.spring.app.model.auth.code.Role;
 import com.grepp.spring.app.model.auth.dto.SignupRequest;
 import com.grepp.spring.app.model.auth.dto.SocialMemberInfoRegistRequest;
 import com.grepp.spring.app.model.member.code.SocialType;
-import com.grepp.spring.app.model.member.dto.StudySummaryDto;
 import com.grepp.spring.app.model.member.dto.response.AttendanceResponse;
 import com.grepp.spring.app.model.member.dto.response.AchievementRecordResponse;
 import com.grepp.spring.app.model.member.dto.response.MypageStudyInfoResponse;
