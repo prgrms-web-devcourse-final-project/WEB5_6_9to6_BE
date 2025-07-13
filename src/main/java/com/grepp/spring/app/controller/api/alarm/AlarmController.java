@@ -1,11 +1,14 @@
-package com.grepp.spring.app.controller.api;
+package com.grepp.spring.app.controller.api.alarm;
 
+import com.grepp.spring.app.model.alarm.dto.AlarmListResponse;
+import com.grepp.spring.app.model.alarm.service.AlarmService;
 import com.grepp.spring.infra.response.CommonResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,8 +21,19 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping(value = "/api/v1/alarms", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AlarmController {
+
+    private AlarmService alarmService;
+
+    // 멤버 알람 목록
+    @GetMapping("/{memberId}")
+    public ResponseEntity<CommonResponse<List<AlarmListResponse>>> getMemberAlarms(@PathVariable Long memberId) {
+        List<AlarmListResponse> alarms = alarmService.getAlarmsByMemberId(memberId);
+        return ResponseEntity.ok(CommonResponse.success(alarms));
+    }
+
 
     // 알람 전송
     @PostMapping()
