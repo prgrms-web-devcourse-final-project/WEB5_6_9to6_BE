@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>채팅 테스트</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+  <script src="https://unpkg.com/@stomp/stompjs@6.1.2/bundles/stomp.umd.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<input id="senderId" placeholder="senderId" />
+<input id="receiverId" placeholder="receiverId" />
+<input id="content" placeholder="content" />
+<button id="sendBtn">Send</button>
+
+<script>
+  // 스크립트 로딩 완료 후 실행
+  document.addEventListener('DOMContentLoaded', function() {
+    const studyId = 7;
+
+    // @stomp/stompjs UMD 번들에서는 StompJs로 접근
+    const stompClient = new StompJs.Client({
+      brokerURL: 'ws://localhost:8080/ws-connect',
+      reconnectDelay: 5000,
+      debug: (str) => console.log(str)
+    });
+
+    stompClient.onConnect = function(frame) {
+      console.log('[✅ CONNECTED]', frame);
+
+      stompClient.subscribe(`/subscribe/${studyId}`, function(message) {
+        console.log('📥 받은 메시지:', JSON.parse(message.body));
+      });
+
+      document.getElementById('sendBtn').addEventListener('click', () => {
+        const payload = {
+          senderId: $('#senderId').val(),
+          receiverId: $('#receiverId').val(),
+          content: $('#content').val()
+        };
+
+        stompClient.publish({
+          destination: `/publish/chat/${studyId}`,
+          body: JSON.stringify(payload)
+        });
+      });
+    };
+
+    stompClient.onStompError = function(frame) {
+      console.error('❌ STOMP Error:', frame);
+    };
+
+    stompClient.activate();
+  }, 500); // 500ms 후 실행
+  // window.load 끝
+</script>
+</body>
+</html>

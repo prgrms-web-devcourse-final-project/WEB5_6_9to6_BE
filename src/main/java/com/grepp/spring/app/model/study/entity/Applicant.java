@@ -29,6 +29,10 @@ public class Applicant extends BaseEntity {
     private ApplicantState state;
 
     private String introduction;
+  
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", insertable = false, updatable = false)
+    private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "study_id")
