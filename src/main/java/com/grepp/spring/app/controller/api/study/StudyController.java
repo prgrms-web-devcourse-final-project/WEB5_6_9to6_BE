@@ -190,11 +190,10 @@ public class StudyController {
     // 스터디 목표 달성 여부 조회
     @GetMapping("/{studyId}/goals/completed")
     public ResponseEntity<?> getWeeklyGoalStats(
-        @PathVariable Long studyId,
-        @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        @PathVariable Long studyId) {
 
         Long memberId = SecurityUtil.getCurrentMemberId(); // 로그인된 사용자
-        WeeklyGoalStatusResponse response = studyService.getWeeklyGoalStats(studyId, memberId, endDate);
+        WeeklyGoalStatusResponse response = studyService.getWeeklyGoalStats(studyId, memberId);
 
         return ResponseEntity.ok(CommonResponse.success(response));
     }

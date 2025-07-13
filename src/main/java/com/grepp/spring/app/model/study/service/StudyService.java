@@ -245,7 +245,8 @@ public class StudyService {
     }
 
     @Transactional(readOnly = true)
-    public WeeklyGoalStatusResponse getWeeklyGoalStats(Long studyId, Long memberId, LocalDate endDate) {
+    public WeeklyGoalStatusResponse getWeeklyGoalStats(Long studyId, Long memberId) {
+        LocalDate endDate = LocalDate.now();
         LocalDate startDate = endDate.minusDays(6);
         LocalDateTime startDateTime = startDate.atStartOfDay();
         LocalDateTime endDateTime = endDate.atTime(LocalTime.MAX);
