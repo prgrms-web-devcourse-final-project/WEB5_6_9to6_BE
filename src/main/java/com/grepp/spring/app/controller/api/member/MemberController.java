@@ -111,16 +111,4 @@ public class MemberController {
         );
     }
 
-    // 타이머 시간 수정
-    @PutMapping("/{memberId}/timer-settings")
-    @ApiResponse(responseCode = "200")
-    public ResponseEntity<Map<String, Object>> updateTimer(@PathVariable Long memberId) {
-
-        Map<String, Object> response = new LinkedHashMap<>();
-        response.put("code", "0000");
-        response.put("message", "성공적으로 수정하였습니다.");
-        response.put("data", new LinkedHashMap<>());
-
-        return ResponseEntity.ok(response);
-    }
 }
