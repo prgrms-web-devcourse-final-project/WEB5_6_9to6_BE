@@ -1,11 +1,15 @@
 package com.grepp.spring.app.model.study.repository;
 
+import com.grepp.spring.app.model.member.entity.StudyMember;
 import com.grepp.spring.app.model.study.entity.GoalAchievement;
 import io.lettuce.core.dynamic.annotation.Param;
 import java.time.LocalDateTime;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface GoalAchievementRepository extends JpaRepository<GoalAchievement, Long> {
 
     @Query("""
@@ -24,5 +28,6 @@ WHERE sg.study.studyId = :studyId
         @Param("endDateTime") LocalDateTime endDateTime
     );
 
+    List<GoalAchievement> findAllByStudyMemberAndIsAccomplishedTrue(StudyMember studyMember);
 
 }
