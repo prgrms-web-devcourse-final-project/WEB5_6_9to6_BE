@@ -8,7 +8,9 @@ import com.grepp.spring.app.model.auth.token.entity.RefreshToken;
 import com.grepp.spring.app.model.member.repository.MemberRepository;
 import com.grepp.spring.infra.auth.jwt.JwtTokenProvider;
 import com.grepp.spring.infra.auth.jwt.dto.AccessTokenDto;
+import com.grepp.spring.infra.error.exceptions.AlreadyExistException;
 import com.grepp.spring.infra.mail.MailService;
+import com.grepp.spring.infra.response.ResponseCode;
 import java.time.Duration;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,42 +37,45 @@ public class AuthService {
     private final MailService mailService;
     private final RedisTemplate<String, Object> redisTemplate;
     private final MemberRepository memberRepository;
-    
+
     public TokenDto signin(LoginRequest loginRequest) {
         UsernamePasswordAuthenticationToken authenticationToken =
             new UsernamePasswordAuthenticationToken(loginRequest.getUsername(),
                 loginRequest.getPassword());
-        
+
         // loadUserByUsername + password 검증 후 인증 객체 반환
         // 인증 실패 시: AuthenticationException 발생
         Authentication authentication = authenticationManagerBuilder.getObject()
-                                            .authenticate(authenticationToken);
+            .authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String roles =  String.join(",", authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList());
         return processTokenSignin(authentication.getName(), roles);
     }
-    
+
     public TokenDto processTokenSignin(String email, String roles) {
         // black list 에 있다면 해제
         userBlackListRepository.deleteById(email);
 
         long id = memberRepository.findIdByEmail(email);
-        
+
         // 3. 인증 정보를 기반으로 JWT 토큰 생성
         AccessTokenDto accessToken = jwtTokenProvider.generateAccessToken(email, roles, id);
         RefreshToken refreshToken = refreshTokenService.saveWithAtId(accessToken.getJti());
-        
+
         return TokenDto.builder()
-                   .accessToken(accessToken.getToken())
-                   .atId(accessToken.getJti())
-                   .refreshToken(refreshToken.getToken())
-                   .grantType("Bearer")
-                   .refreshExpiresIn(jwtTokenProvider.getRefreshTokenExpiration())
-                   .expiresIn(jwtTokenProvider.getAccessTokenExpiration())
-                   .build();
+            .accessToken(accessToken.getToken())
+            .atId(accessToken.getJti())
+            .refreshToken(refreshToken.getToken())
+            .grantType("Bearer")
+            .refreshExpiresIn(jwtTokenProvider.getRefreshTokenExpiration())
+            .expiresIn(jwtTokenProvider.getAccessTokenExpiration())
+            .build();
     }
 
     public void sendVerifyCode(String email) {
+        if(isPresentEmail(email)) {
+            throw new AlreadyExistException(ResponseCode.ALREADY_EXIST);
+        }
         String title = "이메일 인증 요청";
         String verifyCode = RandomStringUtils.randomNumeric(6);
         redisTemplate.opsForValue().set("verifyCode:" + email, verifyCode, Duration.ofMinutes(5));
@@ -79,5 +84,10 @@ public class AuthService {
 
     public boolean checkVerifyCode(String email, String code) {
         return redisTemplate.opsForValue().get("verifyCode:" + email).equals(code);
+    }
+
+    @Transactional(readOnly = true)
+    protected boolean isPresentEmail(String email) {
+        return memberRepository.findByEmail(email).isPresent();
     }
 }
