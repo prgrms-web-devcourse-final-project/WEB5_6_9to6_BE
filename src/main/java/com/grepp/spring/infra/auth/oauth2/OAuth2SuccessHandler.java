@@ -87,7 +87,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                     .password("{noop} dummy-password")
                     .role(Role.ROLE_USER)
                     .rewardPoints(100)
-                    .winRate(0)
+                    .winCount(0)
                     .socialType(provider)
                     .build();
                 memberRepository.save(member);

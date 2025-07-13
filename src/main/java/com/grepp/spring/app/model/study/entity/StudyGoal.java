@@ -43,4 +43,8 @@ public class StudyGoal {
         this.content = content;
         this.goalType = type;
     }
+
+    public void setStudy(Study study) {
+        this.study = study;
+    }
 }
