@@ -15,6 +15,10 @@ public record CommonResponse<T>(
         return new CommonResponse<>(ResponseCode.SUCCESS.code(), ResponseCode.SUCCESS.message(), data);
     }
 
+    public static <T> CommonResponse<T> success(T data, String message) {
+        return new CommonResponse<>(ResponseCode.SUCCESS.code(), message, data);
+    }
+
     public static <T> CommonResponse<T> noContent() {
         return new CommonResponse<>(ResponseCode.SUCCESS.code(), ResponseCode.SUCCESS.message(), null);
     }
