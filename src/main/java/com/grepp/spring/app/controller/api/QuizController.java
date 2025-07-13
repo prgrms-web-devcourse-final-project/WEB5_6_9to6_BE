@@ -1,11 +1,10 @@
 package com.grepp.spring.app.controller.api;
 
-import com.grepp.spring.app.controller.api.quiz.payload.QuizGradingRequest;
-import com.grepp.spring.app.controller.api.quiz.payload.QuizGradingResponse;
-import com.grepp.spring.app.controller.api.quiz.payload.QuizListResponse;
-import com.grepp.spring.app.controller.api.quiz.payload.SurvivalResultRequest;
+import com.grepp.spring.app.controller.api.quiz.payload.*;
+import com.grepp.spring.app.model.quiz.entity.QuizSet;
 import com.grepp.spring.app.model.quiz.service.QuizGetService;
 import com.grepp.spring.app.model.quiz.service.QuizGradingService;
+import com.grepp.spring.app.model.quiz.service.QuizService;
 import com.grepp.spring.app.model.quiz.service.SurvivalResultService;
 import com.grepp.spring.infra.response.CommonResponse;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -23,6 +23,7 @@ public class QuizController {
     private final QuizGetService quizGetService;
     private final QuizGradingService quizGradingService;
     private final SurvivalResultService survivalResultService;
+    private final QuizService quizService;
 
     @GetMapping("/{studyId}/problems")
     public ResponseEntity<CommonResponse<List<QuizListResponse>>> getAllQuizProblems(@PathVariable Long studyId) {
@@ -47,5 +48,16 @@ public class QuizController {
 
         survivalResultService.registerSurvivalResult(studyId, week, request);
         return ResponseEntity.ok(CommonResponse.success(null));
+    }
+
+    @PostMapping("/{studyId}/problems")
+    public ResponseEntity<CommonResponse<QuizRegisterResponse>> createQuizProblems(
+            @PathVariable Long studyId,
+            @RequestBody QuizRegisterRequest request) throws IOException {
+
+        QuizSet createdQuizSet = quizService.createProblemsForWeek(studyId, request.getWeek());
+        QuizRegisterResponse response = new QuizRegisterResponse(createdQuizSet.getId(), 5);
+
+        return ResponseEntity.ok(CommonResponse.success(response));
     }
 }
