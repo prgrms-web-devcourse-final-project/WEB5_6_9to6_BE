@@ -1,10 +1,11 @@
 package com.grepp.spring.app.controller.websocket;
 
+import com.grepp.spring.app.controller.api.chat.ParticipantResponse;
 import com.grepp.spring.app.controller.websocket.payload.ChatMessageRequest;
 import com.grepp.spring.app.controller.websocket.payload.ChatMessageResponse;
 import com.grepp.spring.app.model.auth.domain.Principal;
 import com.grepp.spring.app.model.chat.service.ChatService;
-import com.grepp.spring.app.model.member.service.MemberService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.Header;
@@ -67,14 +68,22 @@ public class WebsocketController {
                 response
             );
 
-            // 보낸 사람에게도 보냄 (자기 메시지 확인용)
-            messagingTemplate.convertAndSendToUser(
-                principal.getUsername() + "",
-                "/queue/messages",
-                response
-            );
 
+            if(!(authentication.getName().equals(request.getReceiverId())) ) {
+                // 보낸 사람에게도 보냄 (자기 메시지 확인용)
+                messagingTemplate.convertAndSendToUser(
+                    principal.getUsername() + "",
+                    "/queue/messages",
+                    response
+                );
+            }
 
         }
+    }
+
+    @MessageMapping("/participants/{studyId}")
+    public void requestParticipants(@DestinationVariable Long studyId, Principal principal) {
+        List<ParticipantResponse> participants = chatService.getOnlineParticipants(studyId);
+        messagingTemplate.convertAndSend("/subscribe/" + studyId + "/participants", participants);
     }
 }

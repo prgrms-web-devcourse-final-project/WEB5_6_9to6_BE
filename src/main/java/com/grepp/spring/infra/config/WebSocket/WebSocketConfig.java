@@ -1,4 +1,4 @@
-package com.grepp.spring.infra.config;
+package com.grepp.spring.infra.config.WebSocket;
 
 
 import java.security.Principal;
@@ -32,7 +32,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         // websocket handshake endpoint
         registry.addEndpoint("/ws-connect")
             .setAllowedOrigins("http://localhost:8080", "http://127.0.0.1:5500",
-                "http://localhost:3000")  // 모든 도메인 허용 (개발용)
+                "http://localhost:3000")
             .setHandshakeHandler(new DefaultHandshakeHandler() {
                 @Override
                 protected Principal determineUser(ServerHttpRequest request,
