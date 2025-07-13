@@ -15,18 +15,20 @@ import com.grepp.spring.app.model.study.code.GoalType;
 import com.grepp.spring.app.model.study.code.Status;
 import com.grepp.spring.app.model.study.dto.StudyInfoResponse;
 import com.grepp.spring.app.model.study.dto.StudyListResponse;
+import com.grepp.spring.app.model.study.dto.WeeklyGoalStatusResponse;
 import com.grepp.spring.app.model.study.entity.Applicant;
 import com.grepp.spring.app.model.study.entity.GoalAchievement;
 import com.grepp.spring.app.model.study.entity.Study;
 import com.grepp.spring.app.model.study.entity.StudyGoal;
-import com.grepp.spring.app.model.study.entity.StudySchedule;
 import com.grepp.spring.app.model.study.reponse.GoalsResponse;
 import com.grepp.spring.app.model.study.repository.ApplicantRepository;
 import com.grepp.spring.app.model.study.repository.GoalAchievementRepository;
 import com.grepp.spring.app.model.study.repository.StudyGoalRepository;
 import com.grepp.spring.app.model.study.repository.StudyRepository;
 import com.grepp.spring.infra.error.exceptions.NotFoundException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -241,4 +243,40 @@ public class StudyService {
 
         applicantRepository.save(applicant);
     }
+
+    @Transactional(readOnly = true)
+    public WeeklyGoalStatusResponse getWeeklyGoalStats(Long studyId, Long memberId, LocalDate endDate) {
+        LocalDate startDate = endDate.minusDays(6);
+        LocalDateTime startDateTime = startDate.atStartOfDay();
+        LocalDateTime endDateTime = endDate.atTime(LocalTime.MAX);
+
+        // 스터디 존재 여부 확인
+        if (!studyRepository.existsById(studyId)) {
+            throw new NotFoundException("스터디가 존재하지 않습니다.");
+        }
+
+        // memberId → studyMemberId 조회
+        StudyMember studyMember = studyMemberRepository.findByStudyStudyIdAndMemberId(studyId, memberId)
+            .orElseThrow(() -> new NotFoundException("스터디 멤버 정보를 찾을 수 없습니다."));
+        Long studyMemberId = studyMember.getStudyMemberId();
+
+        // 목표 전체에 대해 중복 없이 총 달성 카운트
+        int totalCompletedCount = goalAchievementRepository.countTotalAchievements(
+            studyId, studyMemberId, startDateTime, endDateTime
+        );
+
+        List<WeeklyGoalStatusResponse.GoalStat> goals = List.of(
+            new WeeklyGoalStatusResponse.GoalStat(totalCompletedCount)
+        );
+
+        return new WeeklyGoalStatusResponse(
+            studyId,
+            startDate,
+            endDate,
+            goals
+        );
+    }
+
+
+
 }

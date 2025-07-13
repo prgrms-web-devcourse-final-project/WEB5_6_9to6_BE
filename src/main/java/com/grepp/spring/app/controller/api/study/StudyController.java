@@ -13,6 +13,7 @@ import com.grepp.spring.app.model.member.service.MemberService;
 import com.grepp.spring.app.model.study.dto.StudyInfoResponse;
 import com.grepp.spring.app.model.study.dto.StudyListResponse;
 import com.grepp.spring.app.model.study.dto.WeeklyAttendanceResponse;
+import com.grepp.spring.app.model.study.dto.WeeklyGoalStatusResponse;
 import com.grepp.spring.app.model.study.entity.Study;
 import com.grepp.spring.app.model.study.service.StudyService;
 import com.grepp.spring.infra.response.CommonResponse;
@@ -28,6 +29,7 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -38,6 +40,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -171,5 +174,16 @@ public class StudyController {
         return ResponseEntity.status(200).body(CommonResponse.noContent());
     }
 
+    // 스터디 목표 달성 여부 조회
+    @GetMapping("/{studyId}/goals/completed")
+    public ResponseEntity<?> getWeeklyGoalStats(
+        @PathVariable Long studyId,
+        @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+
+        Long memberId = SecurityUtil.getCurrentMemberId(); // 로그인된 사용자
+        WeeklyGoalStatusResponse response = studyService.getWeeklyGoalStats(studyId, memberId, endDate);
+
+        return ResponseEntity.ok(CommonResponse.success(response));
+    }
 
 }
