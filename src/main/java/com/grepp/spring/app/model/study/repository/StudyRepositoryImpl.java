@@ -8,10 +8,13 @@ import com.grepp.spring.app.model.study.entity.Study;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
+import java.util.Optional;
+import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
 
+@Repository
 public class StudyRepositoryImpl implements StudyRepositoryCustom {
 
     @PersistenceContext
@@ -51,6 +54,21 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom {
         }
 
         return query.getResultList();
+    }
+
+    @Override
+    public Optional<Study> findByIdWithSchedulesAndGoals(Long studyId) {
+        String jpql = """
+            SELECT s FROM Study s
+            LEFT JOIN FETCH s.schedules
+            LEFT JOIN FETCH s.goals
+            WHERE s.studyId = :studyId
+            """;
+        return em.createQuery(jpql, Study.class)
+            .setParameter("studyId", studyId)
+            .getResultList()
+            .stream()
+            .findFirst();
     }
 
 }

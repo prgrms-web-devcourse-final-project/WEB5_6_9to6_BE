@@ -20,7 +20,7 @@
 <ul id="participant-list"></ul>
 <div id="chat-box" style="border: 1px solid #ccc; height: 300px; overflow-y: scroll;"></div>
 
-<!-- 귓속말 대상 선택 드롭다운 -->
+<!-- 귓속말 대상 선택 드롭다운 (receiverId에 이메일을 담음) -->
 <select id="receiver-select" style="margin-top: 10px;">
   <option value="">전체에게</option>
   <option value="alice@example.com">회원 1 (Alice)</option>
@@ -33,6 +33,7 @@
 <button onclick="sendMessage()">보내기</button>
 
 <script>
+  // studyId 가져오기 (URL 쿼리에서), 기본값 1
   const studyId = new URLSearchParams(window.location.search).get("studyId") || 1;
   document.getElementById("study-id").textContent = studyId;
 
@@ -87,6 +88,7 @@
     const messageElement = document.createElement("p");
 
     if (data.receiverId) {
+      // 귓속말 표시
       messageElement.style.color = "blue";
       messageElement.textContent = `(귓속말) ${data.senderId}: ${data.content}`;
     } else {
@@ -107,7 +109,7 @@
     const payload = {
       content: message,
       receiverNickName: "아 하기싫다!",
-      receiverId: receiverId
+      receiverId: receiverId // 필드 이름은 receiverId지만 값은 이메일
     };
 
     stompClient.send(`/publish/chat/${studyId}`, {}, JSON.stringify(payload));
