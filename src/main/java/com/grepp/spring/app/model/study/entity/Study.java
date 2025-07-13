@@ -123,4 +123,9 @@ public class Study {
     public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
     }
+
+    public void addGoal(StudyGoal goal) {
+        this.getGoals().add(goal);
+        goal.setStudy(this);
+    }
 }

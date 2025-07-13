@@ -1,5 +1,6 @@
 package com.grepp.spring.app.controller.api.study;
 
+import com.grepp.spring.app.controller.api.study.payload.StudyCreationRequest;
 import com.grepp.spring.app.controller.api.study.payload.StudySearchRequest;
 import com.grepp.spring.app.controller.api.study.payload.StudyUpdateRequest;
 import com.grepp.spring.app.model.member.dto.response.ApplicantsResponse;
@@ -24,6 +25,7 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -59,7 +61,6 @@ public class StudyController {
     }
 
     // 주간 출석체크 조회(이번주)
-// 주간 출석체크 조회(이번주)
     @GetMapping("/{studyId}/attendance")
     public ResponseEntity<?> weeklyAttendance(
         @PathVariable Long studyId,
@@ -134,9 +135,12 @@ public class StudyController {
     // 스터디 생성
     @PostMapping
     public ResponseEntity<?> createStudy(@RequestBody StudyCreationRequest req) {
-        return ResponseEntity.status(200).body(
-            CommonResponse.noContent()
-        );
+        // 1. 서비스에서 스터디 생성 수행
+        studyService.createStudy(req); 
+        // 2. 채팅방 생성
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+            .body(CommonResponse.success("스터디가 성공적으로 생성되었습니다."));
     }
 
     // 스터디 목표 조회
@@ -152,91 +156,6 @@ public class StudyController {
         log.info("memberId: {}", memberId);
         studyService.registGoal(List.of(studyId, memberId, goalId));
         return ResponseEntity.status(200).body(CommonResponse.noContent());
-    }
-
-    @Data
-    @NoArgsConstructor
-    private static class StudyCreationRequest {
-        private String name;
-        private StudyCategory category;
-        private int maxMember;
-        private Region region;
-        private String place;
-        private boolean isOnline;
-        private List<StudySchedule> schedules;
-        private LocalDate startDate;
-        private LocalDate endDate;
-        private String description;
-        private String externalLink;
-        private StudyType studyType;
-        private List<Goal> goals;
-
-        @Builder
-        public StudyCreationRequest(String name, StudyCategory category, int maxMember,
-            Region region,
-            String place, List<StudySchedule> schedules, LocalDate startDate,
-            LocalDate endDate,
-            String description, String externalLink, StudyType studyType,
-            List<Goal> goals) {
-            this.name = name;
-            this.category = category;
-            this.maxMember = maxMember;
-            this.region = region;
-            this.place = place;
-            this.isOnline = (region == Region.ONLINE) ? true:false;
-            this.schedules = schedules;
-            this.startDate = startDate;
-            this.endDate = endDate;
-            this.description = description;
-            this.externalLink = externalLink;
-            this.studyType = studyType;
-            this.goals = goals;
-        }
-    }
-
-    @Data
-    @NoArgsConstructor
-    private static class StudySchedule {
-        DayOfWeek dayOfWeek;
-        LocalTime startTime;
-        LocalTime endTime;
-
-        @Builder
-        public StudySchedule(DayOfWeek dayOfWeek, LocalTime startTime, LocalTime endTime) {
-            this.dayOfWeek = dayOfWeek;
-            this.startTime = startTime;
-            this.endTime = endTime;
-        }
-    }
-
-    @Data
-    @NoArgsConstructor
-    private static class Goal {
-        long goalId;
-        String content;
-        DayOfWeek checkDay;
-
-        @Builder
-        public Goal(long goalId, String content, DayOfWeek checkDay) {
-            this.goalId = goalId;
-            this.content = content;
-            this.checkDay = checkDay;
-        }
-    }
-
-    // 스터디 타입
-    private enum StudyType {
-        DEFAULT, SURVIVAL
-    }
-
-    // 스터디 주제
-    private enum StudyCategory {
-        LANGUAGE, JOB, PROGRAMMING, EXAM_PUBLIC, EXAM_SCHOOL, OTHERS
-    }
-
-    // 활동 지역
-    private enum Region {
-        ONLINE, SEOUL, JEJU;
     }
 
 

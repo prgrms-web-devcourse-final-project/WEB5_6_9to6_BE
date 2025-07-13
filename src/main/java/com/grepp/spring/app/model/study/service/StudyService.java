@@ -1,5 +1,6 @@
 package com.grepp.spring.app.model.study.service;
 
+import com.grepp.spring.app.controller.api.study.payload.StudyCreationRequest;
 import com.grepp.spring.app.controller.api.study.payload.StudySearchRequest;
 import com.grepp.spring.app.controller.api.study.payload.StudyUpdateRequest;
 import com.grepp.spring.app.model.member.dto.response.ApplicantsResponse;
@@ -8,11 +9,14 @@ import com.grepp.spring.app.model.member.entity.Member;
 import com.grepp.spring.app.model.member.entity.StudyMember;
 import com.grepp.spring.app.model.member.repository.StudyMemberRepository;
 import com.grepp.spring.app.model.study.code.DayOfWeek;
+import com.grepp.spring.app.model.study.code.GoalType;
+import com.grepp.spring.app.model.study.code.Status;
 import com.grepp.spring.app.model.study.dto.StudyInfoResponse;
 import com.grepp.spring.app.model.study.dto.StudyListResponse;
 import com.grepp.spring.app.model.study.entity.GoalAchievement;
 import com.grepp.spring.app.model.study.entity.Study;
 import com.grepp.spring.app.model.study.entity.StudyGoal;
+import com.grepp.spring.app.model.study.entity.StudySchedule;
 import com.grepp.spring.app.model.study.reponse.GoalsResponse;
 import com.grepp.spring.app.model.study.repository.GoalAchievementRepository;
 import com.grepp.spring.app.model.study.repository.StudyGoalRepository;
@@ -95,6 +99,7 @@ public class StudyService {
         return StudyInfoResponse.fromEntity(studyWithGoals);
     }
 
+    // 스터디 수정
     @Transactional
     public void updateStudy(Long studyId, StudyUpdateRequest req) {
         Study study = studyRepository.findById(studyId)
@@ -157,4 +162,54 @@ public class StudyService {
             })
             .toList();
     }
+
+    @Transactional
+    public void createStudy(StudyCreationRequest req) {
+        // 1. 스터디 생성
+        Study study = Study.builder()
+            .name(req.getName())
+            .category(req.getCategory())
+            .maxMembers(req.getMaxMembers())
+            .region(req.getRegion())
+            .place(req.getPlace())
+            .isOnline(req.isOnline())
+            .description(req.getDescription())
+            .externalLink(req.getExternalLink())
+            .studyType(req.getStudyType())
+            .startDate(req.getStartDate())
+            .endDate(req.getEndDate())
+            .status(Status.READY)
+            .createdAt(LocalDateTime.now())
+            .build();
+
+        // 2. 일정 추가 (String -> Enum 변환에 대한 예외 처리 포함)
+        for (String dayStr : req.getSchedules()) {
+            try {
+                DayOfWeek day = DayOfWeek.valueOf(dayStr.toUpperCase());
+                study.addSchedule(day, req.getStartTime(), req.getEndTime());
+            } catch (IllegalArgumentException e) {
+                throw new RuntimeException("올바르지 않은 요일 형식입니다: " + dayStr);
+            }
+        }
+
+        // 3. 목표 추가
+        if (req.getGoals() != null) {
+            for (StudyCreationRequest.GoalDTO g : req.getGoals()) {
+                if (g.getContent() == null || g.getContent().isBlank()) {
+                    continue; // 빈 목표 내용은 무시
+                }
+                StudyGoal goal = StudyGoal.builder()
+                    .content(g.getContent())
+                    .goalType(GoalType.WEEKLY)
+                    .activated(true)
+                    .study(study)
+                    .build();
+                study.addGoal(goal);
+            }
+        }
+
+        // 4. 저장
+        studyRepository.save(study);
+    }
+
 }
