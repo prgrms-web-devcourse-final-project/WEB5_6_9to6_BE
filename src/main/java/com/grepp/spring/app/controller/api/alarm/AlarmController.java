@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -22,10 +21,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/api/v1/alarms", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/v1/alarms")
 public class AlarmController {
 
-    private AlarmService alarmService;
+    private final AlarmService alarmService;
 
     // 멤버 알람 목록
     @GetMapping("/{memberId}")
