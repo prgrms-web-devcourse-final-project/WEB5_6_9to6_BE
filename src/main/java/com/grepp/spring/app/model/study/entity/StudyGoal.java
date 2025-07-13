@@ -37,4 +37,10 @@ public class StudyGoal {
         this.activated = activated;
         this.study = study;
     }
+
+    // 목표 수정
+    public void update(String content, GoalType type) {
+        this.content = content;
+        this.goalType = type;
+    }
 }
