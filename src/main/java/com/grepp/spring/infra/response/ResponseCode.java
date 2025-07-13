@@ -19,7 +19,6 @@ public enum ResponseCode {
     MAIL_SEND_FAIL("5001", HttpStatus.INTERNAL_SERVER_ERROR, "메일 전송에 실패하였습니다."),
     SECURITY_INCIDENT("6000", HttpStatus.OK, "비정상적인 로그인 시도가 감지되었습니다.");
 
-
     private final String code;
     private final HttpStatus status;
     private final String message;

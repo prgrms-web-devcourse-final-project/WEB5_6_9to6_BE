@@ -1,5 +1,10 @@
 package com.grepp.spring.app.controller.api;
 
+import com.grepp.spring.app.controller.api.chat.ChatHistoryResponse;
+import com.grepp.spring.app.controller.api.reward.payload.OwnItemResponse;
+import com.grepp.spring.app.model.auth.domain.Principal;
+import com.grepp.spring.app.model.chat.service.ChatService;
+import com.grepp.spring.infra.response.CommonResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -8,6 +13,7 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,6 +24,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = "/api/v1/chats", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ChatController {
+
+    private final ChatService chatService;
+
+    public ChatController(ChatService chatService) {
+        this.chatService = chatService;
+    }
 
     // 채팅 메시지 전송
     @PostMapping("/{studyId}")
@@ -84,35 +96,19 @@ public class ChatController {
     // 채팅 내역 조회
     @GetMapping("/{studyId}/history")
     @ApiResponse(responseCode = "200")
-    public ResponseEntity<Map<String, Object>> getChatHistory(@PathVariable Long studyId) {
+    public ResponseEntity<CommonResponse<List<ChatHistoryResponse>>> getChatHistory(@PathVariable Long studyId,
+        Authentication authentication) {
 
         List<Map<String, Object>> chatHistory = new ArrayList<>();
 
-        Map<String, Object> chat1 = new LinkedHashMap<>();
-        chat1.put("chatId", 10);
-        chat1.put("senderId", 3);
-        chat1.put("receiverId", null); // 공개 채팅
-        chat1.put("nickname", "철수");
-        chat1.put("message", "안녕하세요!");
-        chat1.put("sentAt", "2025-07-04T14:00:00");
+        Principal principal = (Principal) authentication.getPrincipal();
 
-        Map<String, Object> chat2 = new LinkedHashMap<>();
-        chat2.put("chatId", 11);
-        chat2.put("senderId", 3);
-        chat2.put("receiverId", 5); // 귓속말
-        chat2.put("nickname", "철수");
-        chat2.put("message", "비밀 얘기입니다.");
-        chat2.put("sentAt", "2025-07-04T14:02:00");
 
-        chatHistory.add(chat1);
-        chatHistory.add(chat2);
 
-        Map<String, Object> response = new LinkedHashMap<>();
-        response.put("code", "0000");
-        response.put("message", "채팅 내역 조회 성공");
-        response.put("data", chatHistory);
 
-        return ResponseEntity.ok(response);
+        List<ChatHistoryResponse> responses = chatService.findChat(studyId,principal.getMemberId(),principal.getUsername());
+
+        return ResponseEntity.ok(CommonResponse.success(responses));
     }
 
 }
