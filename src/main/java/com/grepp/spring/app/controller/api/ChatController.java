@@ -1,15 +1,18 @@
 package com.grepp.spring.app.controller.api;
 
 import com.grepp.spring.app.controller.api.chat.ChatHistoryResponse;
+import com.grepp.spring.app.controller.api.chat.ParticipantResponse;
 import com.grepp.spring.app.controller.api.reward.payload.OwnItemResponse;
 import com.grepp.spring.app.model.auth.domain.Principal;
 import com.grepp.spring.app.model.chat.service.ChatService;
+import com.grepp.spring.infra.config.WebSocket.WebSocketSessionTracker;
 import com.grepp.spring.infra.response.CommonResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,14 +26,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(value = "/api/v1/chats", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequiredArgsConstructor
 public class ChatController {
 
     private final ChatService chatService;
+    private final WebSocketSessionTracker webSocketSessionTracker;
 
-    public ChatController(ChatService chatService) {
-        this.chatService = chatService;
-    }
 
+
+    // 웹소켓 사용으로 인해 사용안함.
     // 채팅 메시지 전송
     @PostMapping("/{studyId}")
     @ApiResponse(responseCode = "200")
@@ -65,32 +69,18 @@ public class ChatController {
         return ResponseEntity.status(status).body(error);
     }
 
+
+    // 웹소켓으로 변경해서 안쓸 것 같음
     // 현재 접속 중인 사용자 목록 조회
     @GetMapping("/{studyId}/participants")
     @ApiResponse(responseCode = "200")
-    public ResponseEntity<Map<String, Object>> getOnlineParticipants(@PathVariable Long studyId) {
+    public ResponseEntity<CommonResponse<List<ParticipantResponse>>> getOnlineParticipants(@PathVariable Long studyId) {
 
-        List<Map<String, Object>> participants = new ArrayList<>();
 
-        Map<String, Object> member1 = new LinkedHashMap<>();
-        member1.put("memberId", 3);
-        member1.put("nickname", "철수");
-        member1.put("status", "ONLINE");
+        List<ParticipantResponse> participants = chatService.getOnlineParticipants(studyId);
 
-        Map<String, Object> member2 = new LinkedHashMap<>();
-        member2.put("memberId", 5);
-        member2.put("nickname", "영희");
-        member2.put("status", "ONLINE");
 
-        participants.add(member1);
-        participants.add(member2);
-
-        Map<String, Object> response = new LinkedHashMap<>();
-        response.put("code", "0000");
-        response.put("message", "접속자 목록 조회 성공");
-        response.put("data", participants);
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(CommonResponse.success(participants));
     }
 
     // 채팅 내역 조회
