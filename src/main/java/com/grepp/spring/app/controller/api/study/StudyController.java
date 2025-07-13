@@ -4,6 +4,7 @@ import com.grepp.spring.app.controller.api.study.payload.ApplicationRequest;
 import com.grepp.spring.app.controller.api.study.payload.StudyCreationRequest;
 import com.grepp.spring.app.controller.api.study.payload.StudySearchRequest;
 import com.grepp.spring.app.controller.api.study.payload.StudyUpdateRequest;
+import com.grepp.spring.app.model.chat.service.ChatService;
 import com.grepp.spring.app.model.member.dto.response.ApplicantsResponse;
 import com.grepp.spring.app.model.member.dto.response.AttendanceResponse;
 import com.grepp.spring.app.model.member.dto.response.StudyMemberResponse;
@@ -12,6 +13,7 @@ import com.grepp.spring.app.model.member.service.MemberService;
 import com.grepp.spring.app.model.study.dto.StudyInfoResponse;
 import com.grepp.spring.app.model.study.dto.StudyListResponse;
 import com.grepp.spring.app.model.study.dto.WeeklyAttendanceResponse;
+import com.grepp.spring.app.model.study.entity.Study;
 import com.grepp.spring.app.model.study.service.StudyService;
 import com.grepp.spring.infra.response.CommonResponse;
 import com.grepp.spring.infra.util.SecurityUtil;
@@ -46,6 +48,7 @@ public class StudyController {
 
     private final MemberService memberService;
     private final StudyService studyService;
+    private final ChatService chatService;
 
     // 출석체크
     @PostMapping("/{studyId}/attendance")
@@ -146,9 +149,9 @@ public class StudyController {
     @PostMapping
     public ResponseEntity<?> createStudy(@RequestBody StudyCreationRequest req) {
         // 1. 서비스에서 스터디 생성 수행
-        studyService.createStudy(req); 
+        Study study = studyService.createStudy(req);
         // 2. 채팅방 생성
-
+        chatService.createChatRoom(study);
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(CommonResponse.success("스터디가 성공적으로 생성되었습니다."));
     }

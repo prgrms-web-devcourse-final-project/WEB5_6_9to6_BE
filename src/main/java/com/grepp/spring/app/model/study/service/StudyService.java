@@ -170,7 +170,7 @@ public class StudyService {
     }
 
     @Transactional
-    public void createStudy(StudyCreationRequest req) {
+    public Study createStudy(StudyCreationRequest req) {
         // 1. 스터디 생성
         Study study = Study.builder()
             .name(req.getName())
@@ -215,7 +215,7 @@ public class StudyService {
         }
 
         // 4. 저장
-        studyRepository.save(study);
+        return studyRepository.save(study);
     }
 
     @Transactional
@@ -241,5 +241,4 @@ public class StudyService {
 
         applicantRepository.save(applicant);
     }
-
 }
