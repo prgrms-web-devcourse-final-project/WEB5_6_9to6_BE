@@ -10,6 +10,8 @@ import com.grepp.spring.app.model.member.dto.response.AttendanceResponse;
 import com.grepp.spring.app.model.member.dto.response.StudyMemberResponse;
 import com.grepp.spring.app.model.member.entity.Attendance;
 import com.grepp.spring.app.model.member.service.MemberService;
+import com.grepp.spring.app.model.study.code.Category;
+import com.grepp.spring.app.model.study.code.Status;
 import com.grepp.spring.app.model.study.dto.StudyInfoResponse;
 import com.grepp.spring.app.model.study.dto.StudyListResponse;
 import com.grepp.spring.app.model.study.dto.WeeklyAttendanceResponse;
@@ -21,6 +23,7 @@ import com.grepp.spring.infra.util.SecurityUtil;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import lombok.Builder;
@@ -52,6 +55,16 @@ public class StudyController {
     private final MemberService memberService;
     private final StudyService studyService;
     private final ChatService chatService;
+
+    // 카테고리 & statuses 조회(enum)
+    @GetMapping("/categories")
+    public ResponseEntity<?> getCategories() {
+        Map<String, Object> data = Map.of(
+            "categories", Arrays.stream(Category.values()).map(Enum::name).toList(),
+            "statuses", Arrays.stream(Status.values()).map(Enum::name).toList()
+        );
+        return ResponseEntity.ok(CommonResponse.success(data));
+    }
 
     // 출석체크
     @PostMapping("/{studyId}/attendance")
