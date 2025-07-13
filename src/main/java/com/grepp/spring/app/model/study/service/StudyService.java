@@ -7,17 +7,21 @@ import com.grepp.spring.app.model.member.dto.response.ApplicantsResponse;
 import com.grepp.spring.app.model.member.dto.response.StudyMemberResponse;
 import com.grepp.spring.app.model.member.entity.Member;
 import com.grepp.spring.app.model.member.entity.StudyMember;
+import com.grepp.spring.app.model.member.repository.MemberRepository;
 import com.grepp.spring.app.model.member.repository.StudyMemberRepository;
+import com.grepp.spring.app.model.study.code.ApplicantState;
 import com.grepp.spring.app.model.study.code.DayOfWeek;
 import com.grepp.spring.app.model.study.code.GoalType;
 import com.grepp.spring.app.model.study.code.Status;
 import com.grepp.spring.app.model.study.dto.StudyInfoResponse;
 import com.grepp.spring.app.model.study.dto.StudyListResponse;
+import com.grepp.spring.app.model.study.entity.Applicant;
 import com.grepp.spring.app.model.study.entity.GoalAchievement;
 import com.grepp.spring.app.model.study.entity.Study;
 import com.grepp.spring.app.model.study.entity.StudyGoal;
 import com.grepp.spring.app.model.study.entity.StudySchedule;
 import com.grepp.spring.app.model.study.reponse.GoalsResponse;
+import com.grepp.spring.app.model.study.repository.ApplicantRepository;
 import com.grepp.spring.app.model.study.repository.GoalAchievementRepository;
 import com.grepp.spring.app.model.study.repository.StudyGoalRepository;
 import com.grepp.spring.app.model.study.repository.StudyRepository;
@@ -37,6 +41,8 @@ public class StudyService {
     private final StudyGoalRepository studyGoalRepository;
     private final GoalAchievementRepository goalAchievementRepository;
     private final StudyMemberRepository studyMemberRepository;
+    private final MemberRepository memberRepository;
+    private final ApplicantRepository applicantRepository;
 
     //필터 조건에 따라 스터디 목록 + 현재 인원 수 조회
     public List<StudyListResponse> searchStudiesWithMemberCount(StudySearchRequest req) {
@@ -210,6 +216,30 @@ public class StudyService {
 
         // 4. 저장
         studyRepository.save(study);
+    }
+
+    @Transactional
+    public void applyToStudy(Long memberId, Long studyId, String introduction) {
+        Study study = studyRepository.findById(studyId)
+            .orElseThrow(() -> new NotFoundException("해당 스터디가 존재하지 않습니다."));
+
+        Member member = memberRepository.findById(memberId)
+            .orElseThrow(() -> new NotFoundException("회원 정보를 찾을 수 없습니다."));
+
+
+        // 이미 신청한 경우 예외 발생
+        if (applicantRepository.existsByStudyAndMember(study, member)) {
+            throw new IllegalStateException("이미 해당 스터디에 신청하셨습니다.");
+        }
+
+        Applicant applicant = Applicant.builder()
+            .study(study)
+            .member(member)
+            .state(ApplicantState.WAIT) // 기본 신청 상태
+            .introduction(introduction)
+            .build();
+
+        applicantRepository.save(applicant);
     }
 
 }

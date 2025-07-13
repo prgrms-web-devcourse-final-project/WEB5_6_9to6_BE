@@ -1,5 +1,6 @@
 package com.grepp.spring.app.controller.api.study;
 
+import com.grepp.spring.app.controller.api.study.payload.ApplicationRequest;
 import com.grepp.spring.app.controller.api.study.payload.StudyCreationRequest;
 import com.grepp.spring.app.controller.api.study.payload.StudySearchRequest;
 import com.grepp.spring.app.controller.api.study.payload.StudyUpdateRequest;
@@ -7,7 +8,6 @@ import com.grepp.spring.app.model.member.dto.response.ApplicantsResponse;
 import com.grepp.spring.app.model.member.dto.response.AttendanceResponse;
 import com.grepp.spring.app.model.member.dto.response.StudyMemberResponse;
 import com.grepp.spring.app.model.member.entity.Attendance;
-import com.grepp.spring.app.model.member.dto.response.StudyMemberResponse;
 import com.grepp.spring.app.model.member.service.MemberService;
 import com.grepp.spring.app.model.study.dto.StudyInfoResponse;
 import com.grepp.spring.app.model.study.dto.StudyListResponse;
@@ -104,13 +104,22 @@ public class StudyController {
     }
 
     // 스터디 신청자 목록 조회
-    @GetMapping("/{studyId}/applications")
+    @GetMapping("/{studyId}/applications-list")
     public ResponseEntity<?> getApplications(@PathVariable Long studyId) {
         List<ApplicantsResponse> applicants = studyService.getApplicants(studyId);
         return ResponseEntity.ok(CommonResponse.success(applicants));
     }
 
-    // 스터디 신청 api 구현 필요(추후 추가 예정)
+    // 스터디 신청
+    @PostMapping("/{studyId}/application")
+    public ResponseEntity<?> application(
+        @PathVariable Long studyId,
+        @RequestBody ApplicationRequest req
+    ) {
+        Long memberId = SecurityUtil.getCurrentMemberId();
+        studyService.applyToStudy(memberId, studyId, req.getIntroduction());
+        return ResponseEntity.ok(CommonResponse.success(""));
+    }
 
     // 유저가 스터디 맴버인지 조회
     @GetMapping("/{studyId}/members/me/check")
@@ -159,10 +168,5 @@ public class StudyController {
         return ResponseEntity.status(200).body(CommonResponse.noContent());
     }
 
-
-    // 진행 요일
-    private enum DayOfWeek {
-        MON, TUE, WED, THU, FRI, SAT, SUN
-    }
 
 }
