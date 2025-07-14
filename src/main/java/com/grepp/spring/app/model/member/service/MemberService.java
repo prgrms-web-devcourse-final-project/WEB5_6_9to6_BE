@@ -5,25 +5,32 @@ import com.grepp.spring.app.model.auth.code.Role;
 import com.grepp.spring.app.model.auth.dto.SignupRequest;
 import com.grepp.spring.app.model.auth.dto.SocialMemberInfoRegistRequest;
 import com.grepp.spring.app.model.member.code.SocialType;
-import com.grepp.spring.app.model.member.dto.StudySummaryDto;
+import com.grepp.spring.app.model.member.dto.response.AchievementRecordResponse;
 import com.grepp.spring.app.model.member.dto.response.MemberInfoResponse;
+import com.grepp.spring.app.model.member.dto.response.MemberMyPageResponse;
 import com.grepp.spring.app.model.member.dto.response.MemberStudyListResponse;
+import com.grepp.spring.app.model.member.dto.response.MypageStudyInfoResponse;
+import com.grepp.spring.app.model.member.dto.response.StudyInfoResponse;
 import com.grepp.spring.app.model.member.entity.Attendance;
 import com.grepp.spring.app.model.member.entity.Member;
 import com.grepp.spring.app.model.member.entity.StudyMember;
 import com.grepp.spring.app.model.member.repository.MemberRepository;
-import com.grepp.spring.app.model.timer.repository.TimerRepository;
 import com.grepp.spring.app.model.member.repository.StudyAttendanceRepository;
 import com.grepp.spring.app.model.member.repository.StudyMemberRepository;
-import com.grepp.spring.app.model.study.dto.ScheduleDto;
+import com.grepp.spring.app.model.study.entity.GoalAchievement;
 import com.grepp.spring.app.model.study.entity.Study;
+import com.grepp.spring.app.model.study.entity.StudySchedule;
+import com.grepp.spring.app.model.study.repository.GoalAchievementRepository;
+import com.grepp.spring.app.model.timer.repository.TimerRepository;
 import com.grepp.spring.infra.error.exceptions.AlreadyCheckedAttendanceException;
 import com.grepp.spring.infra.error.exceptions.AlreadyExistException;
 import com.grepp.spring.infra.error.exceptions.NotFoundException;
 import com.grepp.spring.infra.response.ResponseCode;
 import jakarta.persistence.EntityNotFoundException;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -40,6 +47,7 @@ public class MemberService {
     private final TimerRepository timerRepository;
     private final PasswordEncoder passwordEncoder;
     private final StudyAttendanceRepository studyAttendanceRepository;
+    private final GoalAchievementRepository goalAchievementRepository;
 
     @Transactional
     public Member join(SignupRequest req) {
@@ -56,7 +64,7 @@ public class MemberService {
             .birthday(req.getBirthday())
             .gender(req.getGender())
             .socialType(SocialType.LOCAL)
-            .winRate(0)
+            .winCount(0)
             .avatarImage(null)
             .build();
 
@@ -136,20 +144,22 @@ public class MemberService {
         Member member = memberRepository.findById(memberId)
             .orElseThrow(() -> new RuntimeException("존재하지 않는 회원입니다."));
 
-        List<StudySummaryDto> studyList = studyMemberRepository.findByMemberId(memberId)
+        List<StudyInfoResponse> studyList = studyMemberRepository.findByMemberId(memberId)
             .stream()
             .map(sm -> {
                 Study study = sm.getStudy();
 
-                List<ScheduleDto> schedules = study.getSchedules().stream()
-                    .map(s -> ScheduleDto.builder()
-                        .dayOfWeek(s.getDayOfWeek().name())
-                        .startTime(s.getStartTime())
-                        .endTime(s.getEndTime())
-                        .build())
+                List<StudySchedule> scheduleList = study.getSchedules();
+
+                List<String> scheduleDays = scheduleList.stream()
+                    .map(s -> s.getDayOfWeek().name())
+                    .distinct()
                     .toList();
 
-                return StudySummaryDto.builder()
+                String startTime = scheduleList.isEmpty() ? null : scheduleList.get(0).getStartTime();
+                String endTime = scheduleList.isEmpty() ? null : scheduleList.get(0).getEndTime();
+
+                return StudyInfoResponse.builder()
                     .studyId(study.getStudyId())
                     .title(study.getName())
                     .currentMemberCount(study.getStudyMembers().size())
@@ -159,7 +169,9 @@ public class MemberService {
                     .place(study.getPlace())
                     .startDate(study.getStartDate().toString())
                     .endDate(study.getEndDate().toString())
-                    .scheduleList(schedules)
+                    .schedules(scheduleDays)
+                    .startTime(startTime)
+                    .endTime(endTime)
                     .studyType(study.getStudyType().name())
                     .build();
             })
@@ -172,6 +184,63 @@ public class MemberService {
             .build();
     }
 
+    // 마이페이지 조회 (유저 정보 요청: 닉네임, 가입한 스터디 수, 우승 횟수, 포인트, 가입한 스터디 정보, 목표 달성)
+    @Transactional(readOnly = true)
+    public MemberMyPageResponse getMyPage(Long memberId) {
+
+        Member member = memberRepository.findById(memberId)
+            .orElseThrow(() -> new NoSuchElementException("존재하지 않는 회원입니다."));
+
+        List<StudyMember> studyMembers = studyMemberRepository.findByMemberId(memberId);
+
+        List<MypageStudyInfoResponse> userStudies = studyMembers.stream()
+            .map(sm -> {
+                Study study = sm.getStudy();
+
+                List<StudySchedule> scheduleList = study.getSchedules();
+
+                List<String> scheduleDays = scheduleList.stream()
+                    .map(s -> s.getDayOfWeek().name())
+                    .distinct()
+                    .toList();
+
+                String startTime = scheduleList.isEmpty() ? null : scheduleList.get(0).getStartTime();
+                String endTime = scheduleList.isEmpty() ? null : scheduleList.get(0).getEndTime();
+
+                List<GoalAchievement> goalAchievements = goalAchievementRepository
+                    .findAllByStudyMemberAndIsAccomplishedTrue(sm);
+
+                List<AchievementRecordResponse> achievementRecords = goalAchievements.stream()
+                    .map(a -> AchievementRecordResponse.builder()
+                        .isAccomplished(true)
+                        .achievedAt(a.getAchievedAt().toString())
+                        .build())
+                    .toList();
+
+                return MypageStudyInfoResponse.builder()
+                    .title(study.getName())
+                    .currentMemberCount(study.getStudyMembers().size())
+                    .maxMemberCount(study.getMaxMembers())
+                    .category(study.getCategory().name())
+                    .region(study.getRegion().name())
+                    .place(study.getPlace())
+                    .schedules(scheduleDays)
+                    .startTime(startTime)
+                    .endTime(endTime)
+                    .studyType(study.getStudyType().name())
+                    .achievementRecords(achievementRecords)
+                    .build();
+            })
+            .toList();
+
+        return MemberMyPageResponse.builder()
+            .nickname(member.getNickname())
+            .joinedStudyCount(userStudies.size())
+            .rewardPoints(member.getRewardPoints())
+            .winCount(member.getWinCount())
+            .userStudies(userStudies)
+            .build();
+    }
 
     public Long findStudyMemberId(String email, Long studyId) {
         // email → member
@@ -185,6 +254,7 @@ public class MemberService {
         return studyMember.getStudyMemberId();
     }
 
+    // 출석 체크 등록
     public void markAttendance(Long studyMemberId) {
         StudyMember studyMember = studyMemberRepository.findById(studyMemberId)
             .orElseThrow(() -> new RuntimeException("스터디 멤버를 찾을 수 없습니다."));
@@ -210,4 +280,18 @@ public class MemberService {
 
         studyAttendanceRepository.save(attendance);
     }
+
+    // 주간 출석체크 조회
+    public List<Attendance> getWeeklyAttendanceEntities(Long studyMemberId) {
+        LocalDate today = LocalDate.now();
+        LocalDate startOfWeek = today.with(DayOfWeek.MONDAY);
+        LocalDate endOfWeek = today.with(DayOfWeek.SUNDAY);
+
+        return studyAttendanceRepository.findByStudyMember_StudyMemberIdAndAttendanceDateBetween(
+            studyMemberId,
+            startOfWeek,
+            endOfWeek
+        );
+    }
+
 }

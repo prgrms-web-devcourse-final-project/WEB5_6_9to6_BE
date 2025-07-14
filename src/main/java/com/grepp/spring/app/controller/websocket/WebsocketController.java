@@ -1,5 +1,6 @@
 package com.grepp.spring.app.controller.websocket;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.grepp.spring.app.controller.api.chat.ParticipantResponse;
 import com.grepp.spring.app.controller.websocket.payload.ChatMessageRequest;
 import com.grepp.spring.app.controller.websocket.payload.ChatMessageResponse;
@@ -7,6 +8,7 @@ import com.grepp.spring.app.model.auth.domain.Principal;
 import com.grepp.spring.app.model.chat.service.ChatService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -21,6 +23,7 @@ public class WebsocketController {
 
     private final ChatService chatService;
     private final SimpMessagingTemplate messagingTemplate;
+    private final RedisTemplate<String , String> redisTemplate;
 
 
 
@@ -86,4 +89,14 @@ public class WebsocketController {
         List<ParticipantResponse> participants = chatService.getOnlineParticipants(studyId);
         messagingTemplate.convertAndSend("/subscribe/" + studyId + "/participants", participants);
     }
+
+// 웹소켓으로 받은 메세지를 레디스로 전송
+    @MessageMapping("/chat.send") // ex. /app/chat.send
+    public void sendMessage(ChatMessageRequest request
+    ,@DestinationVariable Long studyId) {
+        String topic = "chat:" + studyId;
+        String message = new ObjectMapper().writeValueAsString(request);
+        redisTemplate.convertAndSend(topic, message);
+    }
+
 }
