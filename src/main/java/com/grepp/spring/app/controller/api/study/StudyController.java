@@ -1,17 +1,29 @@
 package com.grepp.spring.app.controller.api.study;
 
+import com.grepp.spring.app.controller.api.study.payload.ApplicationRequest;
+import com.grepp.spring.app.controller.api.study.payload.StudyCreationRequest;
 import com.grepp.spring.app.controller.api.study.payload.StudySearchRequest;
 import com.grepp.spring.app.controller.api.study.payload.StudyUpdateRequest;
+import com.grepp.spring.app.model.chat.service.ChatService;
 import com.grepp.spring.app.model.member.dto.response.ApplicantsResponse;
+import com.grepp.spring.app.model.member.dto.response.AttendanceResponse;
+import com.grepp.spring.app.model.member.dto.response.StudyMemberResponse;
+import com.grepp.spring.app.model.member.entity.Attendance;
 import com.grepp.spring.app.model.member.service.MemberService;
+import com.grepp.spring.app.model.study.code.Category;
+import com.grepp.spring.app.model.study.code.Status;
 import com.grepp.spring.app.model.study.dto.StudyInfoResponse;
 import com.grepp.spring.app.model.study.dto.StudyListResponse;
+import com.grepp.spring.app.model.study.dto.WeeklyAttendanceResponse;
+import com.grepp.spring.app.model.study.dto.WeeklyGoalStatusResponse;
+import com.grepp.spring.app.model.study.entity.Study;
 import com.grepp.spring.app.model.study.service.StudyService;
 import com.grepp.spring.infra.response.CommonResponse;
 import com.grepp.spring.infra.util.SecurityUtil;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import lombok.Builder;
@@ -20,6 +32,8 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -29,6 +43,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -39,10 +54,21 @@ public class StudyController {
 
     private final MemberService memberService;
     private final StudyService studyService;
+    private final ChatService chatService;
+
+    // 카테고리 & statuses 조회(enum)
+    @GetMapping("/categories")
+    public ResponseEntity<?> getCategories() {
+        Map<String, Object> data = Map.of(
+            "categories", Arrays.stream(Category.values()).map(Enum::name).toList(),
+            "statuses", Arrays.stream(Status.values()).map(Enum::name).toList()
+        );
+        return ResponseEntity.ok(CommonResponse.success(data));
+    }
 
     // 출석체크
     @PostMapping("/{studyId}/attendance")
-    public ResponseEntity<?> attend(
+    public ResponseEntity<?> attendance(
         @PathVariable Long studyId,
         Authentication authentication
     ) {
@@ -54,7 +80,21 @@ public class StudyController {
         return ResponseEntity.ok(CommonResponse.success("출석 체크 완료."));
     }
 
-    // 출석체크 조회 api 필요(추후 추가 예정)
+    // 주간 출석체크 조회(이번주)
+    @GetMapping("/{studyId}/attendance")
+    public ResponseEntity<?> weeklyAttendance(
+        @PathVariable Long studyId,
+        Authentication authentication
+    ) {
+        String email = authentication.getName();
+        Long studyMemberId = memberService.findStudyMemberId(email, studyId);
+
+        // 이번 주 출석 내역 조회
+        List<Attendance> attendanceList = memberService.getWeeklyAttendanceEntities(studyMemberId);
+
+        WeeklyAttendanceResponse response = new WeeklyAttendanceResponse(studyMemberId, attendanceList);
+        return ResponseEntity.ok(CommonResponse.success(response));
+    }
 
     // 스터디 목록(검색)
     @PostMapping("/search")
@@ -83,56 +123,53 @@ public class StudyController {
     }
 
     // 스터디 신청자 목록 조회
-    @GetMapping("/{studyId}/applications")
+    @GetMapping("/{studyId}/applications-list")
     public ResponseEntity<?> getApplications(@PathVariable Long studyId) {
         List<ApplicantsResponse> applicants = studyService.getApplicants(studyId);
         return ResponseEntity.ok(CommonResponse.success(applicants));
     }
 
-    // 스터디 신청 api 구현 필요(추후 추가 예정)
+    // 스터디 신청
+    @PostMapping("/{studyId}/application")
+    public ResponseEntity<?> application(
+        @PathVariable Long studyId,
+        @RequestBody ApplicationRequest req
+    ) {
+        Long memberId = SecurityUtil.getCurrentMemberId();
+        studyService.applyToStudy(memberId, studyId, req.getIntroduction());
+        return ResponseEntity.ok(CommonResponse.success(""));
+    }
 
     // 유저가 스터디 맴버인지 조회
-    // NOTE 이건 진짜 유저 정보가 필요할 것같은데?
     @GetMapping("/{studyId}/members/me/check")
     public ResponseEntity<?> isMember(@PathVariable Long studyId) {
-        String code = "SUCCESS";
-        Map<String, Boolean> matched = Map.of("matched", true);
+        Long memberId = SecurityUtil.getCurrentMemberId();
+
+        boolean isMember = studyService.isUserStudyMember(memberId, studyId);
+
+        Map<String, Boolean> data = Map.of("isMember", isMember);
 
         return ResponseEntity.status(200).body(
-            CommonResponse.success(matched)
+            CommonResponse.success(data)
         );
     }
 
-
-    // 스터디 맴버 조회
+    // 스터디 맴버 리스트 조회
     @GetMapping("/{studyId}/members")
     public ResponseEntity<?> getMembers(@PathVariable Long studyId) {
-        String code = "SUCCESS";
-        long studyMemberId1 = 11;
-        long studyMemberId2 = 22;
-        long memberId1 = 1;
-        long memberId2 = 2;
-        String nickName1 = "김이박";
-        String nickName2 = "박유저";
-        StudyRole role1 = StudyRole.LEADER;
-        StudyRole role2 = StudyRole.MEMBER;
-        String profileImage1 = "https://marketplace.canva.com/O7Muo/MAGaICO7Muo/1/tl/canva-cute-puppy-with-bone-illustration-MAGaICO7Muo.png";
-        String profileImage2 = "https://marketplace.canva.com/MQp8I/MAGdTAMQp8I/1/tl/canva-cute-kawaii-dinosaur-character-illustration-MAGdTAMQp8I.png";
-
-        List<Map<String, Object>> data = List.of(
-            Map.of("studyMemberId", studyMemberId1, "memberId", memberId1,"nickName", nickName1, "profileImage", profileImage1, "role", role1),
-            Map.of("studyMemberId", studyMemberId2, "memberId", memberId2, "nickName", nickName2,"profileImage", profileImage2, "role", role2)
-        );
-
-        return ResponseEntity.status(200).body(CommonResponse.success(data));
+        List<StudyMemberResponse> members = studyService.getStudyMembers(studyId);
+        return ResponseEntity.ok(CommonResponse.success(members));
     }
 
     // 스터디 생성
     @PostMapping
     public ResponseEntity<?> createStudy(@RequestBody StudyCreationRequest req) {
-        return ResponseEntity.status(200).body(
-            CommonResponse.noContent()
-        );
+        // 1. 서비스에서 스터디 생성 수행
+        Study study = studyService.createStudy(req);
+        // 2. 채팅방 생성
+        chatService.createChatRoom(study);
+        return ResponseEntity.status(HttpStatus.CREATED)
+            .body(CommonResponse.success("스터디가 성공적으로 생성되었습니다."));
     }
 
     // 스터디 목표 조회
@@ -150,136 +187,15 @@ public class StudyController {
         return ResponseEntity.status(200).body(CommonResponse.noContent());
     }
 
-    @Data
-    @NoArgsConstructor
-    private static class StudyCreationRequest {
-        private String name;
-        private StudyCategory category;
-        private int maxMember;
-        private Region region;
-        private String place;
-        private boolean isOnline;
-        private List<StudySchedule> schedules;
-        private LocalDate startDate;
-        private LocalDate endDate;
-        private String description;
-        private String externalLink;
-        private StudyType studyType;
-        private List<Goal> goals;
+    // 스터디 목표 달성 여부 조회
+    @GetMapping("/{studyId}/goals/completed")
+    public ResponseEntity<?> getWeeklyGoalStats(
+        @PathVariable Long studyId) {
 
-        @Builder
-        public StudyCreationRequest(String name, StudyCategory category, int maxMember,
-            Region region,
-            String place, List<StudySchedule> schedules, LocalDate startDate,
-            LocalDate endDate,
-            String description, String externalLink, StudyType studyType,
-            List<Goal> goals) {
-            this.name = name;
-            this.category = category;
-            this.maxMember = maxMember;
-            this.region = region;
-            this.place = place;
-            this.isOnline = (region == Region.ONLINE) ? true:false;
-            this.schedules = schedules;
-            this.startDate = startDate;
-            this.endDate = endDate;
-            this.description = description;
-            this.externalLink = externalLink;
-            this.studyType = studyType;
-            this.goals = goals;
-        }
-    }
+        Long memberId = SecurityUtil.getCurrentMemberId(); // 로그인된 사용자
+        WeeklyGoalStatusResponse response = studyService.getWeeklyGoalStats(studyId, memberId);
 
-    @Data
-    @NoArgsConstructor
-    private static class StudySchedule {
-        DayOfWeek dayOfWeek;
-        LocalTime startTime;
-        LocalTime endTime;
-
-        @Builder
-        public StudySchedule(DayOfWeek dayOfWeek, LocalTime startTime, LocalTime endTime) {
-            this.dayOfWeek = dayOfWeek;
-            this.startTime = startTime;
-            this.endTime = endTime;
-        }
-    }
-
-    @Data
-    @NoArgsConstructor
-    private static class Goal {
-        long goalId;
-        String content;
-        DayOfWeek checkDay;
-
-        @Builder
-        public Goal(long goalId, String content, DayOfWeek checkDay) {
-            this.goalId = goalId;
-            this.content = content;
-            this.checkDay = checkDay;
-        }
-    }
-
-
-
-//    @Data
-//    public static class StudyListResponse{
-//        private StudyType studyType;
-//        private String name;
-//        private StudyCategory studyCategory;
-//        private Region region;
-//        private LocalDate startDate;
-//        private int currentMember;
-//        private int maxMember;
-//        private List<StudySchedule> studySchedule;
-//
-//        @Builder
-//        public StudyListResponse(StudyType studyType, String name, StudyCategory studyCategory,
-//            Region region, LocalDate startDate, int currentMember, int maxMember,
-//            List<StudySchedule> studySchedule) {
-//            this.studyType = studyType;
-//            this.name = name;
-//            this.studyCategory = studyCategory;
-//            this.region = region;
-//            this.startDate = startDate;
-//            this.currentMember = currentMember;
-//            this.maxMember = maxMember;
-//            this.studySchedule = studySchedule;
-//        }
-//    }
-
-
-    private enum StudyRole {
-        MEMBER, LEADER;
-    }
-
-    private enum ApplyState {
-        WAIT, ACCEPT, REJECT;
-    }
-
-    // 스터디 타입
-    private enum StudyType {
-        DEFAULT, SURVIVAL
-    }
-
-    // 스터디 주제
-    private enum StudyCategory {
-        LANGUAGE, JOB, PROGRAMMING, EXAM_PUBLIC, EXAM_SCHOOL, OTHERS
-    }
-
-    // 활동 지역
-    private enum Region {
-        ONLINE, SEOUL, JEJU;
-    }
-
-    // 스터디 활동 상태
-    private enum StudyStatus {
-        READY, ACTIVATE
-    }
-
-    // 진행 요일
-    private enum DayOfWeek {
-        MON, TUE, WED, THU, FRI, SAT, SUN
+        return ResponseEntity.ok(CommonResponse.success(response));
     }
 
 }

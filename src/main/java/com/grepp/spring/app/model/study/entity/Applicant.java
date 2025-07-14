@@ -31,13 +31,13 @@ public class Applicant extends BaseEntity {
     private String introduction;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "study_id")
     @JsonIgnore
     private Study study;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
 
     @Builder
     public Applicant(Long id, ApplicantState state, String introduction, Study study, Member member) {

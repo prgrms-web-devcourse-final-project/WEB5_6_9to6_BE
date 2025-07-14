@@ -21,7 +21,6 @@ public class TimerQueryRepository {
 
     public List<Tuple> findDailyStudyLogsByStudyMemberId(Long studyMemberId, Long studyId, LocalDateTime startOfDay, LocalDateTime endOfDay) {
         return queryFactory
-            // select 절에서 Projections.constructor 제거
             .select(
                 Expressions.dateTemplate(LocalDate.class, "DATE({0})", timer.createdAt),
                 timer.dailyStudyTime.sum().castToNum(Long.class)
@@ -35,6 +34,20 @@ public class TimerQueryRepository {
             )
             .groupBy(Expressions.dateTemplate(LocalDate.class, "DATE({0})", timer.createdAt))
             .fetch();
+    }
+
+    public Long findTotalStudyTimeInPeriod(Long studyMemberId, Long studyId, LocalDateTime startOfDay, LocalDateTime endOfDay) {
+        return queryFactory
+            .select(timer.dailyStudyTime.sum().castToNum(Long.class))
+            .from(timer)
+            .where(
+                timer.studyMemberId.eq(studyMemberId),
+                timer.studyId.eq(studyId),
+                timer.createdAt.goe(startOfDay),
+                timer.createdAt.lt(endOfDay)
+            )
+
+            .fetchOne();
     }
 
 

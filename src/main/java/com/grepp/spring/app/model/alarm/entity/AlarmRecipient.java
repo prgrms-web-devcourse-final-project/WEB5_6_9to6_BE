@@ -20,6 +20,7 @@ public class AlarmRecipient {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "alarm_recipient_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
