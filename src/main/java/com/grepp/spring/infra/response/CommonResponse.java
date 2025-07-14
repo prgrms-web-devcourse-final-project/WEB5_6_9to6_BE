@@ -41,7 +41,7 @@ public record CommonResponse<T>(
         return new CommonResponse<>(code, message, null, null);
     }
 
-    public CommonResponse<T> withToken(String token) {
-        return new CommonResponse<>(this.code, this.message, this.data, token);
-    }
+//    public CommonResponse<T> withToken(String token) {
+//        return new CommonResponse<>(this.code, this.message, this.data, token);
+//    }
 }
