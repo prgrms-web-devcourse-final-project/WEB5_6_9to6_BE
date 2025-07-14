@@ -6,7 +6,6 @@ import com.grepp.spring.app.controller.api.study.payload.StudySearchRequest;
 import com.grepp.spring.app.controller.api.study.payload.StudyUpdateRequest;
 import com.grepp.spring.app.model.chat.service.ChatService;
 import com.grepp.spring.app.model.member.dto.response.ApplicantsResponse;
-import com.grepp.spring.app.model.member.dto.response.AttendanceResponse;
 import com.grepp.spring.app.model.member.dto.response.StudyMemberResponse;
 import com.grepp.spring.app.model.member.entity.Attendance;
 import com.grepp.spring.app.model.member.service.MemberService;
@@ -20,19 +19,12 @@ import com.grepp.spring.app.model.study.entity.Study;
 import com.grepp.spring.app.model.study.service.StudyService;
 import com.grepp.spring.infra.response.CommonResponse;
 import com.grepp.spring.infra.util.SecurityUtil;
-import java.io.Serializable;
-import java.time.LocalDate;
-import java.time.LocalTime;
+import jakarta.validation.Valid;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -43,7 +35,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -99,7 +90,7 @@ public class StudyController {
     // 스터디 목록(검색)
     @PostMapping("/search")
     public ResponseEntity<CommonResponse<List<StudyListResponse>>> searchStudies(
-        @RequestBody StudySearchRequest req
+        @Valid @RequestBody StudySearchRequest req
     ) {
         List<StudyListResponse> responseList = studyService.searchStudiesWithMemberCount(req);
         return ResponseEntity.ok(CommonResponse.success(responseList));
