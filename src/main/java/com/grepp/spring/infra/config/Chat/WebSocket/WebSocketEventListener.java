@@ -1,4 +1,4 @@
-package com.grepp.spring.infra.config.WebSocket;
+package com.grepp.spring.infra.config.Chat.WebSocket;
 
 
 import com.grepp.spring.app.controller.api.chat.ParticipantResponse;
@@ -7,7 +7,6 @@ import com.grepp.spring.app.model.auth.domain.Principal;
 import com.grepp.spring.app.model.chat.service.ChatService;
 import com.grepp.spring.app.model.member.repository.MemberRepository;
 import java.util.List;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;

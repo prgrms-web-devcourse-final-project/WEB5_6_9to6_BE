@@ -1,4 +1,4 @@
-package com.grepp.spring.infra.config.WebSocket;
+package com.grepp.spring.infra.config.Chat.WebSocket;
 
 import com.grepp.spring.app.controller.api.chat.SessionUserInfo;
 import java.util.Collections;

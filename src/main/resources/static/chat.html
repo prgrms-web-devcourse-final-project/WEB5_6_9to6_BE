@@ -109,10 +109,10 @@
     const payload = {
       content: message,
       receiverNickName: "아 하기싫다!",
-      receiverId: receiverId // 필드 이름은 receiverId지만 값은 이메일
+      receiverEmail: receiverId // 필드 이름은 receiverId지만 값은 이메일
     };
 
-    stompClient.send(`/publish/chat/${studyId}`, {}, JSON.stringify(payload));
+    stompClient.send(`/publish/chat.send/${studyId}`, {}, JSON.stringify(payload));
     document.getElementById("message").value = "";
   }
 

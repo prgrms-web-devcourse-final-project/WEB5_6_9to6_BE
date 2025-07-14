@@ -1,4 +1,4 @@
-package com.grepp.spring.infra.config.WebSocket;
+package com.grepp.spring.infra.config.Chat.WebSocket;
 
 
 import java.security.Principal;

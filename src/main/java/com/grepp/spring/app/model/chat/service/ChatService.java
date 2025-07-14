@@ -9,16 +9,14 @@ import com.grepp.spring.app.model.chat.entity.ChatRoom;
 import com.grepp.spring.app.model.chat.repository.ChatRepository;
 import com.grepp.spring.app.model.chat.repository.ChatRoomRepository;
 import com.grepp.spring.app.model.member.repository.MemberRepository;
-import com.grepp.spring.infra.config.WebSocket.WebSocketSessionTracker;
+import com.grepp.spring.infra.config.Chat.WebSocket.WebSocketSessionTracker;
 import com.grepp.spring.app.model.study.entity.Study;
-import com.grepp.spring.infra.config.WebSocket.WebSocketSessionTracker;
 import com.grepp.spring.infra.util.NotFoundException;
 import jakarta.transaction.Transactional;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

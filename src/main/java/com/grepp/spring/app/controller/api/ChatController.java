@@ -2,10 +2,9 @@ package com.grepp.spring.app.controller.api;
 
 import com.grepp.spring.app.controller.api.chat.ChatHistoryResponse;
 import com.grepp.spring.app.controller.api.chat.ParticipantResponse;
-import com.grepp.spring.app.controller.api.reward.payload.OwnItemResponse;
 import com.grepp.spring.app.model.auth.domain.Principal;
 import com.grepp.spring.app.model.chat.service.ChatService;
-import com.grepp.spring.infra.config.WebSocket.WebSocketSessionTracker;
+import com.grepp.spring.infra.config.Chat.WebSocket.WebSocketSessionTracker;
 import com.grepp.spring.infra.response.CommonResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import java.util.ArrayList;
