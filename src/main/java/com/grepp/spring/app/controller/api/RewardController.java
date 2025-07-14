@@ -2,6 +2,7 @@ package com.grepp.spring.app.controller.api;
 
 import com.grepp.spring.app.controller.api.reward.payload.ImageResponse;
 import com.grepp.spring.app.controller.api.reward.payload.OwnItemResponse;
+import com.grepp.spring.app.controller.api.reward.payload.RewardItemResponse;
 import com.grepp.spring.app.controller.api.reward.payload.SaveImageRequest;
 import com.grepp.spring.app.model.auth.domain.Principal;
 import com.grepp.spring.app.model.reward.dto.ItemSetDto;
@@ -44,21 +45,21 @@ public class RewardController {
     private final ItemSetService itemSetService;
 
     // 아이템 상점 목록
-//    @GetMapping
-//    public ResponseEntity<CommonResponse<RewardItemResponse>> getRewardItems() {
-//        List<RewardItemDto> dtos = rewardItemService.getItemList();
-//            RewardItemResponse responseDto = new RewardItemResponse(dtos);
-//
-//        return ResponseEntity.ok(CommonResponse.success(responseDto));
-//    }
-
     @GetMapping
-    public ResponseEntity<CommonResponse<Page<RewardItemDto>>> getRewardItems(
-        @PageableDefault(size = 10) Pageable pageable
-    ) {
-        Page<RewardItemDto> responsePage = rewardItemService.getItemList(pageable);
-        return ResponseEntity.ok(CommonResponse.success(responsePage));
+    public ResponseEntity<CommonResponse<RewardItemResponse>> getRewardItems() {
+        List<RewardItemDto> dtos = rewardItemService.getItemList();
+            RewardItemResponse responseDto = new RewardItemResponse(dtos);
+
+        return ResponseEntity.ok(CommonResponse.success(responseDto));
     }
+
+//    @GetMapping
+//    public ResponseEntity<CommonResponse<Page<RewardItemDto>>> getRewardItems(
+//        @PageableDefault(size = 10) Pageable pageable
+//    ) {
+//        Page<RewardItemDto> responsePage = rewardItemService.getItemList(pageable);
+//        return ResponseEntity.ok(CommonResponse.success(responsePage));
+//    }
 
     // 아이템 구매
     @PostMapping("/{itemId}/purchase")
