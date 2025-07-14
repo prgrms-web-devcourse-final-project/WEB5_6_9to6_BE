@@ -4,6 +4,7 @@ import com.grepp.spring.app.model.member.dto.response.MemberInfoResponse;
 import com.grepp.spring.app.controller.api.member.payload.request.MemberUpdateRequest;
 import com.grepp.spring.app.controller.api.member.payload.request.PasswordVerifyRequest;
 import com.grepp.spring.app.model.member.dto.response.MemberStudyListResponse;
+import com.grepp.spring.app.model.member.dto.response.MemberMyPageResponse;
 import com.grepp.spring.app.model.member.dto.response.PasswordVerifyResponse;
 import com.grepp.spring.app.model.member.service.MemberService;
 import com.grepp.spring.infra.response.CommonResponse;
@@ -65,68 +66,16 @@ public class MemberController {
 
         MemberStudyListResponse dto = memberService.getMemberStudyList(memberId);
 
-        return ResponseEntity.ok(CommonResponse.success(dto));
+        return ResponseEntity.ok(CommonResponse.success(dto, "가입한 스터디 목록을 조회했습니다."));
     }
 
-    // 아직 못 고침
     // 유저 정보 요청(닉네임, 우승횟수, 스터디 수, 스터디 종류, 스터디별 출석률, 스터디별 목표달성률, 날짜별 일일 공부시간)
     @GetMapping("/{memberId}")
-    @ApiResponse(responseCode = "200")
-    public ResponseEntity<Map<String, Object>> getMember(@PathVariable Long memberId) {
+    public ResponseEntity<CommonResponse<MemberMyPageResponse>> getMemberMyPage(@PathVariable Long memberId) {
 
-        Map<String, Object> response = new LinkedHashMap<>();
-        response.put("code", "0000");
-        response.put("message", "마이페이지 정보를 성공적으로 불러왔습니다.");
-        response.put("data", mockDataMemberId());
+        MemberMyPageResponse dto = memberService.getMyPage(memberId);
 
-        return ResponseEntity.ok(response);
-    }
-
-    private Map<String, Object> mockDataMemberId() {
-
-        Map<String, Object> data = new LinkedHashMap<>();
-        data.put("nickname", "멋쟁이라이언");
-        data.put("winCount", 5);
-        data.put("studyCount", 3);
-        data.put("rewardPoints", 3000);
-        data.put("userStudies", List.of(
-            Map.of(
-                "studyCategory", "개발",
-                "studyName", "자바스크립트 완전정복 스터디",
-                "studyStatus", "IN_PROGRESS",
-                "maxMembers", 8,
-                "currentMembers", 6,
-                "attendanceRecords", List.of(
-                    Map.of("date", "2024-07-01", "isAttended", true),
-                    Map.of("date", "2024-07-02", "isAttended", false),
-                    Map.of("date", "2024-07-03", "isAttended", true)
-                ),
-                "achievementRecords", List.of(
-                    Map.of("date", "2024-07-01", "isAchieved", true, "achievedAt", "2024-07-01T10:30:00"),
-                    Map.of("date", "2024-07-02", "isAchieved", false, "achievedAt", "2024-07-01T10:30:00"),
-                    Map.of("date", "2024-07-03", "isAchieved", true, "achievedAt", "2024-07-03T15:45:10")
-                )
-            ),
-            Map.of(
-                "studyCategory", "어학",
-                "studyName", "매일 1시간 토익 스터디",
-                "studyStatus", "COMPLETED",
-                "maxMembers", 5,
-                "currentMembers", 5,
-                "attendanceRecords", List.of(
-                    Map.of("date", "2024-06-25", "isAttended", true)
-                ),
-                "achievementRecords", List.of(
-                    Map.of("date", "2024-06-25", "isAchieved", true, "achievedAt", "2024-06-25T09:00:00")
-                )
-            )
-        ));
-        data.put("dailyStudyTimes", List.of(
-            Map.of("date", "2024-07-01", "totalStudySeconds", 3600),
-            Map.of("date", "2024-07-02", "totalStudySeconds", 1200)
-        ));
-
-        return data;
+        return ResponseEntity.ok(CommonResponse.success(dto, "마이페이지 정보를 성공적으로 불러왔습니다."));
     }
 
     // 알람 목록 조회
@@ -162,40 +111,4 @@ public class MemberController {
         );
     }
 
-    // 영준님 파트
-    // 타이머 누적 시간 조회
-    @GetMapping("/{memberId}/timer/all-timer")
-    @ApiResponse(responseCode = "200")
-    public ResponseEntity<Map<String, Object>> getAllTimer(@PathVariable Long memberId) {
-
-        Map<String, Object> response = new LinkedHashMap<>();
-        response.put("code", "0000");
-        response.put("message", "타이머 누적 시간이 조회되었습니다.");
-        response.put("data", mockDataAllTimer());
-
-        return ResponseEntity.ok(response);
-    }
-
-    private Map<String, Object> mockDataAllTimer() {
-
-        Map<String, Object> data = new LinkedHashMap<>();
-        data.put("userId", 1);
-        data.put("nickname", "홍길동");
-        data.put("totalStudyTime", 145800);
-
-        return data;
-    }
-
-    // 타이머 시간 수정
-    @PutMapping("/{memberId}/timer-settings")
-    @ApiResponse(responseCode = "200")
-    public ResponseEntity<Map<String, Object>> updateTimer(@PathVariable Long memberId) {
-
-        Map<String, Object> response = new LinkedHashMap<>();
-        response.put("code", "0000");
-        response.put("message", "성공적으로 수정하였습니다.");
-        response.put("data", new LinkedHashMap<>());
-
-        return ResponseEntity.ok(response);
-    }
 }
