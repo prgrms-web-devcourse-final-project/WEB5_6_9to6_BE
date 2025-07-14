@@ -9,33 +9,39 @@ public record CommonResponse<T>(
     @Schema(description = "응답 메시지", example = "성공적으로 처리되었습니다.")
     String message,
     @Schema(description = "응답 데이터")
-    T data
+    T data,
+    @Schema(description = "JWT 액세스 토큰")
+    String accessToken
 ) {
     public static <T> CommonResponse<T> success(T data) {
-        return new CommonResponse<>(ResponseCode.SUCCESS.code(), ResponseCode.SUCCESS.message(), data);
+        return new CommonResponse<>(ResponseCode.SUCCESS.code(), ResponseCode.SUCCESS.message(), data, null);
     }
 
     public static <T> CommonResponse<T> success(T data, String message) {
-        return new CommonResponse<>(ResponseCode.SUCCESS.code(), message, data);
+        return new CommonResponse<>(ResponseCode.SUCCESS.code(), message, data, null);
     }
 
     public static <T> CommonResponse<T> noContent() {
-        return new CommonResponse<>(ResponseCode.SUCCESS.code(), ResponseCode.SUCCESS.message(), null);
+        return new CommonResponse<>(ResponseCode.SUCCESS.code(), ResponseCode.SUCCESS.message(), null, null);
     }
 
     public static <T> CommonResponse<T> noContent(SuccessCode message) {
-        return new CommonResponse<>(message.code(), message.message(), null);
+        return new CommonResponse<>(message.code(), message.message(), null, null);
     }
 
     public static <T> CommonResponse<T> error(ResponseCode code) {
-        return new CommonResponse<>(code.code(), code.message(), null);
+        return new CommonResponse<>(code.code(), code.message(), null, null);
     }
 
     public static <T> CommonResponse<T> error(ResponseCode code, T data) {
-        return new CommonResponse<>(code.code(), code.message(), data);
+        return new CommonResponse<>(code.code(), code.message(), data, null);
     }
 
     public static <T> CommonResponse<T> error(String code, String message) {
-        return new CommonResponse<>(code, message, null);
+        return new CommonResponse<>(code, message, null, null);
+    }
+
+    public CommonResponse<T> withToken(String token) {
+        return new CommonResponse<>(this.code, this.message, this.data, token);
     }
 }
