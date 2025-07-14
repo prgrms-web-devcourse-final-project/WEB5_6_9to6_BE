@@ -41,4 +41,5 @@ public class InjectJwtToBodyAdvice implements ResponseBodyAdvice<CommonResponse<
         // 요청 헤더 JWT 가 없는 경우 그대로 반환
         return body;
     }
+
 }
