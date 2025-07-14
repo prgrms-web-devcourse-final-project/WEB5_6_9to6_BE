@@ -17,6 +17,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -31,18 +32,29 @@ public class QuizService {
     private final GenerativeModel generativeModel;
 
     @Transactional
+    public void createNextQuizForStudy(Long studyId) throws IOException {
+        int lastWeek = quizSetRepository.findTopByStudyIdOrderByWeekDesc(studyId)
+                .map(QuizSet::getWeek)
+                .orElse(0);
+
+        int nextWeek = lastWeek + 1;
+        createProblemsForWeek(studyId, nextWeek);
+    }
+
+    @Transactional
     public QuizSet createProblemsForWeek(Long studyId, int week) throws IOException {
         quizSetRepository.findByStudyIdAndWeek(studyId, week).ifPresent(qs -> {
             throw new IllegalStateException("이미 해당 주차의 퀴즈가 존재합니다.");
         });
 
-        String topic = getStudyTopicByWeekOrder(studyId, week);
+        StudyGoal targetGoal = getStudyTopicByWeekOrder(studyId, week);
 
-        List<QuizGenerationDto> generatedQuizzes = requestQuizGenerationToLlm(topic, 5);
+        List<QuizGenerationDto> generatedQuizzes = requestQuizGenerationToLlm(targetGoal.getContent(), 5);
 
         QuizSet quizSet = QuizSet.builder()
                 .studyId(studyId)
                 .week(week)
+                .studyGoal(targetGoal)
                 .activated(true)
                 .build();
         quizSetRepository.save(quizSet);
@@ -69,28 +81,28 @@ public class QuizService {
         return quizSet;
     }
 
-    private String getStudyTopicByWeekOrder(Long studyId, int week) {
+    private StudyGoal getStudyTopicByWeekOrder(Long studyId, int week) {
         List<StudyGoal> allGoals = studyGoalRepository.findGoalsByStudyId(studyId);
-
         int targetIndex = week - 1;
         if (allGoals.size() <= targetIndex) {
             throw new EntityNotFoundException(String.format("%d주차에 해당하는 스터디 목표가 없습니다.", week));
         }
         StudyGoal targetGoal = allGoals.get(targetIndex);
-
-        return targetGoal.getContent();
+        return targetGoal;
     }
 
     private List<QuizGenerationDto> requestQuizGenerationToLlm(String topic, int count) throws IOException {
         String prompt = String.format("""
-            다음 학습 목표에 대해 초보자가 이해해야 할 핵심 개념을 묻는 4지선다형 객관식 문제 %d개를 만들어줘.
-            학습 목표: "%s"
-            
-            반드시 문제(question), 4개의 선택지(choices), 1부터 시작하는 정답 인덱스(answer) 키를 가진 JSON 객체들의 배열 형식으로만 응답해줘. 다른 설명은 절대 추가하지 마.
-            """, count, topic);
+        다음 학습 목표에 대해 초보자가 이해해야 할 핵심 개념을 묻는 4지선다형 객관식 문제 %d개를 만들어줘.
+        학습 목표: "%s"
+
+        반드시 문제(question), 4개의 선택지(choices), 1부터 시작하는 정답 인덱스(answer) 키를 가진 JSON 객체들의 배열 형식으로만 응답해줘. 다른 설명은 절대 추가하지 마.
+        """, count, topic);
+
         try {
             String jsonResponse = ResponseHandler.getText(generativeModel.generateContent(prompt));
             String cleanJsonResponse = jsonResponse.replace("```json", "").replace("```", "").trim();
+
             ObjectMapper objectMapper = new ObjectMapper();
             return objectMapper.readValue(cleanJsonResponse, new TypeReference<>() {});
         } catch (Exception e) {

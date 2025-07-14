@@ -18,4 +18,6 @@ public interface QuizSetRepository extends JpaRepository<QuizSet, Long> {
     List<QuizSet> findQuizSetsByStudyId(@Param("studyId") Long studyId);
 
     Optional<QuizSet> findByStudyIdAndWeek(Long studyId, int week);
+
+    Optional<QuizSet> findTopByStudyIdOrderByWeekDesc(Long studyId);
 }
