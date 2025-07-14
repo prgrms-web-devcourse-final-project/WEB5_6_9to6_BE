@@ -6,6 +6,7 @@ import com.grepp.spring.infra.error.exceptions.CommonException;
 import com.grepp.spring.infra.error.exceptions.InsufficientRewardPointsException;
 import com.grepp.spring.infra.error.exceptions.MailSendFailureException;
 import com.grepp.spring.infra.error.exceptions.RewardApiException;
+import com.grepp.spring.infra.error.exceptions.StudyDataException;
 import com.grepp.spring.infra.response.CommonResponse;
 import com.grepp.spring.infra.response.ResponseCode;
 import com.grepp.spring.infra.util.NotFoundException;
@@ -14,6 +15,7 @@ import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.ui.Model;
@@ -140,6 +142,22 @@ public class RestApiExceptionAdvice {
         return ResponseEntity
             .status(HttpStatus.CONFLICT)
             .body(CommonResponse.error(ResponseCode.ALREADY_EXIST.code(), ex.getMessage()));
+    }
+
+    @ExceptionHandler(StudyDataException.class)
+    public ResponseEntity<CommonResponse<String>> handleStudyDataException(StudyDataException ex) {
+        log.error(ex.getMessage(), ex);
+        return ResponseEntity
+            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(CommonResponse.error(ResponseCode.FAIL_SEARCH_STUDY.code(), ex.getMessage()));
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<CommonResponse<String>> handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
+        log.error("잘못된 요청 형식입니다.", ex);
+        return ResponseEntity
+            .badRequest()
+            .body(CommonResponse.error(ResponseCode.FAIL_SEARCH_STUDY.code(), "요청 형식이 잘못되었습니다."));
     }
 
 }

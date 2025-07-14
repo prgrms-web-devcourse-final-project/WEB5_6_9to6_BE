@@ -26,6 +26,8 @@ import com.grepp.spring.app.model.study.repository.GoalAchievementRepository;
 import com.grepp.spring.app.model.study.repository.StudyGoalRepository;
 import com.grepp.spring.app.model.study.repository.StudyRepository;
 import com.grepp.spring.infra.error.exceptions.NotFoundException;
+import com.grepp.spring.infra.error.exceptions.StudyDataException;
+import com.grepp.spring.infra.response.ResponseCode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -48,15 +50,39 @@ public class StudyService {
 
     //필터 조건에 따라 스터디 목록 + 현재 인원 수 조회
     public List<StudyListResponse> searchStudiesWithMemberCount(StudySearchRequest req) {
-        List<Study> studies = studyRepository.searchByFilterWithSchedules(req);
+        if (req == null) {
+            throw new StudyDataException(ResponseCode.FAIL_SEARCH_STUDY.message());
+        }
+
+        List<Study> studies;
+        try {
+            studies = studyRepository.searchByFilterWithSchedules(req);
+        } catch (Exception e) {
+            throw new StudyDataException(ResponseCode.FAIL_SEARCH_STUDY.message());
+        }
 
         return studies.stream()
             .map(study -> {
-                int currentMemberCount = studyMemberRepository.countByStudy_StudyId(study.getStudyId());
-                return StudyListResponse.fromEntity(study, currentMemberCount);
+                if (study.getStudyId() == null) {
+                    throw new StudyDataException(ResponseCode.FAIL_SEARCH_STUDY.message());
+                }
+
+                int currentMemberCount;
+                try {
+                    currentMemberCount = studyMemberRepository.countByStudy_StudyId(study.getStudyId());
+                } catch (Exception e) {
+                    throw new StudyDataException(ResponseCode.FAIL_SEARCH_STUDY.message());
+                }
+
+                try {
+                    return StudyListResponse.fromEntity(study, currentMemberCount);
+                } catch (Exception e) {
+                    throw new StudyDataException(ResponseCode.FAIL_SEARCH_STUDY.message());
+                }
             })
             .collect(Collectors.toList());
     }
+
 
     @Transactional
     public void registGoal(List<Long> ids) {
