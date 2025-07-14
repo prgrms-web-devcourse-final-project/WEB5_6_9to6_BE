@@ -8,10 +8,10 @@ import org.springframework.data.domain.Pageable;
 
 @Data
 public class PageParam {
-    @Min(value = 1, message = "페이지는 1보다 작을 수 없습니다.")
+    @Min(value = 1, message = "Page는 1보다 작을 수 없습니다.")
     @Max(1000)
     private int page = 1;
-    @Min(value = 1, message = "최소 1개는 가져와야합니다.")
+    @Min(value = 1, message = "Size는 1보다 작을 수 없습니다.")
     @Max(1000)
     private int size = 5;
 
