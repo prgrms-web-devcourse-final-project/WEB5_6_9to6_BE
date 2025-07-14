@@ -1,17 +1,13 @@
 package com.grepp.spring.app.controller.api.member;
 
-import com.grepp.spring.app.model.member.dto.response.MemberInfoResponse;
 import com.grepp.spring.app.controller.api.member.payload.request.MemberUpdateRequest;
 import com.grepp.spring.app.controller.api.member.payload.request.PasswordVerifyRequest;
-import com.grepp.spring.app.model.member.dto.response.MemberStudyListResponse;
+import com.grepp.spring.app.model.member.dto.response.MemberInfoResponse;
 import com.grepp.spring.app.model.member.dto.response.MemberMyPageResponse;
+import com.grepp.spring.app.model.member.dto.response.MemberStudyListResponse;
 import com.grepp.spring.app.model.member.dto.response.PasswordVerifyResponse;
 import com.grepp.spring.app.model.member.service.MemberService;
 import com.grepp.spring.infra.response.CommonResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -76,39 +72,6 @@ public class MemberController {
         MemberMyPageResponse dto = memberService.getMyPage(memberId);
 
         return ResponseEntity.ok(CommonResponse.success(dto, "마이페이지 정보를 성공적으로 불러왔습니다."));
-    }
-
-    // 알람 목록 조회
-    @GetMapping("/{memberId}/alarms")
-    @ApiResponse(responseCode = "200")
-    public ResponseEntity<Map<String, Object>> getMemberAlarms(@PathVariable long memberId) {
-
-        Map<String, Object> response = new LinkedHashMap<>();
-        response.put("code", "0000");
-        response.put("message", "");
-        response.put("data", mockDataAlarm());
-
-        return ResponseEntity.ok(response);
-    }
-
-    private List<Map<String, Object>> mockDataAlarm() {
-
-        return List.of(
-            Map.of(
-                "alarmId", 101,
-                "type", "ACCEPT",
-                "message", "스터디 가입이 승인되었습니다.",
-                "isRead", false,
-                "sentAt", "2025-07-04T17:35:00"
-            ),
-            Map.of(
-                "alarmId", 100,
-                "type", "REJECT",
-                "message", "스터디 가입이 거절되었습니다.",
-                "isRead", true,
-                "sentAt", "2025-07-03T14:12:00"
-            )
-        );
     }
 
 }
