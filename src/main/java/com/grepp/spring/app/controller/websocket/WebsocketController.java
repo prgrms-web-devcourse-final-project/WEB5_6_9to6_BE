@@ -4,17 +4,15 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.grepp.spring.app.controller.api.chat.ParticipantResponse;
 import com.grepp.spring.app.controller.websocket.payload.ChatMessageRequest;
-import com.grepp.spring.app.controller.websocket.payload.ChatMessageResponse;
 import com.grepp.spring.app.model.auth.domain.Principal;
 import com.grepp.spring.app.model.chat.service.ChatService;
+import com.grepp.spring.app.model.study.service.StudyService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
-import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 
@@ -96,15 +94,12 @@ public class WebsocketController {
     public void sendMessage(ChatMessageRequest request,
         @DestinationVariable Long studyId,
         Authentication authentication) {
+
+
         System.out.println("WebSocket message received for studyId = " + studyId);
 
         Principal principal = (Principal) authentication.getPrincipal();
 
-        if (principal == null) {
-            System.out.println(" 인증 실패: Principal null");
-            // 인증 실패 처리
-            return;
-        }
 
         long memberId = principal.getMemberId();
 

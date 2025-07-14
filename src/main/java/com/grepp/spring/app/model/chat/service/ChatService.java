@@ -16,8 +16,11 @@ import jakarta.transaction.Transactional;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -29,6 +32,7 @@ public class ChatService {
     private final ChatRepository chatRepository;
     private final MemberRepository memberRepository;
     private final WebSocketSessionTracker tracker;
+    private final RedisTemplate redisTemplate;
 
     @Transactional
     public ChatMessageResponse saveChatMessage(Long studyId, ChatMessageRequest request,
@@ -53,7 +57,6 @@ public class ChatService {
 
         List<Chat> chats = chatRepository.findAllRelevantChats(studyId, username, memberId);
 
-        // 4. 병합 후 정렬
         return chats.stream()
             .sorted(Comparator.comparing(Chat::getCreatedAt).reversed()) // 가장 최근이 먼저
             .map(ChatHistoryResponse::from)
@@ -69,16 +72,25 @@ public class ChatService {
     }
 
     public List<ParticipantResponse> getOnlineParticipants(Long studyId) {
-        Map<String, String> onlineUsers = tracker.getConnectedUsers(studyId);
+        Map<Object, Object> sessions = redisTemplate.opsForHash().entries("participants:" + studyId);
+        Map<Object, Object> nicknames = redisTemplate.opsForHash().entries("nicknames:" + studyId);
 
-        return onlineUsers.entrySet().stream()
-            .map(entry -> {
-                String email = entry.getKey();
-                String nickname = entry.getValue();
-                Long memberId = memberRepository.findIdByEmail(email);
+        Set<String> uniqueEmails = sessions.values().stream()
+            .map(Object::toString)
+            .collect(Collectors.toSet());
+
+        return uniqueEmails.stream()
+            .map(email -> {
+                String value = (String) nicknames.get(email); // "123:Alice"
+                if (value == null || !value.contains(":")) return null;
+
+                String[] parts = value.split(":", 2);
+                Long memberId = Long.valueOf(parts[0]);
+                String nickname = parts[1];
 
                 return new ParticipantResponse(memberId, nickname, "ONLINE");
             })
+            .filter(Objects::nonNull)
             .collect(Collectors.toList());
     }
 }

@@ -1,10 +1,13 @@
 package com.grepp.spring.infra.config.Chat.WebSocket;
 
 
+import com.grepp.spring.infra.config.Chat.WebSocket.Auth.WebSocketAuthInterceptor;
 import java.security.Principal;
 import java.util.Map;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.server.ServerHttpRequest;
+import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,8 +19,11 @@ import org.springframework.web.socket.server.support.DefaultHandshakeHandler;
 
 @Configuration
 @EnableWebSocketMessageBroker
+@RequiredArgsConstructor
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
+
+    private final WebSocketAuthInterceptor webSocketAuthInterceptor;
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
@@ -44,6 +50,11 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 }
             })
             .withSockJS(); // SockJS fallback 지원;
+    }
+
+    @Override
+    public void configureClientInboundChannel(ChannelRegistration registration) {
+        registration.interceptors(webSocketAuthInterceptor);
     }
 
 }

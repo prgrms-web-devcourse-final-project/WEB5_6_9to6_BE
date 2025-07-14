@@ -17,11 +17,11 @@ public class ChatPublisher {
     public void publish(String studyId, ChatMessageRequest request){
         try {
             String message = objectMapper.writeValueAsString(request);
-            System.out.println("📤 Redis 발행 직전: " + message);
+            System.out.println(" Redis 발행 직전: " + message);
             redisTemplate.convertAndSend("chat:"+studyId, message);
-            System.out.println("📤 Redis 발행 완료");
+            System.out.println(" Redis 발행 완료");
         }catch (JsonProcessingException e){
-            System.out.println("❌ Redis 발행 실패");
+            System.out.println(" Redis 발행 실패");
             throw new RuntimeException("Failed to serialize message", e);
 
         }

@@ -16,9 +16,9 @@ public class RedisConnectionChecker {
         try {
             redisTemplate.opsForValue().set("connection_test", "ok", Duration.ofSeconds(10));
             String result = redisTemplate.opsForValue().get("connection_test");
-            System.out.println("✅ Redis 연결 테스트 성공: " + result);
+            System.out.println("Redis 연결 테스트 성공: " + result);
         } catch (Exception e) {
-            System.err.println("❌ Redis 연결 실패!");
+            System.err.println("Redis 연결 실패!");
             e.printStackTrace();
         }
     }
