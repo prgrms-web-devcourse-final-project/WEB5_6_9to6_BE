@@ -39,6 +39,8 @@ dependencies {
     implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta' // QUeryDSL JPA
     implementation platform('com.google.cloud:libraries-bom:26.43.0')
     implementation 'com.google.cloud:google-cloud-vertexai'
+    implementation 'org.springframework.retry:spring-retry'
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
 
 
 

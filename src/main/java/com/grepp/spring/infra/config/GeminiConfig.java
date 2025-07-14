@@ -12,7 +12,7 @@ public class GeminiConfig {
 
     private final String projectId = "able-coast-463406-n9";
     private final String location = "us-central1";
-    private final String modelName = "gemini-2.5-pro-preview-03-25";
+    private final String modelName = "gemini-2.5-pro";
 
     @Bean
     public VertexAI vertexAI() throws IOException {
