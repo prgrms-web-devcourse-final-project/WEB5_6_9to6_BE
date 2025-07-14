@@ -22,7 +22,7 @@ public class ChatMessageRequest {
             .chatRoom(chatRoom)
             .senderId(senderId)
             .senderNickname(senderNickname)
-            .receiverId(receiverId)
+            .receiverId(receiverEmail)
             .receiverNickname(receiverNickName)
             .content(content)
             .build();

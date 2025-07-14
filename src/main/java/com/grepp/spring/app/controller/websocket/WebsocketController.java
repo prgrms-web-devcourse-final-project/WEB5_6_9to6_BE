@@ -95,11 +95,10 @@ public class WebsocketController {
     @MessageMapping("/chat.send/{studyId}") // ex. /publish/chat.send
     public void sendMessage(ChatMessageRequest request,
         @DestinationVariable Long studyId,
-        Authentication authentication,
-        @Header("simpUser") UsernamePasswordAuthenticationToken token) {
+        Authentication authentication) {
         System.out.println("WebSocket message received for studyId = " + studyId);
 
-        Principal principal = (Principal) token.getPrincipal();
+        Principal principal = (Principal) authentication.getPrincipal();
 
         if (principal == null) {
             System.out.println(" 인증 실패: Principal null");

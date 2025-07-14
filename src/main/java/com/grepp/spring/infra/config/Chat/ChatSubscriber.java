@@ -33,19 +33,19 @@ public class ChatSubscriber implements MessageListener {
 
 
 
-            if (chat.getReceiverId() == null) {
+            if (chat.getReceiverEmail() == null) {
                 // 전체 채팅
                 messagingTemplate.convertAndSend("/subscribe/" + chat.getStudyId(), response);
             } else {
                 // 귓속말
-                messagingTemplate.convertAndSendToUser(chat.getReceiverId(), "/queue/messages", response);
+                messagingTemplate.convertAndSendToUser(chat.getReceiverEmail(), "/queue/messages", response);
 
 
 
 
 
                 // 보낸 사람에게도 보내기(자기 메세지 확인용)
-                if(!chat.getReceiverId().equals(chat.getSenderEmail())){
+                if(!chat.getReceiverEmail().equals(chat.getSenderEmail())){
                     messagingTemplate.convertAndSendToUser(
                         chat.getSenderEmail(),
                         "/queue/messages",
