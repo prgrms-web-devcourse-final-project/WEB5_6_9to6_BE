@@ -278,6 +278,4 @@ public class StudyService {
         );
     }
 
-
-
 }
