@@ -1,11 +1,10 @@
 package com.grepp.spring.app.controller.api;
 
 import com.grepp.spring.app.controller.api.reward.payload.ImageResponse;
+import com.grepp.spring.app.controller.api.reward.payload.OwnItemResponse;
 import com.grepp.spring.app.controller.api.reward.payload.SaveImageRequest;
 import com.grepp.spring.app.model.auth.domain.Principal;
 import com.grepp.spring.app.model.reward.dto.ItemSetDto;
-import com.grepp.spring.app.controller.api.reward.payload.OwnItemResponse;
-import com.grepp.spring.app.controller.api.reward.payload.RewardItemResponse;
 import com.grepp.spring.app.model.reward.dto.OwnItemDto;
 import com.grepp.spring.app.model.reward.dto.RewardItemDto;
 import com.grepp.spring.app.model.reward.service.ItemSetService;
@@ -20,6 +19,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -42,12 +44,20 @@ public class RewardController {
     private final ItemSetService itemSetService;
 
     // 아이템 상점 목록
-    @GetMapping
-    public ResponseEntity<CommonResponse<RewardItemResponse>> getRewardItems() {
-List<RewardItemDto> dtos = rewardItemService.getItemList();
-        RewardItemResponse responseDto = new RewardItemResponse(dtos);
+//    @GetMapping
+//    public ResponseEntity<CommonResponse<RewardItemResponse>> getRewardItems() {
+//        List<RewardItemDto> dtos = rewardItemService.getItemList();
+//            RewardItemResponse responseDto = new RewardItemResponse(dtos);
+//
+//        return ResponseEntity.ok(CommonResponse.success(responseDto));
+//    }
 
-  return ResponseEntity.ok(CommonResponse.success(responseDto));
+    @GetMapping
+    public ResponseEntity<CommonResponse<Page<RewardItemDto>>> getRewardItems(
+        @PageableDefault(size = 10) Pageable pageable
+    ) {
+        Page<RewardItemDto> responsePage = rewardItemService.getItemList(pageable);
+        return ResponseEntity.ok(CommonResponse.success(responsePage));
     }
 
     // 아이템 구매
