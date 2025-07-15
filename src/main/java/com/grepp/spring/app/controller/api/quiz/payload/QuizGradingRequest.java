@@ -8,6 +8,7 @@ import java.util.List;
 @NoArgsConstructor
 public class QuizGradingRequest {
     private Long memberId;
+    private Long studyId;
     private int week;
     private List<Integer> answerSheet;
 }

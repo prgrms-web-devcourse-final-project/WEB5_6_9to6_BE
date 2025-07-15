@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -14,7 +16,7 @@ public class Quiz {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "quizSetId")
@@ -30,12 +32,12 @@ public class Quiz {
     @Column(nullable = false)
     private boolean activated;
 
-    @OneToOne(mappedBy = "quiz", fetch = FetchType.LAZY)
-    private Choice choice;
+    @OneToMany(mappedBy = "quiz", fetch = FetchType.LAZY)
+    private List<Choice> choice;
 
     @Builder
-    public Quiz(Long quizId, QuizSet quizSet, String question, Integer answer, boolean activated, Choice choice) {
-        this.Id = quizId;
+    public Quiz(Long quizId, QuizSet quizSet, String question, Integer answer, boolean activated, List<Choice> choice) {
+        this.id = quizId;
         this.quizSet = quizSet;
         this.question = question;
         this.answer = answer;

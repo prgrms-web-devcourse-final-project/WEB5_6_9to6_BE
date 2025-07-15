@@ -2,17 +2,13 @@ package com.grepp.spring.app.model.quiz.service;
 
 import com.grepp.spring.app.controller.api.quiz.payload.QuizListResponse;
 import com.grepp.spring.app.model.quiz.dto.QuizDto;
-import com.grepp.spring.app.model.quiz.entity.Choice;
-import com.grepp.spring.app.model.quiz.entity.Quiz;
-import com.grepp.spring.app.model.quiz.entity.QuizSet;
+import com.grepp.spring.app.model.quiz.dto.QuizProjection;
 import com.grepp.spring.app.model.quiz.repository.QuizSetRepository;
-import com.grepp.spring.infra.error.exceptions.InvalidQuizException;
 import com.grepp.spring.infra.error.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -20,50 +16,36 @@ public class QuizGetService {
 
     private final QuizSetRepository quizSetRepository;
 
-    // 스터디에 해당하는 퀴즈 정보 가져옴
     @Transactional(readOnly = true)
     public List<QuizListResponse> getQuizzesByStudyId(Long studyId) {
-        List<QuizSet> quizSets = quizSetRepository.findQuizSetsByStudyId(studyId);
+        List<QuizProjection> projections = quizSetRepository.findQuizSetsByStudyId(studyId);
 
-        if (quizSets.isEmpty()) {
+        if (projections.isEmpty()) {
             throw new NotFoundException("해당 스터디에 대한 퀴즈가 존재하지 않습니다.");
         }
 
-        List<QuizListResponse> result = new ArrayList<>();
+        Map<Integer, List<QuizDto>> quizMap = new LinkedHashMap<>();
 
-        for (QuizSet quizSet : quizSets) {
-
-            List<QuizDto> quizDtos = new ArrayList<>();
-            for (Quiz quiz : quizSet.getQuizzes()) {
-                QuizDto dto = mapToQuizDto(quiz);
-                quizDtos.add(dto);
-            }
-
-            result.add(new QuizListResponse(quizSet.getWeek(), quizDtos));
-        }
-
-        return result;
-    }
-
-    private QuizDto mapToQuizDto(Quiz quiz) {
-        Choice choice = quiz.getChoice();
-        List<String> choices;
-
-        if (choice != null) {
-            choices = List.of(
-                    choice.getChoice1(),
-                    choice.getChoice2(),
-                    choice.getChoice3(),
-                    choice.getChoice4()
+        for (QuizProjection p : projections) {
+            QuizDto dto = new QuizDto(
+                    p.getQuizId(),
+                    p.getQuestion(),
+                    List.of(p.getChoice1(), p.getChoice2(), p.getChoice3(), p.getChoice4())
             );
-        } else {
-            throw new InvalidQuizException();
+            Integer week = p.getWeek();
+            if (!quizMap.containsKey(week)) {
+                quizMap.put(week, new ArrayList<>());
+            }
+            quizMap.get(week).add(dto);
         }
 
-        return new QuizDto(
-                quiz.getId(),
-                quiz.getQuestion(),
-                choices
-        );
+        List<QuizListResponse> responses = new ArrayList<>();
+        for (Integer week : quizMap.keySet()) {
+            List<QuizDto> quizDtos = quizMap.get(week);
+            QuizListResponse response = new QuizListResponse(week, quizDtos);
+            responses.add(response);
+        }
+
+        return responses;
     }
 }
