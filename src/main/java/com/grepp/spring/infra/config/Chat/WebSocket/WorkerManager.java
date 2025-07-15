@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.grepp.spring.app.controller.websocket.payload.ChatMessageRequest;
 import com.grepp.spring.app.controller.websocket.payload.ChatMessageResponse;
 import com.grepp.spring.app.model.chat.service.ChatService;
+import com.grepp.spring.infra.response.CommonResponse;
 import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -63,15 +64,19 @@ public class WorkerManager {
                             chat.getStudyId(), chat, chat.getSenderId()
                         );
 
+                        // 응답 형태로 파싱
+                        CommonResponse<ChatMessageResponse> wrappedResponse = CommonResponse.success(response);
+
+
                         // WebSocket 브로드캐스트
                         if (chat.getReceiverEmail() == null) {
                             System.out.println("브로드캐스트: /subscribe/" + studyId + " -> " + response.content());
-                            messagingTemplate.convertAndSend("/subscribe/" + chat.getStudyId(), response);
+                            messagingTemplate.convertAndSend("/subscribe/" + chat.getStudyId(), wrappedResponse);
                         } else {
-                            messagingTemplate.convertAndSendToUser(chat.getReceiverEmail(), "/queue/messages", response);
+                            messagingTemplate.convertAndSendToUser(chat.getReceiverEmail(), "/queue/messages", wrappedResponse);
 
                             if (!chat.getReceiverEmail().equals(chat.getSenderEmail())) {
-                                messagingTemplate.convertAndSendToUser(chat.getSenderEmail(), "/queue/messages", response);
+                                messagingTemplate.convertAndSendToUser(chat.getSenderEmail(), "/queue/messages", wrappedResponse);
                             }
                         }
                     } catch (Exception e) {

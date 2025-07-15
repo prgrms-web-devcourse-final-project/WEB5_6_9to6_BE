@@ -8,6 +8,7 @@ import com.grepp.spring.app.model.chat.service.ChatService;
 import com.grepp.spring.app.model.member.repository.MemberRepository;
 import com.grepp.spring.infra.config.Chat.WebSocket.WebSocketSessionTracker;
 import com.grepp.spring.infra.config.Chat.WebSocket.WorkerManager;
+import com.grepp.spring.infra.response.CommonResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
@@ -96,8 +97,9 @@ public class WebSocketEventListener {
     private void broadcastParticipants(Long studyId) {
 
         List<ParticipantResponse> current = chatService.getOnlineParticipants(studyId);
+        CommonResponse<List<ParticipantResponse>> response = CommonResponse.success(current);
 
-        messagingTemplate.convertAndSend("/subscribe/" + studyId + "/participants", current);
+        messagingTemplate.convertAndSend("/subscribe/" + studyId + "/participants", response);
         System.out.println("broadcasting to /subscribe/" + studyId + "/participants : " + current.size() + "명");
     }
 

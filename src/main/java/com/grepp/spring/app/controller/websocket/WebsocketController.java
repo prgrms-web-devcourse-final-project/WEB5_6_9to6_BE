@@ -8,9 +8,11 @@ import com.grepp.spring.app.model.auth.domain.Principal;
 import com.grepp.spring.app.model.chat.service.ChatService;
 import com.grepp.spring.app.model.study.service.StudyService;
 import com.grepp.spring.infra.config.Chat.WebSocket.WorkerManager;
+import com.grepp.spring.infra.response.CommonResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -87,8 +89,12 @@ public class WebsocketController {
 
     @MessageMapping("/participants/{studyId}")
     public void requestParticipants(@DestinationVariable Long studyId, Principal principal) {
+
+
+
         List<ParticipantResponse> participants = chatService.getOnlineParticipants(studyId);
-        messagingTemplate.convertAndSend("/subscribe/" + studyId + "/participants", participants);
+        CommonResponse<List<ParticipantResponse>> response = CommonResponse.success(participants);
+        messagingTemplate.convertAndSend("/subscribe/" + studyId + "/participants", response);
     }
 
 // 웹소켓으로 받은 메세지를 레디스로 전송

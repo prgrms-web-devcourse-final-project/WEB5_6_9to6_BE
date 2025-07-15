@@ -11,6 +11,8 @@ import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
+
+// redis pub/sub 기반 구현
 @Component
 @RequiredArgsConstructor
 public class ChatSubscriber
