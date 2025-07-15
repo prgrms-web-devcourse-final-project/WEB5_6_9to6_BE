@@ -37,8 +37,17 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
         // websocket handshake endpoint
         registry.addEndpoint("/ws-connect")
-            .setAllowedOrigins("http://localhost:8080", "http://127.0.0.1:5500",
-                "http://localhost:3000")
+
+            //TODO 실 서비스 시 도메인 확인해서 잘 연결하기
+//            .setAllowedOrigins("http://localhost:8080",
+//                "http://127.0.0.1:5500",
+//                "http://localhost:3000",
+//                "http://3.37.19.66",
+//                "https://3.37.19.66",
+//                "https://www.stuidium.com",
+//                "http://www.stuidium.com")
+//
+            .setAllowedOriginPatterns("*") // 개발용 루트 열기
             .setHandshakeHandler(new DefaultHandshakeHandler() {
                 @Override
                 protected Principal determineUser(ServerHttpRequest request,
