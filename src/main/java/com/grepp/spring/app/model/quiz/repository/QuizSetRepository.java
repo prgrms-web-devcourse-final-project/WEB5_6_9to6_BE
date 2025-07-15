@@ -17,6 +17,7 @@ public interface QuizSetRepository extends JpaRepository<QuizSet, Long> {
             "ORDER BY qs.week ASC")
     List<QuizSet> findQuizSetsByStudyId(@Param("studyId") Long studyId);
 
-    @Query(value = "SELECT * FROM quiz_set WHERE study_id = ?1 AND week = ?2", nativeQuery = true)
     Optional<QuizSet> findByStudyIdAndWeek(Long studyId, int week);
+
+    Optional<QuizSet> findTopByStudyIdOrderByWeekDesc(Long studyId);
 }
