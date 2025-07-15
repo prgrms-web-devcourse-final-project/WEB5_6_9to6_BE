@@ -1,4 +1,4 @@
-package com.grepp.spring.infra.config.Chat.WebSocket;
+package com.grepp.spring.infra.config.Chat.WebSocket.Participants;
 
 
 import com.grepp.spring.app.controller.api.chat.ParticipantResponse;
@@ -6,6 +6,8 @@ import com.grepp.spring.app.controller.api.chat.SessionUserInfo;
 import com.grepp.spring.app.model.auth.domain.Principal;
 import com.grepp.spring.app.model.chat.service.ChatService;
 import com.grepp.spring.app.model.member.repository.MemberRepository;
+import com.grepp.spring.infra.config.Chat.WebSocket.WebSocketSessionTracker;
+import com.grepp.spring.infra.config.Chat.WebSocket.WorkerManager;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
@@ -27,6 +29,7 @@ public class WebSocketEventListener {
     private final SimpMessagingTemplate messagingTemplate;
     private final ChatService chatService;
     private final RedisTemplate redisTemplate;
+    private final WorkerManager workerManager;
 
     @EventListener
     public void handleConnect(SessionConnectEvent event) {
@@ -52,7 +55,10 @@ public class WebSocketEventListener {
                     redisTemplate.opsForHash().put("nicknames:" + studyId, email, memberId + ":" + nickname);
                     redisTemplate.opsForHash().put("participants:" + studyId, sessionId, email);
 
+                    //접속자 broadcast
                     broadcastParticipants(studyId);
+                    // 워커 등록
+                    workerManager.startWorker(studyId);
                 } catch (NumberFormatException e) {
                     System.out.println(" studyId 파싱 실패: " + studyIdHeader);
                 }
@@ -80,6 +86,9 @@ public class WebSocketEventListener {
 
 
                 broadcastParticipants(studyId);
+
+                // 워커 제거
+                workerManager.stopWorker(studyId);
             }
         }
     }

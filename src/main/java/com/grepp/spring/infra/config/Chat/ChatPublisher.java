@@ -19,7 +19,7 @@ public class ChatPublisher {
             String message = objectMapper.writeValueAsString(request);
             System.out.println(" Redis 발행 직전: " + message);
             redisTemplate.convertAndSend("chat:"+studyId, message);
-            System.out.println(" Redis 발행 완료");
+            redisTemplate.opsForList().leftPush("chat:log:"+studyId, message); // List 저장
         }catch (JsonProcessingException e){
             System.out.println(" Redis 발행 실패");
             throw new RuntimeException("Failed to serialize message", e);

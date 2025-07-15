@@ -7,6 +7,7 @@ import com.grepp.spring.app.controller.websocket.payload.ChatMessageRequest;
 import com.grepp.spring.app.model.auth.domain.Principal;
 import com.grepp.spring.app.model.chat.service.ChatService;
 import com.grepp.spring.app.model.study.service.StudyService;
+import com.grepp.spring.infra.config.Chat.WebSocket.WorkerManager;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -24,6 +25,7 @@ public class WebsocketController {
     private final SimpMessagingTemplate messagingTemplate;
     private final RedisTemplate<String , String> redisTemplate;
     private final ObjectMapper objectMapper;
+    private final WorkerManager workerManager;
 
 
 
@@ -118,6 +120,7 @@ public class WebsocketController {
 
         String topic = "chat:" + studyId;
         Long publishedCount= redisTemplate.convertAndSend(topic , message);
+        redisTemplate.opsForList().leftPush("chat:log:"+studyId, message); // List 저장
 
         System.out.println(" Redis 발행 완료, 수신 리스너 수: " + publishedCount);
     }

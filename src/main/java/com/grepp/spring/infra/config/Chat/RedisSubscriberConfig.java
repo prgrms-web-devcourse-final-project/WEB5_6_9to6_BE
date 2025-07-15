@@ -11,14 +11,18 @@ import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 @RequiredArgsConstructor
 public class RedisSubscriberConfig {
 
-
-    private final RedisMessageListenerContainer listenerContainer;
-    private final ChatSubscriber chatSubscriber;
-
-    @PostConstruct
-    public void subscribe(){
-        listenerContainer.addMessageListener(chatSubscriber, new PatternTopic("chat:*"));
-    }
+//
+//    private final RedisMessageListenerContainer listenerContainer;
+//    private final ChatSubscriber chatSubscriber;
+//
+//
+//
+//    @PostConstruct
+//    public void subscribe(){
+//        listenerContainer.addMessageListener(chatSubscriber, new PatternTopic("chat:*"));
+//    }
+//
+//
 
 
 }
