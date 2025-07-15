@@ -51,7 +51,7 @@ public class QuizService {
     @Transactional
     public QuizSet createProblemsForWeek(Long studyId, int week) throws IOException {
         quizSetRepository.findByStudyIdAndWeek(studyId, week).ifPresent(qs -> {
-            throw new QuizAlreadyExistsException("이미 해당 주차의 퀴즈가 존재합니다.");
+            throw new QuizAlreadyExistsException();
         });
 
         StudyGoal targetGoal = getStudyTopicByWeekOrder(studyId, week);

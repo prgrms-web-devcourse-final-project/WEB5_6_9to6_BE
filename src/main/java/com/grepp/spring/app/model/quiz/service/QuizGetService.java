@@ -57,7 +57,7 @@ public class QuizGetService {
                     choice.getChoice4()
             );
         } else {
-            throw new InvalidQuizException("선택지가 없는 퀴즈가 포함되어 있습니다.");
+            throw new InvalidQuizException();
         }
 
         return new QuizDto(
