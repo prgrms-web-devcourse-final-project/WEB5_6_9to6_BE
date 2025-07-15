@@ -48,6 +48,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 //                "http://www.stuidium.com")
 //
             .setAllowedOriginPatterns("*") // 개발용 루트 열기
+
             .setHandshakeHandler(new DefaultHandshakeHandler() {
                 @Override
                 protected Principal determineUser(ServerHttpRequest request,
