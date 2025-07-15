@@ -8,16 +8,20 @@ import lombok.Getter;
 public class AlarmListResponse {
 
     private Long alarmId;
+    private Long alarmRecipientId;
     private String type;
+    private String resultStatus;
     private String message;
     private Boolean isRead;
     private LocalDateTime sentAt;
 
     @Builder
-    public AlarmListResponse(Long alarmId, String type, String message, Boolean isRead,
-        LocalDateTime sentAt) {
+    public AlarmListResponse(Long alarmId, Long alarmRecipientId, String type, String resultStatus,
+        String message, Boolean isRead, LocalDateTime sentAt) {
         this.alarmId = alarmId;
+        this.alarmRecipientId = alarmRecipientId;
         this.type = type;
+        this.resultStatus = resultStatus;
         this.message = message;
         this.isRead = isRead;
         this.sentAt = sentAt;

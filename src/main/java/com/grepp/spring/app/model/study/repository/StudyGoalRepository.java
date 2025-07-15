@@ -14,4 +14,7 @@ public interface StudyGoalRepository extends JpaRepository<StudyGoal, Long> {
 
     @Query("select new com.grepp.spring.app.model.study.reponse.GoalsResponse(sg.goalId, sg.content) from StudyGoal sg WHERE sg.study.studyId = :studyId")
     List<GoalsResponse> findGoalsById(Long studyId);
+
+    @Query("SELECT g FROM StudyGoal g WHERE g.study.studyId = :studyId ORDER BY g.goalId ASC")
+    List<StudyGoal> findGoalsByStudyId(@Param("studyId") Long studyId);
 }

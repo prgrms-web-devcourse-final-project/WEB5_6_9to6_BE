@@ -1,6 +1,7 @@
 package com.grepp.spring.app.model.alarm.entity;
 
 import com.grepp.spring.app.model.alarm.code.AlarmType;
+import com.grepp.spring.app.model.alarm.code.ResultStatus;
 import com.grepp.spring.app.model.member.entity.Member;
 import com.grepp.spring.infra.entity.BaseEntity;
 import jakarta.persistence.CascadeType;
@@ -18,6 +19,7 @@ import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -45,7 +47,19 @@ public class Alarm extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private AlarmType alarmType;
 
+    @Enumerated(EnumType.STRING)
+    private ResultStatus resultStatus;
+
     @OneToMany(mappedBy = "alarm", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AlarmRecipient> recipients = new ArrayList<>();
 
+    @Builder
+    public Alarm(Member receiver, Member sender, String message, AlarmType alarmType,
+        ResultStatus resultStatus) {
+        this.receiver = receiver;
+        this.sender = sender;
+        this.message = message;
+        this.alarmType = alarmType;
+        this.resultStatus = resultStatus;
+    }
 }
