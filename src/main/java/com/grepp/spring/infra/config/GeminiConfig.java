@@ -2,10 +2,14 @@ package com.grepp.spring.infra.config;
 
 import com.google.cloud.vertexai.VertexAI;
 import com.google.cloud.vertexai.api.GenerationConfig;
+import com.google.cloud.vertexai.api.HarmCategory;
+import com.google.cloud.vertexai.api.SafetySetting;
 import com.google.cloud.vertexai.generativeai.GenerativeModel;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 public class GeminiConfig {
@@ -22,19 +26,36 @@ public class GeminiConfig {
     @Bean
     public GenerationConfig generationConfig() {
         return GenerationConfig.newBuilder()
-                .setMaxOutputTokens(2048)
-                .setTemperature(0.4f)
+                .setTemperature(0.1f)
+                .setTopP(1.0f)
                 .setTopK(32)
-                .setTopP(1)
+                .setMaxOutputTokens(4096)
                 .build();
     }
 
     @Bean
     public GenerativeModel generativeModel(VertexAI vertexAI, GenerationConfig generationConfig) {
-        return new GenerativeModel.Builder()
-                .setModelName(modelName)
-                .setVertexAi(vertexAI)
-                .setGenerationConfig(generationConfig)
-                .build();
+        List<SafetySetting> safetySettings = Arrays.asList(
+                SafetySetting.newBuilder()
+                        .setCategory(HarmCategory.HARM_CATEGORY_HATE_SPEECH)
+                        .setThreshold(SafetySetting.HarmBlockThreshold.BLOCK_ONLY_HIGH)
+                        .build(),
+                SafetySetting.newBuilder()
+                        .setCategory(HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT)
+                        .setThreshold(SafetySetting.HarmBlockThreshold.BLOCK_ONLY_HIGH)
+                        .build(),
+                SafetySetting.newBuilder()
+                        .setCategory(HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT)
+                        .setThreshold(SafetySetting.HarmBlockThreshold.BLOCK_ONLY_HIGH)
+                        .build(),
+                SafetySetting.newBuilder()
+                        .setCategory(HarmCategory.HARM_CATEGORY_HARASSMENT)
+                        .setThreshold(SafetySetting.HarmBlockThreshold.BLOCK_ONLY_HIGH)
+                        .build()
+        );
+
+        return new GenerativeModel(modelName, vertexAI)
+                .withGenerationConfig(generationConfig)
+                .withSafetySettings(safetySettings);
     }
 }
