@@ -6,10 +6,10 @@ import com.grepp.spring.app.model.quiz.entity.Choice;
 import com.grepp.spring.app.model.quiz.entity.Quiz;
 import com.grepp.spring.app.model.quiz.entity.QuizSet;
 import com.grepp.spring.app.model.quiz.repository.QuizSetRepository;
+import com.grepp.spring.infra.error.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +23,10 @@ public class QuizGetService {
     @Transactional(readOnly = true)
     public List<QuizListResponse> getQuizzesByStudyId(Long studyId) {
         List<QuizSet> quizSets = quizSetRepository.findQuizSetsByStudyId(studyId);
+
+        if (quizSets.isEmpty()) {
+            throw new NotFoundException("해당 스터디에 대한 퀴즈가 존재하지 않습니다.");
+        }
 
         List<QuizListResponse> result = new ArrayList<>();
 
