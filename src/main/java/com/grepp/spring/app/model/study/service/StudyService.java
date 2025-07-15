@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,14 +58,14 @@ public class StudyService {
             throw new StudyDataException(ResponseCode.BAD_REQUEST);
         }
 
-        List<Study> studies;
+        Page<Study> studies;
         try {
-            studies = studyRepository.searchByFilterWithSchedules(req);
+            studies = studyRepository.searchByFilterWithSchedules(req, req.getPageable());
         } catch (Exception e) {
             throw new StudyDataException(ResponseCode.FAIL_SEARCH_STUDY);
         }
 
-        return studies.stream()
+        return studies.getContent().stream()
             .map(study -> {
                 if (study.getStudyId() == null) {
                     throw new StudyDataException(ResponseCode.FAIL_SEARCH_STUDY);
@@ -85,6 +86,7 @@ public class StudyService {
             })
             .collect(Collectors.toList());
     }
+
 
 
     @Transactional
@@ -316,7 +318,5 @@ public class StudyService {
             goals
         );
     }
-
-
 
 }

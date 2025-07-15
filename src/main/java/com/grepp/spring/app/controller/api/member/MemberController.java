@@ -2,12 +2,18 @@ package com.grepp.spring.app.controller.api.member;
 
 import com.grepp.spring.app.controller.api.member.payload.request.MemberUpdateRequest;
 import com.grepp.spring.app.controller.api.member.payload.request.PasswordVerifyRequest;
+import com.grepp.spring.app.model.member.dto.response.AvatarInfoResponse;
 import com.grepp.spring.app.model.member.dto.response.MemberInfoResponse;
 import com.grepp.spring.app.model.member.dto.response.MemberMyPageResponse;
 import com.grepp.spring.app.model.member.dto.response.MemberStudyListResponse;
 import com.grepp.spring.app.model.member.dto.response.PasswordVerifyResponse;
+import com.grepp.spring.app.model.member.dto.response.RequiredMemberInfoResponse;
 import com.grepp.spring.app.model.member.service.MemberService;
+import com.grepp.spring.app.model.reward.service.OwnItemService;
+import com.grepp.spring.app.model.reward.service.RewardItemService;
 import com.grepp.spring.infra.response.CommonResponse;
+import com.grepp.spring.infra.util.SecurityUtil;
+import java.util.LinkedHashMap;
 import com.grepp.spring.infra.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +31,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class MemberController {
 
     private final MemberService memberService;
+    private final RewardItemService rewardItemService;
+    private final OwnItemService ownItemService;
 
     // 유저 정보 조회(이메일, 닉네임, 아바타)
     @GetMapping("/{memberId}/info")
@@ -73,6 +81,18 @@ public class MemberController {
         MemberMyPageResponse dto = memberService.getMyPage(memberId);
 
         return ResponseEntity.ok(CommonResponse.success(dto, "마이페이지 정보를 성공적으로 불러왔습니다."));
+    }
+
+    // 요구사항 - 맴버테이블 전체 + 입고 있는 아바타 정보
+    @GetMapping("/info-all")
+    public ResponseEntity<CommonResponse<?>> infoAll() {
+        Long memberId = SecurityUtil.getCurrentMemberId();
+        RequiredMemberInfoResponse memberInfoRes =  memberService.getMemberRequiredInfo(memberId);
+        AvatarInfoResponse avatarRes = memberService.getMemberAvatarInfo(memberId);
+        LinkedHashMap<String, Object> responseData = new LinkedHashMap<>();
+        responseData.put("memberInfo", memberInfoRes);
+        responseData.put("avatarInfo", avatarRes);
+        return ResponseEntity.ok(CommonResponse.success(responseData));
     }
 
 //    // 로그인 한 사용자 memberId

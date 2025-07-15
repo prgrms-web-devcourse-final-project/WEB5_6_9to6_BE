@@ -6,10 +6,12 @@ import com.grepp.spring.app.model.auth.dto.SignupRequest;
 import com.grepp.spring.app.model.auth.dto.SocialMemberInfoRegistRequest;
 import com.grepp.spring.app.model.member.code.SocialType;
 import com.grepp.spring.app.model.member.dto.response.AchievementRecordResponse;
+import com.grepp.spring.app.model.member.dto.response.AvatarInfoResponse;
 import com.grepp.spring.app.model.member.dto.response.MemberInfoResponse;
 import com.grepp.spring.app.model.member.dto.response.MemberMyPageResponse;
 import com.grepp.spring.app.model.member.dto.response.MemberStudyListResponse;
 import com.grepp.spring.app.model.member.dto.response.MypageStudyInfoResponse;
+import com.grepp.spring.app.model.member.dto.response.RequiredMemberInfoResponse;
 import com.grepp.spring.app.model.member.dto.response.StudyInfoResponse;
 import com.grepp.spring.app.model.member.entity.Attendance;
 import com.grepp.spring.app.model.member.entity.Member;
@@ -17,6 +19,7 @@ import com.grepp.spring.app.model.member.entity.StudyMember;
 import com.grepp.spring.app.model.member.repository.MemberRepository;
 import com.grepp.spring.app.model.member.repository.StudyAttendanceRepository;
 import com.grepp.spring.app.model.member.repository.StudyMemberRepository;
+import com.grepp.spring.app.model.reward.repository.OwnItemIdGetRepository;
 import com.grepp.spring.app.model.study.entity.GoalAchievement;
 import com.grepp.spring.app.model.study.entity.Study;
 import com.grepp.spring.app.model.study.entity.StudySchedule;
@@ -48,6 +51,7 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final StudyAttendanceRepository studyAttendanceRepository;
     private final GoalAchievementRepository goalAchievementRepository;
+    private final OwnItemIdGetRepository ownItemIdGetRepository;
 
     @Transactional
     public Member join(SignupRequest req) {
@@ -294,4 +298,19 @@ public class MemberService {
         );
     }
 
+    @Transactional(readOnly = true)
+    public RequiredMemberInfoResponse getMemberRequiredInfo(Long memberId) {
+        return memberRepository.findRequiredMemberInfo(memberId);
+    }
+
+    @Transactional(readOnly = true)
+    public AvatarInfoResponse getMemberAvatarInfo(Long memberId) {
+        List<Long> ids = ownItemIdGetRepository.findOwnItemIdsByMemberId(memberId);
+        String memberAvatarImage = memberRepository.findAvatarImageById(memberId);
+        AvatarInfoResponse avatarInfoResponse = AvatarInfoResponse.builder()
+            .itemIds(ids)
+            .avatarImage(memberAvatarImage)
+            .build();
+        return avatarInfoResponse;
+    }
 }
