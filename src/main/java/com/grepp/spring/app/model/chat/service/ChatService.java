@@ -13,6 +13,7 @@ import com.grepp.spring.infra.config.Chat.WebSocket.WebSocketSessionTracker;
 import com.grepp.spring.app.model.study.entity.Study;
 import com.grepp.spring.infra.util.NotFoundException;
 import jakarta.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -20,11 +21,14 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ChatService {
 
 
@@ -93,7 +97,18 @@ public class ChatService {
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
     }
+
+    // 매일 새벽 4시에 실행 (필요에 따라 수정 가능)
+    @Scheduled(cron = "0 0 4 * * ?")
+    @Transactional
+    public void deleteOldMessages() {
+        LocalDateTime threshold = LocalDateTime.now().minusWeeks(2);
+        int deletedCount = chatRepository.deleteByCreatedAtBefore(threshold);
+        log.info(" 삭제된 메시지 수: " + deletedCount);
+    }
 }
+
+
 
 
 
