@@ -128,4 +128,8 @@ public class Study {
         this.getGoals().add(goal);
         goal.setStudy(this);
     }
+
+    public Study(Long studyId) {
+        this.studyId = studyId;
+    }
 }

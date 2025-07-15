@@ -8,6 +8,7 @@ import com.grepp.spring.app.model.member.dto.response.MemberStudyListResponse;
 import com.grepp.spring.app.model.member.dto.response.PasswordVerifyResponse;
 import com.grepp.spring.app.model.member.service.MemberService;
 import com.grepp.spring.infra.response.CommonResponse;
+import com.grepp.spring.infra.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -74,4 +75,9 @@ public class MemberController {
         return ResponseEntity.ok(CommonResponse.success(dto, "마이페이지 정보를 성공적으로 불러왔습니다."));
     }
 
+//    // 로그인 한 사용자 memberId
+//    @GetMapping("/i-want-my-id")
+//    public ResponseEntity<?> getMyId() {
+//        return ResponseEntity.ok(CommonResponse.success(SecurityUtil.getCurrentMemberId()));
+//    }
 }

@@ -148,16 +148,17 @@ public class RestApiExceptionAdvice {
     public ResponseEntity<CommonResponse<String>> handleStudyDataException(StudyDataException ex) {
         log.error(ex.getMessage(), ex);
         return ResponseEntity
-            .status(HttpStatus.INTERNAL_SERVER_ERROR)
-            .body(CommonResponse.error(ResponseCode.FAIL_SEARCH_STUDY.code(), ex.getMessage()));
+            .status(ex.code().status())
+            .body(CommonResponse.error(ex.code().code(), ex.getMessage()));
     }
+
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<CommonResponse<String>> handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
-        log.error("잘못된 요청 형식입니다.", ex);
+        log.error(ex.getMessage(), ex);
         return ResponseEntity
             .badRequest()
-            .body(CommonResponse.error(ResponseCode.FAIL_SEARCH_STUDY.code(), "요청 형식이 잘못되었습니다."));
+            .body(CommonResponse.error(ResponseCode.BAD_REQUEST.code(), ex.getMessage()));
     }
 
 }

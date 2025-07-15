@@ -10,6 +10,7 @@ import com.grepp.spring.app.model.chat.repository.ChatRepository;
 import com.grepp.spring.app.model.chat.repository.ChatRoomRepository;
 import com.grepp.spring.app.model.member.repository.MemberRepository;
 import com.grepp.spring.app.model.study.entity.Study;
+import com.grepp.spring.app.model.study.repository.StudyRepository;
 import com.grepp.spring.infra.config.WebSocket.WebSocketSessionTracker;
 import com.grepp.spring.infra.util.NotFoundException;
 import jakarta.transaction.Transactional;
@@ -30,6 +31,7 @@ public class ChatService {
     private final ChatRepository chatRepository;
     private final MemberRepository memberRepository;
     private final WebSocketSessionTracker tracker;
+    private final StudyRepository studyRepository;
 
     @Transactional
     public ChatMessageResponse saveChatMessage(Long studyId, ChatMessageRequest request,
@@ -62,11 +64,15 @@ public class ChatService {
     }
 
     // 채팅방 생성
-    public ChatRoom createChatRoom(Study study) {
+    public void createChatRoom(Long studyId) {
+        Study study = studyRepository.findById(studyId)
+            .orElseThrow(() -> new NotFoundException("스터디가 존재하지 않습니다."));
+
         ChatRoom chatRoom = ChatRoom.builder()
             .study(study)
             .build();
-        return chatRoomRepository.save(chatRoom);
+
+        chatRoomRepository.save(chatRoom);
     }
 
     public List<ParticipantResponse> getOnlineParticipants(Long studyId) {

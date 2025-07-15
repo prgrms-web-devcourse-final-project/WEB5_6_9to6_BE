@@ -12,6 +12,7 @@ import com.grepp.spring.app.model.member.entity.Attendance;
 import com.grepp.spring.app.model.member.service.MemberService;
 import com.grepp.spring.app.model.study.code.Category;
 import com.grepp.spring.app.model.study.code.Status;
+import com.grepp.spring.app.model.study.dto.StudyCreationResponse;
 import com.grepp.spring.app.model.study.dto.StudyInfoResponse;
 import com.grepp.spring.app.model.study.dto.StudyListResponse;
 import com.grepp.spring.app.model.study.dto.WeeklyAttendanceResponse;
@@ -163,14 +164,15 @@ public class StudyController {
 
     // 스터디 생성
     @PostMapping
-    public ResponseEntity<?> createStudy(@RequestBody StudyCreationRequest req) {
-        // 1. 서비스에서 스터디 생성 수행
-        Study study = studyService.createStudy(req);
-        // 2. 채팅방 생성
-        chatService.createChatRoom(study);
+    public ResponseEntity<CommonResponse<StudyCreationResponse>> createStudy(@RequestBody StudyCreationRequest req) {
+        StudyCreationResponse response = studyService.createStudy(req);
+
+        chatService.createChatRoom(response.getStudyId());
+
         return ResponseEntity.status(HttpStatus.CREATED)
-            .body(CommonResponse.success("스터디가 성공적으로 생성되었습니다."));
+            .body(CommonResponse.success(response));
     }
+
 
     // 스터디 목표 조회
     @GetMapping("/{studyId}/goals")

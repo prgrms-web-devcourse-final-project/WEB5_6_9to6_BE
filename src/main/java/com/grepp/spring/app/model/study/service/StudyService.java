@@ -13,6 +13,7 @@ import com.grepp.spring.app.model.study.code.ApplicantState;
 import com.grepp.spring.app.model.study.code.DayOfWeek;
 import com.grepp.spring.app.model.study.code.GoalType;
 import com.grepp.spring.app.model.study.code.Status;
+import com.grepp.spring.app.model.study.dto.StudyCreationResponse;
 import com.grepp.spring.app.model.study.dto.StudyInfoResponse;
 import com.grepp.spring.app.model.study.dto.StudyListResponse;
 import com.grepp.spring.app.model.study.dto.WeeklyGoalStatusResponse;
@@ -31,7 +32,9 @@ import com.grepp.spring.infra.response.ResponseCode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -51,33 +54,33 @@ public class StudyService {
     //필터 조건에 따라 스터디 목록 + 현재 인원 수 조회
     public List<StudyListResponse> searchStudiesWithMemberCount(StudySearchRequest req) {
         if (req == null) {
-            throw new StudyDataException(ResponseCode.FAIL_SEARCH_STUDY.message());
+            throw new StudyDataException(ResponseCode.BAD_REQUEST);
         }
 
         List<Study> studies;
         try {
             studies = studyRepository.searchByFilterWithSchedules(req);
         } catch (Exception e) {
-            throw new StudyDataException(ResponseCode.FAIL_SEARCH_STUDY.message());
+            throw new StudyDataException(ResponseCode.FAIL_SEARCH_STUDY);
         }
 
         return studies.stream()
             .map(study -> {
                 if (study.getStudyId() == null) {
-                    throw new StudyDataException(ResponseCode.FAIL_SEARCH_STUDY.message());
+                    throw new StudyDataException(ResponseCode.FAIL_SEARCH_STUDY);
                 }
 
                 int currentMemberCount;
                 try {
                     currentMemberCount = studyMemberRepository.countByStudy_StudyId(study.getStudyId());
                 } catch (Exception e) {
-                    throw new StudyDataException(ResponseCode.FAIL_SEARCH_STUDY.message());
+                    throw new StudyDataException(ResponseCode.FAIL_SEARCH_STUDY);
                 }
 
                 try {
                     return StudyListResponse.fromEntity(study, currentMemberCount);
                 } catch (Exception e) {
-                    throw new StudyDataException(ResponseCode.FAIL_SEARCH_STUDY.message());
+                    throw new StudyDataException(ResponseCode.FAIL_SEARCH_STUDY);
                 }
             })
             .collect(Collectors.toList());
@@ -121,16 +124,25 @@ public class StudyService {
 
     @Transactional(readOnly = true)
     public StudyInfoResponse getStudyInfo(Long studyId) {
-        Study studyWithGoals = studyRepository.findByIdWithGoals(studyId)
-            .orElseThrow(() -> new NotFoundException("스터디가 존재하지 않습니다."));
+        try {
+            // goals 포함 조회
+            Study studyWithGoals = studyRepository.findByIdWithGoals(studyId)
+                .orElseThrow(() -> new StudyDataException(ResponseCode.FAIL_GET_STUDY_INFO));
 
-        Study studyWithSchedules = studyRepository.findByIdWithSchedules(studyId)
-            .orElseThrow(() -> new NotFoundException("스터디가 존재하지 않습니다."));
+            // schedules 포함 조회
+            Study studyWithSchedules = studyRepository.findByIdWithSchedules(studyId)
+                .orElseThrow(() -> new StudyDataException(ResponseCode.FAIL_GET_STUDY_INFO));
 
-        // goals fetch join 과 schedules fetch join 을 합치기
-        studyWithGoals.getSchedules().addAll(studyWithSchedules.getSchedules());
+            // schedules 병합
+            studyWithGoals.getSchedules().addAll(studyWithSchedules.getSchedules());
 
-        return StudyInfoResponse.fromEntity(studyWithGoals);
+            return StudyInfoResponse.fromEntity(studyWithGoals);
+        } catch (StudyDataException e) {
+            throw e; // 이미 처리된 예외는 다시 던지기
+        } catch (Exception e) {
+            // 그 외 예외는 공통 에러로 처리
+            throw new StudyDataException(ResponseCode.FAIL_GET_STUDY_INFO);
+        }
     }
 
     // 스터디 수정
@@ -198,7 +210,7 @@ public class StudyService {
     }
 
     @Transactional
-    public Study createStudy(StudyCreationRequest req) {
+    public StudyCreationResponse  createStudy(StudyCreationRequest req) {
         // 1. 스터디 생성
         Study study = Study.builder()
             .name(req.getName())
@@ -226,24 +238,25 @@ public class StudyService {
             }
         }
 
-        // 3. 목표 추가
+        // 3. 목표 추가(request 로 받은 goalId는 n주차 개념으로 오름차순 정렬)
         if (req.getGoals() != null) {
-            for (StudyCreationRequest.GoalDTO g : req.getGoals()) {
-                if (g.getContent() == null || g.getContent().isBlank()) {
-                    continue; // 빈 목표 내용은 무시
-                }
-                StudyGoal goal = StudyGoal.builder()
-                    .content(g.getContent())
-                    .goalType(GoalType.WEEKLY)
-                    .activated(true)
-                    .study(study)
-                    .build();
-                study.addGoal(goal);
-            }
+            req.getGoals().stream()
+                .filter(g -> g.getContent() != null && !g.getContent().isBlank())
+                .sorted(Comparator.comparingLong(g -> Optional.ofNullable(g.getGoalId()).orElse(Long.MAX_VALUE))) // goalId 오름차순
+                .forEach(g -> {
+                    StudyGoal goal = StudyGoal.builder()
+                        .content(g.getContent())
+                        .goalType(GoalType.WEEKLY)
+                        .activated(true)
+                        .study(study)
+                        .build();
+                    study.addGoal(goal);
+                });
         }
 
         // 4. 저장
-        return studyRepository.save(study);
+        Study saved = studyRepository.save(study);
+        return new StudyCreationResponse(saved.getStudyId());
     }
 
     @Transactional
