@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -37,4 +38,15 @@ public class AlarmRecipient {
     @Column(nullable = false)
     private Boolean activated = true;
 
+    @Builder
+    public AlarmRecipient(Alarm alarm, Member member) {
+        this.alarm = alarm;
+        this.member = member;
+        this.isRead = false;
+        this.activated = true;
+    }
+
+    public void markAsRead() {
+        this.isRead = true;
+    }
 }
