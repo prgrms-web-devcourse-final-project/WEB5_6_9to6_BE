@@ -1,5 +1,6 @@
 package com.grepp.spring.app.model.member.repository;
 
+import com.grepp.spring.app.model.member.code.StudyRole;
 import com.grepp.spring.app.model.member.entity.StudyMember;
 import io.lettuce.core.dynamic.annotation.Param;
 import java.util.List;
@@ -29,4 +30,9 @@ public interface StudyMemberRepository extends JpaRepository<StudyMember, Long> 
 
     @Query("SELECT sm FROM StudyMember sm JOIN FETCH sm.member WHERE sm.study.studyId = :studyId")
     List<StudyMember> findAllByStudyIdWithMember(@Param("studyId") Long studyId);
+
+
+    @Query("select sm.studyRole  from StudyMember sm "
+        + "where sm.study.studyId = :studyId and sm.member.id = :memberId")
+    Optional<StudyRole> findRoleByStudyAndMember(Long studyId, Long memberId);
 }

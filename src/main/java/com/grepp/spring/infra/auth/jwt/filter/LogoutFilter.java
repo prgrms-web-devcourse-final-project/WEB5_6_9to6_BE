@@ -29,7 +29,7 @@ public class LogoutFilter extends OncePerRequestFilter {
 
         String path = request.getRequestURI();
         if (!path.equals("/auth/logout")) {
-            filterChain.doFilter(request, response); // 로그아웃 요청이 아니면 다음 필터로 바로 넘깁니다.
+            filterChain.doFilter(request, response);
             return;
         }
         
