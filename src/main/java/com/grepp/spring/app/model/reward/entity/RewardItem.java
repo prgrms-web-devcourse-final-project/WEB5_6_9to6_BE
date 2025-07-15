@@ -1,7 +1,9 @@
 package com.grepp.spring.app.model.reward.entity;
 
 import com.grepp.spring.app.model.reward.code.ItemType;
+import com.grepp.spring.app.model.reward.code.ItemTypeConverter;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -32,6 +34,7 @@ public class RewardItem {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
+    @Convert(converter = ItemTypeConverter.class)
     private ItemType itemType;
 
     @Column(nullable = false)
@@ -48,4 +51,7 @@ public class RewardItem {
         this.activated = activated;
         this.image = image;
     }
+
+
+
 }
