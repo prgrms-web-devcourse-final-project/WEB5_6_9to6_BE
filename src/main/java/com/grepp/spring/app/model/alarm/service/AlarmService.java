@@ -80,7 +80,7 @@ public class AlarmService {
         }
     }
 
-    // 알람 목록 조회
+    // 알림 목록 조회
     @Transactional(readOnly = true)
     public List<AlarmListResponse> getAlarmsByMemberId(Long memberId) {
         List<AlarmRecipient> recipients = alarmRecipientRepository.findByMember_Id(memberId);
@@ -101,7 +101,7 @@ public class AlarmService {
             .collect(Collectors.toList());
     }
 
-    // 읽음 처리
+    // 알림 읽음 처리
     @Transactional
     public void markAlarmAsRead(Long alarmRecipientId) {
         AlarmRecipient recipient = alarmRecipientRepository.findById(alarmRecipientId)

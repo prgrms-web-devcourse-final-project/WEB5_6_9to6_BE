@@ -40,7 +40,7 @@ public class AlarmController {
         return emitter;
     }
 
-    // 알람 전송
+    // 알림 전송
     @PostMapping
     public ResponseEntity<CommonResponse<Void>> sendAlarm(@RequestBody AlarmRequest request) {
         alarmService.createAndSendAlarm(request);
@@ -49,7 +49,7 @@ public class AlarmController {
             .body(CommonResponse.noContent(SuccessCode.ALARM_SENT));
     }
 
-    // 알람 읽음 처리
+    // 알림 읽음 처리
     @PatchMapping("/{alarmRecipientId}/read")
     public ResponseEntity<CommonResponse<Void>> markAlarmAsRead(@PathVariable Long alarmRecipientId) {
         alarmService.markAlarmAsRead(alarmRecipientId);
@@ -58,7 +58,7 @@ public class AlarmController {
             .body(CommonResponse.noContent(SuccessCode.ALARM_READ));
     }
 
-    // 알람 목록 조회
+    // 알림 목록 조회
     @GetMapping("/{memberId}")
     public ResponseEntity<CommonResponse<List<AlarmListResponse>>> getMemberAlarms(@PathVariable Long memberId) {
         List<AlarmListResponse> alarms = alarmService.getAlarmsByMemberId(memberId);
