@@ -3,6 +3,7 @@ package com.grepp.spring.app.controller.api;
 import com.grepp.spring.app.controller.api.reward.payload.ImageResponse;
 import com.grepp.spring.app.controller.api.reward.payload.SaveImageRequest;
 import com.grepp.spring.app.model.auth.domain.Principal;
+import com.grepp.spring.app.model.member.service.MemberService;
 import com.grepp.spring.app.model.reward.dto.ItemSetDto;
 import com.grepp.spring.app.controller.api.reward.payload.OwnItemResponse;
 import com.grepp.spring.app.controller.api.reward.payload.RewardItemResponse;
@@ -13,6 +14,7 @@ import com.grepp.spring.app.model.reward.service.OwnItemService;
 import com.grepp.spring.app.model.reward.service.RewardItemService;
 import com.grepp.spring.infra.response.CommonResponse;
 import com.grepp.spring.infra.response.SuccessCode;
+import com.grepp.spring.infra.util.SecurityUtil;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import java.util.HashMap;
@@ -40,6 +42,7 @@ public class RewardController {
     private final RewardItemService rewardItemService;
     private final OwnItemService ownItemService;
     private final ItemSetService itemSetService;
+    private final MemberService memberService;
 
     // 아이템 상점 목록
     @GetMapping
@@ -85,15 +88,31 @@ List<RewardItemDto> dtos = rewardItemService.getItemList();
 
     // 사용 아이템 변경
     @PatchMapping("/own-items/{ownItemId}")
-    public ResponseEntity<CommonResponse<Map<String, Object>>> changeOwnItems(
+    public ResponseEntity<CommonResponse<ImageResponse>> changeOwnItems(
         @PathVariable long ownItemId
     ) {
         Map<String, Object> data = Map.of();
 
+        Long memberId = SecurityUtil.getCurrentMemberId();
+
         ownItemService.changeOwnItems(ownItemId);
-        return ResponseEntity
-            .status(HttpStatus.CREATED)
-            .body(CommonResponse.success(data));
+
+        // 변경 후 현재 사용 중인 아이템들로 조합 이미지 체크
+        ItemSetDto itemSetDto = ownItemService.getUseItemList(memberId);
+        Optional<ImageResponse> imageOpt = itemSetService.ExistItemSet(itemSetDto);
+
+        if (imageOpt.isPresent()) {
+            ImageResponse image = imageOpt.get();
+
+            // 3. 조합 이미지 있으면 → 멤버 테이블 업데이트
+            memberService.updateProfileImage(memberId, image.getImage());
+
+            // 4. 이미지 포함 응답
+            return ResponseEntity.ok(CommonResponse.success(image));
+        } else {
+            // 5. 이미지 없으면 → 멤버 테이블 업데이트 생략 + 메시지 응답
+            return ResponseEntity.ok(CommonResponse.noContent(SuccessCode.NO_IMAGE_FOUND));
+        }
     }
 
     @GetMapping("/{itemId}/image")

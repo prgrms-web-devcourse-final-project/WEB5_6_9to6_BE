@@ -294,4 +294,9 @@ public class MemberService {
         );
     }
 
+    public void updateProfileImage(Long memberId, String image) {
+        Member member = memberRepository.findById(memberId)
+            .orElseThrow(() -> new NotFoundException("Member not found"));
+        member.updateAvatarImage(image);
+    }
 }
