@@ -6,6 +6,7 @@ import com.grepp.spring.app.model.quiz.entity.Choice;
 import com.grepp.spring.app.model.quiz.entity.Quiz;
 import com.grepp.spring.app.model.quiz.entity.QuizSet;
 import com.grepp.spring.app.model.quiz.repository.QuizSetRepository;
+import com.grepp.spring.infra.error.exceptions.InvalidQuizException;
 import com.grepp.spring.infra.error.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -56,7 +57,7 @@ public class QuizGetService {
                     choice.getChoice4()
             );
         } else {
-            choices = List.of();
+            throw new InvalidQuizException("선택지가 없는 퀴즈가 포함되어 있습니다.");
         }
 
         return new QuizDto(
