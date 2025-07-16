@@ -39,7 +39,9 @@ public class MemberController {
     // 유저 정보 조회(이메일, 닉네임, 아바타)
     @Operation(
         summary = "간단한 회원 정보 조회",
-        description = "회원 ID(`memberId`)를 이용하여 해당 회원의 이메일, 닉네임, 현재 장착한 아바타 이미지 주소를 조회합니다."
+        description = """
+            회원 ID(`memberId`)를 이용하여 해당 회원의 이메일, 닉네임, 현재 장착한 아바타 이미지 주소를 조회합니다.
+            """
     )
     @GetMapping("/{memberId}/info")
     public ResponseEntity<CommonResponse<MemberInfoResponse>> getMemberInfo(@PathVariable Long memberId) {
@@ -52,7 +54,10 @@ public class MemberController {
     // 개인 정보 수정 (닉네임, 비밀번호 변경)
     @Operation(
         summary = "회원 정보 수정",
-        description = "회원 ID(`memberId`)에 해당하는 회원의 정보를 수정합니다. 요청 본문을 통해 닉네임 또는 비밀번호를 변경할 수 있습니다."
+        description = """
+    요청 body에 `MemberUpdateRequest`를 포함해야합니다.
+    회원 ID(`memberId`)에 해당하는 회원의 정보를 수정합니다. 요청 본문을 통해 닉네임 또는 비밀번호를 변경할 수 있습니다.
+    """
     )
     @PutMapping("/{memberId}/info")
     public ResponseEntity<CommonResponse<Void>> updateMemberInfo(@PathVariable Long memberId,
@@ -66,7 +71,9 @@ public class MemberController {
     // 기존 비밀번호 확인
     @Operation(
         summary = "기존 비밀번호 확인",
-        description = "회원 ID(`memberId`)와 현재 비밀번호를 받아 일치 여부를 확인합니다. 비밀번호 변경 전 본인 인증 용도로 사용됩니다."
+        description = """
+    요청 body에 `PasswordVerifyRequest`를 포함해야합니다.
+    회원 ID(`memberId`)와 현재 비밀번호를 받아 일치 여부를 확인합니다. 비밀번호 변경 전 본인 인증 용도로 사용됩니다."""
     )
     @PostMapping("/{memberId}/password/verify")
     public ResponseEntity<CommonResponse<PasswordVerifyResponse>> verifyPassword(
