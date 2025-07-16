@@ -32,8 +32,8 @@ public class Quiz {
     @Column(nullable = false)
     private boolean activated;
 
-    @OneToOne(mappedBy = "quiz", fetch = FetchType.LAZY)
-    private Choice choice;
+    @OneToMany(mappedBy = "quiz", fetch = FetchType.LAZY)
+    private List<Choice> choice;
 
     @Builder
     public Quiz(Long quizId, QuizSet quizSet, String question, Integer answer, boolean activated, Choice choice) {

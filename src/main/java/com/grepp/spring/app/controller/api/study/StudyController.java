@@ -1,6 +1,7 @@
 package com.grepp.spring.app.controller.api.study;
 
 import com.grepp.spring.app.controller.api.study.payload.ApplicationRequest;
+import com.grepp.spring.app.controller.api.study.payload.ApplicationResultRequest;
 import com.grepp.spring.app.controller.api.study.payload.StudyCreationRequest;
 import com.grepp.spring.app.controller.api.study.payload.StudySearchRequest;
 import com.grepp.spring.app.controller.api.study.payload.StudyUpdateRequest;
@@ -9,6 +10,7 @@ import com.grepp.spring.app.model.member.dto.response.ApplicantsResponse;
 import com.grepp.spring.app.model.member.dto.response.StudyMemberResponse;
 import com.grepp.spring.app.model.member.entity.Attendance;
 import com.grepp.spring.app.model.member.service.MemberService;
+import com.grepp.spring.app.model.study.code.ApplicantState;
 import com.grepp.spring.app.model.study.code.Category;
 import com.grepp.spring.app.model.study.code.Status;
 import com.grepp.spring.app.model.study.dto.StudyInfoResponse;
@@ -16,9 +18,13 @@ import com.grepp.spring.app.model.study.dto.StudyListResponse;
 import com.grepp.spring.app.model.study.dto.WeeklyAttendanceResponse;
 import com.grepp.spring.app.model.study.dto.WeeklyGoalStatusResponse;
 import com.grepp.spring.app.model.study.entity.Study;
+import com.grepp.spring.app.model.study.service.ApplicantService;
+import com.grepp.spring.app.model.study.service.StudyMemberService;
 import com.grepp.spring.app.model.study.service.StudyService;
 import com.grepp.spring.infra.response.CommonResponse;
 import com.grepp.spring.infra.util.SecurityUtil;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.Arrays;
 import java.util.List;
@@ -37,6 +43,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "스터디 API", description = "스터디 생성, 조회, 가입, 관리 등 스터디 관련 API 입니다.")
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -46,8 +53,12 @@ public class StudyController {
     private final MemberService memberService;
     private final StudyService studyService;
     private final ChatService chatService;
+    private final ApplicantService applicantService;
+    private final StudyMemberService studyMemberService;
 
     // 카테고리 & statuses 조회(enum)
+    @Operation(summary = "스터디 카테고리 및 상태 목록 조회",
+        description = "스터디 생성 및 검색에 사용되는 카테고리(Enum)와 상태(Enum)의 전체 목록을 문자열 리스트로 조회합니다.")
     @GetMapping("/categories")
     public ResponseEntity<?> getCategories() {
         Map<String, Object> data = Map.of(
@@ -58,6 +69,10 @@ public class StudyController {
     }
 
     // 출석체크
+    @Operation(summary = "스터디 출석 체크", description = """
+        현재 로그인한 사용자가 특정 스터디(`studyId`)에 대해 출석 체크를 합니다.
+        - 이 API는 인증이 필요하며, 요청 헤더에 유효한 토큰이 있어야 합니다.
+        """)
     @PostMapping("/{studyId}/attendance")
     public ResponseEntity<?> attendance(
         @PathVariable Long studyId,
@@ -72,6 +87,10 @@ public class StudyController {
     }
 
     // 주간 출석체크 조회(이번주)
+    @Operation(summary = "주간 출석체크 조회(이번주)", description = """
+        현재 로그인한 사용자의 특정 스터디(`studyId`)에 대한 이번 주 출석 내역을 조회합니다.
+        - 이 API는 인증이 필요하며, 요청 헤더에 유효한 토큰이 있어야 합니다.
+        """)
     @GetMapping("/{studyId}/attendance")
     public ResponseEntity<?> weeklyAttendance(
         @PathVariable Long studyId,
@@ -88,6 +107,10 @@ public class StudyController {
     }
 
     // 스터디 목록(검색)
+    @Operation(summary = "스터디 목록 검색", description = """
+        요청 body에 `StudySearchRequest`를 포함해야합니다.
+        - 카테고리, 스터디 상태, 검색어 등 다양한 조건으로 스터디를 검색하고, 목록을 반환합니다.
+        """)
     @PostMapping("/search")
     public ResponseEntity<CommonResponse<List<StudyListResponse>>> searchStudies(
         @Valid @RequestBody StudySearchRequest req
@@ -97,6 +120,7 @@ public class StudyController {
     }
 
     // 스터디 정보 조회
+    @Operation(summary = "스터디 상세 정보 조회", description = "스터디 ID(`studyId`)를 이용하여 스터디의 상세 정보를 조회합니다.")
     @GetMapping("/{studyId}")
     public ResponseEntity<?> getStudyInfo(@PathVariable Long studyId) {
         StudyInfoResponse data = studyService.getStudyInfo(studyId);
@@ -104,6 +128,10 @@ public class StudyController {
     }
 
     // 스터디 정보 수정
+    @Operation(summary = "스터디 정보 수정", description = """
+        요청 body에 `StudyUpdateRequest`를 포함해야합니다.
+        - 스터디 ID(`studyId`)에 해당하는 스터디의 정보를 수정합니다. 스터디장만 호출 가능합니다.
+        """)
     @PutMapping("/{studyId}")
     public ResponseEntity<?> updateStudyInfo(
         @PathVariable Long studyId,
@@ -114,6 +142,7 @@ public class StudyController {
     }
 
     // 스터디 신청자 목록 조회
+    @Operation(summary = "스터디 신청자 목록 조회", description = "스터디 ID(`studyId`)에 해당하는 스터디의 가입 신청자 목록을 조회합니다. 스터디장만 호출 가능합니다.")
     @GetMapping("/{studyId}/applications-list")
     public ResponseEntity<?> getApplications(@PathVariable Long studyId) {
         List<ApplicantsResponse> applicants = studyService.getApplicants(studyId);
@@ -121,6 +150,11 @@ public class StudyController {
     }
 
     // 스터디 신청
+    @Operation(summary = "스터디 가입 신청", description = """
+        요청 body에 `ApplicationRequest`를 포함해야합니다.
+        - 현재 로그인한 사용자가 특정 스터디(`studyId`)에 가입 신청을 합니다. 자기소개를 포함할 수 있습니다.
+        - 이 API는 인증이 필요하며, 요청 헤더에 유효한 토큰이 있어야 합니다.
+        """)
     @PostMapping("/{studyId}/application")
     public ResponseEntity<?> application(
         @PathVariable Long studyId,
@@ -132,6 +166,11 @@ public class StudyController {
     }
 
     // 유저가 스터디 맴버인지 조회
+    @Operation(summary = "현재 사용자의 스터디 멤버 여부 확인", description = """
+        현재 로그인한 사용자가 특정 스터디(`studyId`)의 멤버인지 여부를 확인합니다.
+        - `isMember` 필드가 `true` 또는 `false`로 반환됩니다.
+        - 이 API는 인증이 필요하며, 요청 헤더에 유효한 토큰이 있어야 합니다.
+        """)
     @GetMapping("/{studyId}/members/me/check")
     public ResponseEntity<?> isMember(@PathVariable Long studyId) {
         Long memberId = SecurityUtil.getCurrentMemberId();
@@ -146,6 +185,7 @@ public class StudyController {
     }
 
     // 스터디 맴버 리스트 조회
+    @Operation(summary = "스터디 멤버 목록 조회", description = "스터디 ID(`studyId`)에 해당하는 스터디에 속한 모든 멤버의 목록을 조회합니다.")
     @GetMapping("/{studyId}/members")
     public ResponseEntity<?> getMembers(@PathVariable Long studyId) {
         List<StudyMemberResponse> members = studyService.getStudyMembers(studyId);
@@ -153,6 +193,10 @@ public class StudyController {
     }
 
     // 스터디 생성
+    @Operation(summary = "스터디 생성", description = """
+        요청 body에 `StudyCreationRequest`를 포함해야합니다.
+        - 새로운 스터디를 생성합니다. 생성과 동시에 해당 스터디의 채팅방도 함께 생성됩니다.
+        """)
     @PostMapping
     public ResponseEntity<?> createStudy(@RequestBody StudyCreationRequest req) {
         // 1. 서비스에서 스터디 생성 수행
@@ -164,13 +208,17 @@ public class StudyController {
     }
 
     // 스터디 목표 조회
+    @Operation(summary = "스터디 목표 목록 조회", description = "스터디 ID(`studyId`)에 설정된 목표 목록을 조회합니다.")
     @GetMapping("/{studyId}/goals")
     public ResponseEntity<?> getGoals(@PathVariable Long studyId) {
         return ResponseEntity.status(200).body(CommonResponse.success(studyService.findGoals(studyId)));
     }
 
     // 스터디 목표 달성
-    @PostMapping("/{studyId}/goal/{goalId}")
+    @Operation(summary = "스터디 목표 달성 등록", description = """
+        현재 로그인한 사용자가 특정 스터디(`studyId`)의 특정 목표(`goalId`)를 달성했음을 등록합니다.
+        - 이 API는 인증이 필요하며, 요청 헤더에 유효한 토큰이 있어야 합니다.
+        """)
     public ResponseEntity<?> successGoal(@PathVariable Long studyId, @PathVariable Long goalId) {
         Long memberId = SecurityUtil.getCurrentMemberId();
         log.info("memberId: {}", memberId);
@@ -179,6 +227,10 @@ public class StudyController {
     }
 
     // 스터디 목표 달성 여부 조회
+    @Operation(summary = "주간 스터디 목표 달성 현황 조회", description = """
+        현재 로그인한 사용자의 특정 스터디(`studyId`)에 대한 주간 목표 달성 현황을 조회합니다.
+        - 이 API는 인증이 필요하며, 요청 헤더에 유효한 토큰이 있어야 합니다.
+        """)
     @GetMapping("/{studyId}/goals/completed")
     public ResponseEntity<?> getWeeklyGoalStats(
         @PathVariable Long studyId) {
@@ -188,5 +240,34 @@ public class StudyController {
 
         return ResponseEntity.ok(CommonResponse.success(response));
     }
+
+    // 스터디 가입 승인, 거절
+    @Operation(
+        summary = "스터디 가입 승인, 거절",
+        description = """
+        요청 body에 `ApplicationResultRequest`를 포함해야합니다.
+        스터디 가입 신청에 대해 승인 또는 거절을 처리합니다.
+        - 요청 body에 `memberId`와 `applicationResult`(APPROVED, REJECTED 등)를 포함해야 합니다.
+        - **승인(APPROVED)** 시 신청자는 스터디 멤버로 추가됩니다.
+        - **거절(REJECTED)** 시 신청자의 상태만 업데이트됩니다.
+        - 스터디장만 호출 가능합니다.
+        """
+    )
+    @PostMapping("/{studyId}/applications/respond")
+    public ResponseEntity<CommonResponse<?>> responseStudyApplication(
+        @PathVariable Long studyId,
+        @RequestBody ApplicationResultRequest req) {
+
+        // 신청자 상태변경
+        applicantService.updateState(req.getMemberId(), studyId, req.getApplicationResult());
+
+        // 스터디 맴버에 저장
+        if (req.getApplicationResult() == ApplicantState.ACCEPT) {
+            studyMemberService.saveMember(studyId, req.getMemberId());
+        }
+
+        return ResponseEntity.ok(CommonResponse.noContent());
+    }
+
 
 }

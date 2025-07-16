@@ -7,6 +7,7 @@ public enum ResponseCode {
     ITEM_PURCHASE_SUCCESS("0002", HttpStatus.CREATED, "성공적으로 구매하였습니다."),
     BAD_REQUEST("4000", HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
     INVALID_FILENAME("4001", HttpStatus.BAD_REQUEST, "사용 할 수 없는 파일 이름입니다."),
+    SAME_STATE("4003", HttpStatus.BAD_REQUEST , "현재 상태와 동일한 상태입니다."),
     UNAUTHORIZED("4010", HttpStatus.UNAUTHORIZED, "권한이 없습니다."),
     BAD_CREDENTIAL("4011", HttpStatus.UNAUTHORIZED, "아이디나 비밀번호가 틀렸습니다."),
     NOT_EXIST_PRE_AUTH_CREDENTIAL("4012", HttpStatus.OK, "사전 인증 정보가 요청에서 발견되지 않았습니다."),

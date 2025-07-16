@@ -8,7 +8,6 @@ import com.grepp.spring.infra.error.exceptions.InvalidQuizException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.*;
 
 @Service
