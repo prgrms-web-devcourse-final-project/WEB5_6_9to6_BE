@@ -7,6 +7,7 @@ import com.grepp.spring.app.model.alarm.sse.EmitterRepository;
 import com.grepp.spring.infra.response.CommonResponse;
 import com.grepp.spring.infra.response.SuccessCode;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+@Tag(name = "알림 API", description = "실시간 알림(SSE) 및 알림 목록 관련 API 입니다.")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/v1/alarms")
