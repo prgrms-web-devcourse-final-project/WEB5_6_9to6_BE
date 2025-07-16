@@ -20,9 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -106,6 +103,7 @@ public class RewardController {
             .status(HttpStatus.CREATED)
             .body(CommonResponse.success(data));
     }
+
 
     @GetMapping("/{itemId}/image")
     @ApiResponse(responseCode = "200")

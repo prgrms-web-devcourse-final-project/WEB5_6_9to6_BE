@@ -9,7 +9,6 @@ import com.grepp.spring.infra.config.Chat.WebSocket.WebSocketSessionTracker;
 import com.grepp.spring.infra.response.CommonResponse;
 import com.grepp.spring.infra.response.ResponseCode;
 import com.grepp.spring.infra.util.SecurityUtil;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -40,7 +39,6 @@ public class ChatController {
     // 웹소켓 사용으로 인해 사용안함.
     // 채팅 메시지 전송
     @PostMapping("/{studyId}")
-    @ApiResponse(responseCode = "200")
     public ResponseEntity<Map<String, Object>> sendChatMessage(@PathVariable Long studyId,
         @RequestBody Map<String, Object> request) {
 
@@ -76,7 +74,6 @@ public class ChatController {
     // 웹소켓으로 변경해서 안쓸 것 같음
     // 현재 접속 중인 사용자 목록 조회
     @GetMapping("/{studyId}/participants")
-    @ApiResponse(responseCode = "200")
     public ResponseEntity<CommonResponse<List<ParticipantResponse>>> getOnlineParticipants(@PathVariable Long studyId) {
 
 
@@ -88,7 +85,6 @@ public class ChatController {
 
     // 채팅 내역 조회
     @GetMapping("/{studyId}/history")
-    @ApiResponse(responseCode = "200")
     public ResponseEntity<CommonResponse<List<ChatHistoryResponse>>> getChatHistory(@PathVariable Long studyId,
         Authentication authentication) {
 
