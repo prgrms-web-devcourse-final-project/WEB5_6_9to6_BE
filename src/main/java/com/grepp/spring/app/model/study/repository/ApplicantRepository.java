@@ -19,5 +19,6 @@ public interface ApplicantRepository extends JpaRepository<Applicant, Long> {
     void updateStateById(@Param("memberId") long memberId, @Param("studyId") long studyId, @Param("state") ApplicantState state);
 
     Optional<Applicant> findByMember_IdAndStudy_StudyId(Long memberId, Long studyId);
+
 }
 
