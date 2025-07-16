@@ -1,5 +1,6 @@
 package com.grepp.spring.app.model.quiz.entity;
 
+import com.grepp.spring.app.model.study.entity.StudyGoal;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -14,7 +15,7 @@ public class QuizSet {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
+    private Long id;
 
     @Column(nullable = false)
     private Long studyId;
@@ -25,15 +26,20 @@ public class QuizSet {
     @Column(nullable = false)
     private boolean activated;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "goal_id", unique = true)
+    private StudyGoal studyGoal;
+
     @OneToMany(mappedBy = "quizSet", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Quiz> quizzes;
 
     @Builder
-    public QuizSet(Long quizSetId, Long studyId, Integer week, boolean activated, List<Quiz> quizzes) {
-        this.Id = quizSetId;
+    public QuizSet(Long quizSetId, Long studyId, Integer week, boolean activated, StudyGoal studyGoal, List<Quiz> quizzes) {
+        this.id = quizSetId;
         this.studyId = studyId;
         this.week = week;
         this.activated = activated;
+        this.studyGoal = studyGoal;
         this.quizzes = quizzes;
     }
 }

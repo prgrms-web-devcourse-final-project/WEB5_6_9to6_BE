@@ -54,7 +54,7 @@ public class Member extends BaseEntity{
 
     @Column(nullable = false)
     @ColumnDefault("0")
-    private Integer winRate = 0;
+    private Integer winCount = 0;
 
     @Enumerated(EnumType.STRING)
     private SocialType socialType;
@@ -70,7 +70,7 @@ public class Member extends BaseEntity{
 
     @Builder
     public Member(Long id, String email, String password, String nickname, LocalDate birthday,
-        Gender gender, Integer rewardPoints, Integer winRate, SocialType socialType, Role role,
+        Gender gender, Integer rewardPoints, Integer winCount, SocialType socialType, Role role,
         String avatarImage) {
         this.id = id;
         this.email = email;
@@ -79,7 +79,7 @@ public class Member extends BaseEntity{
         this.birthday = birthday;
         this.gender = gender;
         this.rewardPoints = rewardPoints;
-        this.winRate = winRate;
+        this.winCount = winCount;
         this.socialType = socialType;
         this.role = role;
         this.avatarImage = avatarImage;
@@ -105,4 +105,9 @@ public class Member extends BaseEntity{
         }
         rewardPoints -= amount;
     }
+
+    public void updateAvatarImage(String avatarImage) {
+        this.avatarImage = avatarImage;
+    }
+
 }

@@ -10,9 +10,15 @@ public record CommonResponse<T>(
     String message,
     @Schema(description = "응답 데이터")
     T data
+//    @Schema(description = "JWT 액세스 토큰")
+//    String accessToken
 ) {
     public static <T> CommonResponse<T> success(T data) {
         return new CommonResponse<>(ResponseCode.SUCCESS.code(), ResponseCode.SUCCESS.message(), data);
+    }
+
+    public static <T> CommonResponse<T> success(T data, String message) {
+        return new CommonResponse<>(ResponseCode.SUCCESS.code(), message, data);
     }
 
     public static <T> CommonResponse<T> noContent() {
@@ -34,4 +40,8 @@ public record CommonResponse<T>(
     public static <T> CommonResponse<T> error(String code, String message) {
         return new CommonResponse<>(code, message, null);
     }
+
+//    public CommonResponse<T> withToken(String token) {
+//        return new CommonResponse<>(this.code, this.message, this.data, token);
+//    }
 }

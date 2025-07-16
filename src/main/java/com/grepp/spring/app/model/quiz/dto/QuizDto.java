@@ -11,4 +11,5 @@ public class QuizDto {
     private Long quizId;
     private String question;
     private List<String> choices;
+    private Integer answer;
 }

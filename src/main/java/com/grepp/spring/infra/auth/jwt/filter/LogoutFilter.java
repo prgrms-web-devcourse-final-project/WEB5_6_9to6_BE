@@ -26,29 +26,31 @@ public class LogoutFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
         FilterChain filterChain) throws ServletException, IOException {
-        
-        String accessToken = jwtTokenProvider.resolveToken(request, AuthToken.ACCESS_TOKEN);
-        
-        if(accessToken == null){
-            filterChain.doFilter(request,response);
+
+        String path = request.getRequestURI();
+        if (!path.equals("/auth/logout")) {
+            filterChain.doFilter(request, response);
             return;
         }
         
-        String path = request.getRequestURI();
-        Claims claims  = jwtTokenProvider.getClaims(accessToken);
-        
-        if(path.equals("/auth/logout")){
-            refreshTokenService.deleteByAccessTokenId(claims.getId());
-            SecurityContextHolder.clearContext();
-            ResponseCookie expiredAccessToken = TokenCookieFactory.createExpiredToken(AuthToken.ACCESS_TOKEN.name());
-            ResponseCookie expiredRefreshToken = TokenCookieFactory.createExpiredToken(AuthToken.REFRESH_TOKEN.name());
-            ResponseCookie expiredSessionId = TokenCookieFactory.createExpiredToken(AuthToken.AUTH_SERVER_SESSION_ID.name());
-            response.addHeader("Set-Cookie", expiredAccessToken.toString());
-            response.addHeader("Set-Cookie", expiredRefreshToken.toString());
-            response.addHeader("Set-Cookie", expiredSessionId.toString());
-            response.sendRedirect("/");
+        String accessToken = jwtTokenProvider.resolveToken(request, AuthToken.ACCESS_TOKEN);
+
+        if(accessToken == null){
+            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+            return;
         }
-        
-        filterChain.doFilter(request,response);
+
+        Claims claims  = jwtTokenProvider.getClaims(accessToken);
+
+        refreshTokenService.deleteByAccessTokenId(claims.getId());
+        SecurityContextHolder.clearContext();
+        ResponseCookie expiredAccessToken = TokenCookieFactory.createExpiredToken(AuthToken.ACCESS_TOKEN.name());
+        ResponseCookie expiredRefreshToken = TokenCookieFactory.createExpiredToken(AuthToken.REFRESH_TOKEN.name());
+        ResponseCookie expiredSessionId = TokenCookieFactory.createExpiredToken(AuthToken.AUTH_SERVER_SESSION_ID.name());
+        response.addHeader("Set-Cookie", expiredAccessToken.toString());
+        response.addHeader("Set-Cookie", expiredRefreshToken.toString());
+        response.addHeader("Set-Cookie", expiredSessionId.toString());
+        response.setStatus(HttpServletResponse.SC_OK);
+
     }
 }
