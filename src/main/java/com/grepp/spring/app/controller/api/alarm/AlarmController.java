@@ -83,6 +83,15 @@ public class AlarmController {
             .body(CommonResponse.noContent(SuccessCode.ALARM_READ));
     }
 
+    // 알림 모두 읽음 처리
+    @PatchMapping("/{memberId}/read-all")
+    public ResponseEntity<CommonResponse<Void>> markAllAlarmsAsRead(@PathVariable Long memberId) {
+        alarmService.markAllAlarmsAsRead(memberId);
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(CommonResponse.noContent(SuccessCode.ALARM_ALL_READ));
+    }
+
     // 알림 목록 조회
     @Operation(
         summary = "사용자의 알림 목록 조회",
