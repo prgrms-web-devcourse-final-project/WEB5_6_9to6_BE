@@ -1,19 +1,23 @@
 package com.grepp.spring.app.model.quiz.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import java.util.List;
 
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
 public class QuizProjection {
+    private final int week;
+    private final Long quizId;
+    private final String question;
+    private final List<String> choices;
+    private final Integer answer;
 
-    private Integer week;
-    private Long quizId;
-    private String question;
-    private String choice1;
-    private String choice2;
-    private String choice3;
-    private String choice4;
+    public QuizProjection(int week, Long quizId, String question,
+                          String choice1, String choice2, String choice3, String choice4,
+                          Integer answer) {
+        this.week = week;
+        this.quizId = quizId;
+        this.question = question;
+        this.choices = List.of(choice1, choice2, choice3, choice4);
+        this.answer = answer;
+    }
 }
