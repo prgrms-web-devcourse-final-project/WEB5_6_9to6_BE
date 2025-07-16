@@ -83,21 +83,10 @@ public class AlarmService {
     // 알림 목록 조회
     @Transactional(readOnly = true)
     public List<AlarmListResponse> getAlarmsByMemberId(Long memberId) {
-        List<AlarmRecipient> recipients = alarmRecipientRepository.findByMemberId(memberId);
+        List<AlarmRecipient> recipients = alarmRecipientRepository.findAllWithSenderByMemberId(memberId);
 
         return recipients.stream()
-            .map(recipient -> {
-                Alarm alarm = recipient.getAlarm();
-                return AlarmListResponse.builder()
-                    .alarmId(alarm.getId())
-                    .alarmRecipientId(recipient.getId())
-                    .type(alarm.getAlarmType().name())
-                    .resultStatus(alarm.getResultStatus() != null ? alarm.getResultStatus().name() : null)
-                    .message(alarm.getMessage())
-                    .isRead(recipient.getIsRead())
-                    .sentAt(alarm.getCreatedAt())
-                    .build();
-            })
+            .map(AlarmListResponse::new)
             .collect(Collectors.toList());
     }
 
