@@ -1,4 +1,4 @@
-package com.grepp.spring.infra.config.WebSocket;
+package com.grepp.spring.infra.config.Chat.WebSocket.Participants;
 
 
 import com.grepp.spring.app.controller.api.chat.ParticipantResponse;
@@ -6,10 +6,13 @@ import com.grepp.spring.app.controller.api.chat.SessionUserInfo;
 import com.grepp.spring.app.model.auth.domain.Principal;
 import com.grepp.spring.app.model.chat.service.ChatService;
 import com.grepp.spring.app.model.member.repository.MemberRepository;
+import com.grepp.spring.infra.config.Chat.WebSocket.WebSocketSessionTracker;
+import com.grepp.spring.infra.config.Chat.WebSocket.WorkerManager;
+import com.grepp.spring.infra.response.CommonResponse;
 import java.util.List;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.security.core.Authentication;
@@ -26,14 +29,14 @@ public class WebSocketEventListener {
     private final MemberRepository memberRepository;
     private final SimpMessagingTemplate messagingTemplate;
     private final ChatService chatService;
+    private final RedisTemplate redisTemplate;
+    private final WorkerManager workerManager;
 
     @EventListener
-    public void handleConnect(SessionConnectEvent event ) {
-
+    public void handleConnect(SessionConnectEvent event) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
 
         if (accessor.getUser() != null) {
-
             Authentication authentication = (Authentication) accessor.getUser();
             Principal principal = (Principal) authentication.getPrincipal();
 
@@ -47,10 +50,18 @@ public class WebSocketEventListener {
             if (studyIdHeader != null && sessionId != null) {
                 try {
                     Long studyId = Long.valueOf(studyIdHeader);
+
+                    // 메모리 및 Redis 등록
                     tracker.addSession(sessionId, studyId, email, nickname);
+                    redisTemplate.opsForHash().put("nicknames:" + studyId, email, memberId + ":" + nickname);
+                    redisTemplate.opsForHash().put("participants:" + studyId, sessionId, email);
+
+                    //접속자 broadcast
                     broadcastParticipants(studyId);
+                    // 워커 등록
+                    workerManager.startWorker(studyId);
                 } catch (NumberFormatException e) {
-                    // 로그 등 처리
+                    System.out.println(" studyId 파싱 실패: " + studyIdHeader);
                 }
             }
         }
@@ -64,9 +75,21 @@ public class WebSocketEventListener {
         if (sessionId != null) {
             SessionUserInfo info = tracker.getSession(sessionId);
             if (info != null) {
-                tracker.removeUser(info.studyId(), info.email());
+                Long studyId = info.studyId();
+                String email = info.email();
+
+                // 메모리 제거
                 tracker.removeSession(sessionId);
-                broadcastParticipants(info.studyId());
+                tracker.removeUser(studyId, email);
+
+                // Redis 제거
+                redisTemplate.opsForHash().delete("participants:" + studyId, sessionId);
+
+
+                broadcastParticipants(studyId);
+
+                // 워커 제거
+                workerManager.stopWorker(studyId);
             }
         }
     }
@@ -74,8 +97,9 @@ public class WebSocketEventListener {
     private void broadcastParticipants(Long studyId) {
 
         List<ParticipantResponse> current = chatService.getOnlineParticipants(studyId);
+        CommonResponse<List<ParticipantResponse>> response = CommonResponse.success(current);
 
-        messagingTemplate.convertAndSend("/subscribe/" + studyId + "/participants", current);
+        messagingTemplate.convertAndSend("/subscribe/" + studyId + "/participants", response);
         System.out.println("broadcasting to /subscribe/" + studyId + "/participants : " + current.size() + "명");
     }
 

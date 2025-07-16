@@ -5,20 +5,30 @@ import com.grepp.spring.app.model.study.code.Category;
 import com.grepp.spring.app.model.study.code.Region;
 import com.grepp.spring.app.model.study.code.Status;
 import com.grepp.spring.app.model.study.entity.Study;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.StringUtils;
 
 import java.util.List;
+import org.springframework.util.StringUtils;
+
+import static com.grepp.spring.app.model.study.entity.QStudy.study;
 
 @Repository
+@RequiredArgsConstructor
 public class StudyRepositoryImpl implements StudyRepositoryCustom {
 
     @PersistenceContext
     private EntityManager em;
+
+    private final JPAQueryFactory queryFactory;
 
     @Override
     public List<Study> searchByFilterWithSchedules(StudySearchRequest req) {
@@ -54,6 +64,48 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom {
         }
 
         return query.getResultList();
+    }
+
+    @Override
+    public Page<Study> searchByFilterWithSchedules(StudySearchRequest req, Pageable pageable) {
+        List<Long> ids = queryFactory
+            .select(study.studyId)
+            .from(study)
+            .where(
+                (req.getCategory() != null && req.getCategory() != Category.ALL) ? study.category.eq(req.getCategory()) : null,
+                (req.getRegion() != null && req.getRegion() != Region.ALL) ? study.region.eq(req.getRegion()) : null,
+                (req.getStatus() != null && req.getStatus() != Status.ALL) ? study.status.eq(req.getStatus()) : null,
+                StringUtils.hasText(req.getName()) ? study.name.contains(req.getName()) : null
+            )
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .orderBy(study.createdAt.desc())
+            .fetch();
+
+        if (ids.isEmpty()) {
+            return Page.empty(pageable);
+        }
+
+        List<Study> content = queryFactory
+            .selectFrom(study)
+            .distinct()
+            .leftJoin(study.schedules).fetchJoin()
+            .where(study.studyId.in(ids))
+            .orderBy(study.createdAt.desc())
+            .fetch();
+
+        Long total = queryFactory
+            .select(study.count())
+            .from(study)
+            .where(
+                (req.getCategory() != null && req.getCategory() != Category.ALL) ? study.category.eq(req.getCategory()) : null,
+                (req.getRegion() != null && req.getRegion() != Region.ALL) ? study.region.eq(req.getRegion()) : null,
+                (req.getStatus() != null && req.getStatus() != Status.ALL) ? study.status.eq(req.getStatus()) : null,
+                StringUtils.hasText(req.getName()) ? study.name.contains(req.getName()) : null
+            )
+            .fetchOne();
+
+        return new PageImpl<>(content, pageable, total != null ? total : 0L);
     }
 
     @Override

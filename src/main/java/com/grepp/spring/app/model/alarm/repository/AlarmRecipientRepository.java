@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AlarmRecipientRepository extends JpaRepository<AlarmRecipient, Long> {
 
-    List<AlarmRecipient> findByMemberId(Long memberId);
+    List<AlarmRecipient> findByMember_Id(Long memberId);
 
 }

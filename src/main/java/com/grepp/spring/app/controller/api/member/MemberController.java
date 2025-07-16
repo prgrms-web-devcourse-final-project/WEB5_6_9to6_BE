@@ -1,17 +1,19 @@
 package com.grepp.spring.app.controller.api.member;
 
-import com.grepp.spring.app.model.member.dto.response.MemberInfoResponse;
 import com.grepp.spring.app.controller.api.member.payload.request.MemberUpdateRequest;
 import com.grepp.spring.app.controller.api.member.payload.request.PasswordVerifyRequest;
-import com.grepp.spring.app.model.member.dto.response.MemberStudyListResponse;
+import com.grepp.spring.app.model.member.dto.response.AvatarInfoResponse;
+import com.grepp.spring.app.model.member.dto.response.MemberInfoResponse;
 import com.grepp.spring.app.model.member.dto.response.MemberMyPageResponse;
+import com.grepp.spring.app.model.member.dto.response.MemberStudyListResponse;
 import com.grepp.spring.app.model.member.dto.response.PasswordVerifyResponse;
+import com.grepp.spring.app.model.member.dto.response.RequiredMemberInfoResponse;
 import com.grepp.spring.app.model.member.service.MemberService;
+import com.grepp.spring.app.model.reward.service.OwnItemService;
+import com.grepp.spring.app.model.reward.service.RewardItemService;
 import com.grepp.spring.infra.response.CommonResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import com.grepp.spring.infra.util.SecurityUtil;
 import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +30,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class MemberController {
 
     private final MemberService memberService;
+    private final RewardItemService rewardItemService;
+    private final OwnItemService ownItemService;
 
     // 유저 정보 조회(이메일, 닉네임, 아바타)
     @GetMapping("/{memberId}/info")
@@ -78,49 +82,16 @@ public class MemberController {
         return ResponseEntity.ok(CommonResponse.success(dto, "마이페이지 정보를 성공적으로 불러왔습니다."));
     }
 
-    // 알람 목록 조회
-    @GetMapping("/{memberId}/alarms")
-    @ApiResponse(responseCode = "200")
-    public ResponseEntity<Map<String, Object>> getMemberAlarms(@PathVariable long memberId) {
-
-        Map<String, Object> response = new LinkedHashMap<>();
-        response.put("code", "0000");
-        response.put("message", "");
-        response.put("data", mockDataAlarm());
-
-        return ResponseEntity.ok(response);
+    // 요구사항 - 맴버테이블 전체 + 입고 있는 아바타 정보
+    @GetMapping("/info-all")
+    public ResponseEntity<CommonResponse<?>> infoAll() {
+        Long memberId = SecurityUtil.getCurrentMemberId();
+        RequiredMemberInfoResponse memberInfoRes =  memberService.getMemberRequiredInfo(memberId);
+        AvatarInfoResponse avatarRes = memberService.getMemberAvatarInfo(memberId);
+        LinkedHashMap<String, Object> responseData = new LinkedHashMap<>();
+        responseData.put("memberInfo", memberInfoRes);
+        responseData.put("avatarInfo", avatarRes);
+        return ResponseEntity.ok(CommonResponse.success(responseData));
     }
 
-    private List<Map<String, Object>> mockDataAlarm() {
-
-        return List.of(
-            Map.of(
-                "alarmId", 101,
-                "type", "ACCEPT",
-                "message", "스터디 가입이 승인되었습니다.",
-                "isRead", false,
-                "sentAt", "2025-07-04T17:35:00"
-            ),
-            Map.of(
-                "alarmId", 100,
-                "type", "REJECT",
-                "message", "스터디 가입이 거절되었습니다.",
-                "isRead", true,
-                "sentAt", "2025-07-03T14:12:00"
-            )
-        );
-    }
-
-    // 타이머 시간 수정
-    @PutMapping("/{memberId}/timer-settings")
-    @ApiResponse(responseCode = "200")
-    public ResponseEntity<Map<String, Object>> updateTimer(@PathVariable Long memberId) {
-
-        Map<String, Object> response = new LinkedHashMap<>();
-        response.put("code", "0000");
-        response.put("message", "성공적으로 수정하였습니다.");
-        response.put("data", new LinkedHashMap<>());
-
-        return ResponseEntity.ok(response);
-    }
 }
