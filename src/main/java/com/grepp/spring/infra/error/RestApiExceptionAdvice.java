@@ -2,12 +2,14 @@ package com.grepp.spring.infra.error;
 
 import com.grepp.spring.infra.error.exceptions.AlreadyCheckedAttendanceException;
 import com.grepp.spring.infra.error.exceptions.AlreadyExistException;
+import com.grepp.spring.infra.error.exceptions.AlreadyProcessedException;
 import com.grepp.spring.infra.error.exceptions.CommonException;
 import com.grepp.spring.infra.error.exceptions.InsufficientRewardPointsException;
 import com.grepp.spring.infra.error.exceptions.MailSendFailureException;
 import com.grepp.spring.infra.error.exceptions.OutOfMinimumPageException;
 import com.grepp.spring.infra.error.exceptions.OutOfMinimumPageSizeException;
 import com.grepp.spring.infra.error.exceptions.RewardApiException;
+import com.grepp.spring.infra.error.exceptions.SameStateException;
 import com.grepp.spring.infra.response.CommonResponse;
 import com.grepp.spring.infra.response.ResponseCode;
 import com.grepp.spring.infra.util.NotFoundException;
@@ -140,5 +142,23 @@ public class RestApiExceptionAdvice {
             .status(HttpStatus.BAD_REQUEST)
             .body(CommonResponse.error(ResponseCode.BAD_REQUEST.code(), ex.getMessage()));
     }
+
+    @ExceptionHandler(SameStateException.class)
+    public ResponseEntity<CommonResponse<String>> handleSameStateException(SameStateException ex) {
+        log.error(ex.getMessage(), ex);
+        return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .body(CommonResponse.error(ResponseCode.BAD_REQUEST));
+    }
+
+    @ExceptionHandler(AlreadyProcessedException.class)
+    public ResponseEntity<CommonResponse<String>> handleAlreadyProcessedException(AlreadyProcessedException ex) {
+        log.error(ex.getMessage(), ex);
+        return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .body(CommonResponse.error(ResponseCode.BAD_REQUEST));
+    }
+
+
 
 }

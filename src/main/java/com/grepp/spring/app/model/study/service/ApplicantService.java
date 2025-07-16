@@ -21,8 +21,8 @@ public class ApplicantService {
     public void updateState(long memberId, long studyId, ApplicantState state) {
         Applicant applicant = applicantRepository.findByMember_IdAndStudy_StudyId(memberId, studyId)
             .orElseThrow(() -> new NotFoundException(ResponseCode.NOT_FOUND.message()));
-        applicantRepository.updateStateById(memberId, studyId, state);
 
+        applicantRepository.updateStateById(memberId, studyId, state);
         applicant.changeState(state);
     }
 
