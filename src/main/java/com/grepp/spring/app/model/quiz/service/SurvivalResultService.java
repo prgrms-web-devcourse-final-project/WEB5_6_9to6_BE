@@ -21,7 +21,6 @@ public class SurvivalResultService {
     private final QuizRecordRepository quizRecordRepository;
     private final MemberRepository memberRepository;
 
-    // 생존 시 지급할 리워드 포인트를 상수로 정의합니다.
     private static final int SURVIVAL_REWARD_POINTS = 10;
 
     @Transactional
