@@ -9,7 +9,6 @@ import com.grepp.spring.app.model.reward.dto.OwnItemDto;
 import com.grepp.spring.app.model.reward.entity.OwnItem;
 import com.grepp.spring.app.model.reward.entity.RewardItem;
 import com.grepp.spring.app.model.reward.repository.OwnItemRepository;
-import com.grepp.spring.app.model.reward.repository.OwnItemRepositoryImpl;
 import com.grepp.spring.app.model.reward.repository.RewardItemRepository;
 import com.grepp.spring.infra.error.exceptions.AlreadyExistException;
 import com.grepp.spring.infra.error.exceptions.InsufficientRewardPointsException;
@@ -139,5 +138,9 @@ public class OwnItemService {
         }
 
         currentItem.use(true);
+
+
+
+
     }
 }

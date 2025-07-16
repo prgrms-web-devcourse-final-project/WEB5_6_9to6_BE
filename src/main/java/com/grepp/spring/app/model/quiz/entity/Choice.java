@@ -13,7 +13,7 @@ public class Choice {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
+    private Long id;
 
     @Column(nullable = false)
     private String choice1;
@@ -30,13 +30,13 @@ public class Choice {
     @Column(nullable = false)
     private boolean activated;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "quizId")
     private Quiz quiz;
 
     @Builder
     public Choice(Long choiceId, String choice1, String choice2, String choice3, String choice4, boolean activated, Quiz quiz) {
-        this.Id = choiceId;
+        this.id = choiceId;
         this.choice1 = choice1;
         this.choice2 = choice2;
         this.choice3 = choice3;

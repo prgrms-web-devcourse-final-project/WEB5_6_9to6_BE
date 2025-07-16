@@ -13,6 +13,7 @@ import com.grepp.spring.app.model.quiz.repository.QuizRepository;
 import com.grepp.spring.app.model.quiz.repository.QuizSetRepository;
 import com.grepp.spring.app.model.study.entity.StudyGoal;
 import com.grepp.spring.app.model.study.repository.StudyGoalRepository;
+import com.grepp.spring.infra.error.exceptions.QuizAlreadyExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.retry.annotation.Backoff;
@@ -50,7 +51,7 @@ public class QuizService {
     @Transactional
     public QuizSet createProblemsForWeek(Long studyId, int week) throws IOException {
         quizSetRepository.findByStudyIdAndWeek(studyId, week).ifPresent(qs -> {
-            throw new IllegalStateException("이미 해당 주차의 퀴즈가 존재합니다.");
+            throw new QuizAlreadyExistsException();
         });
 
         StudyGoal targetGoal = getStudyTopicByWeekOrder(studyId, week);
