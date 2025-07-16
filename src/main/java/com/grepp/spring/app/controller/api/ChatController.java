@@ -2,11 +2,13 @@ package com.grepp.spring.app.controller.api;
 
 import com.grepp.spring.app.controller.api.chat.ChatHistoryResponse;
 import com.grepp.spring.app.controller.api.chat.ParticipantResponse;
-import com.grepp.spring.app.controller.api.reward.payload.OwnItemResponse;
 import com.grepp.spring.app.model.auth.domain.Principal;
 import com.grepp.spring.app.model.chat.service.ChatService;
-import com.grepp.spring.infra.config.WebSocket.WebSocketSessionTracker;
+import com.grepp.spring.app.model.study.service.StudyService;
+import com.grepp.spring.infra.config.Chat.WebSocket.WebSocketSessionTracker;
 import com.grepp.spring.infra.response.CommonResponse;
+import com.grepp.spring.infra.response.ResponseCode;
+import com.grepp.spring.infra.util.SecurityUtil;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -31,6 +33,7 @@ public class ChatController {
 
     private final ChatService chatService;
     private final WebSocketSessionTracker webSocketSessionTracker;
+    private final StudyService studyService;
 
 
 
@@ -90,13 +93,19 @@ public class ChatController {
         Authentication authentication) {
 
         List<Map<String, Object>> chatHistory = new ArrayList<>();
-
+        Long memberId = SecurityUtil.getCurrentMemberId();
         Principal principal = (Principal) authentication.getPrincipal();
 
+        boolean isMember = studyService.isUserStudyMember(memberId, studyId);
+
+        if(!isMember){
+            return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(CommonResponse.error(ResponseCode.UNAUTHORIZED));
+        }
 
 
-
-        List<ChatHistoryResponse> responses = chatService.findChat(studyId,principal.getMemberId(),principal.getUsername());
+        List<ChatHistoryResponse> responses = chatService.findChat(studyId,memberId,principal.getUsername());
 
         return ResponseEntity.ok(CommonResponse.success(responses));
     }

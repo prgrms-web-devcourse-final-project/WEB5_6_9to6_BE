@@ -32,6 +32,7 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,7 +49,7 @@ public class StudyService {
 
     //필터 조건에 따라 스터디 목록 + 현재 인원 수 조회
     public List<StudyListResponse> searchStudiesWithMemberCount(StudySearchRequest req) {
-        List<Study> studies = studyRepository.searchByFilterWithSchedules(req);
+        Page<Study> studies = studyRepository.searchByFilterWithSchedules(req, req.getPageable());
 
         return studies.stream()
             .map(study -> {
@@ -277,7 +278,5 @@ public class StudyService {
             goals
         );
     }
-
-
 
 }
