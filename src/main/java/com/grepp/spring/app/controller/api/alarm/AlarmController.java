@@ -56,6 +56,7 @@ public class AlarmController {
     @Operation(
         summary = "알림 전송 (내부용)",
         description = """
+        요청 body에 `AlarmRequest`를 포함하여야 합니다.
         서버에서 특정 이벤트가 발생했을 때, 사용자에게 알림을 전송하기 위해 호출되는 API입니다.
         - `AlarmRequest`에 담긴 정보를 바탕으로 알림을 생성하고, 구독된 클라이언트(SSE)에게 메시지를 전송합니다.
         - 주로 서버 내부 로직에서 호출되는 것을 상정합니다.
