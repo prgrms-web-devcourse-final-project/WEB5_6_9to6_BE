@@ -14,7 +14,8 @@ public interface QuizSetRepository extends JpaRepository<QuizSet, Long> {
     @Query("""
     SELECT new com.grepp.spring.app.model.quiz.dto.QuizProjection(
         qs.week, q.id, q.question,
-        c.choice1, c.choice2, c.choice3, c.choice4
+        c.choice1, c.choice2, c.choice3, c.choice4,
+        q.answer
     )
     FROM QuizSet qs
     JOIN qs.quizzes q
@@ -22,7 +23,7 @@ public interface QuizSetRepository extends JpaRepository<QuizSet, Long> {
     WHERE qs.studyId = :studyId
       AND qs.activated = true
       AND q.activated = true
-    ORDER BY qs.week ASC
+    ORDER BY qs.week ASC, q.id ASC
     """)
     List<QuizProjection> findQuizSetsByStudyId(@Param("studyId") Long studyId);
 
