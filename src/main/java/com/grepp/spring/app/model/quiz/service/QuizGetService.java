@@ -4,6 +4,7 @@ import com.grepp.spring.app.controller.api.quiz.payload.QuizListResponse;
 import com.grepp.spring.app.model.quiz.dto.QuizDto;
 import com.grepp.spring.app.model.quiz.dto.QuizProjection;
 import com.grepp.spring.app.model.quiz.repository.QuizSetRepository;
+import com.grepp.spring.infra.error.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
