@@ -9,7 +9,8 @@ import com.grepp.spring.infra.config.Chat.WebSocket.WebSocketSessionTracker;
 import com.grepp.spring.infra.response.CommonResponse;
 import com.grepp.spring.infra.response.ResponseCode;
 import com.grepp.spring.infra.util.SecurityUtil;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "채팅 API", description = "스터디 채팅 내역 조회 및 참여자 목록 관련 API 입니다.")
 @RestController
 @RequestMapping(value = "/api/v1/chats", produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
@@ -39,8 +41,12 @@ public class ChatController {
 
     // 웹소켓 사용으로 인해 사용안함.
     // 채팅 메시지 전송
+    @Operation(summary = "채팅 메시지 전송 (미사용)", description = """
+        (현재 웹소켓을 사용하므로 이 API는 사용되지 않습니다.)
+        요청 body에 `채팅 정보`를 포함해야합니다.
+        - HTTP를 통해 채팅 메시지를 전송하는 API입니다.
+        """)
     @PostMapping("/{studyId}")
-    @ApiResponse(responseCode = "200")
     public ResponseEntity<Map<String, Object>> sendChatMessage(@PathVariable Long studyId,
         @RequestBody Map<String, Object> request) {
 
@@ -75,8 +81,8 @@ public class ChatController {
 
     // 웹소켓으로 변경해서 안쓸 것 같음
     // 현재 접속 중인 사용자 목록 조회
+    @Operation(summary = "채팅방 참여자 목록 조회 (미사용)", description = "(현재 웹소켓을 사용하므로 이 API는 사용되지 않을 수 있습니다.) 특정 스터디 채팅방(`studyId`)에 현재 접속 중인 사용자 목록을 조회합니다.")
     @GetMapping("/{studyId}/participants")
-    @ApiResponse(responseCode = "200")
     public ResponseEntity<CommonResponse<List<ParticipantResponse>>> getOnlineParticipants(@PathVariable Long studyId) {
 
 
@@ -87,8 +93,12 @@ public class ChatController {
     }
 
     // 채팅 내역 조회
+    @Operation(summary = "채팅 내역 조회", description = """
+        특정 스터디(`studyId`)의 전체 채팅 내역을 조회합니다.
+        - 이 API는 스터디 멤버만 호출할 수 있으며, 인증이 필요합니다.
+        - 요청 헤더에 유효한 토큰이 있어야 합니다.
+        """)
     @GetMapping("/{studyId}/history")
-    @ApiResponse(responseCode = "200")
     public ResponseEntity<CommonResponse<List<ChatHistoryResponse>>> getChatHistory(@PathVariable Long studyId,
         Authentication authentication) {
 
