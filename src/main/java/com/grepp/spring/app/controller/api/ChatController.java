@@ -12,7 +12,6 @@ import com.grepp.spring.infra.util.SecurityUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;

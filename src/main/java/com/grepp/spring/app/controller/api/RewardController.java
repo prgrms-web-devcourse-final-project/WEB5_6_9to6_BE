@@ -25,6 +25,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -56,10 +59,10 @@ public class RewardController {
     @GetMapping
     @Operation(summary = "아이템 상점 목록", description="전체 아이템 목록을 조회합니다.")
     public ResponseEntity<CommonResponse<RewardItemResponse>> getRewardItems() {
-List<RewardItemDto> dtos = rewardItemService.getItemList();
-        RewardItemResponse responseDto = new RewardItemResponse(dtos);
+        List<RewardItemDto> dtos = rewardItemService.getItemList();
+            RewardItemResponse responseDto = new RewardItemResponse(dtos);
 
-  return ResponseEntity.ok(CommonResponse.success(responseDto));
+        return ResponseEntity.ok(CommonResponse.success(responseDto));
     }
 
     /**
@@ -67,6 +70,14 @@ List<RewardItemDto> dtos = rewardItemService.getItemList();
      * @param itemId 리워드아이템 아이디(쿼리 파라미터)
      * @return
      */
+//    @GetMapping
+//    public ResponseEntity<CommonResponse<Page<RewardItemDto>>> getRewardItems(
+//        @PageableDefault(size = 10) Pageable pageable
+//    ) {
+//        Page<RewardItemDto> responsePage = rewardItemService.getItemList(pageable);
+//        return ResponseEntity.ok(CommonResponse.success(responsePage));
+//    }
+
     // 아이템 구매
     @PostMapping("/{itemId}/purchase")
     @Operation(summary = "아이템 구매", description="ownitem 테이블에 리워드 아이템 정보를 추가합니다. ")
