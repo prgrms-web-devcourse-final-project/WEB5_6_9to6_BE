@@ -15,7 +15,10 @@ import com.grepp.spring.app.model.reward.service.RewardItemService;
 import com.grepp.spring.infra.response.CommonResponse;
 import com.grepp.spring.infra.response.SuccessCode;
 import com.grepp.spring.infra.util.SecurityUtil;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +37,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "아이템 API", description = "아이템 구매 및 조회 관련 API입니다.")
 @RestController
 @RequestMapping(value = "/api/v1/reward-items", produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
@@ -45,7 +49,12 @@ public class RewardController {
     private final MemberService memberService;
 
     // 아이템 상점 목록
+
+    /**
+     * @return
+     */
     @GetMapping
+    @Operation(summary = "아이템 상점 목록", description="전체 아이템 목록을 조회합니다.")
     public ResponseEntity<CommonResponse<RewardItemResponse>> getRewardItems() {
 List<RewardItemDto> dtos = rewardItemService.getItemList();
         RewardItemResponse responseDto = new RewardItemResponse(dtos);
@@ -53,8 +62,14 @@ List<RewardItemDto> dtos = rewardItemService.getItemList();
   return ResponseEntity.ok(CommonResponse.success(responseDto));
     }
 
+    /**
+     *
+     * @param itemId 리워드아이템 아이디(쿼리 파라미터)
+     * @return
+     */
     // 아이템 구매
     @PostMapping("/{itemId}/purchase")
+    @Operation(summary = "아이템 구매", description="ownitem 테이블에 리워드 아이템 정보를 추가합니다. ")
     public ResponseEntity<CommonResponse<Map<String, Object>>> purchaseItem(
          @PathVariable long itemId,
         Authentication authentication
@@ -72,6 +87,7 @@ List<RewardItemDto> dtos = rewardItemService.getItemList();
 
     // 소유 아이템 목록
     @GetMapping("/own-items")
+    @Operation(summary = "소유 아이템 목록", description="소유한 아이템을 표시합니다.")
     public ResponseEntity<CommonResponse<List<OwnItemResponse>>> getOwnItems(
         Authentication authentication) {
 
@@ -87,6 +103,7 @@ List<RewardItemDto> dtos = rewardItemService.getItemList();
     }
 
     // 사용 아이템 변경
+    @Operation(summary = "사용 아이템 변경", description="아이템을 변경합니다. 변경 시 서버에 조합된 이미지가 있을 시 프로필 이미지를 반환, 없으면 NO_IMAGE_FOUND 응답이 갑니다.")
     @PatchMapping("/own-items/{ownItemId}")
     public ResponseEntity<CommonResponse<ImageResponse>> changeOwnItems(
         @PathVariable long ownItemId
@@ -117,6 +134,7 @@ List<RewardItemDto> dtos = rewardItemService.getItemList();
 
     @GetMapping("/{itemId}/image")
     @ApiResponse(responseCode = "200")
+    @Operation(summary = "서버에 조합된 이미지 있는지 없는지 판단", description="서버에 조합된 이미지가 있는지 없는지 판단합니다. \n 아이템 변경에서 같은 로직을 수행하기 때문에 안쓰셔도 됩니다.")
     public ResponseEntity<CommonResponse<ImageResponse>> getItemImages(@PathVariable Long itemId,
         Authentication authentication) {
         Principal principal = (Principal) authentication.getPrincipal();
@@ -134,6 +152,7 @@ List<RewardItemDto> dtos = rewardItemService.getItemList();
 
     @PostMapping("/saveimage")
     @ApiResponse(responseCode = "200")
+    @Operation(summary = "서버에 이미지 저장", description="서버에 해당 조합에 해당하는 조합과 이미지를 가진 데이터를 생성합니다.")
     public ResponseEntity<CommonResponse<Map<String, Object>>> PostItemImages(
         @Valid @RequestBody SaveImageRequest saveImageRequest) {
         Map<String, Object> data = Map.of();
@@ -144,8 +163,6 @@ List<RewardItemDto> dtos = rewardItemService.getItemList();
             .status(HttpStatus.CREATED)
             .body(CommonResponse.success(data));
     }
-
-
 
 
 
