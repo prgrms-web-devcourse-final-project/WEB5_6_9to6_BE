@@ -245,6 +245,7 @@ public class StudyController {
     @Operation(
         summary = "스터디 가입 승인, 거절",
         description = """
+        요청 body에 `ApplicationResultRequest`를 포함해야합니다.
         스터디 가입 신청에 대해 승인 또는 거절을 처리합니다.
         - 요청 body에 `memberId`와 `applicationResult`(APPROVED, REJECTED 등)를 포함해야 합니다.
         - **승인(APPROVED)** 시 신청자는 스터디 멤버로 추가됩니다.
