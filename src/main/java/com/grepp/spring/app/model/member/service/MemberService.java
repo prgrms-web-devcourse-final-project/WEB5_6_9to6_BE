@@ -298,6 +298,12 @@ public class MemberService {
         );
     }
 
+    public void updateProfileImage(Long memberId, String image) {
+        Member member = memberRepository.findById(memberId)
+            .orElseThrow(() -> new NotFoundException("Member not found"));
+        member.updateAvatarImage(image);
+    }
+
     @Transactional(readOnly = true)
     public RequiredMemberInfoResponse getMemberRequiredInfo(Long memberId) {
         return memberRepository.findRequiredMemberInfo(memberId);
@@ -312,10 +318,5 @@ public class MemberService {
             .avatarImage(memberAvatarImage)
             .build();
         return avatarInfoResponse;
-    }
-    public void updateProfileImage(Long memberId, String image) {
-        Member member = memberRepository.findById(memberId)
-            .orElseThrow(() -> new NotFoundException("Member not found"));
-        member.updateAvatarImage(image);
     }
 }
