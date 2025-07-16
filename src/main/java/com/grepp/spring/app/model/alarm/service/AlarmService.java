@@ -101,7 +101,7 @@ public class AlarmService {
             .collect(Collectors.toList());
     }
 
-    // 알림 읽음 처리
+    // 알림 개별 읽음 처리
     @Transactional
     public void markAlarmAsRead(Long alarmRecipientId) {
         AlarmRecipient recipient = alarmRecipientRepository.findById(alarmRecipientId)
@@ -111,4 +111,11 @@ public class AlarmService {
             recipient.markAsRead();
         }
     }
+
+    // 알림 모두 읽음 처리
+    @Transactional
+    public void markAllAlarmsAsRead(Long memberId) {
+        alarmRecipientRepository.markAllAsReadByMemberId(memberId);
+    }
+
 }
