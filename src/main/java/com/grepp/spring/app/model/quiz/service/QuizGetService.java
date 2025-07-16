@@ -2,63 +2,48 @@ package com.grepp.spring.app.model.quiz.service;
 
 import com.grepp.spring.app.controller.api.quiz.payload.QuizListResponse;
 import com.grepp.spring.app.model.quiz.dto.QuizDto;
-import com.grepp.spring.app.model.quiz.entity.Choice;
-import com.grepp.spring.app.model.quiz.entity.Quiz;
-import com.grepp.spring.app.model.quiz.entity.QuizSet;
+import com.grepp.spring.app.model.quiz.dto.QuizProjection;
 import com.grepp.spring.app.model.quiz.repository.QuizSetRepository;
+import com.grepp.spring.infra.error.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class QuizGetService {
 
     private final QuizSetRepository quizSetRepository;
 
-    // 스터디에 해당하는 퀴즈 정보 가져옴
-    @Transactional(readOnly = true)
     public List<QuizListResponse> getQuizzesByStudyId(Long studyId) {
-        List<QuizSet> quizSets = quizSetRepository.findQuizSetsByStudyId(studyId);
+        List<QuizProjection> projections = quizSetRepository.findQuizSetsByStudyId(studyId);
+
+        Map<Integer, List<QuizDto>> quizzesByWeek = new LinkedHashMap<>();
+
+        for (QuizProjection projection : projections) {
+            int week = projection.getWeek();
+
+            quizzesByWeek.computeIfAbsent(week, k -> new ArrayList<>());
+
+            QuizDto quizDto = new QuizDto(
+                    projection.getQuizId(),
+                    projection.getQuestion(),
+                    projection.getChoices(),
+                    projection.getAnswer()
+            );
+
+            quizzesByWeek.get(week).add(quizDto);
+        }
 
         List<QuizListResponse> result = new ArrayList<>();
-
-        for (QuizSet quizSet : quizSets) {
-
-            List<QuizDto> quizDtos = new ArrayList<>();
-            for (Quiz quiz : quizSet.getQuizzes()) {
-                QuizDto dto = mapToQuizDto(quiz);
-                quizDtos.add(dto);
-            }
-
-            result.add(new QuizListResponse(quizSet.getWeek(), quizDtos));
+        for (Map.Entry<Integer, List<QuizDto>> entry : quizzesByWeek.entrySet()) {
+            result.add(new QuizListResponse(entry.getKey(), entry.getValue()));
         }
+
+        result.sort(Comparator.comparingInt(QuizListResponse::getWeek));
 
         return result;
-    }
-
-    private QuizDto mapToQuizDto(Quiz quiz) {
-        Choice choice = quiz.getChoice();
-        List<String> choices;
-
-        if (choice != null) {
-            choices = List.of(
-                    choice.getChoice1(),
-                    choice.getChoice2(),
-                    choice.getChoice3(),
-                    choice.getChoice4()
-            );
-        } else {
-            choices = List.of();
-        }
-
-        return new QuizDto(
-                quiz.getId(),
-                quiz.getQuestion(),
-                choices
-        );
     }
 }
