@@ -49,13 +49,22 @@ public class AlarmController {
             .body(CommonResponse.noContent(SuccessCode.ALARM_SENT));
     }
 
-    // 알림 읽음 처리
+    // 알림 개별 읽음 처리
     @PatchMapping("/{alarmRecipientId}/read")
     public ResponseEntity<CommonResponse<Void>> markAlarmAsRead(@PathVariable Long alarmRecipientId) {
         alarmService.markAlarmAsRead(alarmRecipientId);
         return ResponseEntity
             .status(HttpStatus.OK)
             .body(CommonResponse.noContent(SuccessCode.ALARM_READ));
+    }
+
+    // 알림 모두 읽음 처리
+    @PatchMapping("/{memberId}/read-all")
+    public ResponseEntity<CommonResponse<Void>> markAllAlarmsAsRead(@PathVariable Long memberId) {
+        alarmService.markAllAlarmsAsRead(memberId);
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(CommonResponse.noContent(SuccessCode.ALARM_ALL_READ));
     }
 
     // 알림 목록 조회
