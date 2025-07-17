@@ -23,6 +23,14 @@ public enum ResponseCode {
     SECURITY_INCIDENT("6000", HttpStatus.OK, "비정상적인 로그인 시도가 감지되었습니다."),
     INVALID_QUIZ("8000", HttpStatus.NOT_FOUND, "유효하지 않은 퀴즈 데이터입니다."),
     QUIZ_ALREADY_EXISTS("8001", HttpStatus.CONFLICT, "이미 해당 주차의 퀴즈가 존재합니다."),
+    INVALID_QUIZ_GRADE_REQUEST("8002", HttpStatus.BAD_REQUEST, "퀴즈 채점 요청이 올바르지 않습니다."),
+    QUIZ_RESULT_ALREADY_SUBMITTED("8003", HttpStatus.CONFLICT, "이미 퀴즈 결과가 제출되었습니다."),
+    STUDY_GOAL_NOT_FOUND("8005", HttpStatus.NOT_FOUND, "해당 주차의 스터디 목표가 존재하지 않습니다."),
+    QUIZ_GENERATION_FAILED("8006", HttpStatus.INTERNAL_SERVER_ERROR, "퀴즈 생성 중 오류가 발생했습니다."),
+    STUDY_MEMBER_NOT_FOUND("8007", HttpStatus.NOT_FOUND, "해당 스터디에 존재하지 않는 스터디 멤버입니다."),
+
+
+
     ;
     private final String code;
     private final HttpStatus status;

@@ -4,8 +4,9 @@ import com.grepp.spring.app.controller.api.quiz.payload.*;
 import com.grepp.spring.app.model.quiz.entity.QuizSet;
 import com.grepp.spring.app.model.quiz.service.QuizGetService;
 import com.grepp.spring.app.model.quiz.service.QuizGradingService;
-import com.grepp.spring.app.model.quiz.service.QuizService;
+import com.grepp.spring.app.model.quiz.service.QuizCreateService;
 import com.grepp.spring.app.model.quiz.service.SurvivalResultService;
+import com.grepp.spring.infra.error.exceptions.MemberNotFoundException;
 import com.grepp.spring.infra.response.CommonResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -22,10 +23,10 @@ public class QuizController {
     private final QuizGetService quizGetService;
     private final QuizGradingService quizGradingService;
     private final SurvivalResultService survivalResultService;
-    private final QuizService quizService;
+    private final QuizCreateService quizCreateService;
 
     @GetMapping("/{studyId}/problems")
-    public ResponseEntity<CommonResponse<List<QuizListResponse>>> getAllQuizProblems(@PathVariable Long studyId) {
+    public ResponseEntity<CommonResponse<List<QuizListResponse>>> getAllQuizProblems(@PathVariable Long studyId) throws MemberNotFoundException {
 
         List<QuizListResponse> data = quizGetService.getQuizzesByStudyId(studyId);
         return ResponseEntity.ok(CommonResponse.success(data));
@@ -54,7 +55,7 @@ public class QuizController {
             @PathVariable Long studyId,
             @RequestBody QuizRegisterRequest request) throws IOException {
 
-        QuizSet createdQuizSet = quizService.createProblemsForWeek(studyId, request.getWeek());
+        QuizSet createdQuizSet = quizCreateService.createProblems(studyId, request.getWeek());
         QuizRegisterResponse response = new QuizRegisterResponse(createdQuizSet.getId(), 5);
 
         return ResponseEntity.ok(CommonResponse.success(response));
