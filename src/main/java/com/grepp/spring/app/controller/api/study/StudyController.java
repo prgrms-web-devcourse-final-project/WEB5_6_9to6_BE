@@ -194,7 +194,8 @@ public class StudyController {
         """)
     @PostMapping
     public ResponseEntity<CommonResponse<StudyCreationResponse>> createStudy(@RequestBody StudyCreationRequest req) {
-        StudyCreationResponse response = studyService.createStudy(req);
+        Long memberId = SecurityUtil.getCurrentMemberId();
+        StudyCreationResponse response = studyService.createStudy(req, memberId);
 
         chatService.createChatRoom(response.getStudyId());
 

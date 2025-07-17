@@ -3,6 +3,7 @@ package com.grepp.spring.app.model.study.service;
 import com.grepp.spring.app.controller.api.study.payload.StudyCreationRequest;
 import com.grepp.spring.app.controller.api.study.payload.StudySearchRequest;
 import com.grepp.spring.app.controller.api.study.payload.StudyUpdateRequest;
+import com.grepp.spring.app.model.member.code.StudyRole;
 import com.grepp.spring.app.model.member.dto.response.ApplicantsResponse;
 import com.grepp.spring.app.model.member.dto.response.StudyMemberResponse;
 import com.grepp.spring.app.model.member.entity.Member;
@@ -212,7 +213,11 @@ public class StudyService {
     }
 
     @Transactional
-    public StudyCreationResponse  createStudy(StudyCreationRequest req) {
+    public StudyCreationResponse createStudy(StudyCreationRequest req, Long memberId) {
+
+        Member leader = memberRepository.findById(memberId)
+            .orElseThrow(() -> new NotFoundException("회원 정보를 찾을 수 없습니다."));
+
         // 1. 스터디 생성
         Study study = Study.builder()
             .name(req.getName())
@@ -227,6 +232,7 @@ public class StudyService {
             .startDate(req.getStartDate())
             .endDate(req.getEndDate())
             .status(Status.READY)
+            .activated(true)
             .createdAt(LocalDateTime.now())
             .build();
 
@@ -257,8 +263,18 @@ public class StudyService {
         }
 
         // 4. 저장
-        Study saved = studyRepository.save(study);
-        return new StudyCreationResponse(saved.getStudyId());
+        studyRepository.save(study);
+
+        // 5. 스터디장 등록
+        StudyMember studyLeader = StudyMember.builder()
+            .member(leader)
+            .study(study)
+            .studyRole(StudyRole.LEADER)
+            .activated(true)
+            .build();
+        studyMemberRepository.save(studyLeader);
+
+        return new StudyCreationResponse(study.getStudyId());
     }
 
     @Transactional
