@@ -1,7 +1,18 @@
 package com.grepp.spring.infra.error;
 
 import com.grepp.spring.infra.error.exceptions.*;
-
+import com.grepp.spring.infra.error.exceptions.AlreadyCheckedAttendanceException;
+import com.grepp.spring.infra.error.exceptions.AlreadyExistException;
+import com.grepp.spring.infra.error.exceptions.AlreadyProcessedException;
+import com.grepp.spring.infra.error.exceptions.CommonException;
+import com.grepp.spring.infra.error.exceptions.HasNotRightException;
+import com.grepp.spring.infra.error.exceptions.InsufficientRewardPointsException;
+import com.grepp.spring.infra.error.exceptions.MailSendFailureException;
+import com.grepp.spring.infra.error.exceptions.NullStateException;
+import com.grepp.spring.infra.error.exceptions.OutOfMinimumPageException;
+import com.grepp.spring.infra.error.exceptions.OutOfMinimumPageSizeException;
+import com.grepp.spring.infra.error.exceptions.RewardApiException;
+import com.grepp.spring.infra.error.exceptions.StudyDataException;
 import com.grepp.spring.infra.response.CommonResponse;
 import com.grepp.spring.infra.response.ResponseCode;
 import com.grepp.spring.infra.util.NotFoundException;
@@ -256,5 +267,11 @@ public class RestApiExceptionAdvice {
                 .body(CommonResponse.error(ResponseCode.STUDY_MEMBER_NOT_FOUND.code(), ex.getMessage()));
     }
 
-
+    @ExceptionHandler(NullStateException.class)
+    public ResponseEntity<CommonResponse<String>> handleNullStateException(NullStateException ex) {
+        log.error(ex.getMessage(), ex);
+        return ResponseEntity
+            .status(HttpStatus.NOT_FOUND)
+            .body(CommonResponse.error(ResponseCode.NOT_FOUND));
+    }
 }
