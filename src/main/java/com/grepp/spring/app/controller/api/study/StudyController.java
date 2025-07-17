@@ -250,10 +250,11 @@ public class StudyController {
         description = """
         요청 body에 `ApplicationResultRequest`를 포함해야합니다.
         스터디 가입 신청에 대해 승인 또는 거절을 처리합니다.
+        - 서바이벌 스터디인 경우 바로 신청이 됩니다.
         - 요청 body에 `memberId`와 `applicationResult`(APPROVED, REJECTED 등)를 포함해야 합니다.
         - **승인(APPROVED)** 시 신청자는 스터디 멤버로 추가됩니다.
         - **거절(REJECTED)** 시 신청자의 상태만 업데이트됩니다.
-        - 스터디장만 호출 가능합니다.
+        - 일반 스터디에 한해 스터디장만 호출 가능합니다.
         """
     )
     @PostMapping("/{studyId}/applications/respond")
@@ -280,6 +281,12 @@ public class StudyController {
         return ResponseEntity.ok(CommonResponse.noContent());
     }
 
+    @Operation(summary = "스터디 공지사항 수정", description = """
+        요청 body에 `NotificationUpdateRequest`를 포함해야합니다.
+        - 특정 스터디(`studyId`)의 공지사항을 수정합니다.
+        - 스터디장만 호출 가능합니다.
+        - 이 API는 인증이 필요하며, 요청 헤더에 유효한 토큰이 있어야 합니다.
+        """)
     @PatchMapping("/{studyId}/notification")
     public ResponseEntity<CommonResponse<Void>> updateStudyNotification(
         @PathVariable Long studyId,
@@ -292,6 +299,8 @@ public class StudyController {
         return ResponseEntity.ok(CommonResponse.noContent());
     }
 
+    @Operation(summary = "스터디 공지사항 조회",
+        description = "특정 스터디(`studyId`)의 공지사항을 조회합니다.")
     @GetMapping("/{studyId}/notification")
     public ResponseEntity<CommonResponse<?>> getStudyNotification(
         @PathVariable Long studyId
