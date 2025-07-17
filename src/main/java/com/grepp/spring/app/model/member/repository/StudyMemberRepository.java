@@ -35,4 +35,8 @@ public interface StudyMemberRepository extends JpaRepository<StudyMember, Long> 
     @Query("select sm.studyRole  from StudyMember sm "
         + "where sm.study.studyId = :studyId and sm.member.id = :memberId")
     Optional<StudyRole> findRoleByStudyAndMember(Long studyId, Long memberId);
+
+    @Query("select sm.studyRole = com.grepp.spring.app.model.member.code.StudyRole.LEADER "
+        + "from StudyMember sm where sm.study.studyId = :studyId and sm.member.id = :acceptorId")
+    Boolean isAcceptorHasRight(@Param("acceptorId") Long acceptorId, @Param("studyId") Long studyId);
 }

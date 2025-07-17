@@ -32,5 +32,8 @@ public interface StudyRepository extends JpaRepository<Study, Long>, StudyReposi
 
     @Query("select s.studyType from Study s where s.studyId = :studyId")
     StudyType findStudyTypeById(Long studyId);
+
+    @Query("select s.notice from Study s where s.studyId = :studyId")
+    Optional<String> findNoticeByStudyId(Long studyId);
 }
 

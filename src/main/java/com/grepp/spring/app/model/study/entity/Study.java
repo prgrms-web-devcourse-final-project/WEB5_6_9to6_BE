@@ -128,4 +128,9 @@ public class Study {
         this.getGoals().add(goal);
         goal.setStudy(this);
     }
+
+    public void updateNotice(String notice) {
+        this.notice = notice;
+    }
+
 }

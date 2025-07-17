@@ -26,7 +26,9 @@ import com.grepp.spring.app.model.study.repository.ApplicantRepository;
 import com.grepp.spring.app.model.study.repository.GoalAchievementRepository;
 import com.grepp.spring.app.model.study.repository.StudyGoalRepository;
 import com.grepp.spring.app.model.study.repository.StudyRepository;
+import com.grepp.spring.infra.error.exceptions.HasNotRightException;
 import com.grepp.spring.infra.error.exceptions.NotFoundException;
+import com.grepp.spring.infra.response.ResponseCode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -282,5 +284,22 @@ public class StudyService {
 
     public boolean isSurvival(Long studyId) {
         return (StudyType.SURVIVAL == studyRepository.findStudyTypeById(studyId));
+    }
+
+    @Transactional
+    public void updateStudyNotification(Long memberId, Long studyId, String notice) {
+        Study study = studyRepository.findById(studyId)
+            .orElseThrow(() -> new NotFoundException(ResponseCode.NOT_FOUND.message()));
+
+        if(!studyMemberRepository.isAcceptorHasRight(memberId, studyId)) {
+            throw new HasNotRightException(ResponseCode.UNAUTHORIZED);
+        }
+
+        study.updateNotice(notice);
+    }
+
+    public String findNotice(Long studyId) {
+        return studyRepository.findNoticeByStudyId(studyId)
+            .orElse("none");
     }
 }

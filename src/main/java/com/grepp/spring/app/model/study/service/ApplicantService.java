@@ -1,9 +1,10 @@
 package com.grepp.spring.app.model.study.service;
 
+import com.grepp.spring.app.model.member.repository.StudyMemberRepository;
 import com.grepp.spring.app.model.study.code.ApplicantState;
 import com.grepp.spring.app.model.study.entity.Applicant;
 import com.grepp.spring.app.model.study.repository.ApplicantRepository;
-import com.grepp.spring.infra.error.exceptions.AlreadyExistException;
+import com.grepp.spring.infra.error.exceptions.HasNotRightException;
 import com.grepp.spring.infra.error.exceptions.NotFoundException;
 import com.grepp.spring.infra.error.exceptions.NullStateException;
 import com.grepp.spring.infra.response.ResponseCode;
@@ -15,12 +16,17 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class ApplicantService {
 
+    private final StudyMemberRepository studyMemberRepository;
     private final ApplicantRepository applicantRepository;
 
 
     @Transactional
-    public void updateState(long memberId, long studyId, ApplicantState state) {
+    public void updateState(long acceptorId, long memberId, long studyId, ApplicantState state) {
         if (state == null) throw new NullStateException(ResponseCode.BAD_REQUEST);
+
+        if(!studyMemberRepository.isAcceptorHasRight(acceptorId, studyId)) {
+            throw new HasNotRightException(ResponseCode.UNAUTHORIZED);
+        }
 
         Applicant applicant = applicantRepository.findByMember_IdAndStudy_StudyId(memberId, studyId)
             .orElseThrow(() -> new NotFoundException(ResponseCode.NOT_FOUND.message()));

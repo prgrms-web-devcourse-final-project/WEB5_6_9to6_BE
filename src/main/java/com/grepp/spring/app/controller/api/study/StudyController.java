@@ -2,6 +2,7 @@ package com.grepp.spring.app.controller.api.study;
 
 import com.grepp.spring.app.controller.api.study.payload.ApplicationRequest;
 import com.grepp.spring.app.controller.api.study.payload.ApplicationResultRequest;
+import com.grepp.spring.app.controller.api.study.payload.NotificationUpdateRequest;
 import com.grepp.spring.app.controller.api.study.payload.StudyCreationRequest;
 import com.grepp.spring.app.controller.api.study.payload.StudySearchRequest;
 import com.grepp.spring.app.controller.api.study.payload.StudyUpdateRequest;
@@ -18,6 +19,7 @@ import com.grepp.spring.app.model.study.dto.StudyListResponse;
 import com.grepp.spring.app.model.study.dto.WeeklyAttendanceResponse;
 import com.grepp.spring.app.model.study.dto.WeeklyGoalStatusResponse;
 import com.grepp.spring.app.model.study.entity.Study;
+import com.grepp.spring.app.model.study.reponse.StudyNoticeResponse;
 import com.grepp.spring.app.model.study.service.ApplicantService;
 import com.grepp.spring.app.model.study.service.StudyMemberService;
 import com.grepp.spring.app.model.study.service.StudyService;
@@ -36,6 +38,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -262,7 +265,8 @@ public class StudyController {
 
         // 신청자 상태변경
         if(!isSurvival) {
-            applicantService.updateState(req.getMemberId(), studyId, req.getApplicationResult());
+            Long acceptorId = SecurityUtil.getCurrentMemberId();
+            applicantService.updateState(acceptorId, req.getMemberId(), studyId, req.getApplicationResult());
 
             // 스터디 맴버에 저장
             if (req.getApplicationResult() == ApplicantState.ACCEPT) {
@@ -274,6 +278,26 @@ public class StudyController {
         }
 
         return ResponseEntity.ok(CommonResponse.noContent());
+    }
+
+    @PatchMapping("/{studyId}/notification")
+    public ResponseEntity<CommonResponse<Void>> updateStudyNotification(
+        @PathVariable Long studyId,
+        @RequestBody NotificationUpdateRequest req
+    ) {
+
+        Long memberId = SecurityUtil.getCurrentMemberId();
+        studyService.updateStudyNotification(memberId, studyId, req.getNotice());
+
+        return ResponseEntity.ok(CommonResponse.noContent());
+    }
+
+    @GetMapping("/{studyId}/notification")
+    public ResponseEntity<CommonResponse<?>> getStudyNotification(
+        @PathVariable Long studyId
+    ) {
+        StudyNoticeResponse res = new StudyNoticeResponse(studyService.findNotice(studyId));
+        return ResponseEntity.ok(CommonResponse.success(res));
     }
 
 
