@@ -138,8 +138,9 @@ public class StudyService {
 
             // schedules 병합
             studyWithGoals.getSchedules().addAll(studyWithSchedules.getSchedules());
+            int currentMemberCount = studyMemberRepository.countByStudy_StudyId(studyId);
 
-            return StudyInfoResponse.fromEntity(studyWithGoals);
+            return StudyInfoResponse.fromEntity(studyWithGoals, currentMemberCount);
         } catch (StudyDataException e) {
             throw e; // 이미 처리된 예외는 다시 던지기
         } catch (Exception e) {
