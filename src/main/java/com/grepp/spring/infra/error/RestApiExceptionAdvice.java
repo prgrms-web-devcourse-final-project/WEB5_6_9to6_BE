@@ -7,6 +7,7 @@ import com.grepp.spring.infra.error.exceptions.CommonException;
 import com.grepp.spring.infra.error.exceptions.HasNotRightException;
 import com.grepp.spring.infra.error.exceptions.InsufficientRewardPointsException;
 import com.grepp.spring.infra.error.exceptions.MailSendFailureException;
+import com.grepp.spring.infra.error.exceptions.NullStateException;
 import com.grepp.spring.infra.error.exceptions.OutOfMinimumPageException;
 import com.grepp.spring.infra.error.exceptions.OutOfMinimumPageSizeException;
 import com.grepp.spring.infra.error.exceptions.RewardApiException;
@@ -202,6 +203,14 @@ public class RestApiExceptionAdvice {
         return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
             .body(CommonResponse.error(ResponseCode.BAD_REQUEST.code(), ex.getMessage()));
+    }
+
+    @ExceptionHandler(NullStateException.class)
+    public ResponseEntity<CommonResponse<String>> handleNullStateException(NullStateException ex) {
+        log.error(ex.getMessage(), ex);
+        return ResponseEntity
+            .status(HttpStatus.NOT_FOUND)
+            .body(CommonResponse.error(ResponseCode.NOT_FOUND));
     }
 
 }
