@@ -8,12 +8,17 @@ import com.grepp.spring.infra.error.exceptions.MailSendFailureException;
 import com.grepp.spring.infra.error.exceptions.NullStateException;
 import com.grepp.spring.infra.error.exceptions.OutOfMinimumPageException;
 import com.grepp.spring.infra.error.exceptions.OutOfMinimumPageSizeException;
+import com.grepp.spring.infra.error.exceptions.RewardApiException;
+import com.grepp.spring.infra.error.exceptions.StudyDataException;
+
+import com.grepp.spring.infra.error.exceptions.SameStateException;
 import com.grepp.spring.infra.response.CommonResponse;
 import com.grepp.spring.infra.response.ResponseCode;
 import com.grepp.spring.infra.util.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.ui.Model;
@@ -136,6 +141,23 @@ public class RestApiExceptionAdvice {
         log.error(ex.getMessage(), ex);
         return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
+            .body(CommonResponse.error(ResponseCode.BAD_REQUEST.code(), ex.getMessage()));
+    }
+
+    @ExceptionHandler(StudyDataException.class)
+    public ResponseEntity<CommonResponse<String>> handleStudyDataException(StudyDataException ex) {
+        log.error(ex.getMessage(), ex);
+        return ResponseEntity
+            .status(ex.code().status())
+            .body(CommonResponse.error(ex.code().code(), ex.getMessage()));
+    }
+
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<CommonResponse<String>> handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
+        log.error(ex.getMessage(), ex);
+        return ResponseEntity
+            .badRequest()
             .body(CommonResponse.error(ResponseCode.BAD_REQUEST.code(), ex.getMessage()));
     }
 
