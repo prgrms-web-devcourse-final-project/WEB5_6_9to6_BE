@@ -189,6 +189,10 @@ public class StudyService {
     }
 
     public boolean isUserStudyMember(Long memberId, Long studyId) {
+        if (!studyRepository.existsById(studyId)) {
+            throw new IllegalArgumentException("스터디가 존재하지 않습니다.");
+        }
+
         return studyMemberRepository.existsByMember_IdAndStudy_StudyId(memberId, studyId);
     }
 
@@ -355,7 +359,11 @@ public class StudyService {
     }
 
     public String findNotice(Long studyId) {
+        if (!studyRepository.existsById(studyId)) {
+            throw new IllegalArgumentException("스터디가 존재하지 않습니다.");
+        }
+
         return studyRepository.findNoticeByStudyId(studyId)
-            .orElse("none");
+            .orElse("공지사항이 없습니다.");
     }
 }

@@ -72,7 +72,7 @@ public class ChatService {
     // 채팅방 생성
     public void createChatRoom(Long studyId) {
         Study study = studyRepository.findById(studyId)
-            .orElseThrow(() -> new NotFoundException("스터디가 존재하지 않습니다."));
+            .orElseThrow(() -> new NotFoundException("스터디를 찾을 수 없습니다."));
 
         ChatRoom chatRoom = ChatRoom.builder()
             .study(study)
