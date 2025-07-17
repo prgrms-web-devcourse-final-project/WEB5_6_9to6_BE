@@ -102,7 +102,6 @@ public class RewardController {
     public ResponseEntity<CommonResponse<ImageResponse>> changeOwnItems(
         @PathVariable long ownItemId
     ) {
-        Map<String, Object> data = Map.of();
 
         Long memberId = SecurityUtil.getCurrentMemberId();
 
