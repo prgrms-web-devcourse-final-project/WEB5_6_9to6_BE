@@ -23,7 +23,6 @@ public class StudyUpdateRequest {
     private String startTime;
     private String endTime;
     private LocalDate endDate;
-    private Status status;
     private String description;
     private String externalLink;
     private List<GoalUpdateDTO> goals;

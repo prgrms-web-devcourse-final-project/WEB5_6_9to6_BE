@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import com.querydsl.core.Tuple;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -26,6 +27,7 @@ public class TimerService {
     private final TimerQueryRepository timerQueryRepository;
     private final StudyMemberRepository studyMemberRepository;
 
+    @Transactional(readOnly = true)
     public TotalStudyTimeResponse getAllStudyTime(Long memberId) {
         List<Long> studyMemberIds = studyMemberRepository.findAllStudies(memberId);
         if (studyMemberIds == null || studyMemberIds.isEmpty()) {
@@ -43,6 +45,7 @@ public class TimerService {
             .build();
     }
 
+    @Transactional
     public List<DailyStudyLogResponse> findDailyStudyLogsByStudyMemberId(Long studyId, Long memberId) {
         Long studyMemberId = studyMemberRepository.findIdByStudyMemberIdAndMemberId(studyId, memberId)
             .orElseThrow(() -> new NotFoundException("Study Member Not Found"));
@@ -59,6 +62,7 @@ public class TimerService {
             .toList();
     }
 
+    @Transactional(readOnly = true)
     public StudyWeekTimeResponse getStudyTimeForPeriod(Long studyId, Long memberId) {
         Long studyMemberId = studyMemberRepository.findIdByStudyMemberIdAndMemberId(studyId, memberId)
             .orElseThrow(() -> new NotFoundException("Study Member Not Found"));
@@ -69,11 +73,16 @@ public class TimerService {
         Long totalTime = timerQueryRepository.findTotalStudyTimeInPeriod(studyMemberId, studyId, startOfDay, endOfDay);
 
         return StudyWeekTimeResponse.builder()
-            .totalStudyTime(totalTime)
+            .totalStudyTime(totalTime != null ? totalTime : 0L)
             .build();
     }
 
-    public void recordStudyTime(Long studyId, Long studyMemberId, StudyTimeRecordRequest req) {
+    @Transactional
+    public void recordStudyTime(Long studyId, Long memberId, StudyTimeRecordRequest req) {
+
+        Long studyMemberId = studyMemberRepository.findStudyMemberIdByStudyIdWithMeberId(studyId, memberId)
+            .orElseThrow(() -> new NotFoundException("Study Member Not Found"));
+
         Timer timer = Timer.builder()
             .studyId(studyId)
             .studyMemberId(studyMemberId)

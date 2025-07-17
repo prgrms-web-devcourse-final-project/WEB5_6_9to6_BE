@@ -10,6 +10,7 @@ import com.grepp.spring.infra.response.SuccessCode;
 import com.grepp.spring.infra.util.SecurityUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,12 +39,13 @@ public class TimerController {
         해당 요청은 성공메시지를 반환하며 `data`에 특별한 값은 없습니다.    
         """
     )
-    @PostMapping("/{studyId}/{studyMemberId}")
+    @PostMapping("/{studyId}")
     public ResponseEntity<CommonResponse<SuccessCode>> recordStudyTime(
-        @PathVariable Long studyId, @PathVariable Long studyMemberId,
-        @RequestBody StudyTimeRecordRequest req
+        @PathVariable Long studyId,
+        @Valid @RequestBody StudyTimeRecordRequest req
     ) {
-       timerService.recordStudyTime(studyId, studyMemberId, req);
+        Long memberId = SecurityUtil.getCurrentMemberId();
+       timerService.recordStudyTime(studyId, memberId, req);
        return ResponseEntity.ok(CommonResponse.noContent(SuccessCode.SUCCESS));
     }
 

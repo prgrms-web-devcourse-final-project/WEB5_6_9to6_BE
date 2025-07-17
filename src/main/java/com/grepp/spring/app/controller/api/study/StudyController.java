@@ -1,6 +1,8 @@
 package com.grepp.spring.app.controller.api.study;
 
 import com.grepp.spring.app.controller.api.study.payload.ApplicationRequest;
+import com.grepp.spring.app.controller.api.study.payload.ApplicationResultRequest;
+import com.grepp.spring.app.controller.api.study.payload.NotificationUpdateRequest;
 import com.grepp.spring.app.controller.api.study.payload.StudyCreationRequest;
 import com.grepp.spring.app.controller.api.study.payload.StudySearchRequest;
 import com.grepp.spring.app.controller.api.study.payload.StudyUpdateRequest;
@@ -9,13 +11,18 @@ import com.grepp.spring.app.model.member.dto.response.ApplicantsResponse;
 import com.grepp.spring.app.model.member.dto.response.StudyMemberResponse;
 import com.grepp.spring.app.model.member.entity.Attendance;
 import com.grepp.spring.app.model.member.service.MemberService;
+import com.grepp.spring.app.model.study.code.ApplicantState;
 import com.grepp.spring.app.model.study.code.Category;
 import com.grepp.spring.app.model.study.code.Status;
+import com.grepp.spring.app.model.study.dto.StudyCreationResponse;
 import com.grepp.spring.app.model.study.dto.StudyInfoResponse;
 import com.grepp.spring.app.model.study.dto.StudyListResponse;
 import com.grepp.spring.app.model.study.dto.WeeklyAttendanceResponse;
 import com.grepp.spring.app.model.study.dto.WeeklyGoalStatusResponse;
 import com.grepp.spring.app.model.study.entity.Study;
+import com.grepp.spring.app.model.study.reponse.StudyNoticeResponse;
+import com.grepp.spring.app.model.study.service.ApplicantService;
+import com.grepp.spring.app.model.study.service.StudyMemberService;
 import com.grepp.spring.app.model.study.service.StudyService;
 import com.grepp.spring.infra.response.CommonResponse;
 import com.grepp.spring.infra.util.SecurityUtil;
@@ -32,6 +39,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -49,6 +57,8 @@ public class StudyController {
     private final MemberService memberService;
     private final StudyService studyService;
     private final ChatService chatService;
+    private final ApplicantService applicantService;
+    private final StudyMemberService studyMemberService;
 
     // 카테고리 & statuses 조회(enum)
     @Operation(summary = "스터디 카테고리 및 상태 목록 조회",
@@ -138,7 +148,7 @@ public class StudyController {
     // 스터디 신청자 목록 조회
     @Operation(summary = "스터디 신청자 목록 조회", description = "스터디 ID(`studyId`)에 해당하는 스터디의 가입 신청자 목록을 조회합니다. 스터디장만 호출 가능합니다.")
     @GetMapping("/{studyId}/applications-list")
-    public ResponseEntity<?> getApplications(@PathVariable Long studyId) {
+    public ResponseEntity<CommonResponse<List<ApplicantsResponse>>> getApplications(@PathVariable Long studyId) {
         List<ApplicantsResponse> applicants = studyService.getApplicants(studyId);
         return ResponseEntity.ok(CommonResponse.success(applicants));
     }
@@ -192,14 +202,16 @@ public class StudyController {
         - 새로운 스터디를 생성합니다. 생성과 동시에 해당 스터디의 채팅방도 함께 생성됩니다.
         """)
     @PostMapping
-    public ResponseEntity<?> createStudy(@RequestBody StudyCreationRequest req) {
-        // 1. 서비스에서 스터디 생성 수행
-        Study study = studyService.createStudy(req);
-        // 2. 채팅방 생성
-        chatService.createChatRoom(study);
+    public ResponseEntity<CommonResponse<StudyCreationResponse>> createStudy(@RequestBody StudyCreationRequest req) {
+        Long memberId = SecurityUtil.getCurrentMemberId();
+        StudyCreationResponse response = studyService.createStudy(req, memberId);
+
+        chatService.createChatRoom(response.getStudyId());
+
         return ResponseEntity.status(HttpStatus.CREATED)
-            .body(CommonResponse.success("스터디가 성공적으로 생성되었습니다."));
+            .body(CommonResponse.success(response));
     }
+
 
     // 스터디 목표 조회
     @Operation(summary = "스터디 목표 목록 조회", description = "스터디 ID(`studyId`)에 설정된 목표 목록을 조회합니다.")
@@ -234,5 +246,71 @@ public class StudyController {
 
         return ResponseEntity.ok(CommonResponse.success(response));
     }
+
+    // 스터디 가입 승인, 거절
+    @Operation(
+        summary = "스터디 가입 승인, 거절",
+        description = """
+        요청 body에 `ApplicationResultRequest`를 포함해야합니다.
+        스터디 가입 신청에 대해 승인 또는 거절을 처리합니다.
+        - 서바이벌 스터디인 경우 바로 신청이 됩니다.
+        - 요청 body에 `memberId`와 `applicationResult`(APPROVED, REJECTED 등)를 포함해야 합니다.
+        - **승인(APPROVED)** 시 신청자는 스터디 멤버로 추가됩니다.
+        - **거절(REJECTED)** 시 신청자의 상태만 업데이트됩니다.
+        - 일반 스터디에 한해 스터디장만 호출 가능합니다.
+        """
+    )
+    @PostMapping("/{studyId}/applications/respond")
+    public ResponseEntity<CommonResponse<?>> responseStudyApplication(
+        @PathVariable Long studyId,
+        @RequestBody ApplicationResultRequest req) {
+
+        boolean isSurvival = studyService.isSurvival(studyId);
+
+        // 신청자 상태변경
+        if(!isSurvival) {
+            Long acceptorId = SecurityUtil.getCurrentMemberId();
+            applicantService.updateState(acceptorId, req.getMemberId(), studyId, req.getApplicationResult());
+
+            // 스터디 맴버에 저장
+            if (req.getApplicationResult() == ApplicantState.ACCEPT) {
+                studyMemberService.saveMember(studyId, req.getMemberId());
+            }
+        }
+        else {
+            studyMemberService.applyToStudy(req.getMemberId(), studyId);
+        }
+
+        return ResponseEntity.ok(CommonResponse.noContent());
+    }
+
+    @Operation(summary = "스터디 공지사항 수정", description = """
+        요청 body에 `NotificationUpdateRequest`를 포함해야합니다.
+        - 특정 스터디(`studyId`)의 공지사항을 수정합니다.
+        - 스터디장만 호출 가능합니다.
+        - 이 API는 인증이 필요하며, 요청 헤더에 유효한 토큰이 있어야 합니다.
+        """)
+    @PatchMapping("/{studyId}/notification")
+    public ResponseEntity<CommonResponse<Void>> updateStudyNotification(
+        @PathVariable Long studyId,
+        @RequestBody NotificationUpdateRequest req
+    ) {
+
+        Long memberId = SecurityUtil.getCurrentMemberId();
+        studyService.updateStudyNotification(memberId, studyId, req.getNotice());
+
+        return ResponseEntity.ok(CommonResponse.noContent());
+    }
+
+    @Operation(summary = "스터디 공지사항 조회",
+        description = "특정 스터디(`studyId`)의 공지사항을 조회합니다.")
+    @GetMapping("/{studyId}/notification")
+    public ResponseEntity<CommonResponse<?>> getStudyNotification(
+        @PathVariable Long studyId
+    ) {
+        StudyNoticeResponse res = new StudyNoticeResponse(studyService.findNotice(studyId));
+        return ResponseEntity.ok(CommonResponse.success(res));
+    }
+
 
 }

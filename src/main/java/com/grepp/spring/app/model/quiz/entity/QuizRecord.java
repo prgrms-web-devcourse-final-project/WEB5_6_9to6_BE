@@ -13,7 +13,7 @@ public class QuizRecord {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
+    private Long id;
 
     @Column(nullable = false)
     private Long studyMemberId;
@@ -30,7 +30,7 @@ public class QuizRecord {
 
     @Builder
     public QuizRecord(Long quizRecordId, Long studyMemberId, QuizSet quizSet, boolean isSurvived, boolean activated) {
-        this.Id = quizRecordId;
+        this.id = quizRecordId;
         this.studyMemberId = studyMemberId;
         this.quizSet = quizSet;
         this.isSurvived = isSurvived;
