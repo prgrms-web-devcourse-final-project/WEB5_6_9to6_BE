@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.grepp.spring.app.model.member.entity.Member;
 import com.grepp.spring.app.model.study.code.ApplicantState;
 import com.grepp.spring.infra.entity.BaseEntity;
+import com.grepp.spring.infra.error.exceptions.AlreadyProcessedException;
+import com.grepp.spring.infra.error.exceptions.SameStateException;
+import com.grepp.spring.infra.response.ResponseCode;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -46,5 +49,19 @@ public class Applicant extends BaseEntity {
         this.introduction = introduction;
         this.study = study;
         this.member = member;
+    }
+
+    public void changeState(ApplicantState newState) {
+        // 현재 상태와 동일한 상태로 변경 요청
+        if (this.state == newState) {
+            throw new SameStateException(ResponseCode.BAD_REQUEST);
+        }
+
+        // 이미 처리된(승인/거절) 신청 건을 다시 변경
+        if (this.state == ApplicantState.ACCEPT || this.state == ApplicantState.REJECT) {
+            throw new AlreadyProcessedException(ResponseCode.BAD_REQUEST);
+        }
+
+        this.state = newState;
     }
 }

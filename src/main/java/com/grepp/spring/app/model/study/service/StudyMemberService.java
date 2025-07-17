@@ -8,8 +8,8 @@ import com.grepp.spring.app.model.member.repository.StudyMemberRepository;
 import com.grepp.spring.app.model.study.entity.Study;
 import com.grepp.spring.app.model.study.repository.StudyRepository;
 import com.grepp.spring.infra.error.exceptions.AlreadyExistException;
+import com.grepp.spring.infra.error.exceptions.NotFoundException;
 import com.grepp.spring.infra.response.ResponseCode;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,9 +31,9 @@ public class StudyMemberService {
         }
 
         Member member = memberRepository.findById(memberId)
-            .orElseThrow(() -> new EntityNotFoundException("해당 ID의 회원을 찾을 수 없습니다: " + memberId));
+            .orElseThrow(() -> new NotFoundException(ResponseCode.NOT_FOUND.message()));
         Study study = studyRepository.findById(studyId)
-            .orElseThrow(() -> new EntityNotFoundException("해당 ID의 스터디를 찾을 수 없습니다: " + studyId));
+            .orElseThrow(() -> new NotFoundException(ResponseCode.NOT_FOUND.message()));
 
         StudyMember studyMember = StudyMember.builder()
             .member(member)
@@ -45,4 +45,26 @@ public class StudyMemberService {
         studyMemberRepository.save(studyMember);
 
     }
+
+    @Transactional
+    public void applyToStudy(Long memberId, Long studyId) {
+        Study study = studyRepository.findById(studyId)
+            .orElseThrow(() -> new NotFoundException("해당 스터디가 존재하지 않습니다."));
+
+        Member member = memberRepository.findById(memberId)
+            .orElseThrow(() -> new NotFoundException("회원 정보를 찾을 수 없습니다."));
+
+        // 중복 가입 방지
+        if (studyMemberRepository.existsByMember_IdAndStudy_StudyId(memberId, studyId)) {
+            throw new AlreadyExistException(ResponseCode.ALREADY_EXIST);
+        }
+
+        StudyMember newMember = StudyMember.builder()
+            .study(study)
+            .member(member)
+             .studyRole(StudyRole.MEMBER)
+            .build();
+        studyMemberRepository.save(newMember);
+    }
+
 }
