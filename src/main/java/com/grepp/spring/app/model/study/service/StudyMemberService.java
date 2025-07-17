@@ -45,4 +45,26 @@ public class StudyMemberService {
         studyMemberRepository.save(studyMember);
 
     }
+
+    @Transactional
+    public void applyToStudy(Long memberId, Long studyId) {
+        Study study = studyRepository.findById(studyId)
+            .orElseThrow(() -> new NotFoundException("해당 스터디가 존재하지 않습니다."));
+
+        Member member = memberRepository.findById(memberId)
+            .orElseThrow(() -> new NotFoundException("회원 정보를 찾을 수 없습니다."));
+
+        // 중복 가입 방지
+        if (studyMemberRepository.existsByMember_IdAndStudy_StudyId(memberId, studyId)) {
+            throw new AlreadyExistException(ResponseCode.ALREADY_EXIST);
+        }
+
+        StudyMember newMember = StudyMember.builder()
+            .study(study)
+            .member(member)
+             .studyRole(StudyRole.MEMBER)
+            .build();
+        studyMemberRepository.save(newMember);
+    }
+
 }

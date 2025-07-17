@@ -13,6 +13,7 @@ import com.grepp.spring.app.model.study.code.ApplicantState;
 import com.grepp.spring.app.model.study.code.DayOfWeek;
 import com.grepp.spring.app.model.study.code.GoalType;
 import com.grepp.spring.app.model.study.code.Status;
+import com.grepp.spring.app.model.study.code.StudyType;
 import com.grepp.spring.app.model.study.dto.StudyInfoResponse;
 import com.grepp.spring.app.model.study.dto.StudyListResponse;
 import com.grepp.spring.app.model.study.dto.WeeklyGoalStatusResponse;
@@ -279,4 +280,7 @@ public class StudyService {
         );
     }
 
+    public boolean isSurvival(Long studyId) {
+        return (StudyType.SURVIVAL == studyRepository.findStudyTypeById(studyId));
+    }
 }

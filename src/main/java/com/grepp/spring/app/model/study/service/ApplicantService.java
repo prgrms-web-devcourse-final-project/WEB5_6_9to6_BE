@@ -5,6 +5,7 @@ import com.grepp.spring.app.model.study.entity.Applicant;
 import com.grepp.spring.app.model.study.repository.ApplicantRepository;
 import com.grepp.spring.infra.error.exceptions.AlreadyExistException;
 import com.grepp.spring.infra.error.exceptions.NotFoundException;
+import com.grepp.spring.infra.error.exceptions.NullStateException;
 import com.grepp.spring.infra.response.ResponseCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,8 @@ public class ApplicantService {
 
     @Transactional
     public void updateState(long memberId, long studyId, ApplicantState state) {
+        if (state == null) throw new NullStateException(ResponseCode.BAD_REQUEST);
+
         Applicant applicant = applicantRepository.findByMember_IdAndStudy_StudyId(memberId, studyId)
             .orElseThrow(() -> new NotFoundException(ResponseCode.NOT_FOUND.message()));
 

@@ -258,12 +258,19 @@ public class StudyController {
         @PathVariable Long studyId,
         @RequestBody ApplicationResultRequest req) {
 
-        // 신청자 상태변경
-        applicantService.updateState(req.getMemberId(), studyId, req.getApplicationResult());
+        boolean isSurvival = studyService.isSurvival(studyId);
 
-        // 스터디 맴버에 저장
-        if (req.getApplicationResult() == ApplicantState.ACCEPT) {
-            studyMemberService.saveMember(studyId, req.getMemberId());
+        // 신청자 상태변경
+        if(!isSurvival) {
+            applicantService.updateState(req.getMemberId(), studyId, req.getApplicationResult());
+
+            // 스터디 맴버에 저장
+            if (req.getApplicationResult() == ApplicantState.ACCEPT) {
+                studyMemberService.saveMember(studyId, req.getMemberId());
+            }
+        }
+        else {
+            studyMemberService.applyToStudy(req.getMemberId(), studyId);
         }
 
         return ResponseEntity.ok(CommonResponse.noContent());
