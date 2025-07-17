@@ -145,7 +145,7 @@ public class StudyController {
     // 스터디 신청자 목록 조회
     @Operation(summary = "스터디 신청자 목록 조회", description = "스터디 ID(`studyId`)에 해당하는 스터디의 가입 신청자 목록을 조회합니다. 스터디장만 호출 가능합니다.")
     @GetMapping("/{studyId}/applications-list")
-    public ResponseEntity<?> getApplications(@PathVariable Long studyId) {
+    public ResponseEntity<CommonResponse<List<ApplicantsResponse>>> getApplications(@PathVariable Long studyId) {
         List<ApplicantsResponse> applicants = studyService.getApplicants(studyId);
         return ResponseEntity.ok(CommonResponse.success(applicants));
     }
