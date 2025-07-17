@@ -78,7 +78,11 @@ public class TimerService {
     }
 
     @Transactional
-    public void recordStudyTime(Long studyId, Long studyMemberId, StudyTimeRecordRequest req) {
+    public void recordStudyTime(Long studyId, Long memberId, StudyTimeRecordRequest req) {
+
+        Long studyMemberId = studyMemberRepository.findStudyMemberIdByStudyIdWithMeberId(studyId, memberId)
+            .orElseThrow(() -> new NotFoundException("Study Member Not Found"));
+
         Timer timer = Timer.builder()
             .studyId(studyId)
             .studyMemberId(studyMemberId)
