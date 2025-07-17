@@ -99,8 +99,8 @@ public class Study {
     // 스터디 정보 수정
     public void updateBaseInfo(String name, Category category, int maxMembers,
         Region region, String place, boolean isOnline,
-        String description, String externalLink,
-        Status status) {
+        String description, String externalLink
+    ) {
         this.name = name;
         this.category = category;
         this.maxMembers = maxMembers;
@@ -109,7 +109,7 @@ public class Study {
         this.isOnline = isOnline;
         this.description = description;
         this.externalLink = externalLink;
-        this.status = status;
+//        this.status = status;
     }
 
     // 스터디 일정 추가
@@ -128,4 +128,13 @@ public class Study {
         this.getGoals().add(goal);
         goal.setStudy(this);
     }
+
+    public Study(Long studyId) {
+        this.studyId = studyId;
+    }
+  
+    public void updateNotice(String notice) {
+        this.notice = notice;
+    }
+
 }

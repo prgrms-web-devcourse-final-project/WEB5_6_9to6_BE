@@ -93,6 +93,12 @@ dependencies {
     // 구글 클라우드
     implementation platform('com.google.cloud:libraries-bom:26.43.0')
     implementation 'com.google.cloud:google-cloud-vertexai'
+
+    // llm
+    implementation platform('com.google.cloud:libraries-bom:26.43.0')
+    implementation 'com.google.cloud:google-cloud-vertexai'
+    //implementation 'dev.langchain4j:langchain4j:0.35.0'
+    //implementation 'dev.langchain4j:langchain4j-google-ai-gemini:0.35.0'
     
     // AOP 관련
     implementation 'org.springframework.retry:spring-retry'

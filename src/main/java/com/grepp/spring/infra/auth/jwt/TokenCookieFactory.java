@@ -7,9 +7,9 @@ public class TokenCookieFactory {
         return ResponseCookie.from(name, value)
                    .maxAge(expires)
                    .path("/")
-                   .httpOnly(false)             // HttpOnly
+                   .httpOnly(true)             // HttpOnly
                    .secure(true)
-                   .sameSite("None")
+                   .sameSite("None")// Secure
                    .build();
     }
     
@@ -17,9 +17,9 @@ public class TokenCookieFactory {
         return ResponseCookie.from(name, "")
                    .maxAge(0)
                    .path("/")
-                   .httpOnly(false)             // HttpOnly
+                   .httpOnly(true)             // HttpOnly
                    .secure(true)
-                   .sameSite("None")
+                   .sameSite("None")// // Secure
                    .build();
     }
 }

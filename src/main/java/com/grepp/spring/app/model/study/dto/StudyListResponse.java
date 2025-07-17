@@ -1,9 +1,12 @@
 package com.grepp.spring.app.model.study.dto;
 
 import com.grepp.spring.app.model.study.code.Category;
+import com.grepp.spring.app.model.study.code.Region;
 import com.grepp.spring.app.model.study.code.Status;
+import com.grepp.spring.app.model.study.code.StudyType;
 import com.grepp.spring.app.model.study.entity.Study;
 import com.grepp.spring.app.model.study.entity.StudySchedule;
+import java.time.LocalDate;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -26,6 +29,10 @@ public class StudyListResponse {
     private String endTime;
     private Status status;
     private String createdAt;
+    private LocalDate startDate;
+    private Region region;
+    private StudyType studyType;
+    private String description;
 
     public static StudyListResponse fromEntity(Study study, int currentMemberCount) {
         List<StudySchedule> scheduleList = study.getSchedules();
@@ -57,6 +64,10 @@ public class StudyListResponse {
             .endTime(end)
             .status(study.getStatus())
             .createdAt(study.getCreatedAt().toLocalDate().format(DateTimeFormatter.ISO_DATE))
+            .startDate(study.getStartDate())
+            .region(study.getRegion())
+            .studyType(study.getStudyType())
+            .description(study.getDescription())
             .build();
     }
 }
