@@ -14,6 +14,7 @@ import com.grepp.spring.infra.response.CommonResponse;
 import com.grepp.spring.infra.response.ResponseCode;
 import com.grepp.spring.infra.util.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authorization.AuthorizationDeniedException;
@@ -141,6 +142,16 @@ public class RestApiExceptionAdvice {
             .body(CommonResponse.error(ResponseCode.BAD_REQUEST.code(), ex.getMessage()));
     }
 
+
+    @ExceptionHandler(DataAccessException.class)
+    public ResponseEntity<CommonResponse<String>> handleDataAccessException(DataAccessException ex) {
+        log.error(ex.getMessage(), ex);
+        return ResponseEntity
+            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(CommonResponse.error(ResponseCode.INTERNAL_SERVER_ERROR));
+    }
+
+
     @ExceptionHandler(SameStateException.class)
     public ResponseEntity<CommonResponse<String>> handleSameStateException(SameStateException ex) {
         log.error(ex.getMessage(), ex);
@@ -171,7 +182,5 @@ public class RestApiExceptionAdvice {
             .status(HttpStatus.BAD_REQUEST)
             .body(CommonResponse.error(ResponseCode.BAD_REQUEST.code(), ex.getMessage()));
     }
-
-
 
 }
