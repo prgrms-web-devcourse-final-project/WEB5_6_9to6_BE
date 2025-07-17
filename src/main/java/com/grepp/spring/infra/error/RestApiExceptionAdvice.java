@@ -4,6 +4,7 @@ import com.grepp.spring.infra.error.exceptions.AlreadyCheckedAttendanceException
 import com.grepp.spring.infra.error.exceptions.AlreadyExistException;
 import com.grepp.spring.infra.error.exceptions.AlreadyProcessedException;
 import com.grepp.spring.infra.error.exceptions.CommonException;
+import com.grepp.spring.infra.error.exceptions.HasNotRightException;
 import com.grepp.spring.infra.error.exceptions.InsufficientRewardPointsException;
 import com.grepp.spring.infra.error.exceptions.MailSendFailureException;
 import com.grepp.spring.infra.error.exceptions.OutOfMinimumPageException;
@@ -154,6 +155,13 @@ public class RestApiExceptionAdvice {
         return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
             .body(CommonResponse.error(ResponseCode.BAD_REQUEST));
+    }
+
+    @ExceptionHandler(HasNotRightException.class)
+    public ResponseEntity<CommonResponse<String>> handleHasNotRightException(HasNotRightException ex) {
+        log.error(ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+            .body(CommonResponse.error(ResponseCode.UNAUTHORIZED));
     }
 
 
