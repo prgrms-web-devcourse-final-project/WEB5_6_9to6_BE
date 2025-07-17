@@ -32,6 +32,7 @@ public class StudyListResponse {
     private LocalDate startDate;
     private Region region;
     private StudyType studyType;
+    private String description;
 
     public static StudyListResponse fromEntity(Study study, int currentMemberCount) {
         List<StudySchedule> scheduleList = study.getSchedules();
@@ -66,6 +67,7 @@ public class StudyListResponse {
             .startDate(study.getStartDate())
             .region(study.getRegion())
             .studyType(study.getStudyType())
+            .description(study.getDescription())
             .build();
     }
 }
