@@ -132,4 +132,9 @@ public class Study {
     public Study(Long studyId) {
         this.studyId = studyId;
     }
+  
+    public void updateNotice(String notice) {
+        this.notice = notice;
+    }
+
 }

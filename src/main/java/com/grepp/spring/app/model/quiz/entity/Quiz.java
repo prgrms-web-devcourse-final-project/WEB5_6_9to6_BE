@@ -36,7 +36,7 @@ public class Quiz {
     private List<Choice> choice;
 
     @Builder
-    public Quiz(Long quizId, QuizSet quizSet, String question, Integer answer, boolean activated, List<Choice> choice) {
+    public Quiz(Long quizId, QuizSet quizSet, String question, Integer answer, boolean activated, Choice choice) {
         this.id = quizId;
         this.quizSet = quizSet;
         this.question = question;

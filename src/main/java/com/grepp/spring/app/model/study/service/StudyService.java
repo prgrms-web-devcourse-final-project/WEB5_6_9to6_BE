@@ -15,6 +15,7 @@ import com.grepp.spring.app.model.study.code.DayOfWeek;
 import com.grepp.spring.app.model.study.code.GoalType;
 import com.grepp.spring.app.model.study.code.Status;
 import com.grepp.spring.app.model.study.dto.StudyCreationResponse;
+import com.grepp.spring.app.model.study.code.StudyType;
 import com.grepp.spring.app.model.study.dto.StudyInfoResponse;
 import com.grepp.spring.app.model.study.dto.StudyListResponse;
 import com.grepp.spring.app.model.study.dto.WeeklyGoalStatusResponse;
@@ -27,6 +28,7 @@ import com.grepp.spring.app.model.study.repository.ApplicantRepository;
 import com.grepp.spring.app.model.study.repository.GoalAchievementRepository;
 import com.grepp.spring.app.model.study.repository.StudyGoalRepository;
 import com.grepp.spring.app.model.study.repository.StudyRepository;
+import com.grepp.spring.infra.error.exceptions.HasNotRightException;
 import com.grepp.spring.infra.error.exceptions.NotFoundException;
 import com.grepp.spring.infra.error.exceptions.StudyDataException;
 import com.grepp.spring.infra.response.ResponseCode;
@@ -335,4 +337,24 @@ public class StudyService {
         );
     }
 
+    public boolean isSurvival(Long studyId) {
+        return (StudyType.SURVIVAL == studyRepository.findStudyTypeById(studyId));
+    }
+
+    @Transactional
+    public void updateStudyNotification(Long memberId, Long studyId, String notice) {
+        Study study = studyRepository.findById(studyId)
+            .orElseThrow(() -> new NotFoundException(ResponseCode.NOT_FOUND.message()));
+
+        if(!studyMemberRepository.isAcceptorHasRight(memberId, studyId)) {
+            throw new HasNotRightException(ResponseCode.UNAUTHORIZED);
+        }
+
+        study.updateNotice(notice);
+    }
+
+    public String findNotice(Long studyId) {
+        return studyRepository.findNoticeByStudyId(studyId)
+            .orElse("none");
+    }
 }

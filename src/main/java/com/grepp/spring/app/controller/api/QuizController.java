@@ -45,7 +45,7 @@ public class QuizController {
             @PathVariable int week,
             @RequestBody SurvivalResultRequest request) {
 
-        survivalResultService.registerSurvivalResult(studyId, week, request);
+        survivalResultService.processSurvivalResult(studyId, week, request);
         return ResponseEntity.ok(CommonResponse.success(null));
     }
 
