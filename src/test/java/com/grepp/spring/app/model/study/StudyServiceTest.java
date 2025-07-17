@@ -36,8 +36,8 @@ class StudyServiceTest {
 
         // 가짜 데이터 리스트 생성
         List<ApplicantsResponse> expectedResponses = Arrays.asList(
-            new ApplicantsResponse(101L, 201L, "test1", ApplicantState.WAIT, "I'm ready to study hard!"),
-            new ApplicantsResponse(102L, 202L, "test2", ApplicantState.ACCEPT, "Hi, I want to join here.")
+            new ApplicantsResponse(101L, 201L, "test1", ApplicantState.WAIT, "I'm ready to study hard!","imageUrl1"),
+            new ApplicantsResponse(102L, 202L, "test2", ApplicantState.ACCEPT, "Hi, I want to join here.","imageUrl2")
         );
 
         // studyRepository.findAllApplicants(studyId) 메서드가 호출되면, expectedResponses 리스트를 반환

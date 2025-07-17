@@ -9,9 +9,12 @@ import lombok.Setter;
 @Setter
 public class ChatMessageRequest {
 
-    private String receiverId;
+    private Long senderId;
+    private Long studyId;
+    private String receiverEmail;
     private String receiverNickName;
     private String content;
+    private String senderEmail;
 
 
     public Chat toEntity(ChatRoom chatRoom, Long senderId,String senderNickname) {
@@ -19,7 +22,7 @@ public class ChatMessageRequest {
             .chatRoom(chatRoom)
             .senderId(senderId)
             .senderNickname(senderNickname)
-            .receiverId(receiverId)
+            .receiverId(receiverEmail)
             .receiverNickname(receiverNickName)
             .content(content)
             .build();

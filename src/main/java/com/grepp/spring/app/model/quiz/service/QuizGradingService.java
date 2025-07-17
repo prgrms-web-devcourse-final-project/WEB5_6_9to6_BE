@@ -17,23 +17,22 @@ public class QuizGradingService {
 
     @Transactional(readOnly = true)
     public QuizGradingResponse grade(QuizGradingRequest request) {
-        List<Quiz> quizzes = quizRepository.findQuizzesByWeek(request.getWeek());
+        List<Quiz> quizzes = quizRepository.findQuizzesByStudyIdAndWeek(
+                request.getStudyId(), request.getWeek()
+        );
 
         if (quizzes.size() != request.getAnswerSheet().size()) {
             throw new IllegalArgumentException("답안 수가 퀴즈 수와 일치하지 않습니다.");
         }
 
         int correctCount = 0;
-
         for (int i = 0; i < quizzes.size(); i++) {
-            Quiz quiz = quizzes.get(i);
-            int submittedAnswerIndex = request.getAnswerSheet().get(i);
-            int correctAnswerIndex = quiz.getAnswer();
-
-            boolean isCorrect = submittedAnswerIndex == correctAnswerIndex;
-            if (isCorrect) correctCount++;
+            int correct = quizzes.get(i).getAnswer();
+            int submitted = request.getAnswerSheet().get(i);
+            if (correct == submitted) correctCount++;
         }
 
         return new QuizGradingResponse(request.getWeek(), correctCount);
     }
+
 }

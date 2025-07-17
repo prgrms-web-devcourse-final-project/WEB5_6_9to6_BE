@@ -105,4 +105,9 @@ public class Member extends BaseEntity{
         }
         rewardPoints -= amount;
     }
+
+    public void updateAvatarImage(String avatarImage) {
+        this.avatarImage = avatarImage;
+    }
+
 }

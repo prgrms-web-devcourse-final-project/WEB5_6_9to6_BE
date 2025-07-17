@@ -2,18 +2,25 @@ package com.grepp.spring.infra.error;
 
 import com.grepp.spring.infra.error.exceptions.AlreadyCheckedAttendanceException;
 import com.grepp.spring.infra.error.exceptions.AlreadyExistException;
+import com.grepp.spring.infra.error.exceptions.AlreadyProcessedException;
 import com.grepp.spring.infra.error.exceptions.CommonException;
+import com.grepp.spring.infra.error.exceptions.HasNotRightException;
 import com.grepp.spring.infra.error.exceptions.InsufficientRewardPointsException;
 import com.grepp.spring.infra.error.exceptions.MailSendFailureException;
+import com.grepp.spring.infra.error.exceptions.OutOfMinimumPageException;
+import com.grepp.spring.infra.error.exceptions.OutOfMinimumPageSizeException;
 import com.grepp.spring.infra.error.exceptions.RewardApiException;
+import com.grepp.spring.infra.error.exceptions.StudyDataException;
+
+import com.grepp.spring.infra.error.exceptions.SameStateException;
 import com.grepp.spring.infra.response.CommonResponse;
 import com.grepp.spring.infra.response.ResponseCode;
 import com.grepp.spring.infra.util.NotFoundException;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.ui.Model;
@@ -25,17 +32,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice(basePackages = "com.grepp.spring.app.controller.api")
 @Slf4j
 public class RestApiExceptionAdvice {
-
-//    @ExceptionHandler(MethodArgumentNotValidException.class)
-//    public ResponseEntity<CommonResponse<Map<String, String>>>
-//    validatorHandler(MethodArgumentNotValidException ex) {
-//        log.error(ex.getMessage(), ex);
-//        Map<String, String> errors = new LinkedHashMap<>();
-//        ex.getFieldErrors().forEach(e -> errors.put(e.getField(), e.getDefaultMessage()));
-//        return ResponseEntity
-//                   .badRequest()
-//                   .body(CommonResponse.error(ResponseCode.BAD_REQUEST, errors));
-//    }
     
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<CommonResponse<String>>
@@ -69,14 +65,6 @@ public class RestApiExceptionAdvice {
                    .body(CommonResponse.error(ResponseCode.INTERNAL_SERVER_ERROR));
     }
 
-//    @ExceptionHandler(AlreadyExistException.class)
-//    public ResponseEntity<CommonResponse<String>> alreadyExistExceptionHandler(AlreadyExistException ex) {
-//        log.error(ex.getMessage(), ex);
-//        ResponseCode code = ResponseCode.ALREADY_EXIST;
-//        return ResponseEntity
-//            .status(code.status())
-//            .body(CommonResponse.error(code));
-//    }
 
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<CommonResponse<ResponseCode>> handleIllegalArgumentException(Exception ex) {
@@ -140,6 +128,80 @@ public class RestApiExceptionAdvice {
         return ResponseEntity
             .status(HttpStatus.CONFLICT)
             .body(CommonResponse.error(ResponseCode.ALREADY_EXIST.code(), ex.getMessage()));
+    }
+
+    @ExceptionHandler(OutOfMinimumPageSizeException.class)
+    public ResponseEntity<CommonResponse<String>> handleOutOfMinimumPageSize(OutOfMinimumPageSizeException ex) {
+        log.error(ex.getMessage(), ex);
+        return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .body(CommonResponse.error(ResponseCode.BAD_REQUEST.code(), ex.getMessage()));
+    }
+
+    @ExceptionHandler(OutOfMinimumPageException.class)
+    public ResponseEntity<CommonResponse<String>> handleOutOfMinimumPage(OutOfMinimumPageException ex) {
+        log.error(ex.getMessage(), ex);
+        return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .body(CommonResponse.error(ResponseCode.BAD_REQUEST.code(), ex.getMessage()));
+    }
+
+    @ExceptionHandler(StudyDataException.class)
+    public ResponseEntity<CommonResponse<String>> handleStudyDataException(StudyDataException ex) {
+        log.error(ex.getMessage(), ex);
+        return ResponseEntity
+            .status(ex.code().status())
+            .body(CommonResponse.error(ex.code().code(), ex.getMessage()));
+    }
+
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<CommonResponse<String>> handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
+        log.error(ex.getMessage(), ex);
+        return ResponseEntity
+            .badRequest()
+            .body(CommonResponse.error(ResponseCode.BAD_REQUEST.code(), ex.getMessage()));
+    }
+
+
+    @ExceptionHandler(DataAccessException.class)
+    public ResponseEntity<CommonResponse<String>> handleDataAccessException(DataAccessException ex) {
+        log.error(ex.getMessage(), ex);
+        return ResponseEntity
+            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(CommonResponse.error(ResponseCode.INTERNAL_SERVER_ERROR));
+    }
+
+
+    @ExceptionHandler(SameStateException.class)
+    public ResponseEntity<CommonResponse<String>> handleSameStateException(SameStateException ex) {
+        log.error(ex.getMessage(), ex);
+        return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .body(CommonResponse.error(ResponseCode.BAD_REQUEST));
+    }
+
+    @ExceptionHandler(AlreadyProcessedException.class)
+    public ResponseEntity<CommonResponse<String>> handleAlreadyProcessedException(AlreadyProcessedException ex) {
+        log.error(ex.getMessage(), ex);
+        return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .body(CommonResponse.error(ResponseCode.BAD_REQUEST));
+    }
+
+    @ExceptionHandler(HasNotRightException.class)
+    public ResponseEntity<CommonResponse<String>> handleHasNotRightException(HasNotRightException ex) {
+        log.error(ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+            .body(CommonResponse.error(ResponseCode.UNAUTHORIZED));
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<CommonResponse<String>> handleIllegalArgumentException(IllegalArgumentException ex) {
+        log.error(ex.getMessage(), ex);
+        return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .body(CommonResponse.error(ResponseCode.BAD_REQUEST.code(), ex.getMessage()));
     }
 
 }

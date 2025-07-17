@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>🔔 알림 테스트</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 p-6">
+<div class="max-w-xl mx-auto space-y-4">
+  <h1 class="text-2xl font-bold">🔔 알림 테스트 페이지</h1>
+
+  <!-- 🔑 로그인 멤버 -->
+  <div class="flex items-center gap-2">
+    <input id="memberIdInput" type="number" placeholder="로그인한 memberId"
+           class="border px-3 py-1 rounded w-1/2" />
+    <button onclick="startSSE()" class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">
+      SSE 연결 시작
+    </button>
+  </div>
+
+  <hr/>
+
+  <!-- 🚀 알람 생성 -->
+  <div class="space-y-2">
+    <h2 class="text-lg font-semibold mt-2">📤 알림 전송</h2>
+    <input id="senderIdInput" type="number" placeholder="보내는 사람(senderId)"
+           class="border px-3 py-1 rounded w-full" />
+    <input id="receiverIdInput" type="number" placeholder="받는 사람(receiverId)"
+           class="border px-3 py-1 rounded w-full" />
+    <input id="messageInput" type="text" placeholder="메시지"
+           class="border px-3 py-1 rounded w-full" />
+
+    <!-- AlarmType 선택 -->
+    <select id="alarmTypeSelect" onchange="onAlarmTypeChange()" class="border px-3 py-1 rounded w-full">
+      <option value="APPLY">APPLY</option>
+      <option value="RESULT">RESULT</option>
+    </select>
+
+    <!-- ResultStatus 선택 (조건부 노출) -->
+    <select id="resultStatusSelect" class="border px-3 py-1 rounded w-full hidden">
+      <option value="ACCEPT">ACCEPT</option>
+      <option value="REJECT">REJECT</option>
+    </select>
+
+    <button onclick="sendAlarm()" class="bg-green-600 text-white px-4 py-1 rounded hover:bg-green-700">
+      알림 보내기
+    </button>
+  </div>
+
+  <hr />
+
+  <!-- 📬 수신 알람 -->
+  <div class="text-lg font-semibold mt-4 flex justify-between items-center">
+    <span>📬 수신 알림 목록</span>
+
+    <!-- 🔻 모두 읽음 처리 버튼 -->
+    <button onclick="markAllAsRead()" class="bg-gray-700 text-white px-3 py-1 rounded hover:bg-gray-800 text-sm">
+      모두 읽음
+    </button>
+  </div>
+  <div id="alarm-container" class="space-y-2"></div>
+</div>
+
+<script>
+  let memberId;
+
+  function onAlarmTypeChange() {
+    const alarmType = document.getElementById("alarmTypeSelect").value;
+    const resultStatusSelect = document.getElementById("resultStatusSelect");
+
+    if (alarmType === "RESULT") {
+      resultStatusSelect.classList.remove("hidden");
+    } else {
+      resultStatusSelect.classList.add("hidden");
+    }
+  }
+
+  function startSSE() {
+    memberId = document.getElementById("memberIdInput").value;
+    if (!memberId) {
+      alert("memberId를 입력해주세요.");
+      return;
+    }
+
+    fetch(`/api/v1/alarms/${memberId}`)
+    .then(res => res.json())
+    .then(alarms => {
+      document.getElementById("alarm-container").innerHTML = "";
+      alarms.forEach(renderAlarm);
+    });
+
+    const eventSource = new EventSource(`/api/v1/alarms/subscribe/${memberId}`);
+    eventSource.addEventListener("alarm", (event) => {
+      const data = JSON.parse(event.data);
+      renderAlarm(data, true);
+    });
+  }
+
+  function sendAlarm() {
+    const senderId = document.getElementById("senderIdInput").value;
+    const receiverId = document.getElementById("receiverIdInput").value;
+    const message = document.getElementById("messageInput").value;
+    const alarmType = document.getElementById("alarmTypeSelect").value;
+    const resultStatus = document.getElementById("resultStatusSelect").value;
+
+    if (!senderId || !receiverId || !message || !alarmType) {
+      alert("모든 필드를 입력해주세요.");
+      return;
+    }
+
+    const requestBody = {
+      senderId: Number(senderId),
+      receiverId: Number(receiverId),
+      message: message,
+      type: alarmType
+    };
+
+    if (alarmType === "RESULT") {
+      requestBody.resultStatus = resultStatus;
+    }
+
+    fetch("/api/v1/alarms", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(requestBody)
+    }).then(res => {
+      if (res.ok) {
+        alert("알림이 전송되었습니다!");
+      } else {
+        alert("알림 전송 실패");
+      }
+    });
+  }
+
+  function renderAlarm(alarm, isNew = false) {
+    const container = document.getElementById("alarm-container");
+    const div = document.createElement("div");
+
+    div.className = `p-3 border rounded shadow cursor-pointer transition ${
+        alarm.isRead ? 'bg-gray-100 text-gray-500' : 'bg-white hover:bg-blue-50'
+    }`;
+
+    div.innerHTML = `
+        <div class="font-medium">${alarm.message}</div>
+        <div class="text-sm text-gray-500 mt-1">${formatDateTime(alarm.sentAt)}</div>
+        <div class="text-sm text-gray-600 mt-1"><b>타입:</b> ${alarm.type}</div>
+        ${alarm.resultStatus ? `<div class="text-sm text-gray-600"><b>결과:</b> ${alarm.resultStatus}</div>` : ""}
+      `;
+
+    if (!alarm.isRead) {
+      div.onclick = function () {
+        markAsRead(alarm.alarmRecipientId, div);
+      };
+    }
+
+    if (isNew) container.prepend(div);
+    else container.appendChild(div);
+  }
+
+  function markAsRead(recipientId, element) {
+    fetch(`/api/v1/alarms/${recipientId}/read`, {
+      method: 'PATCH'
+    }).then(() => {
+      element.classList.remove('bg-white', 'hover:bg-blue-50');
+      element.classList.add('bg-gray-100', 'text-gray-500');
+    });
+  }
+
+  function formatDateTime(isoString) {
+    const date = new Date(isoString);
+    return date.toLocaleString();
+  }
+
+  function markAllAsRead() {
+    if (!memberId) {
+      alert("먼저 SSE 연결을 시작하세요.");
+      return;
+    }
+
+    fetch(`/api/v1/alarms/${memberId}/read-all`, {
+      method: 'PATCH'
+    }).then((res) => {
+      if (res.ok) {
+        alert("모든 알림을 읽음 처리했습니다!");
+
+        document.querySelectorAll('#alarm-container > div').forEach(div => {
+          div.classList.remove('bg-white', 'hover:bg-blue-50');
+          div.classList.add('bg-gray-100', 'text-gray-500');
+          div.onclick = null; // 클릭 이벤트 제거
+        });
+
+      } else {
+        alert("모두 읽음 처리 실패");
+      }
+    });
+  }
+</script>
+</body>
+</html>

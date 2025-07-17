@@ -7,6 +7,9 @@ public enum ResponseCode {
     ITEM_PURCHASE_SUCCESS("0002", HttpStatus.CREATED, "성공적으로 구매하였습니다."),
     BAD_REQUEST("4000", HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
     INVALID_FILENAME("4001", HttpStatus.BAD_REQUEST, "사용 할 수 없는 파일 이름입니다."),
+    FAIL_SEARCH_STUDY("4002", HttpStatus.NOT_FOUND, "스터디 검색에 실패했습니다."),
+    SAME_STATE("4003", HttpStatus.BAD_REQUEST , "현재 상태와 동일한 상태입니다."),
+    FAIL_GET_STUDY_INFO("4004", HttpStatus.NOT_FOUND,"스터디 상세 정보를 조회하지 못했습니다."),
     UNAUTHORIZED("4010", HttpStatus.UNAUTHORIZED, "권한이 없습니다."),
     BAD_CREDENTIAL("4011", HttpStatus.UNAUTHORIZED, "아이디나 비밀번호가 틀렸습니다."),
     NOT_EXIST_PRE_AUTH_CREDENTIAL("4012", HttpStatus.OK, "사전 인증 정보가 요청에서 발견되지 않았습니다."),
@@ -17,8 +20,10 @@ public enum ResponseCode {
     ALREADY_ATTENDED("4092",  HttpStatus.CONFLICT, "이미 출석했습니다."),
     INTERNAL_SERVER_ERROR("5000", HttpStatus.INTERNAL_SERVER_ERROR, "서버에러 입니다."),
     MAIL_SEND_FAIL("5001", HttpStatus.INTERNAL_SERVER_ERROR, "메일 전송에 실패하였습니다."),
-    SECURITY_INCIDENT("6000", HttpStatus.OK, "비정상적인 로그인 시도가 감지되었습니다.");
-
+    SECURITY_INCIDENT("6000", HttpStatus.OK, "비정상적인 로그인 시도가 감지되었습니다."),
+    INVALID_QUIZ("8000", HttpStatus.NOT_FOUND, "유효하지 않은 퀴즈 데이터입니다."),
+    QUIZ_ALREADY_EXISTS("8001", HttpStatus.CONFLICT, "이미 해당 주차의 퀴즈가 존재합니다."),
+    ;
     private final String code;
     private final HttpStatus status;
     private final String message;

@@ -49,7 +49,11 @@ public class SecurityConfig {
             .logout(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(
                 (requests) -> requests
-                                  .anyRequest().permitAll()
+//                    .requestMatchers("/favicon.ico", "/img/**", "/js/**","/css/**").permitAll()
+//                    .requestMatchers("/", "/error", "/auth/login", "/auth/signup").permitAll()
+//                    .requestMatchers("/api/v1/studies/search").permitAll()
+//                    .anyRequest().authenticated()
+                    .anyRequest().permitAll()
             )
             // jwtAuthenticationEntryPoint 는 oauth 인증을 사용할 경우 제거
 //            .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint))

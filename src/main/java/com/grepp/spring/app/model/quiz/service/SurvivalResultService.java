@@ -1,6 +1,8 @@
 package com.grepp.spring.app.model.quiz.service;
 
 import com.grepp.spring.app.controller.api.quiz.payload.SurvivalResultRequest;
+import com.grepp.spring.app.model.member.entity.StudyMember;
+import com.grepp.spring.app.model.member.repository.MemberRepository;
 import com.grepp.spring.app.model.member.repository.StudyMemberRepository;
 import com.grepp.spring.app.model.quiz.entity.QuizRecord;
 import com.grepp.spring.app.model.quiz.entity.QuizSet;
@@ -10,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
 @Service
 @RequiredArgsConstructor
 public class SurvivalResultService {
@@ -18,17 +19,26 @@ public class SurvivalResultService {
     private final StudyMemberRepository studyMemberRepository;
     private final QuizSetRepository quizSetRepository;
     private final QuizRecordRepository quizRecordRepository;
+    private final MemberRepository memberRepository;
+
+    private static final int SURVIVAL_REWARD_POINTS = 10;
 
     @Transactional
-    public void registerSurvivalResult(Long studyId, int week, SurvivalResultRequest request) {
+    public void processSurvivalResult(Long studyId, int week, SurvivalResultRequest request) {
 
         Long studyMemberId = request.getStudyMemberId();
-        studyMemberRepository.findById(studyMemberId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 스터디 멤버 ID입니다: " + studyMemberId));
-
+        StudyMember studyMember = studyMemberRepository.findByStudy_StudyIdAndStudyMemberId(studyId, studyMemberId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 스터디에 존재하지 않는 스터디 멤버 ID입니다: " + studyMemberId));
 
         QuizSet quizSet = quizSetRepository.findByStudyIdAndWeek(studyId, week)
                 .orElseThrow(() -> new IllegalArgumentException("해당 주차의 퀴즈 세트가 존재하지 않습니다."));
+
+        if (request.isSurvived()) {
+            Long memberId = studyMember.getMember().getId();
+            memberRepository.addRewardPoints(memberId, SURVIVAL_REWARD_POINTS);
+        } else {
+            studyMember.unActivated();
+        }
 
         QuizRecord quizRecord = QuizRecord.builder()
                 .studyMemberId(studyMemberId)
