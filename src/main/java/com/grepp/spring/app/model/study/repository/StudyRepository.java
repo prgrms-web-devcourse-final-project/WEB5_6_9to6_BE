@@ -1,6 +1,7 @@
 package com.grepp.spring.app.model.study.repository;
 
 import com.grepp.spring.app.model.member.dto.response.ApplicantsResponse;
+import com.grepp.spring.app.model.study.code.StudyType;
 import com.grepp.spring.app.model.study.entity.Study;
 import java.util.List;
 import java.util.Optional;
@@ -28,5 +29,11 @@ public interface StudyRepository extends JpaRepository<Study, Long>, StudyReposi
     // schedules 만 fetch join
     @Query("SELECT s FROM Study s LEFT JOIN FETCH s.schedules WHERE s.studyId = :id")
     Optional<Study> findByIdWithSchedules(@Param("id") Long id);
+
+    @Query("select s.studyType from Study s where s.studyId = :studyId")
+    StudyType findStudyTypeById(Long studyId);
+
+    @Query("select s.notice from Study s where s.studyId = :studyId")
+    Optional<String> findNoticeByStudyId(Long studyId);
 }
 

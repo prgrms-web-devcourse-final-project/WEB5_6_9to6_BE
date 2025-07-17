@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 public class ApplicationResultRequest {
 
     private long memberId;
-    private ApplicantState applicationResult;
+    private ApplicantState applicationResult = null;
 
     @Builder
     public ApplicationResultRequest(long memberId, ApplicantState applicationResult) {
