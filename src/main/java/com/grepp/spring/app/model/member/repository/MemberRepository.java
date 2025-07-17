@@ -4,6 +4,7 @@ import com.grepp.spring.app.model.member.dto.response.RequiredMemberInfoResponse
 import com.grepp.spring.app.model.member.entity.Member;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -27,4 +28,8 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     @Query("select m.avatarImage  from Member m where m.id = :memberId")
     String findAvatarImageById(@Param("memberId") Long memberId);
+
+    @Modifying(clearAutomatically = true)
+    @Query("UPDATE Member m SET m.rewardPoints = m.rewardPoints + :points WHERE m.id = :memberId")
+    void addRewardPoints(@Param("memberId") Long memberId, @Param("points") int points);
 }
