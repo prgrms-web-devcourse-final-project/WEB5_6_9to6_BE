@@ -164,8 +164,7 @@ public class StudyService {
             req.getPlace(),
             req.isOnline(),
             req.getDescription(),
-            req.getExternalLink(),
-            req.getStatus()
+            req.getExternalLink()
         );
         study.setEndDate(req.getEndDate());
 
