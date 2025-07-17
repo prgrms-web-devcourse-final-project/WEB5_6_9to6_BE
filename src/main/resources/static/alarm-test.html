@@ -50,7 +50,14 @@
   <hr />
 
   <!-- 📬 수신 알람 -->
-  <div class="text-lg font-semibold mt-4">📬 수신 알림 목록</div>
+  <div class="text-lg font-semibold mt-4 flex justify-between items-center">
+    <span>📬 수신 알림 목록</span>
+
+    <!-- 🔻 모두 읽음 처리 버튼 -->
+    <button onclick="markAllAsRead()" class="bg-gray-700 text-white px-3 py-1 rounded hover:bg-gray-800 text-sm">
+      모두 읽음
+    </button>
+  </div>
   <div id="alarm-container" class="space-y-2"></div>
 </div>
 
@@ -162,6 +169,30 @@
   function formatDateTime(isoString) {
     const date = new Date(isoString);
     return date.toLocaleString();
+  }
+
+  function markAllAsRead() {
+    if (!memberId) {
+      alert("먼저 SSE 연결을 시작하세요.");
+      return;
+    }
+
+    fetch(`/api/v1/alarms/${memberId}/read-all`, {
+      method: 'PATCH'
+    }).then((res) => {
+      if (res.ok) {
+        alert("모든 알림을 읽음 처리했습니다!");
+
+        document.querySelectorAll('#alarm-container > div').forEach(div => {
+          div.classList.remove('bg-white', 'hover:bg-blue-50');
+          div.classList.add('bg-gray-100', 'text-gray-500');
+          div.onclick = null; // 클릭 이벤트 제거
+        });
+
+      } else {
+        alert("모두 읽음 처리 실패");
+      }
+    });
   }
 </script>
 </body>

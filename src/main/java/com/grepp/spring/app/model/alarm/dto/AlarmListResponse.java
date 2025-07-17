@@ -1,5 +1,8 @@
 package com.grepp.spring.app.model.alarm.dto;
 
+import com.grepp.spring.app.model.alarm.entity.Alarm;
+import com.grepp.spring.app.model.alarm.entity.AlarmRecipient;
+import com.grepp.spring.app.model.member.entity.Member;
 import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,15 +18,31 @@ public class AlarmListResponse {
     private Boolean isRead;
     private LocalDateTime sentAt;
 
+    private Long senderId;
+    private String senderNickname;
+    private String senderAvatarImage;
+
     @Builder
-    public AlarmListResponse(Long alarmId, Long alarmRecipientId, String type, String resultStatus,
-        String message, Boolean isRead, LocalDateTime sentAt) {
-        this.alarmId = alarmId;
-        this.alarmRecipientId = alarmRecipientId;
-        this.type = type;
-        this.resultStatus = resultStatus;
-        this.message = message;
-        this.isRead = isRead;
-        this.sentAt = sentAt;
+    public AlarmListResponse(AlarmRecipient recipient) {
+        Alarm alarm = recipient.getAlarm();
+        Member sender = alarm.getSender();
+
+        this.alarmId = alarm.getId();
+        this.alarmRecipientId = recipient.getId();
+        this.type = alarm.getAlarmType().name();
+        this.resultStatus = alarm.getResultStatus() != null ? alarm.getResultStatus().name() : null;
+        this.message = alarm.getMessage();
+        this.isRead = recipient.getIsRead();
+        this.sentAt = alarm.getCreatedAt();
+
+        if (sender != null) { // 서버이면, null. 관리자 만들면 null 배제할 예정.
+            this.senderId = sender.getId();
+            this.senderNickname = sender.getNickname();
+            this.senderAvatarImage = sender.getAvatarImage();
+        } else {
+            this.senderId = null;
+            this.senderNickname = null;
+            this.senderAvatarImage = null;
+        }
     }
 }

@@ -1,6 +1,7 @@
 package com.grepp.spring.app.controller.api.study;
 
 import com.grepp.spring.app.controller.api.study.payload.ApplicationRequest;
+import com.grepp.spring.app.controller.api.study.payload.ApplicationResultRequest;
 import com.grepp.spring.app.controller.api.study.payload.StudyCreationRequest;
 import com.grepp.spring.app.controller.api.study.payload.StudySearchRequest;
 import com.grepp.spring.app.controller.api.study.payload.StudyUpdateRequest;
@@ -9,6 +10,7 @@ import com.grepp.spring.app.model.member.dto.response.ApplicantsResponse;
 import com.grepp.spring.app.model.member.dto.response.StudyMemberResponse;
 import com.grepp.spring.app.model.member.entity.Attendance;
 import com.grepp.spring.app.model.member.service.MemberService;
+import com.grepp.spring.app.model.study.code.ApplicantState;
 import com.grepp.spring.app.model.study.code.Category;
 import com.grepp.spring.app.model.study.code.Status;
 import com.grepp.spring.app.model.study.dto.StudyCreationResponse;
@@ -17,6 +19,8 @@ import com.grepp.spring.app.model.study.dto.StudyListResponse;
 import com.grepp.spring.app.model.study.dto.WeeklyAttendanceResponse;
 import com.grepp.spring.app.model.study.dto.WeeklyGoalStatusResponse;
 import com.grepp.spring.app.model.study.entity.Study;
+import com.grepp.spring.app.model.study.service.ApplicantService;
+import com.grepp.spring.app.model.study.service.StudyMemberService;
 import com.grepp.spring.app.model.study.service.StudyService;
 import com.grepp.spring.infra.response.CommonResponse;
 import com.grepp.spring.infra.util.SecurityUtil;
@@ -50,6 +54,8 @@ public class StudyController {
     private final MemberService memberService;
     private final StudyService studyService;
     private final ChatService chatService;
+    private final ApplicantService applicantService;
+    private final StudyMemberService studyMemberService;
 
     // 카테고리 & statuses 조회(enum)
     @Operation(summary = "스터디 카테고리 및 상태 목록 조회",
@@ -237,5 +243,34 @@ public class StudyController {
 
         return ResponseEntity.ok(CommonResponse.success(response));
     }
+
+    // 스터디 가입 승인, 거절
+    @Operation(
+        summary = "스터디 가입 승인, 거절",
+        description = """
+        요청 body에 `ApplicationResultRequest`를 포함해야합니다.
+        스터디 가입 신청에 대해 승인 또는 거절을 처리합니다.
+        - 요청 body에 `memberId`와 `applicationResult`(APPROVED, REJECTED 등)를 포함해야 합니다.
+        - **승인(APPROVED)** 시 신청자는 스터디 멤버로 추가됩니다.
+        - **거절(REJECTED)** 시 신청자의 상태만 업데이트됩니다.
+        - 스터디장만 호출 가능합니다.
+        """
+    )
+    @PostMapping("/{studyId}/applications/respond")
+    public ResponseEntity<CommonResponse<?>> responseStudyApplication(
+        @PathVariable Long studyId,
+        @RequestBody ApplicationResultRequest req) {
+
+        // 신청자 상태변경
+        applicantService.updateState(req.getMemberId(), studyId, req.getApplicationResult());
+
+        // 스터디 맴버에 저장
+        if (req.getApplicationResult() == ApplicantState.ACCEPT) {
+            studyMemberService.saveMember(studyId, req.getMemberId());
+        }
+
+        return ResponseEntity.ok(CommonResponse.noContent());
+    }
+
 
 }
