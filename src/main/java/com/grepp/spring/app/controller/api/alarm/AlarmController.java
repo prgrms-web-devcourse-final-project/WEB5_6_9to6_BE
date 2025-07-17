@@ -38,7 +38,7 @@ public class AlarmController {
         summary = "알림 구독 (SSE 연결)",
         description = """
         클라이언트가 실시간 알림을 받기 위해 서버와 SSE(Server-Sent Events) 연결을 맺습니다.
-        - `memberId`를 경로 변수로 받아 해당 사용자의 Emitter를 생성하고 저장합니다.
+        - 로그인한 사용자의 ID를 SecurityUtil에서 추출하여 해당 사용자 전용 Emitter를 생성하고 저장합니다.
         - `produces`는 `text/event-stream`으로, 실시간으로 데이터가 스트리밍됨을 의미합니다.
         - 연결이 타임아웃되거나 완료되면 서버에서 자동으로 Emitter가 제거됩니다.
         """
@@ -75,7 +75,7 @@ public class AlarmController {
 
     // 알림 목록 조회
     @Operation(
-        summary = "사용자의 알림 목록 조회",
+        summary = "자신의 알림 목록 조회",
         description = "로그인한 사용자가 수신한 알림 목록을 최신순으로 조회합니다."
     )
     @GetMapping
