@@ -164,6 +164,14 @@ public class RestApiExceptionAdvice {
             .body(CommonResponse.error(ResponseCode.UNAUTHORIZED));
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<CommonResponse<String>> handleIllegalArgumentException(IllegalArgumentException ex) {
+        log.error(ex.getMessage(), ex);
+        return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .body(CommonResponse.error(ResponseCode.BAD_REQUEST.code(), ex.getMessage()));
+    }
+
 
 
 }
