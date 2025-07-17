@@ -1,5 +1,6 @@
 package com.grepp.spring.app.controller.api.study.payload;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.grepp.spring.app.model.study.code.Category;
 import com.grepp.spring.app.model.study.code.DayOfWeek;
 import com.grepp.spring.app.model.study.code.GoalType;
@@ -18,7 +19,10 @@ public class StudyCreationRequest {
     private int maxMembers;
     private Region region;
     private String place;
+
+    @JsonProperty("isOnline")
     private boolean isOnline;
+
     private List<String> schedules;
     private String startTime;
     private String endTime;

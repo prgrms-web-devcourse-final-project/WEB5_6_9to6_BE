@@ -14,6 +14,7 @@ import com.grepp.spring.app.model.member.service.MemberService;
 import com.grepp.spring.app.model.study.code.ApplicantState;
 import com.grepp.spring.app.model.study.code.Category;
 import com.grepp.spring.app.model.study.code.Status;
+import com.grepp.spring.app.model.study.dto.StudyCreationResponse;
 import com.grepp.spring.app.model.study.dto.StudyInfoResponse;
 import com.grepp.spring.app.model.study.dto.StudyListResponse;
 import com.grepp.spring.app.model.study.dto.WeeklyAttendanceResponse;
@@ -147,7 +148,7 @@ public class StudyController {
     // 스터디 신청자 목록 조회
     @Operation(summary = "스터디 신청자 목록 조회", description = "스터디 ID(`studyId`)에 해당하는 스터디의 가입 신청자 목록을 조회합니다. 스터디장만 호출 가능합니다.")
     @GetMapping("/{studyId}/applications-list")
-    public ResponseEntity<?> getApplications(@PathVariable Long studyId) {
+    public ResponseEntity<CommonResponse<List<ApplicantsResponse>>> getApplications(@PathVariable Long studyId) {
         List<ApplicantsResponse> applicants = studyService.getApplicants(studyId);
         return ResponseEntity.ok(CommonResponse.success(applicants));
     }
@@ -201,14 +202,16 @@ public class StudyController {
         - 새로운 스터디를 생성합니다. 생성과 동시에 해당 스터디의 채팅방도 함께 생성됩니다.
         """)
     @PostMapping
-    public ResponseEntity<?> createStudy(@RequestBody StudyCreationRequest req) {
-        // 1. 서비스에서 스터디 생성 수행
-        Study study = studyService.createStudy(req);
-        // 2. 채팅방 생성
-        chatService.createChatRoom(study);
+    public ResponseEntity<CommonResponse<StudyCreationResponse>> createStudy(@RequestBody StudyCreationRequest req) {
+        Long memberId = SecurityUtil.getCurrentMemberId();
+        StudyCreationResponse response = studyService.createStudy(req, memberId);
+
+        chatService.createChatRoom(response.getStudyId());
+
         return ResponseEntity.status(HttpStatus.CREATED)
-            .body(CommonResponse.success("스터디가 성공적으로 생성되었습니다."));
+            .body(CommonResponse.success(response));
     }
+
 
     // 스터디 목표 조회
     @Operation(summary = "스터디 목표 목록 조회", description = "스터디 ID(`studyId`)에 설정된 목표 목록을 조회합니다.")

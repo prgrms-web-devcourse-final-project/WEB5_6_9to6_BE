@@ -16,6 +16,7 @@ import com.grepp.spring.infra.util.SecurityUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.LinkedHashMap;
+import com.grepp.spring.infra.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -132,4 +133,9 @@ public class MemberController {
         return ResponseEntity.ok(CommonResponse.success(responseData));
     }
 
+//    // 로그인 한 사용자 memberId
+//    @GetMapping("/i-want-my-id")
+//    public ResponseEntity<?> getMyId() {
+//        return ResponseEntity.ok(CommonResponse.success(SecurityUtil.getCurrentMemberId()));
+//    }
 }
