@@ -43,8 +43,9 @@ public class AlarmController {
         - 연결이 타임아웃되거나 완료되면 서버에서 자동으로 Emitter가 제거됩니다.
         """
     )
-    @GetMapping(value = "/subscribe/{memberId}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public SseEmitter subscribe(@PathVariable Long memberId) {
+    @GetMapping(value = "/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public SseEmitter subscribe() {
+        Long memberId = SecurityUtil.getCurrentMemberId();
         SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
         emitterRepository.save(memberId, emitter);
 
