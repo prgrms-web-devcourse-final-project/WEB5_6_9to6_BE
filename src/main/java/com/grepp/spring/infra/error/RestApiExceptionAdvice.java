@@ -7,12 +7,9 @@ import com.grepp.spring.infra.error.exceptions.InsufficientRewardPointsException
 import com.grepp.spring.infra.error.exceptions.MailSendFailureException;
 import com.grepp.spring.infra.error.exceptions.OutOfMinimumPageException;
 import com.grepp.spring.infra.error.exceptions.OutOfMinimumPageSizeException;
-import com.grepp.spring.infra.error.exceptions.RewardApiException;
 import com.grepp.spring.infra.response.CommonResponse;
 import com.grepp.spring.infra.response.ResponseCode;
 import com.grepp.spring.infra.util.NotFoundException;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
