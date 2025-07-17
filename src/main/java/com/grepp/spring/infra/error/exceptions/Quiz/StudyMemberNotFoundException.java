@@ -1,4 +1,4 @@
-package com.grepp.spring.infra.error.exceptions;
+package com.grepp.spring.infra.error.exceptions.Quiz;
 
 public class StudyMemberNotFoundException extends RuntimeException {
 

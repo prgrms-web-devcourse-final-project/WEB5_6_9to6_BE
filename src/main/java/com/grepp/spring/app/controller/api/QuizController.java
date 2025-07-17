@@ -6,7 +6,7 @@ import com.grepp.spring.app.model.quiz.service.QuizGetService;
 import com.grepp.spring.app.model.quiz.service.QuizGradingService;
 import com.grepp.spring.app.model.quiz.service.QuizCreateService;
 import com.grepp.spring.app.model.quiz.service.SurvivalResultService;
-import com.grepp.spring.infra.error.exceptions.MemberNotFoundException;
+import com.grepp.spring.infra.error.exceptions.Quiz.MemberNotFoundException;
 import com.grepp.spring.infra.response.CommonResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;

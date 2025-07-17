@@ -4,7 +4,7 @@ import com.grepp.spring.app.controller.api.quiz.payload.QuizGradingRequest;
 import com.grepp.spring.app.controller.api.quiz.payload.QuizGradingResponse;
 import com.grepp.spring.app.model.quiz.entity.Quiz;
 import com.grepp.spring.app.model.quiz.repository.QuizRepository;
-import com.grepp.spring.infra.error.exceptions.InvalidQuizGradeRequestException;
+import com.grepp.spring.infra.error.exceptions.Quiz.InvalidQuizGradeRequestException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

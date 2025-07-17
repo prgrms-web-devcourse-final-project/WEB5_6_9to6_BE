@@ -11,7 +11,7 @@ import com.grepp.spring.infra.error.exceptions.MailSendFailureException;
 import com.grepp.spring.infra.error.exceptions.NullStateException;
 import com.grepp.spring.infra.error.exceptions.OutOfMinimumPageException;
 import com.grepp.spring.infra.error.exceptions.OutOfMinimumPageSizeException;
-import com.grepp.spring.infra.error.exceptions.RewardApiException;
+import com.grepp.spring.infra.error.exceptions.Quiz.*;
 import com.grepp.spring.infra.error.exceptions.StudyDataException;
 import com.grepp.spring.infra.response.CommonResponse;
 import com.grepp.spring.infra.response.ResponseCode;
