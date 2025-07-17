@@ -30,7 +30,7 @@ public class Choice {
     @Column(nullable = false)
     private boolean activated;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "quizId")
     private Quiz quiz;
 
