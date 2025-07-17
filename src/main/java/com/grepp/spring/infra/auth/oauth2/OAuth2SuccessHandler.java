@@ -36,7 +36,6 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     private final JwtTokenProvider jwtTokenProvider;
     private final MemberRepository memberRepository;
 
-    // fixme "여기에 추가 정보받는 페이지 경로(프론트 경로를 알아야함 아마)"
     @Value("${app.frontend.signup-redirect}")
     private String signupRedirectUrl;
 
