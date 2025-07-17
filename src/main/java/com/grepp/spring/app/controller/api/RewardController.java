@@ -130,11 +130,8 @@ public class RewardController {
     @GetMapping("/{itemId}/image")
     @ApiResponse(responseCode = "200")
     @Operation(summary = "서버에 조합된 이미지 있는지 없는지 판단", description="서버에 조합된 이미지가 있는지 없는지 판단합니다. \n 아이템 변경에서 같은 로직을 수행하기 때문에 안쓰셔도 됩니다.")
-    public ResponseEntity<CommonResponse<ImageResponse>> getItemImages(@PathVariable Long itemId,
-        Authentication authentication) {
-        Principal principal = (Principal) authentication.getPrincipal();
-        long memberId = principal.getMemberId(); // 실제 로그인 유저 ID 사용
-
+    public ResponseEntity<CommonResponse<ImageResponse>> getItemImages(@PathVariable Long itemId) {
+        Long memberId = SecurityUtil.getCurrentMemberId();
         ItemSetDto itemSetDto = ownItemService.getUseItemList(memberId);
         Optional<ImageResponse> image = itemSetService.ExistItemSet(itemSetDto);
 
