@@ -84,8 +84,11 @@ public class StudyController {
     ) {
         String email = authentication.getName();
         Long studyMemberId = memberService.findStudyMemberId(email, studyId);
+        Long memberId = SecurityUtil.getCurrentMemberId();
 
         memberService.markAttendance(studyMemberId);
+        // 100 point 지급 받음
+        memberService.addRewardPoints(memberId);
 
         return ResponseEntity.ok(CommonResponse.success("출석 체크 완료."));
     }

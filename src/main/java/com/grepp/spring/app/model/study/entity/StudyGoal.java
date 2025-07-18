@@ -41,7 +41,7 @@ public class StudyGoal {
     // 목표 수정
     public void update(String content, GoalType type) {
         this.content = content;
-        this.goalType = type;
+        this.goalType = GoalType.WEEKLY;
     }
 
     public void setStudy(Study study) {

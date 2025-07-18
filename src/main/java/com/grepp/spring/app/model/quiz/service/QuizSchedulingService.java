@@ -16,7 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class QuizSchedulingService {
 
-    private final QuizService quizService;
+    private final QuizCreateService quizCreateService;
     private final StudyScheduleRepository studyScheduleRepository;
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
 
@@ -42,7 +42,7 @@ public class QuizSchedulingService {
         for (StudySchedule schedule : schedulesToRun) {
             try {
                 Long studyId = schedule.getStudy().getStudyId();
-                quizService.createNextQuizForStudy(studyId);
+                quizCreateService.createNextQuiz(studyId);
                 log.info("스터디 ID {}: 시작 10분 전 퀴즈가 성공적으로 생성되었습니다.", studyId);
             } catch (Exception e) {
                 log.error("스터디 ID {}: 예약된 퀴즈 생성 중 오류 발생 - {}",

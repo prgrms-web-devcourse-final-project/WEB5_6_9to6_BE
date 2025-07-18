@@ -1,13 +1,22 @@
 package com.grepp.spring.infra.error.exceptions;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import com.grepp.spring.infra.response.ResponseCode;
 
-@ResponseStatus(HttpStatus.BAD_REQUEST)
 public class BadRequestException extends RuntimeException {
+
+    private final ResponseCode code;
 
     public BadRequestException(String message) {
         super(message);
+        this.code = ResponseCode.BAD_REQUEST;
     }
 
+    public BadRequestException(ResponseCode code) {
+        super(code.message());
+        this.code = code;
+    }
+
+    public ResponseCode getCode() {
+        return code;
+    }
 }

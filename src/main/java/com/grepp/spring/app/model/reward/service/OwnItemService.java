@@ -13,7 +13,7 @@ import com.grepp.spring.app.model.reward.repository.RewardItemRepository;
 import com.grepp.spring.infra.error.exceptions.AlreadyExistException;
 import com.grepp.spring.infra.error.exceptions.InsufficientRewardPointsException;
 import com.grepp.spring.infra.response.ResponseCode;
-import com.grepp.spring.infra.util.NotFoundException;
+import com.grepp.spring.infra.error.exceptions.NotFoundException;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -82,7 +82,7 @@ public class OwnItemService {
             .orElseThrow(() -> new NotFoundException("Member not found"));
 
         // 3. 아이템 소유 여부 확인
-        if( ownItemRepository.existsByRewardItem_ItemId(itemId))
+        if(ownItemRepository.existsByMemberIdAndRewardItem_ItemId(memberId, itemId))
         {
             throw new AlreadyExistException(ResponseCode.ALREADY_EXIST);
         }
@@ -103,8 +103,6 @@ public class OwnItemService {
 
         OwnItem ownItem = OwnItem.builder().memberId(memberId).isUsed(false).activated(true).rewardItem(rewardItem).build();
         ownItemRepository.save(ownItem);
-
-
 
 
     }

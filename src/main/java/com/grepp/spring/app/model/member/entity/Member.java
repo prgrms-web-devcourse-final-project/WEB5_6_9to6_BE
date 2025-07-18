@@ -110,4 +110,7 @@ public class Member extends BaseEntity{
         this.avatarImage = avatarImage;
     }
 
+    public void addRewardPoints(int amount) {
+        this.rewardPoints += amount;
+    }
 }

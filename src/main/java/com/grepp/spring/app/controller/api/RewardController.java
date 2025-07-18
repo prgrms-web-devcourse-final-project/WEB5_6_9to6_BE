@@ -49,10 +49,6 @@ public class RewardController {
     private final MemberService memberService;
 
     // 아이템 상점 목록
-
-    /**
-     * @return
-     */
     @GetMapping
     @Operation(summary = "아이템 상점 목록", description="전체 아이템 목록을 조회합니다.")
     public ResponseEntity<CommonResponse<RewardItemResponse>> getRewardItems() {
@@ -62,11 +58,7 @@ public class RewardController {
         return ResponseEntity.ok(CommonResponse.success(responseDto));
     }
 
-    /**
-     *
-     * @param itemId 리워드아이템 아이디(쿼리 파라미터)
-     * @return
-     */
+
 //    @GetMapping
 //    public ResponseEntity<CommonResponse<Page<RewardItemDto>>> getRewardItems(
 //        @PageableDefault(size = 10) Pageable pageable
@@ -79,12 +71,9 @@ public class RewardController {
     @PostMapping("/{itemId}/purchase")
     @Operation(summary = "아이템 구매", description="ownitem 테이블에 리워드 아이템 정보를 추가합니다. ")
     public ResponseEntity<CommonResponse<Map<String, Object>>> purchaseItem(
-         @PathVariable long itemId,
-        Authentication authentication
+         @PathVariable long itemId
     ) {
-        Principal principal = (Principal) authentication.getPrincipal();
-        long memberId = principal.getMemberId();
-
+        Long memberId = SecurityUtil.getCurrentMemberId();
         ownItemService.purchaseItem(memberId,itemId);
 
         Map<String, Object> data = new HashMap<>();
@@ -96,11 +85,8 @@ public class RewardController {
     // 소유 아이템 목록
     @GetMapping("/own-items")
     @Operation(summary = "소유 아이템 목록", description="소유한 아이템을 표시합니다.")
-    public ResponseEntity<CommonResponse<List<OwnItemResponse>>> getOwnItems(
-        Authentication authentication) {
-
-        Principal principal = (Principal) authentication.getPrincipal();
-        long memberId = principal.getMemberId(); // 실제 로그인 유저 ID 사용
+    public ResponseEntity<CommonResponse<List<OwnItemResponse>>> getOwnItems() {
+        Long memberId = SecurityUtil.getCurrentMemberId();
         List<OwnItemDto> dtos = ownItemService.getOwnItems(memberId);
 
          List<OwnItemResponse> responses = dtos.stream()
@@ -116,7 +102,6 @@ public class RewardController {
     public ResponseEntity<CommonResponse<ImageResponse>> changeOwnItems(
         @PathVariable long ownItemId
     ) {
-        Map<String, Object> data = Map.of();
 
         Long memberId = SecurityUtil.getCurrentMemberId();
 
@@ -144,11 +129,8 @@ public class RewardController {
     @GetMapping("/{itemId}/image")
     @ApiResponse(responseCode = "200")
     @Operation(summary = "서버에 조합된 이미지 있는지 없는지 판단", description="서버에 조합된 이미지가 있는지 없는지 판단합니다. \n 아이템 변경에서 같은 로직을 수행하기 때문에 안쓰셔도 됩니다.")
-    public ResponseEntity<CommonResponse<ImageResponse>> getItemImages(@PathVariable Long itemId,
-        Authentication authentication) {
-        Principal principal = (Principal) authentication.getPrincipal();
-        long memberId = principal.getMemberId(); // 실제 로그인 유저 ID 사용
-
+    public ResponseEntity<CommonResponse<ImageResponse>> getItemImages(@PathVariable Long itemId) {
+        Long memberId = SecurityUtil.getCurrentMemberId();
         ItemSetDto itemSetDto = ownItemService.getUseItemList(memberId);
         Optional<ImageResponse> image = itemSetService.ExistItemSet(itemSetDto);
 

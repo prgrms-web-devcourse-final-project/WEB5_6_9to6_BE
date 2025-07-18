@@ -129,12 +129,13 @@ public class Study {
         goal.setStudy(this);
     }
 
-    public Study(Long studyId) {
-        this.studyId = studyId;
-    }
-  
+
     public void updateNotice(String notice) {
         this.notice = notice;
     }
 
+
+    public Study(Long studyId) {
+        this.studyId = studyId;
+    }
 }
