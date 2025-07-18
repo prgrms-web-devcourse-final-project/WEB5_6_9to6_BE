@@ -4,7 +4,9 @@ import com.grepp.spring.app.controller.api.quiz.payload.QuizListResponse;
 import com.grepp.spring.app.model.quiz.dto.QuizDto;
 import com.grepp.spring.app.model.quiz.dto.QuizProjection;
 import com.grepp.spring.app.model.quiz.repository.QuizSetRepository;
-import com.grepp.spring.infra.error.exceptions.InvalidQuizException;
+import com.grepp.spring.app.model.study.repository.StudyRepository;
+import com.grepp.spring.infra.error.exceptions.Quiz.InvalidQuizException;
+import com.grepp.spring.infra.error.exceptions.Quiz.StudyNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,10 +18,18 @@ import java.util.*;
 public class QuizGetService {
 
     private final QuizSetRepository quizSetRepository;
+    private final StudyRepository studyRepository;
 
     public List<QuizListResponse> getQuizzesByStudyId(Long studyId) {
+
+        // 존재 하지 않는 스터디
+        if (!studyRepository.existsById(studyId)) {
+            throw new StudyNotFoundException("존재하지 않는 스터디입니다. studyId: " + studyId);
+        }
+
         List<QuizProjection> projections = quizSetRepository.findQuizSetsByStudyId(studyId);
 
+        // 스터디에 퀴즈 없음
         if (projections.isEmpty()) {
             throw new InvalidQuizException("해당 스터디에 생성된 퀴즈가 없습니다. studyId: " + studyId);
         }

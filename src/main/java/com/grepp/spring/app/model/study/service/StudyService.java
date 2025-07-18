@@ -16,6 +16,7 @@ import com.grepp.spring.app.model.study.code.GoalType;
 import com.grepp.spring.app.model.study.code.Status;
 import com.grepp.spring.app.model.study.dto.StudyCreationResponse;
 import com.grepp.spring.app.model.study.code.StudyType;
+import com.grepp.spring.app.model.study.dto.StudyCreationResponse;
 import com.grepp.spring.app.model.study.dto.StudyInfoResponse;
 import com.grepp.spring.app.model.study.dto.StudyListResponse;
 import com.grepp.spring.app.model.study.dto.WeeklyGoalStatusResponse;
@@ -188,6 +189,10 @@ public class StudyService {
     }
 
     public boolean isUserStudyMember(Long memberId, Long studyId) {
+        if (!studyRepository.existsById(studyId)) {
+            throw new IllegalArgumentException("스터디가 존재하지 않습니다.");
+        }
+
         return studyMemberRepository.existsByMember_IdAndStudy_StudyId(memberId, studyId);
     }
 
@@ -244,7 +249,7 @@ public class StudyService {
                 DayOfWeek day = DayOfWeek.valueOf(dayStr.toUpperCase());
                 study.addSchedule(day, req.getStartTime(), req.getEndTime());
             } catch (IllegalArgumentException e) {
-                throw new RuntimeException("올바르지 않은 요일 형식입니다: " + dayStr);
+                throw new IllegalArgumentException("올바르지 않은 요일 형식입니다: " + dayStr);
             }
         }
 
@@ -354,7 +359,11 @@ public class StudyService {
     }
 
     public String findNotice(Long studyId) {
+        if (!studyRepository.existsById(studyId)) {
+            throw new IllegalArgumentException("스터디가 존재하지 않습니다.");
+        }
+
         return studyRepository.findNoticeByStudyId(studyId)
-            .orElse("none");
+            .orElse("공지사항이 없습니다.");
     }
 }
