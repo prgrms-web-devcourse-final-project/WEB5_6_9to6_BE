@@ -13,5 +13,4 @@ public class MemberUpdateRequest {
 
     private String currentPassword;
     private String newPassword;
-    private String newPasswordCheck;
 }
