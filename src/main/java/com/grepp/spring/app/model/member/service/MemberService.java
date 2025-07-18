@@ -113,16 +113,16 @@ public class MemberService {
         }
 
         // 비밀번호 변경
-        if (request.getCurrentPassword() != null && request.getNewPassword() != null && request.getNewPasswordCheck() != null)  {
+        if (request.getCurrentPassword() != null || request.getNewPassword() != null)  {
 
-            // 기존 비밀번호 일치 확인
-            if (!passwordEncoder.matches(request.getCurrentPassword(), member.getPassword())) {
-                throw new BadRequestException(ResponseCode.INCORRECT_PASSWORD);
+            // 현재 비밀번호, 새 비밀번호 중 하나만 요청이 들어온 경우
+            if (request.getCurrentPassword() == null || request.getNewPassword() == null) {
+                throw new BadRequestException(ResponseCode.MISSING_PASSWORD_FIELDS);
             }
 
-            // 새 비밀번호 확인
-            if (!request.getNewPassword().equals(request.getNewPasswordCheck())) {
-                throw new BadRequestException(ResponseCode.MISMATCH_PASSWORD_CONFIRM);
+            // 현재 비밀번호 일치 확인
+            if (!passwordEncoder.matches(request.getCurrentPassword(), member.getPassword())) {
+                throw new BadRequestException(ResponseCode.INCORRECT_PASSWORD);
             }
 
             member.updatePassword(passwordEncoder.encode(request.getNewPassword()));
