@@ -82,7 +82,7 @@ public class OwnItemService {
             .orElseThrow(() -> new NotFoundException("Member not found"));
 
         // 3. 아이템 소유 여부 확인
-        if( ownItemRepository.existsByRewardItem_ItemId(itemId))
+        if(ownItemRepository.existsByMemberIdAndRewardItem_ItemId(memberId, itemId))
         {
             throw new AlreadyExistException(ResponseCode.ALREADY_EXIST);
         }
@@ -103,8 +103,6 @@ public class OwnItemService {
 
         OwnItem ownItem = OwnItem.builder().memberId(memberId).isUsed(false).activated(true).rewardItem(rewardItem).build();
         ownItemRepository.save(ownItem);
-
-
 
 
     }
