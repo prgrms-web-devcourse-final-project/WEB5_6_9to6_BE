@@ -13,7 +13,7 @@ import com.grepp.spring.app.model.reward.repository.RewardItemRepository;
 import com.grepp.spring.infra.error.exceptions.AlreadyExistException;
 import com.grepp.spring.infra.error.exceptions.InsufficientRewardPointsException;
 import com.grepp.spring.infra.response.ResponseCode;
-import com.grepp.spring.infra.util.NotFoundException;
+import com.grepp.spring.infra.error.exceptions.NotFoundException;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

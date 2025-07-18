@@ -10,13 +10,12 @@ import com.grepp.spring.infra.error.exceptions.MailSendFailureException;
 import com.grepp.spring.infra.error.exceptions.NullStateException;
 import com.grepp.spring.infra.error.exceptions.OutOfMinimumPageException;
 import com.grepp.spring.infra.error.exceptions.OutOfMinimumPageSizeException;
-import com.grepp.spring.infra.error.exceptions.RewardApiException;
 import com.grepp.spring.infra.error.exceptions.StudyDataException;
 
 import com.grepp.spring.infra.error.exceptions.SameStateException;
 import com.grepp.spring.infra.response.CommonResponse;
 import com.grepp.spring.infra.response.ResponseCode;
-import com.grepp.spring.infra.util.NotFoundException;
+import com.grepp.spring.infra.error.exceptions.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -57,15 +56,6 @@ public class RestApiExceptionAdvice {
                    .status(HttpStatus.UNAUTHORIZED)
                    .body(CommonResponse.error(ResponseCode.UNAUTHORIZED));
     }
-    
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<CommonResponse<String>> runtimeExceptionHandler(RuntimeException ex) {
-        log.error(ex.getMessage(), ex);
-        return ResponseEntity
-                   .internalServerError()
-                   .body(CommonResponse.error(ResponseCode.INTERNAL_SERVER_ERROR));
-    }
-
 
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<CommonResponse<ResponseCode>> handleIllegalArgumentException(Exception ex) {
