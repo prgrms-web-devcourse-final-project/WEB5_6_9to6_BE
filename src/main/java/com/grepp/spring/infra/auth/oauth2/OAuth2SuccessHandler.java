@@ -95,8 +95,12 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                 memberRepository.save(member);
             }
 
+            String roleToAdd = "ROLE_USER";
+            String finalRoles = roles + "," + roleToAdd;
+
+
             // 토큰 발급 및 리다이렉트
-            TokenDto token = authService.processTokenSignin(userInfo.getEmail(), roles);
+            TokenDto token = authService.processTokenSignin(userInfo.getEmail(), finalRoles);
 
             ResponseCookie accTkCookie = TokenCookieFactory.create(
                 AuthToken.ACCESS_TOKEN.name(), token.getAccessToken(),
