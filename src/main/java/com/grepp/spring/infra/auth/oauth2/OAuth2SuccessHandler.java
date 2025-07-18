@@ -39,6 +39,9 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     @Value("${app.frontend.signup-redirect}")
     private String signupRedirectUrl;
 
+    @Value("${app.frontend.signup-redirect-main}")
+    private String signupRedirectMainUrl;
+
 
     /* TODO 현재 Oauth2 로그인 시 roles 에는
         "OAUTH2_USER,SCOPE_https://www.googleapis.com/auth/userinfo.email,SCOPE_https://www.googleapis.com/auth/userinfo.profile,SCOPE_openid"
@@ -138,6 +141,6 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         // NOTE aws api gateway 에서 Set-Cookie 병합 정핵이 다를 수 있으니 주의 aws 에서만 jwt 관련 오류가 생긴하면 해당 부분도 확인하기
         response.addHeader("Set-Cookie", accTkCookie.toString());
         response.addHeader("Set-Cookie", rfTkCookie.toString());
-        getRedirectStrategy().sendRedirect(request, response, "/");
+        getRedirectStrategy().sendRedirect(request, response, signupRedirectMainUrl);
     }
 }
