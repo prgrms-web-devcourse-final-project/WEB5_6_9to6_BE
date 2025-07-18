@@ -12,7 +12,7 @@ import com.grepp.spring.app.model.member.repository.MemberRepository;
 import com.grepp.spring.app.model.study.entity.Study;
 import com.grepp.spring.app.model.study.repository.StudyRepository;
 import com.grepp.spring.infra.config.Chat.WebSocket.WebSocketSessionTracker;
-import com.grepp.spring.infra.util.NotFoundException;
+import com.grepp.spring.infra.error.exceptions.NotFoundException;
 import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.Comparator;
