@@ -16,6 +16,8 @@ import com.grepp.spring.infra.error.exceptions.SameStateException;
 import com.grepp.spring.infra.response.CommonResponse;
 import com.grepp.spring.infra.response.ResponseCode;
 import com.grepp.spring.infra.error.exceptions.NotFoundException;
+import jakarta.persistence.EntityNotFoundException;
+import java.util.NoSuchElementException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -197,6 +199,22 @@ public class RestApiExceptionAdvice {
 
     @ExceptionHandler(NullStateException.class)
     public ResponseEntity<CommonResponse<String>> handleNullStateException(NullStateException ex) {
+        log.error(ex.getMessage(), ex);
+        return ResponseEntity
+            .status(HttpStatus.NOT_FOUND)
+            .body(CommonResponse.error(ResponseCode.NOT_FOUND));
+    }
+
+    @ExceptionHandler(NoSuchElementException.class)
+    public ResponseEntity<CommonResponse<String>> handleNoSuchElementException(NoSuchElementException ex) {
+        log.error(ex.getMessage(), ex);
+        return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .body(CommonResponse.error(ResponseCode.BAD_REQUEST.code(), ex.getMessage()));
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<CommonResponse<String>> handleEntityNotFoundException(EntityNotFoundException ex) {
         log.error(ex.getMessage(), ex);
         return ResponseEntity
             .status(HttpStatus.NOT_FOUND)
