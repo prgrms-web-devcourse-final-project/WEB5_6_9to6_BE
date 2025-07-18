@@ -6,7 +6,7 @@ import com.grepp.spring.app.model.quiz.dto.QuizProjection;
 import com.grepp.spring.app.model.quiz.repository.QuizSetRepository;
 import com.grepp.spring.app.model.study.repository.StudyRepository;
 import com.grepp.spring.infra.error.exceptions.Quiz.InvalidQuizException;
-import com.grepp.spring.infra.error.exceptions.Quiz.MemberNotFoundException;
+import com.grepp.spring.infra.error.exceptions.Quiz.StudyNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +24,7 @@ public class QuizGetService {
 
         // 존재 하지 않는 스터디
         if (!studyRepository.existsById(studyId)) {
-            throw new MemberNotFoundException("존재하지 않는 스터디입니다. studyId: " + studyId);
+            throw new StudyNotFoundException("존재하지 않는 스터디입니다. studyId: " + studyId);
         }
 
         List<QuizProjection> projections = quizSetRepository.findQuizSetsByStudyId(studyId);
