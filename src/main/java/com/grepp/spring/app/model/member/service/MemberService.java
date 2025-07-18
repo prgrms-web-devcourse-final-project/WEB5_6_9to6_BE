@@ -119,7 +119,7 @@ public class MemberService {
             if (request.getCurrentPassword() == null || request.getNewPassword() == null) {
                 throw new BadRequestException(ResponseCode.MISSING_PASSWORD_FIELDS);
             }
-
+          
             // 현재 비밀번호 일치 확인
             if (!passwordEncoder.matches(request.getCurrentPassword(), member.getPassword())) {
                 throw new BadRequestException(ResponseCode.INCORRECT_PASSWORD);
