@@ -8,6 +8,9 @@ import com.grepp.spring.app.model.quiz.entity.QuizRecord;
 import com.grepp.spring.app.model.quiz.entity.QuizSet;
 import com.grepp.spring.app.model.quiz.repository.QuizRecordRepository;
 import com.grepp.spring.app.model.quiz.repository.QuizSetRepository;
+import com.grepp.spring.infra.error.exceptions.Quiz.QuizResultAlreadySubmittedException;
+import com.grepp.spring.infra.error.exceptions.Quiz.QuizSetNotFoundException;
+import com.grepp.spring.infra.error.exceptions.Quiz.StudyMemberNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,11 +30,18 @@ public class SurvivalResultService {
     public void processSurvivalResult(Long studyId, int week, SurvivalResultRequest request) {
 
         Long studyMemberId = request.getStudyMemberId();
-        StudyMember studyMember = studyMemberRepository.findByStudy_StudyIdAndStudyMemberId(studyId, studyMemberId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 스터디에 존재하지 않는 스터디 멤버 ID입니다: " + studyMemberId));
 
-        QuizSet quizSet = quizSetRepository.findByStudyIdAndWeek(studyId, week)
-                .orElseThrow(() -> new IllegalArgumentException("해당 주차의 퀴즈 세트가 존재하지 않습니다."));
+        StudyMember studyMember = studyMemberRepository
+                .findByStudy_StudyIdAndStudyMemberId(studyId, studyMemberId)
+                .orElseThrow(() -> new StudyMemberNotFoundException("해당 스터디에 존재하지 않는 스터디 멤버 ID 입니다."));
+
+        QuizSet quizSet = quizSetRepository
+                .findByStudyIdAndWeek(studyId, week)
+                .orElseThrow(() -> new QuizSetNotFoundException("해당 주차의 퀴즈 세트가 존재하지 않습니다."));
+
+        if (quizRecordRepository.existsByStudyMemberIdAndQuizSet(studyMemberId, quizSet)) {
+            throw new QuizResultAlreadySubmittedException("이미 해당 주차의 결과가 등록되었습니다.");
+        }
 
         if (request.isSurvived()) {
             Long memberId = studyMember.getMember().getId();

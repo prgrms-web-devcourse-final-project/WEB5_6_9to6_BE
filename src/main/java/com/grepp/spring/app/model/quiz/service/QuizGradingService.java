@@ -4,6 +4,7 @@ import com.grepp.spring.app.controller.api.quiz.payload.QuizGradingRequest;
 import com.grepp.spring.app.controller.api.quiz.payload.QuizGradingResponse;
 import com.grepp.spring.app.model.quiz.entity.Quiz;
 import com.grepp.spring.app.model.quiz.repository.QuizRepository;
+import com.grepp.spring.infra.error.exceptions.Quiz.InvalidQuizGradeRequestException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +23,7 @@ public class QuizGradingService {
         );
 
         if (quizzes.size() != request.getAnswerSheet().size()) {
-            throw new IllegalArgumentException("답안 수가 퀴즈 수와 일치하지 않습니다.");
+            throw new InvalidQuizGradeRequestException("답안 수가 퀴즈 수와 일치하지 않습니다.");
         }
 
         int correctCount = 0;
@@ -34,5 +35,4 @@ public class QuizGradingService {
 
         return new QuizGradingResponse(request.getWeek(), correctCount);
     }
-
 }
