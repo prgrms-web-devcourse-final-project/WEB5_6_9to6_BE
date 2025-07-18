@@ -26,8 +26,8 @@ import com.grepp.spring.app.model.study.entity.StudySchedule;
 import com.grepp.spring.app.model.study.repository.GoalAchievementRepository;
 import com.grepp.spring.infra.error.exceptions.AlreadyCheckedAttendanceException;
 import com.grepp.spring.infra.error.exceptions.AlreadyExistException;
-import com.grepp.spring.infra.error.exceptions.BadRequestException;
 import com.grepp.spring.infra.error.exceptions.NotFoundException;
+import com.grepp.spring.infra.error.exceptions.PasswordValidationException;
 import com.grepp.spring.infra.response.ResponseCode;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -37,6 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 @Slf4j
 @Service
@@ -108,21 +109,22 @@ public class MemberService {
             .orElseThrow(() -> new NotFoundException("사용자를 찾을 수 없습니다"));
 
         // 닉네임 변경
-        if (request.getNickname() != null && !request.getNickname().isBlank()) {
+        if (StringUtils.hasText(request.getNickname())) {
             member.updateNickname(request.getNickname());
         }
 
         // 비밀번호 변경
-        if (request.getCurrentPassword() != null || request.getNewPassword() != null)  {
+        if (StringUtils.hasText(request.getCurrentPassword()) &&
+            StringUtils.hasText(request.getNewPassword())) {
 
-            // 현재 비밀번호, 새 비밀번호 중 하나만 요청이 들어온 경우
-            if (request.getCurrentPassword() == null || request.getNewPassword() == null) {
-                throw new BadRequestException(ResponseCode.MISSING_PASSWORD_FIELDS);
+            // 기존 비밀번호 일치 확인
+            if (!passwordEncoder.matches(request.getCurrentPassword(), member.getPassword())) {
+                throw new PasswordValidationException(ResponseCode.INCORRECT_PASSWORD);
             }
 
-            // 현재 비밀번호 일치 확인
-            if (!passwordEncoder.matches(request.getCurrentPassword(), member.getPassword())) {
-                throw new BadRequestException(ResponseCode.INCORRECT_PASSWORD);
+            // 새 비밀번호가 기존 비밀번호와 같은지 검증 (같으면 예외처리)
+            if (passwordEncoder.matches(request.getNewPassword(), member.getPassword())) {
+                throw new PasswordValidationException(ResponseCode.SAME_PASSWORD_NOT_ALLOWED);
             }
 
             member.updatePassword(passwordEncoder.encode(request.getNewPassword()));
@@ -246,11 +248,11 @@ public class MemberService {
     public Long findStudyMemberId(String email, Long studyId) {
         // email → member
         Member member = memberRepository.findByEmail(email)
-            .orElseThrow(() -> new RuntimeException("해당 이메일의 회원이 존재하지 않습니다: " + email));
+            .orElseThrow(() -> new NotFoundException("해당 이메일의 회원이 존재하지 않습니다: " + email));
 
         // memberId → studyMember
         StudyMember studyMember = studyMemberRepository.findByMember_IdAndStudy_StudyId(member.getId(), studyId)
-            .orElseThrow(() -> new RuntimeException("스터디 멤버를 찾을 수 없습니다."));
+            .orElseThrow(() -> new NotFoundException("스터디 멤버를 찾을 수 없습니다."));
 
         return studyMember.getStudyMemberId();
     }
@@ -258,7 +260,7 @@ public class MemberService {
     // 출석 체크 등록
     public void markAttendance(Long studyMemberId) {
         StudyMember studyMember = studyMemberRepository.findById(studyMemberId)
-            .orElseThrow(() -> new RuntimeException("스터디 멤버를 찾을 수 없습니다."));
+            .orElseThrow(() -> new NotFoundException("스터디 멤버를 찾을 수 없습니다."));
 
         LocalDate today = LocalDate.now();
 
@@ -297,7 +299,7 @@ public class MemberService {
 
     public void updateProfileImage(Long memberId, String image) {
         Member member = memberRepository.findById(memberId)
-            .orElseThrow(() -> new NotFoundException("Member not found"));
+            .orElseThrow(() -> new NotFoundException("사용자를 찾을 수 없습니다."));
         member.updateAvatarImage(image);
     }
 
@@ -320,7 +322,7 @@ public class MemberService {
     @Transactional
     public void addRewardPoints(Long memberId) {
         Member member = memberRepository.findById(memberId)
-            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+            .orElseThrow(() -> new NotFoundException("사용자를 찾을 수 없습니다."));
 
         member.addRewardPoints(100);
     }
