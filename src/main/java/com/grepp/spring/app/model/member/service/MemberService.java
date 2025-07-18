@@ -316,4 +316,12 @@ public class MemberService {
             .build();
         return avatarInfoResponse;
     }
+
+    @Transactional
+    public void addRewardPoints(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+
+        member.addRewardPoints(100);
+    }
 }
