@@ -7,7 +7,7 @@ import com.grepp.spring.app.model.reward.entity.ItemSet;
 import com.grepp.spring.app.model.reward.entity.RewardItem;
 import com.grepp.spring.app.model.reward.repository.ItemSetRepository;
 import com.grepp.spring.app.model.reward.repository.RewardItemRepository;
-import com.grepp.spring.infra.util.NotFoundException;
+import com.grepp.spring.infra.error.exceptions.NotFoundException;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.HashSet;
