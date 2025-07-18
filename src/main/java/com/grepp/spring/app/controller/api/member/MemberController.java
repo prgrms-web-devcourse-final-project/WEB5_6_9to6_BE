@@ -73,9 +73,8 @@ public class MemberController {
     @Operation(
         summary = "기존 비밀번호 확인",
         description = """
-    요청 body에 `PasswordVerifyRequest`를 포함해야합니다.
-    현재 로그인된 사용자의 비밀번호와 요청된 비밀번호를 비교하여 일치 여부를 확인합니다. 
-    비밀번호 변경 전 본인 인증 용도로 사용됩니다."""
+    요청 body에 `PasswordVerifyRequest`를 포함해야 합니다.
+    현재 로그인된 사용자의 비밀번호와 요청된 비밀번호를 비교하여 일치 여부를 확인합니다. 비밀번호 변경 전 본인 인증 용도로 사용됩니다."""
     )
     @PostMapping("/password/verify")
     public ResponseEntity<CommonResponse<PasswordVerifyResponse>> verifyPassword(
