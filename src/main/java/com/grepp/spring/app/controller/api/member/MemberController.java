@@ -56,15 +56,16 @@ public class MemberController {
         summary = "회원 정보 수정",
         description = """
     요청 body에 `MemberUpdateRequest`를 포함해야합니다.
-    회원 ID(`memberId`)에 해당하는 회원의 정보를 수정합니다. 요청 본문을 통해 닉네임 또는 비밀번호를 변경할 수 있습니다.
+    현재 로그인된 사용자의 정보를 수정합니다. 요청 본문을 통해 닉네임 또는 비밀번호를 변경할 수 있습니다.
+    - 닉네임만 혹은 비밀번호만 변경을 원할 경우, 해당 필드만 요청을 보내면 됩니다.
     """
     )
-    @PutMapping("/{memberId}/info")
-    public ResponseEntity<CommonResponse<Void>> updateMemberInfo(@PathVariable Long memberId,
+    @PutMapping("/info")
+    public ResponseEntity<CommonResponse<Void>> updateMemberInfo(
         @RequestBody MemberUpdateRequest request) {
 
+        Long memberId = SecurityUtil.getCurrentMemberId();
         memberService.updateMemberInfo(memberId, request);
-
         return ResponseEntity.ok(CommonResponse.noContent());
     }
 
@@ -73,13 +74,14 @@ public class MemberController {
         summary = "기존 비밀번호 확인",
         description = """
     요청 body에 `PasswordVerifyRequest`를 포함해야합니다.
-    회원 ID(`memberId`)와 현재 비밀번호를 받아 일치 여부를 확인합니다. 비밀번호 변경 전 본인 인증 용도로 사용됩니다."""
+    현재 로그인된 사용자의 비밀번호와 요청된 비밀번호를 비교하여 일치 여부를 확인합니다. 
+    비밀번호 변경 전 본인 인증 용도로 사용됩니다."""
     )
-    @PostMapping("/{memberId}/password/verify")
+    @PostMapping("/password/verify")
     public ResponseEntity<CommonResponse<PasswordVerifyResponse>> verifyPassword(
-        @PathVariable Long memberId,
         @RequestBody PasswordVerifyRequest request) {
 
+        Long memberId = SecurityUtil.getCurrentMemberId();
         boolean isMatched = memberService.verifyPassword(memberId, request.getPassword());
         var responseData = new PasswordVerifyResponse(isMatched);
 
@@ -131,10 +133,4 @@ public class MemberController {
         responseData.put("avatarInfo", avatarRes);
         return ResponseEntity.ok(CommonResponse.success(responseData));
     }
-
-//    // 로그인 한 사용자 memberId
-//    @GetMapping("/i-want-my-id")
-//    public ResponseEntity<?> getMyId() {
-//        return ResponseEntity.ok(CommonResponse.success(SecurityUtil.getCurrentMemberId()));
-//    }
 }
