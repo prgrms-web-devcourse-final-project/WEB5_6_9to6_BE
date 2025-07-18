@@ -6,6 +6,7 @@ import com.grepp.spring.app.model.quiz.service.QuizGetService;
 import com.grepp.spring.app.model.quiz.service.QuizGradingService;
 import com.grepp.spring.app.model.quiz.service.QuizCreateService;
 import com.grepp.spring.app.model.quiz.service.SurvivalResultService;
+import com.grepp.spring.infra.error.exceptions.Quiz.MemberNotFoundException;
 import com.grepp.spring.infra.response.CommonResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -32,7 +33,7 @@ public class QuizController {
             description = "스터디 ID(`studyId`)를 이용하여 해당 스터디에 생성된 모든 퀴즈 문제 목록을 조회합니다."
     )
     @GetMapping("/{studyId}/problems")
-    public ResponseEntity<CommonResponse<List<QuizListResponse>>> getAllQuizProblems(@PathVariable Long studyId) {
+    public ResponseEntity<CommonResponse<List<QuizListResponse>>> getAllQuizProblems(@PathVariable Long studyId) throws MemberNotFoundException {
 
         List<QuizListResponse> data = quizGetService.getQuizzesByStudyId(studyId);
         return ResponseEntity.ok(CommonResponse.success(data));

@@ -14,6 +14,8 @@ public enum ResponseCode {
     BAD_CREDENTIAL("4011", HttpStatus.UNAUTHORIZED, "아이디나 비밀번호가 틀렸습니다."),
     NOT_EXIST_PRE_AUTH_CREDENTIAL("4012", HttpStatus.OK, "사전 인증 정보가 요청에서 발견되지 않았습니다."),
     SOCIAL_LOGIN_CONFLICT("4013", HttpStatus.UNAUTHORIZED, "이미 동일한 이메일의 로컬 계정이 존재합니다."),
+    INCORRECT_PASSWORD("4015", HttpStatus.BAD_REQUEST, "현재 비밀번호가 일치하지 않습니다."),
+    MISMATCH_PASSWORD_CONFIRM("4016", HttpStatus.BAD_REQUEST, "새 비밀번호와 새 비밀번호 확인이 일치하지 않습니다."),
     NOT_FOUND("4040", HttpStatus.NOT_FOUND, "NOT FOUND"),
     ALREADY_EXIST("4090", HttpStatus.CONFLICT, "해당 데이터는 이미 존재합니다."),
     POINT_NOT_ENOUGH("4091",HttpStatus.CONFLICT,"포인트가 부족합니다."),
