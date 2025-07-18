@@ -26,7 +26,7 @@ public class SaveImageRequest {
         @NotNull
         private String category;
         @NotNull
-        private List<Long> itemIds;
+        private List<Long> itemId;
     }
 
 }

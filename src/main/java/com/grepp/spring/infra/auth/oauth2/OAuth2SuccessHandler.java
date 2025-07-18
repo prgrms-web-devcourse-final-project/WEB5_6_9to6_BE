@@ -97,6 +97,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                     .build();
                 memberRepository.save(member);
             }
+
             // 토큰 발급 및 리다이렉트
             TokenDto token = authService.processTokenSignin(userInfo.getEmail(), roles);
 
