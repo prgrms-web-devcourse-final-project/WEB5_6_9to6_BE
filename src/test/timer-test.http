@@ -1,0 +1,37 @@
+### [POST] 스터디별 공부시간 등록
+# 특정 스터디(studyId)에서 멤버가 공부한 시간을 기록
+# @PathVariable: studyId
+# @RequestBody: StudyTimeRecordRequest (JSON)
+# 성공 시 성공 메시지만 반환
+POST http://localhost:8080/api/v1/timer/1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMTBAZXhhbXBsZS5jb20iLCJqdGkiOiI0NDczOThjYi01MWUxLTRjMDQtYjBjMy1lZmY2MmJiNGM4YzkiLCJtZW1iZXJJZCI6MTAsInJvbGVzIjoiUk9MRV9VU0VSIiwiZXhwIjoxNzU3OTg4NDYwfQ.BWGYHqz6Ssp9DnNDPZAphNRLZSbd1ac2sXkm5rVuuQi8B5Xn6OIsnDnq75R5nCxHvBu1zqb62FwG-dgAo8Dnkw
+
+{
+  "studyTime": 3600
+}
+
+
+### [GET] 전체 누적 시간 조회
+# 특정 멤버(memberId)의 전체 누적 공부 시간을 조회
+# @PathVariable: memberId
+GET http://localhost:8080/api/v1/timer/1/all-time
+Accept: application/json
+
+
+### [GET] 최근 7일간의 일별 공부시간 확인
+# 로그인된 사용자의 특정 스터디(studyId)에서의 최근 7일간 일별 공부 기록을 조회
+# @PathVariable: studyId
+# Authorization 헤더에 유효한 엑세스 토큰값이 필요
+GET http://localhost:8080/api/v1/timer/1/week-daily-time
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMTBAZXhhbXBsZS5jb20iLCJqdGkiOiI0NDczOThjYi01MWUxLTRjMDQtYjBjMy1lZmY2MmJiNGM4YzkiLCJtZW1iZXJJZCI6MTAsInJvbGVzIjoiUk9MRV9VU0VSIiwiZXhwIjoxNzU3OTg4NDYwfQ.BWGYHqz6Ssp9DnNDPZAphNRLZSbd1ac2sXkm5rVuuQi8B5Xn6OIsnDnq75R5nCxHvBu1zqb62FwG-dgAo8Dnkw
+
+
+### [GET] 최근 7일간의 누적 공부시간 확인
+# 로그인된 사용자의 특정 스터디(studyId)에서의 최근 7일간 총 누적 공부 시간을 조회합니다.
+# @PathVariable: studyId
+# Authorization 헤더에 유효한 엑세스 토큰값이 필요
+GET http://localhost:8080/api/v1/timer/1/week-all-time
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMTBAZXhhbXBsZS5jb20iLCJqdGkiOiI0NDczOThjYi01MWUxLTRjMDQtYjBjMy1lZmY2MmJiNGM4YzkiLCJtZW1iZXJJZCI6MTAsInJvbGVzIjoiUk9MRV9VU0VSIiwiZXhwIjoxNzU3OTg4NDYwfQ.BWGYHqz6Ssp9DnNDPZAphNRLZSbd1ac2sXkm5rVuuQi8B5Xn6OIsnDnq75R5nCxHvBu1zqb62FwG-dgAo8Dnkw
