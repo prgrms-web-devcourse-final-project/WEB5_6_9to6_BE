@@ -72,6 +72,9 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         String roles = String.join(",", authentication.getAuthorities()
             .stream().map(GrantedAuthority::getAuthority).toList());
+        if (!roles.contains("ROLE_USER")) {
+            roles += ",ROLE_USER";
+        }
 
         // 처음 로그인한다면 Member 저장
         Optional<Member> existMember = memberRepository.findByEmail(userInfo.getEmail());
@@ -95,12 +98,8 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                 memberRepository.save(member);
             }
 
-            String roleToAdd = "ROLE_USER";
-            String finalRoles = roles + "," + roleToAdd;
-
-
             // 토큰 발급 및 리다이렉트
-            TokenDto token = authService.processTokenSignin(userInfo.getEmail(), finalRoles);
+            TokenDto token = authService.processTokenSignin(userInfo.getEmail(), roles);
 
             ResponseCookie accTkCookie = TokenCookieFactory.create(
                 AuthToken.ACCESS_TOKEN.name(), token.getAccessToken(),
