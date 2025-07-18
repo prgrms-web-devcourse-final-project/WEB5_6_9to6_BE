@@ -3,9 +3,7 @@ package com.grepp.spring.infra.error;
 import com.grepp.spring.infra.error.exceptions.*;
 import com.grepp.spring.infra.error.exceptions.AlreadyCheckedAttendanceException;
 import com.grepp.spring.infra.error.exceptions.AlreadyExistException;
-import com.grepp.spring.infra.error.exceptions.AlreadyProcessedException;
 import com.grepp.spring.infra.error.exceptions.CommonException;
-import com.grepp.spring.infra.error.exceptions.HasNotRightException;
 import com.grepp.spring.infra.error.exceptions.InsufficientRewardPointsException;
 import com.grepp.spring.infra.error.exceptions.MailSendFailureException;
 import com.grepp.spring.infra.error.exceptions.NullStateException;
@@ -19,7 +17,6 @@ import com.grepp.spring.infra.error.exceptions.NotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.NoSuchElementException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -154,39 +151,6 @@ public class RestApiExceptionAdvice {
         return ResponseEntity
             .badRequest()
             .body(CommonResponse.error(ResponseCode.BAD_REQUEST.code(), ex.getMessage()));
-    }
-
-
-    @ExceptionHandler(DataAccessException.class)
-    public ResponseEntity<CommonResponse<String>> handleDataAccessException(DataAccessException ex) {
-        log.error(ex.getMessage(), ex);
-        return ResponseEntity
-            .status(HttpStatus.INTERNAL_SERVER_ERROR)
-            .body(CommonResponse.error(ResponseCode.INTERNAL_SERVER_ERROR));
-    }
-
-
-    @ExceptionHandler(SameStateException.class)
-    public ResponseEntity<CommonResponse<String>> handleSameStateException(SameStateException ex) {
-        log.error(ex.getMessage(), ex);
-        return ResponseEntity
-            .status(HttpStatus.BAD_REQUEST)
-            .body(CommonResponse.error(ResponseCode.BAD_REQUEST));
-    }
-
-    @ExceptionHandler(AlreadyProcessedException.class)
-    public ResponseEntity<CommonResponse<String>> handleAlreadyProcessedException(AlreadyProcessedException ex) {
-        log.error(ex.getMessage(), ex);
-        return ResponseEntity
-            .status(HttpStatus.BAD_REQUEST)
-            .body(CommonResponse.error(ResponseCode.BAD_REQUEST));
-    }
-
-    @ExceptionHandler(HasNotRightException.class)
-    public ResponseEntity<CommonResponse<String>> handleHasNotRightException(HasNotRightException ex) {
-        log.error(ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-            .body(CommonResponse.error(ResponseCode.UNAUTHORIZED));
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
