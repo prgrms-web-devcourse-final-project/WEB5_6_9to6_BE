@@ -195,8 +195,8 @@ public class RestApiExceptionAdvice {
             .body(CommonResponse.error(ResponseCode.BAD_REQUEST.code(), ex.getMessage()));
     }
 
-    @ExceptionHandler(MemberNotFoundException.class)
-    public ResponseEntity<CommonResponse<String>> handleStudyNotFoundException(MemberNotFoundException ex) {
+    @ExceptionHandler(StudyNotFoundException.class)
+    public ResponseEntity<CommonResponse<String>> handleStudyNotFoundException(StudyNotFoundException ex) {
         log.error(ex.getMessage(), ex);
         return ResponseEntity
                 .status(ResponseCode.FAIL_SEARCH_STUDY.status())
