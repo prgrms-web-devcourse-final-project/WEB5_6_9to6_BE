@@ -1,5 +1,6 @@
 package com.grepp.spring.infra.error.exceptions;
 
+
 import com.grepp.spring.infra.response.ResponseCode;
 
 public class BadRequestException extends RuntimeException {

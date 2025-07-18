@@ -10,9 +10,11 @@ import com.grepp.spring.app.model.reward.repository.RewardItemRepository;
 import com.grepp.spring.infra.util.NotFoundException;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -36,10 +38,10 @@ public class ItemSetService {
 
         // 1. category별 itemId 추출
         Map<String, Long> categoryToItemId = dto.getClothes().stream()
-            .filter(clothesDto -> clothesDto.getItemIds() != null && !clothesDto.getItemIds().isEmpty())
+            .filter(clothesDto -> clothesDto.getItemId() != null && !clothesDto.getItemId().isEmpty())
             .collect(Collectors.toMap(
                 SaveImageRequest.ClothesDto::getCategory,
-                clothesDto -> clothesDto.getItemIds().get(0)
+                clothesDto -> clothesDto.getItemId().get(0)
             ));
 
         List<Long> allItemIds = new ArrayList<>(categoryToItemId.values());
@@ -50,8 +52,10 @@ public class ItemSetService {
             .map(RewardItem::getItemId)
             .toList();
 
+        Set<Long> existingIdSet = new HashSet<>(existingIds);
+
         List<Long> notFoundIds = allItemIds.stream()
-            .filter(id -> !existingIds.contains(id))
+            .filter(id -> !existingIdSet.contains(id))
             .toList();
 
         if (!notFoundIds.isEmpty()) {
