@@ -249,7 +249,7 @@ public class StudyService {
                 DayOfWeek day = DayOfWeek.valueOf(dayStr.toUpperCase());
                 study.addSchedule(day, req.getStartTime(), req.getEndTime());
             } catch (IllegalArgumentException e) {
-                throw new RuntimeException("올바르지 않은 요일 형식입니다: " + dayStr);
+                throw new IllegalArgumentException("올바르지 않은 요일 형식입니다: " + dayStr);
             }
         }
 
