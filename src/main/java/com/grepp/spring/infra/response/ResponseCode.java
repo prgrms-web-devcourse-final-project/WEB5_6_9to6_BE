@@ -15,7 +15,7 @@ public enum ResponseCode {
     NOT_EXIST_PRE_AUTH_CREDENTIAL("4012", HttpStatus.OK, "사전 인증 정보가 요청에서 발견되지 않았습니다."),
     SOCIAL_LOGIN_CONFLICT("4013", HttpStatus.UNAUTHORIZED, "이미 동일한 이메일의 로컬 계정이 존재합니다."),
     INCORRECT_PASSWORD("4015", HttpStatus.BAD_REQUEST, "현재 비밀번호가 일치하지 않습니다."),
-    MISSING_PASSWORD_FIELDS("4016", HttpStatus.BAD_REQUEST, "비밀번호 변경 시 현재 비밀번호와 새 비밀번호 모두 제공해야 합니다."),
+    SAME_PASSWORD_NOT_ALLOWED("4016", HttpStatus.BAD_REQUEST, "새 비밀번호는 기존 비밀번호와 달라야 합니다."),
     NOT_FOUND("4040", HttpStatus.NOT_FOUND, "NOT FOUND"),
     ALREADY_EXIST("4090", HttpStatus.CONFLICT, "해당 데이터는 이미 존재합니다."),
     POINT_NOT_ENOUGH("4091",HttpStatus.CONFLICT,"포인트가 부족합니다."),
@@ -30,10 +30,8 @@ public enum ResponseCode {
     STUDY_GOAL_NOT_FOUND("8005", HttpStatus.NOT_FOUND, "해당 주차의 스터디 목표가 존재하지 않습니다."),
     QUIZ_GENERATION_FAILED("8006", HttpStatus.INTERNAL_SERVER_ERROR, "퀴즈 생성 중 오류가 발생했습니다."),
     STUDY_MEMBER_NOT_FOUND("8007", HttpStatus.NOT_FOUND, "해당 스터디에 존재하지 않는 스터디 멤버입니다."),
-
-
-
     ;
+
     private final String code;
     private final HttpStatus status;
     private final String message;
