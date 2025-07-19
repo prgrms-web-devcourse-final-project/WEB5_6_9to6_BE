@@ -68,15 +68,17 @@ public class TimerController {
     @Operation(
         summary = "최근 7일간의 일별 공부시간 확인",
         description = """
-        로그인된 사용자의 특정 스터디에서의 최근 7일간의 일별 공부 시간을 조회합니다.
+        memberId의 특정 스터디에서의 최근 7일간의 일별 공부 시간을 조회합니다.
 
         - 결과는 날짜와 시간이 리스트형태로 반환됩니다. ex) "data": [  {"studyDate":"2025-07-12", "dailyTotalStudyTime" : 10}  ] 
         - 토큰 정보가 없으면 조회가 불가능합니다.
         """
     )
-    @GetMapping("/{studyId}/week-daily-time")
-    public ResponseEntity<CommonResponse<List<DailyStudyLogResponse>>> getDailyTimeAtStudy(@PathVariable Long studyId) {
-        Long memberId = SecurityUtil.getCurrentMemberId();
+    @GetMapping("/{studyId}/{memberId}/weekly-daily")
+    public ResponseEntity<CommonResponse<List<DailyStudyLogResponse>>> getDailyTimeAtStudy(
+        @PathVariable Long studyId,
+        @PathVariable Long memberId
+    ) {
         List<DailyStudyLogResponse> response = timerService.findDailyStudyLogsByStudyMemberId(studyId, memberId);
         return ResponseEntity.ok(CommonResponse.success(response));
     }
@@ -85,16 +87,16 @@ public class TimerController {
     @Operation(
         summary = "최근 7일간의 누적 공부시간 확인",
         description = """
-        로그인된 사용자의 특정 스터디에서의 최근 7일간의 총 누적 공부 시간을 조회합니다.
-
+        memberId의 특정 스터디에서의 최근 7일간의 총 누적 공부 시간을 조회합니다.
         - 결과는 누적 시간으로 반환됩니다. ex) "data": {"weekTotalStudyTime": 100}
         - 토큰 정보가 없으면 조회가 불가능합니다.
         """
     )
-    @GetMapping("/{studyId}/week-all-time")
-    public ResponseEntity<CommonResponse<StudyWeekTimeResponse>> getAllTimeAtStudy(@PathVariable Long studyId) {
-        Long memberId = SecurityUtil.getCurrentMemberId();
-
+    @GetMapping("/{studyId}/{memberId}/weekly-all")
+    public ResponseEntity<CommonResponse<StudyWeekTimeResponse>> getAllTimeAtStudy(
+        @PathVariable Long studyId,
+        @PathVariable Long memberId
+        ) {
         StudyWeekTimeResponse response = timerService.getStudyTimeForPeriod(studyId, memberId);
         return ResponseEntity.ok(CommonResponse.success(response));
     }
