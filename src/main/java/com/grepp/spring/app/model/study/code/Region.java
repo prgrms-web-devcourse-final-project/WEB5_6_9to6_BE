@@ -1,13 +1,23 @@
 package com.grepp.spring.app.model.study.code;
 
 public enum Region {
-    ALL,
     ONLINE,
+    ALL,
     SEOUL,
-    INCHEON,
     GYEONGGI,
-    DAEJEON,
     GANGWON,
+    INCHEON,
+    BUSAN,
+    ULSAN,
+    DAEGU,
+    DAEJEON,
+    GWANGJU,
     SEJONG,
-    CHUNGBUK
+    CHUNGNAM,
+    CHUNGBUK,
+    JEONNAM,
+    JEONBUK,
+    GYEONGNAM,
+    GYEONGBUK,
+    JEJU
 }

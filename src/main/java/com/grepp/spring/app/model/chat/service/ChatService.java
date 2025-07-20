@@ -9,9 +9,10 @@ import com.grepp.spring.app.model.chat.entity.ChatRoom;
 import com.grepp.spring.app.model.chat.repository.ChatRepository;
 import com.grepp.spring.app.model.chat.repository.ChatRoomRepository;
 import com.grepp.spring.app.model.member.repository.MemberRepository;
-import com.grepp.spring.infra.config.Chat.WebSocket.WebSocketSessionTracker;
 import com.grepp.spring.app.model.study.entity.Study;
-import com.grepp.spring.infra.util.NotFoundException;
+import com.grepp.spring.app.model.study.repository.StudyRepository;
+import com.grepp.spring.infra.config.Chat.WebSocket.WebSocketSessionTracker;
+import com.grepp.spring.infra.error.exceptions.NotFoundException;
 import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -37,6 +38,7 @@ public class ChatService {
     private final MemberRepository memberRepository;
     private final WebSocketSessionTracker tracker;
     private final RedisTemplate redisTemplate;
+    private final StudyRepository studyRepository;
 
     @Transactional
     public ChatMessageResponse saveChatMessage(Long studyId, ChatMessageRequest request,
@@ -68,11 +70,15 @@ public class ChatService {
     }
 
     // 채팅방 생성
-    public ChatRoom createChatRoom(Study study) {
+    public void createChatRoom(Long studyId) {
+        Study study = studyRepository.findById(studyId)
+            .orElseThrow(() -> new NotFoundException("스터디를 찾을 수 없습니다."));
+
         ChatRoom chatRoom = ChatRoom.builder()
             .study(study)
             .build();
-        return chatRoomRepository.save(chatRoom);
+
+        chatRoomRepository.save(chatRoom);
     }
 
     public List<ParticipantResponse> getOnlineParticipants(Long studyId) {

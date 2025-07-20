@@ -44,6 +44,9 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom {
         if (req.getStatus() != null && req.getStatus() != Status.ALL) {
             jpql.append(" AND s.status = :status");
         }
+        if (req.getStudyType() != null) {
+            jpql.append(" AND s.studyType = :studyType");
+        }
         if (StringUtils.hasText(req.getName())) {
             jpql.append(" AND s.name LIKE :name");
         }
@@ -58,6 +61,9 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom {
         }
         if (req.getStatus() != null && req.getStatus() != Status.ALL) {
             query.setParameter("status", req.getStatus());
+        }
+        if (req.getStudyType() != null) {
+            query.setParameter("studyType", req.getStudyType());
         }
         if (StringUtils.hasText(req.getName())) {
             query.setParameter("name", "%" + req.getName() + "%");
@@ -75,6 +81,7 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom {
                 (req.getCategory() != null && req.getCategory() != Category.ALL) ? study.category.eq(req.getCategory()) : null,
                 (req.getRegion() != null && req.getRegion() != Region.ALL) ? study.region.eq(req.getRegion()) : null,
                 (req.getStatus() != null && req.getStatus() != Status.ALL) ? study.status.eq(req.getStatus()) : null,
+                (req.getStudyType() != null ) ? study.studyType.eq(req.getStudyType()) : null,
                 StringUtils.hasText(req.getName()) ? study.name.contains(req.getName()) : null
             )
             .offset(pageable.getOffset())
@@ -101,6 +108,7 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom {
                 (req.getCategory() != null && req.getCategory() != Category.ALL) ? study.category.eq(req.getCategory()) : null,
                 (req.getRegion() != null && req.getRegion() != Region.ALL) ? study.region.eq(req.getRegion()) : null,
                 (req.getStatus() != null && req.getStatus() != Status.ALL) ? study.status.eq(req.getStatus()) : null,
+                (req.getStudyType() != null ) ? study.studyType.eq(req.getStudyType()) : null,
                 StringUtils.hasText(req.getName()) ? study.name.contains(req.getName()) : null
             )
             .fetchOne();

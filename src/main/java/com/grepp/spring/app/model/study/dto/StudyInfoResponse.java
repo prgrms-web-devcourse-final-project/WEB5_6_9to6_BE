@@ -37,6 +37,8 @@ public class StudyInfoResponse {
     private String externalLink;
     private StudyType studyType;
     private List<GoalDTO> goals;
+    private String notice;
+    private int currentMemberCount;
 
     @Getter
     @Builder
@@ -54,7 +56,7 @@ public class StudyInfoResponse {
         }
     }
 
-    public static StudyInfoResponse fromEntity(Study study) {
+    public static StudyInfoResponse fromEntity(Study study, int currentMemberCount) {
         List<StudySchedule> schedules = study.getSchedules();
 
         String start = null;
@@ -68,6 +70,8 @@ public class StudyInfoResponse {
             .name(study.getName())
             .category(study.getCategory())
             .maxMembers(study.getMaxMembers())
+            .notice(study.getNotice())
+            .currentMemberCount(currentMemberCount)
             .region(study.getRegion())
             .place(study.getPlace())
             .isOnline(study.isOnline())

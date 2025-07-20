@@ -15,7 +15,7 @@ public class QuizSet {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
+    private Long id;
 
     @Column(nullable = false)
     private Long studyId;
@@ -35,7 +35,7 @@ public class QuizSet {
 
     @Builder
     public QuizSet(Long quizSetId, Long studyId, Integer week, boolean activated, StudyGoal studyGoal, List<Quiz> quizzes) {
-        this.Id = quizSetId;
+        this.id = quizSetId;
         this.studyId = studyId;
         this.week = week;
         this.activated = activated;

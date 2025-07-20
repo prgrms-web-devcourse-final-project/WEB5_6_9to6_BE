@@ -36,9 +36,11 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     private final JwtTokenProvider jwtTokenProvider;
     private final MemberRepository memberRepository;
 
-    // fixme "여기에 추가 정보받는 페이지 경로(프론트 경로를 알아야함 아마)"
     @Value("${app.frontend.signup-redirect}")
     private String signupRedirectUrl;
+
+    @Value("${app.frontend.signup-redirect-main}")
+    private String signupRedirectMainUrl;
 
 
     /* TODO 현재 Oauth2 로그인 시 roles 에는
@@ -70,6 +72,9 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         String roles = String.join(",", authentication.getAuthorities()
             .stream().map(GrantedAuthority::getAuthority).toList());
+        if (!roles.contains("ROLE_USER")) {
+            roles += ",ROLE_USER";
+        }
 
         // 처음 로그인한다면 Member 저장
         Optional<Member> existMember = memberRepository.findByEmail(userInfo.getEmail());
@@ -139,6 +144,6 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         // NOTE aws api gateway 에서 Set-Cookie 병합 정핵이 다를 수 있으니 주의 aws 에서만 jwt 관련 오류가 생긴하면 해당 부분도 확인하기
         response.addHeader("Set-Cookie", accTkCookie.toString());
         response.addHeader("Set-Cookie", rfTkCookie.toString());
-        getRedirectStrategy().sendRedirect(request, response, "/");
+        getRedirectStrategy().sendRedirect(request, response, signupRedirectMainUrl);
     }
 }

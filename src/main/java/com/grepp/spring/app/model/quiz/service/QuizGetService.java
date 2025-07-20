@@ -2,63 +2,74 @@ package com.grepp.spring.app.model.quiz.service;
 
 import com.grepp.spring.app.controller.api.quiz.payload.QuizListResponse;
 import com.grepp.spring.app.model.quiz.dto.QuizDto;
-import com.grepp.spring.app.model.quiz.entity.Choice;
-import com.grepp.spring.app.model.quiz.entity.Quiz;
-import com.grepp.spring.app.model.quiz.entity.QuizSet;
+import com.grepp.spring.app.model.quiz.dto.QuizProjection;
 import com.grepp.spring.app.model.quiz.repository.QuizSetRepository;
+import com.grepp.spring.app.model.study.repository.StudyRepository;
+import com.grepp.spring.infra.error.exceptions.Quiz.InvalidQuizException;
+import com.grepp.spring.infra.error.exceptions.Quiz.StudyNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class QuizGetService {
 
     private final QuizSetRepository quizSetRepository;
+    private final StudyRepository studyRepository;
 
-    // 스터디에 해당하는 퀴즈 정보 가져옴
-    @Transactional(readOnly = true)
     public List<QuizListResponse> getQuizzesByStudyId(Long studyId) {
-        List<QuizSet> quizSets = quizSetRepository.findQuizSetsByStudyId(studyId);
 
-        List<QuizListResponse> result = new ArrayList<>();
+        // 존재 하지 않는 스터디
+        if (!studyRepository.existsById(studyId)) {
+            throw new StudyNotFoundException("존재하지 않는 스터디입니다. studyId: " + studyId);
+        }
 
-        for (QuizSet quizSet : quizSets) {
+        List<QuizProjection> projections = quizSetRepository.findQuizSetsByStudyId(studyId);
 
-            List<QuizDto> quizDtos = new ArrayList<>();
-            for (Quiz quiz : quizSet.getQuizzes()) {
-                QuizDto dto = mapToQuizDto(quiz);
-                quizDtos.add(dto);
+        // 스터디에 퀴즈 없음
+        if (projections.isEmpty()) {
+            throw new InvalidQuizException("해당 스터디에 생성된 퀴즈가 없습니다. studyId: " + studyId);
+        }
+
+        Map<Integer, List<QuizDto>> quizzesByWeek = new LinkedHashMap<>();
+
+        for (QuizProjection projection : projections) {
+            int week = projection.getWeek();
+
+            if (!quizzesByWeek.containsKey(week)) {
+                quizzesByWeek.put(week, new ArrayList<>());
             }
 
-            result.add(new QuizListResponse(quizSet.getWeek(), quizDtos));
-        }
-
-        return result;
-    }
-
-    private QuizDto mapToQuizDto(Quiz quiz) {
-        Choice choice = quiz.getChoice();
-        List<String> choices;
-
-        if (choice != null) {
-            choices = List.of(
-                    choice.getChoice1(),
-                    choice.getChoice2(),
-                    choice.getChoice3(),
-                    choice.getChoice4()
+            QuizDto quizDto = new QuizDto(
+                    projection.getQuizId(),
+                    projection.getQuestion(),
+                    projection.getChoices(),
+                    projection.getAnswer()
             );
-        } else {
-            choices = List.of();
+
+            quizzesByWeek.get(week).add(quizDto);
         }
 
-        return new QuizDto(
-                quiz.getId(),
-                quiz.getQuestion(),
-                choices
-        );
+        List<QuizListResponse> responseList = new ArrayList<>();
+
+        for (Map.Entry<Integer, List<QuizDto>> entry : quizzesByWeek.entrySet()) {
+            int week = entry.getKey();
+            List<QuizDto> quizList = entry.getValue();
+
+            QuizListResponse response = new QuizListResponse(week, quizList);
+            responseList.add(response);
+        }
+
+        responseList.sort(new Comparator<QuizListResponse>() {
+            @Override
+            public int compare(QuizListResponse o1, QuizListResponse o2) {
+                return Integer.compare(o1.getWeek(), o2.getWeek());
+            }
+        });
+
+        return responseList;
     }
 }
