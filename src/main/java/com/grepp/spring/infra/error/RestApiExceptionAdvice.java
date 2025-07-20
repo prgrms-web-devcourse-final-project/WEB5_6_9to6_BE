@@ -255,5 +255,13 @@ public class RestApiExceptionAdvice {
             .status(HttpStatus.NOT_FOUND)
             .body(CommonResponse.error(ResponseCode.NOT_FOUND));
     }
+
+    @ExceptionHandler(PasswordValidationException.class)
+    public ResponseEntity<CommonResponse<Void>> handlePasswordValidation(PasswordValidationException ex) {
+        log.error(ex.getMessage(), ex);
+        return ResponseEntity
+            .status(ex.getCode().status())
+            .body(CommonResponse.error(ex.getCode()));
+    }
 }
 
