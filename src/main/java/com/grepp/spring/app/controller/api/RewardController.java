@@ -4,6 +4,7 @@ import com.grepp.spring.app.controller.api.reward.payload.ImageResponse;
 import com.grepp.spring.app.controller.api.reward.payload.SaveImageRequest;
 import com.grepp.spring.app.model.auth.domain.Principal;
 import com.grepp.spring.app.model.member.service.MemberService;
+import com.grepp.spring.app.model.reward.dto.CreateRewardItemRequest;
 import com.grepp.spring.app.model.reward.dto.ItemSetDto;
 import com.grepp.spring.app.controller.api.reward.payload.OwnItemResponse;
 import com.grepp.spring.app.controller.api.reward.payload.RewardItemResponse;
@@ -16,10 +17,12 @@ import com.grepp.spring.infra.response.CommonResponse;
 import com.grepp.spring.infra.response.SuccessCode;
 import com.grepp.spring.infra.util.SecurityUtil;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,13 +32,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "아이템 API", description = "아이템 구매 및 조회 관련 API입니다.")
 @RestController
@@ -155,6 +161,17 @@ public class RewardController {
             .body(CommonResponse.success(data));
     }
 
+    @PostMapping(consumes = {"multipart/form-data"})
+    @Operation(summary = "리워드 아이템 생성", description = "이미지 + JSON 데이터를 포함한 리워드 아이템 생성")
+    @ApiResponse(responseCode = "201", description = "생성 성공")
+    public ResponseEntity<CommonResponse<Map<String, Object>>> createRewardItem(
+        @Parameter(description = "이미지 파일") @RequestPart("image") MultipartFile image,
+        @Parameter(description = "아이템 정보(JSON)") @RequestPart("data") @Validated CreateRewardItemRequest request
+    ) throws IOException {
+        Long itemId = rewardItemService.createRewardItem(request, image);
+        return ResponseEntity.status(HttpStatus.CREATED)
+            .body(CommonResponse.success(Map.of("itemId", itemId)));
+    }
 
 
 }

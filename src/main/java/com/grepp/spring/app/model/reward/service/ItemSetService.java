@@ -7,6 +7,7 @@ import com.grepp.spring.app.model.reward.entity.ItemSet;
 import com.grepp.spring.app.model.reward.entity.RewardItem;
 import com.grepp.spring.app.model.reward.repository.ItemSetRepository;
 import com.grepp.spring.app.model.reward.repository.RewardItemRepository;
+import com.grepp.spring.app.model.s3.service.S3Service;
 import com.grepp.spring.infra.error.exceptions.NotFoundException;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ public class ItemSetService {
 
     private final ItemSetRepository itemSetRepository;
     private final RewardItemRepository rewardItemRepository;
+    private final S3Service s3Service;
 
     public Optional<ImageResponse> ExistItemSet(ItemSetDto itemSetDto) {
 
@@ -72,7 +74,6 @@ public class ItemSetService {
             .build();
 
         itemSetRepository.save(itemSet);
-
     }
 
 
