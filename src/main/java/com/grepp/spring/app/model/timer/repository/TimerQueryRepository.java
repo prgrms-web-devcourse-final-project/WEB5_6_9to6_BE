@@ -50,6 +50,12 @@ public class TimerQueryRepository {
             .fetchOne();
     }
 
-
+    public Long findTotalStdTimeByStdMemberIds(List<Long> studyMemberIds) {
+        return queryFactory
+            .select(timer.dailyStudyTime.sum().castToNum(Long.class))
+            .from(timer)
+            .where(timer.studyMemberId.in(studyMemberIds), timer.activated.eq(true))
+            .fetchOne();
+    }
 
 }

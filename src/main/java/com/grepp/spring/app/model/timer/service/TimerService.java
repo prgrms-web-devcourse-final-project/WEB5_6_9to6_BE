@@ -38,7 +38,7 @@ public class TimerService {
         }
 
         log.info("조회된 studyMemberIds: {}", studyMemberIds);
-        Long totalStudyTime = timerRepository.findTotalStudyTimeByStudyMemberIds(studyMemberIds);
+        Long totalStudyTime = timerQueryRepository.findTotalStdTimeByStdMemberIds(studyMemberIds);
 
         return TotalStudyTimeResponse.builder()
             .totalStudyTime(totalStudyTime != null ? totalStudyTime : 0L)
