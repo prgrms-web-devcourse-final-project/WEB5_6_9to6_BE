@@ -10,7 +10,6 @@ import com.grepp.spring.app.model.alarm.repository.AlarmRepository;
 import com.grepp.spring.app.model.alarm.sse.EmitterRepository;
 import com.grepp.spring.app.model.member.entity.Member;
 import com.grepp.spring.app.model.member.repository.MemberRepository;
-import com.grepp.spring.infra.error.exceptions.BadRequestException;
 import com.grepp.spring.infra.error.exceptions.NotFoundException;
 import com.grepp.spring.infra.error.exceptions.alarm.AlarmValidationException;
 import com.grepp.spring.infra.response.ResponseCode;
