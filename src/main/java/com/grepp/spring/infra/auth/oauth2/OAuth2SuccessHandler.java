@@ -1,6 +1,7 @@
 package com.grepp.spring.infra.auth.oauth2;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.grepp.spring.app.controller.api.auth.payload.TokenResponse;
 import com.grepp.spring.app.model.auth.AuthService;
 import com.grepp.spring.app.model.auth.code.AuthToken;
 import com.grepp.spring.app.model.auth.code.Role;
@@ -17,9 +18,11 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -120,13 +123,8 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         // 현재 같은 이메일의 로컬 계정이 존재할때 로그인 거부 및 로컬 로그인 안내
         Member member = existMember.orElseThrow(); // NPE 방지용
         if (member.getSocialType() == SocialType.LOCAL) {
-
-            CommonResponse<?> errorResponse = CommonResponse.error(ResponseCode.SOCIAL_LOGIN_CONFLICT);
-            String json = new ObjectMapper().writeValueAsString(errorResponse);
-
-            response.getWriter().write(json);
-            response.setStatus(HttpServletResponse.SC_CONFLICT); // 409
-            response.getWriter().flush();
+            String redirectUrlWithQuery = signupRedirectMainUrl + "?error=local-email";
+            getRedirectStrategy().sendRedirect(request, response, redirectUrlWithQuery);
             return;
         }
 
