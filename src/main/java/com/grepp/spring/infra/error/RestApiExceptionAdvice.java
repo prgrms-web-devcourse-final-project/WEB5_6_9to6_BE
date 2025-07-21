@@ -11,6 +11,7 @@ import com.grepp.spring.infra.error.exceptions.OutOfMinimumPageException;
 import com.grepp.spring.infra.error.exceptions.OutOfMinimumPageSizeException;
 import com.grepp.spring.infra.error.exceptions.Quiz.*;
 import com.grepp.spring.infra.error.exceptions.StudyDataException;
+import com.grepp.spring.infra.error.exceptions.alarm.AlarmValidationException;
 import com.grepp.spring.infra.response.CommonResponse;
 import com.grepp.spring.infra.response.ResponseCode;
 import com.grepp.spring.infra.error.exceptions.NotFoundException;
@@ -254,6 +255,14 @@ public class RestApiExceptionAdvice {
         return ResponseEntity
             .status(HttpStatus.NOT_FOUND)
             .body(CommonResponse.error(ResponseCode.NOT_FOUND));
+    }
+
+    @ExceptionHandler(AlarmValidationException.class)
+    public ResponseEntity<CommonResponse<Void>> handleAlarmValidation(AlarmValidationException ex) {
+        log.error(ex.getMessage(), ex);
+        return ResponseEntity
+            .status(ex.getCode().status())
+            .body(CommonResponse.error(ex.getCode()));
     }
 }
 
