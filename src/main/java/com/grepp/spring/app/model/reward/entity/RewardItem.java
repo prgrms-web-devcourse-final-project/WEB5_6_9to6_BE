@@ -34,7 +34,6 @@ public class RewardItem {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    @Convert(converter = ItemTypeConverter.class)
     private ItemType itemType;
 
     @Column(nullable = false)
