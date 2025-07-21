@@ -27,9 +27,11 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -135,6 +137,33 @@ public class AuthController {
         log.info("memberId: {}", memberId);
         memberService.updateMemberInfoById(memberId, req);
         return ResponseEntity.ok(CommonResponse.noContent());
+    }
+
+    @Operation(summary = "Access Token 정보 조회",
+        description = """
+            현재 로그인한 사용자의 Access Token 정보를 조회합니다.
+            - 요청 시 브라우저에 저장된 **Access Token 쿠키**가 자동으로 사용됩니다.
+            - **참고:** 이 API는 토큰 문자열 자체를 반환하며, 사용자 ID나 이메일 등은 포함하지 않습니다.
+            """
+    )
+    @GetMapping("/oauth/get-token")
+    public ResponseEntity<CommonResponse<TokenResponse>> getToken(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(401).build();
+        }
+
+        Principal principal = (Principal) authentication.getPrincipal();
+
+        String accessToken = principal.getAccessToken()
+            .orElse(null);
+
+        TokenResponse tokenResponse = TokenResponse.builder()
+            .accessToken(accessToken)
+            .grantType("Bearer")
+            .expiresIn(null)
+            .build();
+
+        return ResponseEntity.ok(CommonResponse.success(tokenResponse));
     }
 
 }

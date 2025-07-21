@@ -1,27 +1,20 @@
 package com.grepp.spring.infra.error;
 
+import com.grepp.spring.infra.error.exceptions.*;
 import com.grepp.spring.infra.error.exceptions.AlreadyCheckedAttendanceException;
 import com.grepp.spring.infra.error.exceptions.AlreadyExistException;
 import com.grepp.spring.infra.error.exceptions.CommonException;
 import com.grepp.spring.infra.error.exceptions.InsufficientRewardPointsException;
 import com.grepp.spring.infra.error.exceptions.MailSendFailureException;
-import com.grepp.spring.infra.error.exceptions.NotFoundException;
 import com.grepp.spring.infra.error.exceptions.NullStateException;
 import com.grepp.spring.infra.error.exceptions.OutOfMinimumPageException;
 import com.grepp.spring.infra.error.exceptions.OutOfMinimumPageSizeException;
-import com.grepp.spring.infra.error.exceptions.Quiz.InvalidQuizException;
-import com.grepp.spring.infra.error.exceptions.Quiz.InvalidQuizGradeRequestException;
-import com.grepp.spring.infra.error.exceptions.Quiz.QuizAlreadyExistsException;
-import com.grepp.spring.infra.error.exceptions.Quiz.QuizGenerationFailedException;
-import com.grepp.spring.infra.error.exceptions.Quiz.QuizResultAlreadySubmittedException;
-import com.grepp.spring.infra.error.exceptions.Quiz.QuizSetNotFoundException;
-import com.grepp.spring.infra.error.exceptions.Quiz.StudyGoalNotFoundException;
-import com.grepp.spring.infra.error.exceptions.Quiz.StudyMemberNotFoundException;
-import com.grepp.spring.infra.error.exceptions.Quiz.StudyNotFoundException;
+import com.grepp.spring.infra.error.exceptions.Quiz.*;
 import com.grepp.spring.infra.error.exceptions.StudyDataException;
 import com.grepp.spring.infra.error.exceptions.alarm.AlarmValidationException;
 import com.grepp.spring.infra.response.CommonResponse;
 import com.grepp.spring.infra.response.ResponseCode;
+import com.grepp.spring.infra.error.exceptions.NotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.NoSuchElementException;
 import lombok.extern.slf4j.Slf4j;
@@ -262,6 +255,14 @@ public class RestApiExceptionAdvice {
         return ResponseEntity
             .status(HttpStatus.NOT_FOUND)
             .body(CommonResponse.error(ResponseCode.NOT_FOUND));
+    }
+
+    @ExceptionHandler(PasswordValidationException.class)
+    public ResponseEntity<CommonResponse<Void>> handlePasswordValidation(PasswordValidationException ex) {
+        log.error(ex.getMessage(), ex);
+        return ResponseEntity
+            .status(ex.getCode().status())
+            .body(CommonResponse.error(ex.getCode()));
     }
 
     @ExceptionHandler(AlarmValidationException.class)
