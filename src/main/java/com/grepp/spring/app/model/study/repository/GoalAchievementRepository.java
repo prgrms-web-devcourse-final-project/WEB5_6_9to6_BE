@@ -11,7 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface GoalAchievementRepository extends JpaRepository<GoalAchievement, Long> {
+public interface GoalAchievementRepository extends JpaRepository<GoalAchievement, Long>, GoalQueryRepository {
 
     @Query("""
 SELECT COUNT(DISTINCT ga.achievementId)
@@ -31,13 +31,13 @@ WHERE sg.study.studyId = :studyId
 
     List<GoalAchievement> findAllByStudyMemberAndIsAccomplishedTrue(StudyMember studyMember);
 
-    @Query("select new com.grepp.spring.app.controller.api.study.payload.CheckGoalResponse("
-        + "sg.goalId, sg.content, COALESCE(ga.isAccomplished, FALSE)) "
-        + "from StudyGoal sg "
-        + "left join GoalAchievement ga on sg.goalId = ga.studyGoal.goalId "
-        + "and ga.studyMember.studyMemberId = :studyMemberId "
-        + "and ga.activated = TRUE "
-        + "where sg.study.studyId = :studyId "
-        + "and sg.activated = TRUE")
-    List<CheckGoalResponse> findAchieveStatusesByStudyId(@Param("studyId") Long studyId, @Param("studyMemberId") Long studyMemberId);
+//    @Query("select new com.grepp.spring.app.controller.api.study.payload.CheckGoalResponse("
+//        + "sg.goalId, sg.content, COALESCE(ga.isAccomplished, FALSE)) "
+//        + "from StudyGoal sg "
+//        + "left join GoalAchievement ga on sg.goalId = ga.studyGoal.goalId "
+//        + "and ga.studyMember.studyMemberId = :studyMemberId "
+//        + "and ga.activated = TRUE "
+//        + "where sg.study.studyId = :studyId "
+//        + "and sg.activated = TRUE")
+//    List<CheckGoalResponse> findAchieveStatusesByStudyId(@Param("studyId") Long studyId, @Param("studyMemberId") Long studyMemberId);
 }
