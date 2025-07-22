@@ -118,7 +118,7 @@ public class OwnItemService {
     }
 
     @Transactional
-    public void changeOwnItems(long ownItemId) {
+    public ItemType changeOwnItems(long ownItemId) {
         OwnItem currentItem = ownItemRepository.findById(ownItemId)
             .orElseThrow(()-> new NotFoundException("OwnItem not found" + ownItemId));
 
@@ -140,6 +140,6 @@ public class OwnItemService {
         log.info("currentItem: {}", currentItem);
 
 
-
+return itemType;
     }
 }
