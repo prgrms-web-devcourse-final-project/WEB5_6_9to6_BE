@@ -34,8 +34,8 @@ public class ItemSetService {
 
     public Optional<ImageResponse> ExistItemSet(ItemSetDto itemSetDto) {
 
-        return itemSetRepository.findByHatAndHairAndFaceAndTopAndBottom(
-            itemSetDto.getHat(), itemSetDto.getHair(), itemSetDto.getFace(), itemSetDto.getTop(), itemSetDto.getBottom()
+        return itemSetRepository.findByHatAndHairAndFaceAndTop(
+            itemSetDto.getHat(), itemSetDto.getHair(), itemSetDto.getFace(), itemSetDto.getTop()
         ).map(ItemSet->new ImageResponse(ItemSet.getImage()));
     }
 
@@ -80,7 +80,6 @@ public class ItemSetService {
             .hair(categoryToItemId.get(ItemType.HAIR))
             .face(categoryToItemId.get(ItemType.FACE))
             .top(categoryToItemId.get(ItemType.TOP))
-            .bottom(categoryToItemId.get(ItemType.BOTTOM))
             .image(imageUrl)
             .build();
 
