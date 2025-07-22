@@ -27,7 +27,7 @@ public class StudyMemberService {
     private final GoalAchievementRepository goalAchievementRepository;
 
     @Transactional
-    public void saveMember(Long studyId, long memberId) {
+    public void saveMember(Long studyId, Long memberId) {
 
         // 중복 등록 방지
         if (studyMemberRepository.existsByMember_IdAndStudy_StudyId(memberId, studyId)) {
