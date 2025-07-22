@@ -7,10 +7,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface TimerRepository extends JpaRepository<Timer, Long>{
+public interface TimerRepository extends JpaRepository<Timer, Long>, TimerCustomRepository {
 
-    @Query("select sum(t.dailyStudyTime) from Timer t where t.studyMemberId = :studyMemberId")
-    int findSumOfAllByStudyMemberId(Long studyMemberId);
+//    @Query("select sum(t.dailyStudyTime) from Timer t where t.studyMemberId = :studyMemberId")
+//    int findSumOfAllByStudyMemberId(Long studyMemberId);
 
     @Query("select sum(t.dailyStudyTime) from Timer t where t.studyMemberId in :studyMemberIds")
     Long findTotalStudyTimeByStudyMemberIds(List<Long> studyMemberIds);

@@ -1,21 +1,17 @@
 package com.grepp.spring.app.model.timer.repository;
-import com.grepp.spring.app.model.timer.dto.DailyStudyLogResponse;
-import com.querydsl.core.types.Projections;
+
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
-import com.querydsl.core.Tuple;
 
-import static com.grepp.spring.app.model.timer.entity.QTimer.*;
+import static com.grepp.spring.app.model.timer.entity.QTimer.timer;
 
-
-@Repository
 @RequiredArgsConstructor
-public class TimerQueryRepository {
+public class TimerCustomRepositoryImpl implements TimerCustomRepository {
 
     private final JPAQueryFactory queryFactory;
 
