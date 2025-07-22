@@ -20,6 +20,7 @@ import com.grepp.spring.app.model.study.dto.StudyInfoResponse;
 import com.grepp.spring.app.model.study.dto.StudyListResponse;
 import com.grepp.spring.app.model.study.dto.WeeklyAttendanceResponse;
 import com.grepp.spring.app.model.study.dto.WeeklyGoalStatusResponse;
+import com.grepp.spring.app.model.study.reponse.GoalsResponse;
 import com.grepp.spring.app.model.study.reponse.StudyNoticeResponse;
 import com.grepp.spring.app.model.study.service.ApplicantService;
 import com.grepp.spring.app.model.study.service.StudyMemberService;
@@ -64,7 +65,7 @@ public class StudyController {
     @Operation(summary = "스터디 카테고리 및 상태 목록 조회",
         description = "스터디 생성 및 검색에 사용되는 카테고리(Enum)와 상태(Enum)의 전체 목록을 문자열 리스트로 조회합니다.")
     @GetMapping("/categories")
-    public ResponseEntity<?> getCategories() {
+    public ResponseEntity<CommonResponse<Map<String, Object>>> getCategories() {
         Map<String, Object> data = Map.of(
             "categories", Arrays.stream(Category.values()).map(Enum::name).toList(),
             "statuses", Arrays.stream(Status.values()).map(Enum::name).toList()
@@ -78,7 +79,7 @@ public class StudyController {
         - 이 API는 인증이 필요하며, 요청 헤더에 유효한 토큰이 있어야 합니다.
         """)
     @PostMapping("/{studyId}/attendance")
-    public ResponseEntity<?> attendance(
+    public ResponseEntity<CommonResponse<String>> attendance(
         @PathVariable Long studyId,
         Authentication authentication
     ) {
@@ -99,7 +100,7 @@ public class StudyController {
         - 이 API는 인증이 필요하며, 요청 헤더에 유효한 토큰이 있어야 합니다.
         """)
     @GetMapping("/{studyId}/attendance")
-    public ResponseEntity<?> weeklyAttendance(
+    public ResponseEntity<CommonResponse<WeeklyAttendanceResponse>> weeklyAttendance(
         @PathVariable Long studyId,
         Authentication authentication
     ) {
@@ -129,7 +130,7 @@ public class StudyController {
     // 스터디 정보 조회
     @Operation(summary = "스터디 상세 정보 조회", description = "스터디 ID(`studyId`)를 이용하여 스터디의 상세 정보를 조회합니다.")
     @GetMapping("/{studyId}")
-    public ResponseEntity<?> getStudyInfo(@PathVariable Long studyId) {
+    public ResponseEntity<CommonResponse<StudyInfoResponse>> getStudyInfo(@PathVariable Long studyId) {
         StudyInfoResponse data = studyService.getStudyInfo(studyId);
         return ResponseEntity.ok(CommonResponse.success(data));
     }
@@ -140,7 +141,7 @@ public class StudyController {
         - 스터디 ID(`studyId`)에 해당하는 스터디의 정보를 수정합니다. 스터디장만 호출 가능합니다.
         """)
     @PutMapping("/{studyId}")
-    public ResponseEntity<?> updateStudyInfo(
+    public ResponseEntity<CommonResponse<Void>> updateStudyInfo(
         @PathVariable Long studyId,
         @RequestBody StudyUpdateRequest data
     ) {
@@ -163,7 +164,7 @@ public class StudyController {
         - 이 API는 인증이 필요하며, 요청 헤더에 유효한 토큰이 있어야 합니다.
         """)
     @PostMapping("/{studyId}/application")
-    public ResponseEntity<?> application(
+    public ResponseEntity<CommonResponse<String>> application(
         @PathVariable Long studyId,
         @RequestBody ApplicationRequest req
     ) {
@@ -179,7 +180,7 @@ public class StudyController {
         - 이 API는 인증이 필요하며, 요청 헤더에 유효한 토큰이 있어야 합니다.
         """)
     @GetMapping("/{studyId}/members/me/check")
-    public ResponseEntity<?> isMember(@PathVariable Long studyId) {
+    public ResponseEntity<CommonResponse<Map<String, Boolean>>> isMember(@PathVariable Long studyId) {
         Long memberId = SecurityUtil.getCurrentMemberId();
 
         boolean isMember = studyService.isUserStudyMember(memberId, studyId);
@@ -194,7 +195,7 @@ public class StudyController {
     // 스터디 맴버 리스트 조회
     @Operation(summary = "스터디 멤버 목록 조회", description = "스터디 ID(`studyId`)에 해당하는 스터디에 속한 모든 멤버의 목록을 조회합니다.")
     @GetMapping("/{studyId}/members")
-    public ResponseEntity<?> getMembers(@PathVariable Long studyId) {
+    public ResponseEntity<CommonResponse<List<StudyMemberResponse>>> getMembers(@PathVariable Long studyId) {
         List<StudyMemberResponse> members = studyService.getStudyMembers(studyId);
         return ResponseEntity.ok(CommonResponse.success(members));
     }
@@ -219,7 +220,7 @@ public class StudyController {
     // 스터디 목표 조회
     @Operation(summary = "스터디 목표 목록 조회", description = "스터디 ID(`studyId`)에 설정된 목표 목록을 조회합니다.")
     @GetMapping("/{studyId}/goals")
-    public ResponseEntity<?> getGoals(@PathVariable Long studyId) {
+    public ResponseEntity<CommonResponse<List<GoalsResponse>>> getGoals(@PathVariable Long studyId) {
         return ResponseEntity.status(200).body(CommonResponse.success(studyService.findGoals(studyId)));
     }
 
@@ -229,7 +230,7 @@ public class StudyController {
         - 이 API는 인증이 필요하며, 요청 헤더에 유효한 토큰이 있어야 합니다.
         """)
     @PostMapping("{studyId}/goal/{goalId}")
-    public ResponseEntity<?> successGoal(@PathVariable Long studyId, @PathVariable Long goalId) {
+    public ResponseEntity<CommonResponse<Void>> successGoal(@PathVariable Long studyId, @PathVariable Long goalId) {
         Long memberId = SecurityUtil.getCurrentMemberId();
         log.info("memberId: {}", memberId);
         studyService.registGoal(List.of(studyId, memberId, goalId));
@@ -242,7 +243,7 @@ public class StudyController {
         - 이 API는 인증이 필요하며, 요청 헤더에 유효한 토큰이 있어야 합니다.
         """)
     @GetMapping("/{studyId}/goals/completed")
-    public ResponseEntity<?> getWeeklyGoalStats(
+    public ResponseEntity<CommonResponse<WeeklyGoalStatusResponse>> getWeeklyGoalStats(
         @PathVariable Long studyId) {
 
         Long memberId = SecurityUtil.getCurrentMemberId(); // 로그인된 사용자
@@ -265,7 +266,7 @@ public class StudyController {
         """
     )
     @PostMapping("/{studyId}/applications/respond")
-    public ResponseEntity<CommonResponse<?>> responseStudyApplication(
+    public ResponseEntity<CommonResponse<Void>> responseStudyApplication(
         @PathVariable Long studyId,
         @RequestBody ApplicationResultRequest req) {
 
@@ -309,7 +310,7 @@ public class StudyController {
     @Operation(summary = "스터디 공지사항 조회",
         description = "특정 스터디(`studyId`)의 공지사항을 조회합니다.")
     @GetMapping("/{studyId}/notification")
-    public ResponseEntity<CommonResponse<?>> getStudyNotification(
+    public ResponseEntity<CommonResponse<StudyNoticeResponse>> getStudyNotification(
         @PathVariable Long studyId
     ) {
         StudyNoticeResponse res = new StudyNoticeResponse(studyService.findNotice(studyId));
@@ -323,7 +324,7 @@ public class StudyController {
         - 이 API는 인증이 필요하며, 요청 헤더에 유효한 토큰이 있어야 합니다.
         """)
     @GetMapping("/{studyId}/check-goal")
-    public ResponseEntity<CommonResponse<?>> getCheckGoal(
+    public ResponseEntity<CommonResponse<List<CheckGoalResponse>>> getCheckGoal(
         @PathVariable Long studyId
     ){
         Long memberId = SecurityUtil.getCurrentMemberId();
