@@ -1,5 +1,6 @@
 package com.grepp.spring.app.model.study.repository;
 
+import com.grepp.spring.app.controller.api.study.payload.CheckGoalResponse;
 import com.grepp.spring.app.model.member.entity.StudyMember;
 import com.grepp.spring.app.model.study.entity.GoalAchievement;
 import io.lettuce.core.dynamic.annotation.Param;
@@ -30,4 +31,13 @@ WHERE sg.study.studyId = :studyId
 
     List<GoalAchievement> findAllByStudyMemberAndIsAccomplishedTrue(StudyMember studyMember);
 
+    @Query("select new com.grepp.spring.app.controller.api.study.payload.CheckGoalResponse("
+        + "sg.goalId, sg.content, COALESCE(ga.isAccomplished, FALSE)) "
+        + "from StudyGoal sg "
+        + "left join GoalAchievement ga on sg.goalId = ga.studyGoal.goalId "
+        + "and ga.studyMember.studyMemberId = :studyMemberId "
+        + "and ga.activated = TRUE "
+        + "where sg.study.studyId = :studyId "
+        + "and sg.activated = TRUE")
+    List<CheckGoalResponse> findAchieveStatusesByStudyId(@Param("studyId") Long studyId, @Param("studyMemberId") Long studyMemberId);
 }
