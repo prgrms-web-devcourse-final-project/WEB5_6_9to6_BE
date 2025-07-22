@@ -14,14 +14,12 @@ import org.springframework.stereotype.Repository;
 public interface StudyRepository extends JpaRepository<Study, Long>, StudyRepositoryCustom {
 
     // 지원자 목록 조회
-    @Query("SELECT new com.grepp.spring.app.model.member.dto.response.ApplicantsResponse(" +
-        "a.id, a.member.id, a.member.nickname, a.state, a.introduction, a.member.avatarImage) " +
-        "FROM Applicant a " +
-        "JOIN a.member m " +
-        "WHERE a.study.studyId = :studyId")
-    List<ApplicantsResponse> findAllApplicants(@Param("studyId") Long studyId);
-
-
+//    @Query("SELECT new com.grepp.spring.app.model.member.dto.response.ApplicantsResponse(" +
+//        "a.id, a.member.id, a.member.nickname, a.state, a.introduction, a.member.avatarImage) " +
+//        "FROM Applicant a " +
+//        "JOIN a.member m " +
+//        "WHERE a.study.studyId = :studyId")
+//    List<ApplicantsResponse> findAllApplicants(@Param("studyId") Long studyId);
 
     // goals 만 fetch join
     @Query("SELECT s FROM Study s LEFT JOIN FETCH s.goals WHERE s.studyId = :id")

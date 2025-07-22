@@ -1,10 +1,12 @@
 package com.grepp.spring.app.model.study.repository;
 
 import com.grepp.spring.app.controller.api.study.payload.StudySearchRequest;
+import com.grepp.spring.app.model.member.dto.response.ApplicantsResponse;
 import com.grepp.spring.app.model.study.code.Category;
 import com.grepp.spring.app.model.study.code.Region;
 import com.grepp.spring.app.model.study.code.Status;
 import com.grepp.spring.app.model.study.entity.Study;
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -19,6 +21,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import org.springframework.util.StringUtils;
 
+import static com.grepp.spring.app.model.member.entity.QMember.member;
+import static com.grepp.spring.app.model.study.entity.QApplicant.applicant;
 import static com.grepp.spring.app.model.study.entity.QStudy.study;
 
 @Repository
@@ -129,6 +133,22 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom {
             .getResultList()
             .stream()
             .findFirst();
+    }
+
+    @Override
+    public List<ApplicantsResponse> findAllApplicants(Long studyId) {
+        return queryFactory
+            .select(Projections.constructor(ApplicantsResponse.class,
+                applicant.id,
+                member.id,
+                member.nickname,
+                applicant.state,
+                applicant.introduction,
+                member.avatarImage))
+            .from(applicant)
+            .join(applicant.member, member)
+            .where(applicant.study.studyId.eq(studyId))
+            .fetch();
     }
 
 }
