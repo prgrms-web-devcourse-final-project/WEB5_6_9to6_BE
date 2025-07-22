@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface StudyMemberRepository extends JpaRepository<StudyMember, Long> {
 
-    List<StudyMember> findByMemberId(Long memberId);
+    List<StudyMember> findByMemberIdAndActivatedTrue(Long memberId);
 
     @Query("select sm.studyMemberId from StudyMember sm where sm.member.id = :memberId")
     List<Long> findAllStudies(@Param("memberId") Long memberId);
@@ -26,9 +26,9 @@ public interface StudyMemberRepository extends JpaRepository<StudyMember, Long> 
 
     int countByStudy_StudyId(Long studyId);
 
-    boolean existsByMember_IdAndStudy_StudyId(Long memberId, Long studyId);
+    boolean existsByMember_IdAndStudy_StudyIdAndActivatedTrue(Long memberId, Long studyId);
 
-    @Query("SELECT sm FROM StudyMember sm JOIN FETCH sm.member WHERE sm.study.studyId = :studyId")
+    @Query("SELECT sm FROM StudyMember sm JOIN FETCH sm.member WHERE sm.study.studyId = :studyId AND sm.activated = true")
     List<StudyMember> findAllByStudyIdWithMember(@Param("studyId") Long studyId);
 
 

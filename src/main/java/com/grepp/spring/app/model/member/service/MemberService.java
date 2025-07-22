@@ -147,7 +147,7 @@ public class MemberService {
         Member member = memberRepository.findById(memberId)
             .orElseThrow(() -> new NotFoundException("사용자를 찾을 수 없습니다."));
 
-        List<StudyInfoResponse> studyList = studyMemberRepository.findByMemberId(memberId)
+        List<StudyInfoResponse> studyList = studyMemberRepository.findByMemberIdAndActivatedTrue(memberId)
             .stream()
             .map(sm -> {
                 Study study = sm.getStudy();
@@ -194,7 +194,7 @@ public class MemberService {
         Member member = memberRepository.findById(memberId)
             .orElseThrow(() -> new NotFoundException("사용자를 찾을 수 없습니다."));
 
-        List<StudyMember> studyMembers = studyMemberRepository.findByMemberId(memberId);
+        List<StudyMember> studyMembers = studyMemberRepository.findByMemberIdAndActivatedTrue(memberId);
 
         List<MypageStudyInfoResponse> userStudies = studyMembers.stream()
             .map(sm -> {

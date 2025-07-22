@@ -193,7 +193,7 @@ public class StudyService {
             throw new IllegalArgumentException("스터디가 존재하지 않습니다.");
         }
 
-        return studyMemberRepository.existsByMember_IdAndStudy_StudyId(memberId, studyId);
+        return studyMemberRepository.existsByMember_IdAndStudy_StudyIdAndActivatedTrue(memberId, studyId);
     }
 
     // 스터디 멤버 조회
