@@ -14,7 +14,6 @@ import com.grepp.spring.app.model.study.code.ApplicantState;
 import com.grepp.spring.app.model.study.code.DayOfWeek;
 import com.grepp.spring.app.model.study.code.GoalType;
 import com.grepp.spring.app.model.study.code.Status;
-import com.grepp.spring.app.model.study.dto.StudyCreationResponse;
 import com.grepp.spring.app.model.study.code.StudyType;
 import com.grepp.spring.app.model.study.dto.StudyCreationResponse;
 import com.grepp.spring.app.model.study.dto.StudyInfoResponse;
