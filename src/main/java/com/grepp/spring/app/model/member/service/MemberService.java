@@ -245,6 +245,12 @@ public class MemberService {
             .build();
     }
 
+    public Long findMemberIdByEmail(String email) {
+        Member member = memberRepository.findByEmail(email)
+            .orElseThrow(() -> new NotFoundException("해당 이메일의 회원이 존재하지 않습니다."));
+        return member.getId();
+    }
+
     public Long findStudyMemberId(String email, Long studyId) {
         // email → member
         Member member = memberRepository.findByEmail(email)
@@ -252,6 +258,13 @@ public class MemberService {
 
         // memberId → studyMember
         StudyMember studyMember = studyMemberRepository.findByMember_IdAndStudy_StudyId(member.getId(), studyId)
+            .orElseThrow(() -> new NotFoundException("스터디 멤버를 찾을 수 없습니다."));
+
+        return studyMember.getStudyMemberId();
+    }
+
+    public Long findStudyMemberId(Long memberId, Long studyId) {
+        StudyMember studyMember = studyMemberRepository.findByMember_IdAndStudy_StudyId(memberId, studyId)
             .orElseThrow(() -> new NotFoundException("스터디 멤버를 찾을 수 없습니다."));
 
         return studyMember.getStudyMemberId();

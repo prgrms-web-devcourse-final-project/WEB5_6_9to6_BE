@@ -45,6 +45,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "스터디 API", description = "스터디 생성, 조회, 가입, 관리 등 스터디 관련 API 입니다.")
@@ -94,19 +95,28 @@ public class StudyController {
     }
 
     // 주간 출석체크 조회(이번주)
-    @Operation(summary = "주간 출석체크 조회(이번주)", description = """
-        현재 로그인한 사용자의 특정 스터디(`studyId`)에 대한 이번 주 출석 내역을 조회합니다.
-        - 이 API는 인증이 필요하며, 요청 헤더에 유효한 토큰이 있어야 합니다.
-        """)
+    @Operation(
+        summary = "주간 출석 내역 조회 (이번 주)",
+        description = """
+        로그인한 사용자의 특정 스터디(`studyId`)에 대한 이번 주 출석 정보를 조회합니다.
+
+        - 인증된 사용자만 사용할 수 있습니다. (`Authorization` 헤더에 JWT 토큰 필요)
+        - `memberId`를 쿼리 파라미터로 전달하지 않으면, 로그인한 사용자의 정보로 조회합니다.
+        - 응답에는 스터디 멤버 ID와 이번 주 출석 현황이 포함됩니다.
+        """
+    )
     @GetMapping("/{studyId}/attendance")
     public ResponseEntity<?> weeklyAttendance(
         @PathVariable Long studyId,
+        @RequestParam(required = false) Long memberId,
         Authentication authentication
     ) {
-        String email = authentication.getName();
-        Long studyMemberId = memberService.findStudyMemberId(email, studyId);
+        if (memberId == null) {
+            String email = authentication.getName();
+            memberId = memberService.findMemberIdByEmail(email); // 이 메서드도 필요함
+        }
 
-        // 이번 주 출석 내역 조회
+        Long studyMemberId = memberService.findStudyMemberId(memberId, studyId);
         List<Attendance> attendanceList = memberService.getWeeklyAttendanceEntities(studyMemberId);
 
         WeeklyAttendanceResponse response = new WeeklyAttendanceResponse(studyMemberId, attendanceList);
