@@ -123,7 +123,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         // 현재 같은 이메일의 로컬 계정이 존재할때 로그인 거부 및 로컬 로그인 안내
         Member member = existMember.orElseThrow(); // NPE 방지용
         if (member.getSocialType() == SocialType.LOCAL) {
-            String redirectUrlWithQuery = signupRedirectMainUrl + "?error=local-email";
+            String redirectUrlWithQuery = signupRedirectMainUrl + "login/?error=local-email";
             getRedirectStrategy().sendRedirect(request, response, redirectUrlWithQuery);
             return;
         }

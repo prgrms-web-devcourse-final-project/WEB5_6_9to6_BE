@@ -41,10 +41,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class StudyService {
@@ -99,6 +102,10 @@ public class StudyService {
         Long memberId = ids.get(1);
         Long goalId = ids.get(2);
 
+        if (!studyRepository.existsByStudyIdAndActivatedTrue(studyId)) {
+            throw new NotFoundException("존재하지 않거나 비활성화된 스터디입니다.");
+        }
+
         StudyGoal studyGoal = studyGoalRepository.findById(goalId)
             .orElseThrow(() -> new NotFoundException("해당 목표를 찾을 수 없습니다."));
         StudyMember studyMember = studyMemberRepository.findByStudyStudyIdAndMemberId(studyId, memberId)
@@ -124,6 +131,10 @@ public class StudyService {
 
     @Transactional(readOnly = true)
     public List<GoalsResponse> findGoals(Long studyId) {
+        if (!studyRepository.existsByStudyIdAndActivatedTrue(studyId)) {
+            throw new NotFoundException("존재하지 않거나 비활성화된 스터디입니다.");
+        }
+
         return studyGoalRepository.findGoalsById(studyId);
     }
 
@@ -189,8 +200,8 @@ public class StudyService {
     }
 
     public boolean isUserStudyMember(Long memberId, Long studyId) {
-        if (!studyRepository.existsById(studyId)) {
-            throw new IllegalArgumentException("스터디가 존재하지 않습니다.");
+        if (!studyRepository.existsByStudyIdAndActivatedTrue(studyId)) {
+            throw new IllegalArgumentException("존재하지 않거나 비활성화된 스터디입니다.");
         }
 
         return studyMemberRepository.existsByMember_IdAndStudy_StudyIdAndActivatedTrue(memberId, studyId);
@@ -198,8 +209,9 @@ public class StudyService {
 
     // 스터디 멤버 조회
     public List<StudyMemberResponse> getStudyMembers(Long studyId) {
-        if (!studyRepository.existsById(studyId)) {
-            throw new NotFoundException("스터디가 존재하지 않습니다.");
+        // 활성화된 스터디만 조회 가능
+        if (!studyRepository.existsByStudyIdAndActivatedTrue(studyId)) {
+            throw new NotFoundException("스터디가 존재하지 않거나 비활성화 상태입니다.");
         }
 
         List<StudyMember> studyMembers = studyMemberRepository.findAllByStudyIdWithMember(studyId);
@@ -286,8 +298,8 @@ public class StudyService {
 
     @Transactional
     public void applyToStudy(Long memberId, Long studyId, String introduction) {
-        Study study = studyRepository.findById(studyId)
-            .orElseThrow(() -> new NotFoundException("해당 스터디가 존재하지 않습니다."));
+        Study study = studyRepository.findByStudyIdAndActivatedTrue(studyId)
+            .orElseThrow(() -> new NotFoundException("존재하지 않거나 비활성화된 스터디입니다."));
 
         Member member = memberRepository.findById(memberId)
             .orElseThrow(() -> new NotFoundException("회원 정보를 찾을 수 없습니다."));
@@ -315,9 +327,9 @@ public class StudyService {
         LocalDateTime startDateTime = startDate.atStartOfDay();
         LocalDateTime endDateTime = endDate.atTime(LocalTime.MAX);
 
-        // 스터디 존재 여부 확인
-        if (!studyRepository.existsById(studyId)) {
-            throw new NotFoundException("스터디가 존재하지 않습니다.");
+        // 활성화된 스터디만 허용
+        if (!studyRepository.existsByStudyIdAndActivatedTrue(studyId)) {
+            throw new NotFoundException("존재하지 않거나 비활성화된 스터디입니다.");
         }
 
         // memberId → studyMemberId 조회
@@ -343,12 +355,17 @@ public class StudyService {
     }
 
     public boolean isSurvival(Long studyId) {
+        if (!studyRepository.existsByStudyIdAndActivatedTrue(studyId)) {
+            throw new NotFoundException("존재하지 않거나 비활성화된 스터디입니다.");
+        }
+
         return (StudyType.SURVIVAL == studyRepository.findStudyTypeById(studyId));
     }
 
     @Transactional
     public void updateStudyNotification(Long memberId, Long studyId, String notice) {
-        Study study = studyRepository.findById(studyId)
+        // 비활성 스터디 접근 방지
+        Study study = studyRepository.findByStudyIdAndActivatedTrue(studyId)
             .orElseThrow(() -> new NotFoundException(ResponseCode.NOT_FOUND.message()));
 
         if(!studyMemberRepository.isAcceptorHasRight(memberId, studyId)) {
@@ -359,11 +376,36 @@ public class StudyService {
     }
 
     public String findNotice(Long studyId) {
-        if (!studyRepository.existsById(studyId)) {
-            throw new IllegalArgumentException("스터디가 존재하지 않습니다.");
+        if (!studyRepository.existsByStudyIdAndActivatedTrue(studyId)) {
+            throw new IllegalArgumentException("존재하지 않거나 비활성화된 스터디입니다.");
         }
 
         return studyRepository.findNoticeByStudyId(studyId)
             .orElse("공지사항이 없습니다.");
     }
+
+    // 매일 자정(00:00:00)에 종료일이 지난 스터디를 일괄 삭제
+    @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Seoul")
+    @Transactional
+    public void deactivateExpiredStudies() {
+        LocalDate today = LocalDate.now();
+        List<Study> expiredStudies = studyRepository.findAllByEndDateBefore(today);
+
+        if (expiredStudies.isEmpty()) {
+            log.info("만료된 스터디 없음 - 비활성화 생략");
+            return;
+        }
+
+        log.info("만료된 스터디 {}개 비활성화 시작...", expiredStudies.size());
+
+        for (Study study : expiredStudies) {
+            if (study.isActivated()) {
+                study.setActivated(false);
+            }
+        }
+
+        log.info("만료된 스터디 비활성화 완료");
+    }
+
+
 }

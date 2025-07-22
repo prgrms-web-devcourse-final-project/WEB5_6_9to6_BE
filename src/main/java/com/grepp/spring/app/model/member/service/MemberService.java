@@ -147,7 +147,7 @@ public class MemberService {
         Member member = memberRepository.findById(memberId)
             .orElseThrow(() -> new NotFoundException("사용자를 찾을 수 없습니다."));
 
-        List<StudyInfoResponse> studyList = studyMemberRepository.findByMemberIdAndActivatedTrue(memberId)
+        List<StudyInfoResponse> studyList = studyMemberRepository.findActiveStudyMemberships(memberId)
             .stream()
             .map(sm -> {
                 Study study = sm.getStudy();
@@ -194,7 +194,7 @@ public class MemberService {
         Member member = memberRepository.findById(memberId)
             .orElseThrow(() -> new NotFoundException("사용자를 찾을 수 없습니다."));
 
-        List<StudyMember> studyMembers = studyMemberRepository.findByMemberIdAndActivatedTrue(memberId);
+        List<StudyMember> studyMembers = studyMemberRepository.findActiveStudyMemberships(memberId);
 
         List<MypageStudyInfoResponse> userStudies = studyMembers.stream()
             .map(sm -> {
@@ -257,14 +257,14 @@ public class MemberService {
             .orElseThrow(() -> new NotFoundException("해당 이메일의 회원이 존재하지 않습니다: " + email));
 
         // memberId → studyMember
-        StudyMember studyMember = studyMemberRepository.findByMember_IdAndStudy_StudyId(member.getId(), studyId)
-            .orElseThrow(() -> new NotFoundException("스터디 멤버를 찾을 수 없습니다."));
+        StudyMember studyMember = studyMemberRepository.findActiveStudyMember(member.getId(), studyId)
+            .orElseThrow(() -> new NotFoundException("활성화된 스터디 멤버를 찾을 수 없습니다."));
 
         return studyMember.getStudyMemberId();
     }
 
     public Long findStudyMemberId(Long memberId, Long studyId) {
-        StudyMember studyMember = studyMemberRepository.findByMember_IdAndStudy_StudyId(memberId, studyId)
+        StudyMember studyMember = studyMemberRepository.findActiveStudyMember(memberId, studyId)
             .orElseThrow(() -> new NotFoundException("스터디 멤버를 찾을 수 없습니다."));
 
         return studyMember.getStudyMemberId();

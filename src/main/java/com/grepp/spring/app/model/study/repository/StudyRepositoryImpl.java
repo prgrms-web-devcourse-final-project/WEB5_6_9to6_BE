@@ -78,6 +78,7 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom {
             .select(study.studyId)
             .from(study)
             .where(
+                study.activated.isTrue(),
                 (req.getCategory() != null && req.getCategory() != Category.ALL) ? study.category.eq(req.getCategory()) : null,
                 (req.getRegion() != null && req.getRegion() != Region.ALL) ? study.region.eq(req.getRegion()) : null,
                 (req.getStatus() != null && req.getStatus() != Status.ALL) ? study.status.eq(req.getStatus()) : null,
@@ -97,7 +98,7 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom {
             .selectFrom(study)
             .distinct()
             .leftJoin(study.schedules).fetchJoin()
-            .where(study.studyId.in(ids))
+            .where(study.activated.isTrue(),study.studyId.in(ids))
             .orderBy(study.createdAt.desc())
             .fetch();
 
@@ -105,6 +106,7 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom {
             .select(study.count())
             .from(study)
             .where(
+                study.activated.isTrue(),
                 (req.getCategory() != null && req.getCategory() != Category.ALL) ? study.category.eq(req.getCategory()) : null,
                 (req.getRegion() != null && req.getRegion() != Region.ALL) ? study.region.eq(req.getRegion()) : null,
                 (req.getStatus() != null && req.getStatus() != Status.ALL) ? study.status.eq(req.getStatus()) : null,
