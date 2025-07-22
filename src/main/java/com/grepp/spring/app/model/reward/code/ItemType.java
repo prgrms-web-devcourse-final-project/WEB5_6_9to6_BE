@@ -6,8 +6,7 @@ public enum ItemType {
     HAT,
     HAIR,
     FACE,
-    TOP,
-    BOTTOM;
+    TOP;
 
     public static ItemType from(String value) {
         return ItemType.valueOf(value.toUpperCase());

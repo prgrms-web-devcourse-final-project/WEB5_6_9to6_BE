@@ -21,7 +21,7 @@ public class OwnItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long ownItemId;
+    private long ownItemId;
 
     @Column(nullable = false)
     private Long memberId;
