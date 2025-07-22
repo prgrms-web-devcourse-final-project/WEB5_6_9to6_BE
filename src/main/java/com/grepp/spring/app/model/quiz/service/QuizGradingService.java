@@ -12,11 +12,11 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class QuizGradingService {
 
     private final QuizRepository quizRepository;
 
-    @Transactional(readOnly = true)
     public QuizGradingResponse grade(QuizGradingRequest request) {
         List<Quiz> quizzes = quizRepository.findQuizzesByStudyIdAndWeek(
                 request.getStudyId(), request.getWeek()

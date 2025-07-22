@@ -63,13 +63,6 @@ public class QuizGetService {
             responseList.add(response);
         }
 
-        responseList.sort(new Comparator<QuizListResponse>() {
-            @Override
-            public int compare(QuizListResponse o1, QuizListResponse o2) {
-                return Integer.compare(o1.getWeek(), o2.getWeek());
-            }
-        });
-
         return responseList;
     }
 }
