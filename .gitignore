@@ -48,6 +48,5 @@ bin/
 /.nb-gradle/
 
 # 아래 파일들은 Git 추적에서 제외
-Dockerfile
 .dockerignore
 *.tar
