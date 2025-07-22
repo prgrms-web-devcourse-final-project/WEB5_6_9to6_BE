@@ -11,7 +11,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class GoalQueryRepositoryImpl implements GoalQueryRepository {
+public class GoalCustomRepositoryImpl implements GoalCustomRepository {
 
     private final JPAQueryFactory queryFactory;
 

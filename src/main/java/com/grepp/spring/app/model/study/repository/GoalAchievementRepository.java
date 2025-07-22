@@ -1,6 +1,5 @@
 package com.grepp.spring.app.model.study.repository;
 
-import com.grepp.spring.app.controller.api.study.payload.CheckGoalResponse;
 import com.grepp.spring.app.model.member.entity.StudyMember;
 import com.grepp.spring.app.model.study.entity.GoalAchievement;
 import io.lettuce.core.dynamic.annotation.Param;
@@ -11,7 +10,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface GoalAchievementRepository extends JpaRepository<GoalAchievement, Long>, GoalQueryRepository {
+public interface GoalAchievementRepository extends JpaRepository<GoalAchievement, Long>,
+    GoalCustomRepository {
 
     @Query("""
 SELECT COUNT(DISTINCT ga.achievementId)
