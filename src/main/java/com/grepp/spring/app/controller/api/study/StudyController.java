@@ -20,7 +20,6 @@ import com.grepp.spring.app.model.study.dto.StudyInfoResponse;
 import com.grepp.spring.app.model.study.dto.StudyListResponse;
 import com.grepp.spring.app.model.study.dto.WeeklyAttendanceResponse;
 import com.grepp.spring.app.model.study.dto.WeeklyGoalStatusResponse;
-import com.grepp.spring.app.model.study.entity.Study;
 import com.grepp.spring.app.model.study.reponse.StudyNoticeResponse;
 import com.grepp.spring.app.model.study.service.ApplicantService;
 import com.grepp.spring.app.model.study.service.StudyMemberService;

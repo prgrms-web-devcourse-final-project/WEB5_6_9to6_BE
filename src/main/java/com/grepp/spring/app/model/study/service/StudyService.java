@@ -57,6 +57,7 @@ public class StudyService {
     private final ApplicantRepository applicantRepository;
 
     //필터 조건에 따라 스터디 목록 + 현재 인원 수 조회
+    @Transactional(readOnly = true)
     public List<StudyListResponse> searchStudiesWithMemberCount(StudySearchRequest req) {
         if (req == null) {
             throw new StudyDataException(ResponseCode.BAD_REQUEST);
@@ -188,6 +189,7 @@ public class StudyService {
         }
     }
 
+    @Transactional(readOnly = true)
     public boolean isUserStudyMember(Long memberId, Long studyId) {
         if (!studyRepository.existsById(studyId)) {
             throw new IllegalArgumentException("스터디가 존재하지 않습니다.");
@@ -197,6 +199,7 @@ public class StudyService {
     }
 
     // 스터디 멤버 조회
+    @Transactional(readOnly = true)
     public List<StudyMemberResponse> getStudyMembers(Long studyId) {
         if (!studyRepository.existsById(studyId)) {
             throw new NotFoundException("스터디가 존재하지 않습니다.");
@@ -358,6 +361,7 @@ public class StudyService {
         study.updateNotice(notice);
     }
 
+    @Transactional(readOnly = true)
     public String findNotice(Long studyId) {
         if (!studyRepository.existsById(studyId)) {
             throw new IllegalArgumentException("스터디가 존재하지 않습니다.");
