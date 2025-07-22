@@ -147,22 +147,22 @@ public class RewardController {
         );
     }
 
-    @PostMapping("/saveimage")
-    @ApiResponse(responseCode = "200")
-    @Operation(summary = "서버에 이미지 저장", description="서버에 해당 조합에 해당하는 조합과 이미지를 가진 데이터를 생성합니다.")
-    public ResponseEntity<CommonResponse<Map<String, Object>>> PostItemImages(
-        @Valid @RequestBody SaveImageRequest saveImageRequest) {
-        Map<String, Object> data = Map.of();
+    @PostMapping(value = "/saveimage", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "조합된 아바타 이미지 저장", description = "조합된 아바타 이미지를 S3에 저장하고, 조합 정보를 DB에 저장합니다.")
+    @ApiResponse(responseCode = "201")
+    public ResponseEntity<CommonResponse<Map<String, Object>>> postItemImages(
+        @RequestPart("image") MultipartFile image,
+        @RequestPart("request") @Valid SaveImageRequest saveImageRequest
+    ) throws IOException {
 
-        itemSetService.saveImage(saveImageRequest);
-
+        itemSetService.saveImage(saveImageRequest, image);
         return ResponseEntity
             .status(HttpStatus.CREATED)
-            .body(CommonResponse.success(data));
+            .body(CommonResponse.success(Map.of()));
     }
 
-    @PostMapping(consumes = {"multipart/form-data"})
-    @Operation(summary = "리워드 아이템 생성", description = "이미지 + JSON 데이터를 포함한 리워드 아이템 생성")
+    @PostMapping(consumes = {"multipart/parts"})
+    @Operation(summary = "기본 파츠 저장(삭제 예정)", description = "이미지 + JSON 데이터를 포함한 리워드 아이템 생성")
     @ApiResponse(responseCode = "201", description = "생성 성공")
     public ResponseEntity<CommonResponse<Map<String, Object>>> createRewardItem(
         @Parameter(description = "이미지 파일") @RequestPart("image") MultipartFile image,
