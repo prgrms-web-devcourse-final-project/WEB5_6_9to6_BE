@@ -1,6 +1,5 @@
 package com.grepp.spring.infra.error;
 
-import com.grepp.spring.infra.error.exceptions.*;
 import com.grepp.spring.infra.error.exceptions.AlreadyCheckedAttendanceException;
 import com.grepp.spring.infra.error.exceptions.AlreadyExistException;
 import com.grepp.spring.infra.error.exceptions.CommonException;
@@ -10,7 +9,6 @@ import com.grepp.spring.infra.error.exceptions.NotFoundException;
 import com.grepp.spring.infra.error.exceptions.NullStateException;
 import com.grepp.spring.infra.error.exceptions.OutOfMinimumPageException;
 import com.grepp.spring.infra.error.exceptions.OutOfMinimumPageSizeException;
-import com.grepp.spring.infra.error.exceptions.Quiz.*;
 import com.grepp.spring.infra.error.exceptions.StudyDataException;
 import com.grepp.spring.infra.error.exceptions.PasswordValidationException;
 import com.grepp.spring.infra.error.exceptions.Quiz.InvalidQuizException;
@@ -22,7 +20,6 @@ import com.grepp.spring.infra.error.exceptions.Quiz.QuizSetNotFoundException;
 import com.grepp.spring.infra.error.exceptions.Quiz.StudyGoalNotFoundException;
 import com.grepp.spring.infra.error.exceptions.Quiz.StudyMemberNotFoundException;
 import com.grepp.spring.infra.error.exceptions.Quiz.StudyNotFoundException;
-import com.grepp.spring.infra.error.exceptions.StudyDataException;
 import com.grepp.spring.infra.error.exceptions.alarm.AlarmValidationException;
 import com.grepp.spring.infra.response.CommonResponse;
 import com.grepp.spring.infra.response.ResponseCode;
