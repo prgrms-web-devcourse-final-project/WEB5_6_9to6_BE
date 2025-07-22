@@ -246,18 +246,25 @@ public class StudyController {
         return ResponseEntity.status(200).body(CommonResponse.noContent());
     }
 
-    // 스터디 목표 달성 여부 조회
-    @Operation(summary = "주간 스터디 목표 달성 현황 조회", description = """
-        현재 로그인한 사용자의 특정 스터디(`studyId`)에 대한 주간 목표 달성 현황을 조회합니다.
-        - 이 API는 인증이 필요하며, 요청 헤더에 유효한 토큰이 있어야 합니다.
-        """)
+    @Operation(
+        summary = "주간 스터디 목표 달성 현황 조회",
+        description = """
+        특정 사용자의 특정 스터디(`studyId`)에 대한 이번 주 목표 달성 현황을 조회합니다.
+
+        - `memberId`를 요청 파라미터로 전달하지 않으면, 현재 로그인한 사용자의 ID를 기반으로 조회합니다.
+        - 인증이 필요하며, `Authorization` 헤더에 유효한 JWT 토큰이 있어야 합니다.
+        """
+    )
     @GetMapping("/{studyId}/goals/completed")
     public ResponseEntity<?> getWeeklyGoalStats(
-        @PathVariable Long studyId) {
+        @PathVariable Long studyId,
+        @RequestParam(required = false) Long memberId
+    ) {
+        if (memberId == null) {
+            memberId = SecurityUtil.getCurrentMemberId(); // 로그인된 사용자 ID
+        }
 
-        Long memberId = SecurityUtil.getCurrentMemberId(); // 로그인된 사용자
         WeeklyGoalStatusResponse response = studyService.getWeeklyGoalStats(studyId, memberId);
-
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 
