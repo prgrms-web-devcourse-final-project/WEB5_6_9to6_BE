@@ -4,6 +4,7 @@ import com.grepp.spring.app.controller.api.reward.payload.ImageResponse;
 import com.grepp.spring.app.controller.api.reward.payload.SaveImageRequest;
 import com.grepp.spring.app.model.auth.domain.Principal;
 import com.grepp.spring.app.model.member.service.MemberService;
+import com.grepp.spring.app.model.reward.code.ItemType;
 import com.grepp.spring.app.model.reward.dto.ItemSetDto;
 import com.grepp.spring.app.controller.api.reward.payload.OwnItemResponse;
 import com.grepp.spring.app.controller.api.reward.payload.RewardItemResponse;
@@ -105,7 +106,15 @@ public class RewardController {
 
         Long memberId = SecurityUtil.getCurrentMemberId();
 
-        ownItemService.changeOwnItems(ownItemId);
+        ItemType itemType= ownItemService.changeOwnItems(ownItemId);
+
+        ImageResponse emptyImage = new ImageResponse();
+
+        if (itemType==ItemType.BACKGROUND|| itemType==ItemType.THEME){
+            return ResponseEntity.ok(CommonResponse.success(SuccessCode.ITEM_CHANGED_SUCCESSFULLY,emptyImage));
+        }
+
+
 
         // 변경 후 현재 사용 중인 아이템들로 조합 이미지 체크
         ItemSetDto itemSetDto = ownItemService.getUseItemList(memberId);

@@ -14,19 +14,19 @@ import lombok.NoArgsConstructor;
 public class OwnItemResponse
 
  {
-     private Long item_id;
-     private Long own_item_id;
+     private Long itemId;
+     private Long ownItemId;
      private String name;
      private String type;  // ItemType을 문자열로 변환해서 담을 예정
-     private boolean is_used;
+     private boolean isUsed;
 
     public static OwnItemResponse from(OwnItemDto dto) {
         return OwnItemResponse.builder()
-            .item_id(dto.getItemId())
-            .own_item_id(dto.getOwnItemId())
+            .itemId(dto.getItemId())
+            .ownItemId(dto.getOwnItemId())
             .name(dto.getName())
             .type(dto.getItemtype().name())  // enum to string
-            .is_used(dto.isUsed())
+            .isUsed(dto.isUsed())
             .build();
     }
 
