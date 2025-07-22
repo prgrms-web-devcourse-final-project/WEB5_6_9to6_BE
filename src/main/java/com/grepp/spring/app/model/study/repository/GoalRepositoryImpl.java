@@ -4,14 +4,18 @@ import com.grepp.spring.app.controller.api.study.payload.CheckGoalResponse;
 import com.grepp.spring.app.model.member.entity.QStudyMember;
 import com.grepp.spring.app.model.study.entity.QGoalAchievement;
 import com.grepp.spring.app.model.study.entity.QStudyGoal;
+import com.grepp.spring.app.model.study.reponse.GoalsResponse;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 
+import static com.grepp.spring.app.model.study.entity.QStudy.study;
+
 @RequiredArgsConstructor
-public class GoalCustomRepositoryImpl implements GoalCustomRepository {
+public class GoalRepositoryImpl implements GoalRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
 
@@ -44,4 +48,41 @@ public class GoalCustomRepositoryImpl implements GoalCustomRepository {
             )
             .fetch();
     }
+
+    @Override
+    public List<GoalsResponse> findGoalsById(Long studyId) {
+        return queryFactory
+            .select(
+                Projections.constructor(GoalsResponse.class,
+                    studyGoal.goalId,
+                    studyGoal.content
+                    )
+            )
+            .from(studyGoal)
+            .where(
+                studyGoal.study.studyId.eq(studyId).and(studyGoal.activated.isTrue())
+            )
+            .fetch();
+    }
+
+    @Override
+    public int countTotalAchievements(Long studyId, Long studyMemberId, LocalDateTime startDateTime,
+        LocalDateTime endDateTime) {
+        Long count = queryFactory
+            .select(goalAchievement.achievementId.countDistinct())
+            .from(goalAchievement)
+            .join(goalAchievement.studyGoal, studyGoal)
+            .join(studyGoal.study, study)
+            .where(
+                study.studyId.eq(studyId),
+                goalAchievement.studyMember.studyMemberId.eq(studyMemberId),
+                goalAchievement.achievedAt.between(startDateTime, endDateTime),
+                goalAchievement.isAccomplished.isTrue()
+            )
+            .fetchOne();
+
+        return count != null ? count.intValue() : 0;
+    }
+
+
 }
