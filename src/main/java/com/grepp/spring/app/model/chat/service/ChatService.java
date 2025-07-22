@@ -12,7 +12,7 @@ import com.grepp.spring.app.model.member.repository.MemberRepository;
 import com.grepp.spring.app.model.study.entity.Study;
 import com.grepp.spring.app.model.study.repository.StudyRepository;
 import com.grepp.spring.infra.config.Chat.WebSocket.WebSocketSessionTracker;
-import com.grepp.spring.infra.util.NotFoundException;
+import com.grepp.spring.infra.error.exceptions.NotFoundException;
 import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -72,7 +72,7 @@ public class ChatService {
     // 채팅방 생성
     public void createChatRoom(Long studyId) {
         Study study = studyRepository.findById(studyId)
-            .orElseThrow(() -> new NotFoundException("스터디가 존재하지 않습니다."));
+            .orElseThrow(() -> new NotFoundException("스터디를 찾을 수 없습니다."));
 
         ChatRoom chatRoom = ChatRoom.builder()
             .study(study)

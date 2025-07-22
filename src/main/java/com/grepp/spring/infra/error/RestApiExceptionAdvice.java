@@ -3,21 +3,32 @@ package com.grepp.spring.infra.error;
 import com.grepp.spring.infra.error.exceptions.*;
 import com.grepp.spring.infra.error.exceptions.AlreadyCheckedAttendanceException;
 import com.grepp.spring.infra.error.exceptions.AlreadyExistException;
-import com.grepp.spring.infra.error.exceptions.AlreadyProcessedException;
 import com.grepp.spring.infra.error.exceptions.CommonException;
-import com.grepp.spring.infra.error.exceptions.HasNotRightException;
 import com.grepp.spring.infra.error.exceptions.InsufficientRewardPointsException;
 import com.grepp.spring.infra.error.exceptions.MailSendFailureException;
+import com.grepp.spring.infra.error.exceptions.NotFoundException;
 import com.grepp.spring.infra.error.exceptions.NullStateException;
 import com.grepp.spring.infra.error.exceptions.OutOfMinimumPageException;
 import com.grepp.spring.infra.error.exceptions.OutOfMinimumPageSizeException;
 import com.grepp.spring.infra.error.exceptions.Quiz.*;
 import com.grepp.spring.infra.error.exceptions.StudyDataException;
+import com.grepp.spring.infra.error.exceptions.PasswordValidationException;
+import com.grepp.spring.infra.error.exceptions.Quiz.InvalidQuizException;
+import com.grepp.spring.infra.error.exceptions.Quiz.InvalidQuizGradeRequestException;
+import com.grepp.spring.infra.error.exceptions.Quiz.QuizAlreadyExistsException;
+import com.grepp.spring.infra.error.exceptions.Quiz.QuizGenerationFailedException;
+import com.grepp.spring.infra.error.exceptions.Quiz.QuizResultAlreadySubmittedException;
+import com.grepp.spring.infra.error.exceptions.Quiz.QuizSetNotFoundException;
+import com.grepp.spring.infra.error.exceptions.Quiz.StudyGoalNotFoundException;
+import com.grepp.spring.infra.error.exceptions.Quiz.StudyMemberNotFoundException;
+import com.grepp.spring.infra.error.exceptions.Quiz.StudyNotFoundException;
+import com.grepp.spring.infra.error.exceptions.StudyDataException;
+import com.grepp.spring.infra.error.exceptions.alarm.AlarmValidationException;
 import com.grepp.spring.infra.response.CommonResponse;
 import com.grepp.spring.infra.response.ResponseCode;
-import com.grepp.spring.infra.util.NotFoundException;
+import jakarta.persistence.EntityNotFoundException;
+import java.util.NoSuchElementException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -154,39 +165,6 @@ public class RestApiExceptionAdvice {
             .body(CommonResponse.error(ResponseCode.BAD_REQUEST.code(), ex.getMessage()));
     }
 
-
-    @ExceptionHandler(DataAccessException.class)
-    public ResponseEntity<CommonResponse<String>> handleDataAccessException(DataAccessException ex) {
-        log.error(ex.getMessage(), ex);
-        return ResponseEntity
-            .status(HttpStatus.INTERNAL_SERVER_ERROR)
-            .body(CommonResponse.error(ResponseCode.INTERNAL_SERVER_ERROR));
-    }
-
-
-    @ExceptionHandler(SameStateException.class)
-    public ResponseEntity<CommonResponse<String>> handleSameStateException(SameStateException ex) {
-        log.error(ex.getMessage(), ex);
-        return ResponseEntity
-            .status(HttpStatus.BAD_REQUEST)
-            .body(CommonResponse.error(ResponseCode.BAD_REQUEST));
-    }
-
-    @ExceptionHandler(AlreadyProcessedException.class)
-    public ResponseEntity<CommonResponse<String>> handleAlreadyProcessedException(AlreadyProcessedException ex) {
-        log.error(ex.getMessage(), ex);
-        return ResponseEntity
-            .status(HttpStatus.BAD_REQUEST)
-            .body(CommonResponse.error(ResponseCode.BAD_REQUEST));
-    }
-
-    @ExceptionHandler(HasNotRightException.class)
-    public ResponseEntity<CommonResponse<String>> handleHasNotRightException(HasNotRightException ex) {
-        log.error(ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-            .body(CommonResponse.error(ResponseCode.UNAUTHORIZED));
-    }
-
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<CommonResponse<String>> handleIllegalArgumentException(IllegalArgumentException ex) {
         log.error(ex.getMessage(), ex);
@@ -195,8 +173,8 @@ public class RestApiExceptionAdvice {
             .body(CommonResponse.error(ResponseCode.BAD_REQUEST.code(), ex.getMessage()));
     }
 
-    @ExceptionHandler(MemberNotFoundException.class)
-    public ResponseEntity<CommonResponse<String>> handleStudyNotFoundException(MemberNotFoundException ex) {
+    @ExceptionHandler(StudyNotFoundException.class)
+    public ResponseEntity<CommonResponse<String>> handleStudyNotFoundException(StudyNotFoundException ex) {
         log.error(ex.getMessage(), ex);
         return ResponseEntity
                 .status(ResponseCode.FAIL_SEARCH_STUDY.status())
@@ -274,4 +252,36 @@ public class RestApiExceptionAdvice {
             .status(HttpStatus.NOT_FOUND)
             .body(CommonResponse.error(ResponseCode.NOT_FOUND));
     }
+    @ExceptionHandler(NoSuchElementException.class)
+    public ResponseEntity<CommonResponse<String>> handleNoSuchElementException(NoSuchElementException ex) {
+        log.error(ex.getMessage(), ex);
+        return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .body(CommonResponse.error(ResponseCode.BAD_REQUEST.code(), ex.getMessage()));
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<CommonResponse<String>> handleEntityNotFoundException(EntityNotFoundException ex) {
+        log.error(ex.getMessage(), ex);
+        return ResponseEntity
+            .status(HttpStatus.NOT_FOUND)
+            .body(CommonResponse.error(ResponseCode.NOT_FOUND));
+    }
+
+    @ExceptionHandler(PasswordValidationException.class)
+    public ResponseEntity<CommonResponse<Void>> handlePasswordValidation(PasswordValidationException ex) {
+        log.error(ex.getMessage(), ex);
+        return ResponseEntity
+            .status(ex.getCode().status())
+            .body(CommonResponse.error(ex.getCode()));
+    }
+
+    @ExceptionHandler(AlarmValidationException.class)
+    public ResponseEntity<CommonResponse<Void>> handleAlarmValidation(AlarmValidationException ex) {
+        log.error(ex.getMessage(), ex);
+        return ResponseEntity
+            .status(ex.getCode().status())
+            .body(CommonResponse.error(ex.getCode()));
+    }
 }
+

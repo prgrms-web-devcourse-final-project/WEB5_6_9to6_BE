@@ -2,6 +2,7 @@ package com.grepp.spring.app.model.reward.code;
 
 
 public enum ItemType {
+    THEME,
     BACKGROUND,
     HAT,
     HAIR,

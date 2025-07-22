@@ -84,8 +84,11 @@ public class StudyController {
     ) {
         String email = authentication.getName();
         Long studyMemberId = memberService.findStudyMemberId(email, studyId);
+        Long memberId = SecurityUtil.getCurrentMemberId();
 
         memberService.markAttendance(studyMemberId);
+        // 100 point 지급 받음
+        memberService.addRewardPoints(memberId);
 
         return ResponseEntity.ok(CommonResponse.success("출석 체크 완료."));
     }
@@ -225,6 +228,7 @@ public class StudyController {
         현재 로그인한 사용자가 특정 스터디(`studyId`)의 특정 목표(`goalId`)를 달성했음을 등록합니다.
         - 이 API는 인증이 필요하며, 요청 헤더에 유효한 토큰이 있어야 합니다.
         """)
+    @PostMapping("{studyId}/goal/{goalId}")
     public ResponseEntity<?> successGoal(@PathVariable Long studyId, @PathVariable Long goalId) {
         Long memberId = SecurityUtil.getCurrentMemberId();
         log.info("memberId: {}", memberId);

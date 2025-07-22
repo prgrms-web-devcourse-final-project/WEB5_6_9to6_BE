@@ -1,6 +1,7 @@
 package com.grepp.spring.infra.error;
 
 import com.grepp.spring.infra.error.exceptions.AuthApiException;
+import com.grepp.spring.infra.error.exceptions.UnauthenticatedAccessException;
 import com.grepp.spring.infra.response.CommonResponse;
 import com.grepp.spring.infra.response.ResponseCode;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +41,16 @@ public class AuthExceptionAdvice {
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<CommonResponse<String>> authExHandler(
         AccessDeniedException ex
+    ) {
+        log.error(ex.getMessage(), ex);
+        return ResponseEntity
+            .status(HttpStatus.UNAUTHORIZED)
+            .body(CommonResponse.error(ResponseCode.UNAUTHORIZED));
+    }
+
+    @ExceptionHandler(UnauthenticatedAccessException.class)
+    public ResponseEntity<CommonResponse<String>> authExHandler(
+        UnauthenticatedAccessException ex
     ) {
         log.error(ex.getMessage(), ex);
         return ResponseEntity

@@ -14,6 +14,8 @@ public enum ResponseCode {
     BAD_CREDENTIAL("4011", HttpStatus.UNAUTHORIZED, "아이디나 비밀번호가 틀렸습니다."),
     NOT_EXIST_PRE_AUTH_CREDENTIAL("4012", HttpStatus.OK, "사전 인증 정보가 요청에서 발견되지 않았습니다."),
     SOCIAL_LOGIN_CONFLICT("4013", HttpStatus.UNAUTHORIZED, "이미 동일한 이메일의 로컬 계정이 존재합니다."),
+    INCORRECT_PASSWORD("4015", HttpStatus.BAD_REQUEST, "현재 비밀번호가 일치하지 않습니다."),
+    SAME_PASSWORD_NOT_ALLOWED("4016", HttpStatus.BAD_REQUEST, "새 비밀번호는 기존 비밀번호와 달라야 합니다."),
     NOT_FOUND("4040", HttpStatus.NOT_FOUND, "NOT FOUND"),
     ALREADY_EXIST("4090", HttpStatus.CONFLICT, "해당 데이터는 이미 존재합니다."),
     POINT_NOT_ENOUGH("4091",HttpStatus.CONFLICT,"포인트가 부족합니다."),
@@ -28,10 +30,13 @@ public enum ResponseCode {
     STUDY_GOAL_NOT_FOUND("8005", HttpStatus.NOT_FOUND, "해당 주차의 스터디 목표가 존재하지 않습니다."),
     QUIZ_GENERATION_FAILED("8006", HttpStatus.INTERNAL_SERVER_ERROR, "퀴즈 생성 중 오류가 발생했습니다."),
     STUDY_MEMBER_NOT_FOUND("8007", HttpStatus.NOT_FOUND, "해당 스터디에 존재하지 않는 스터디 멤버입니다."),
-
-
-
+    ALARM_RESULT_STATUS_REQUIRED("9000", HttpStatus.BAD_REQUEST, "RESULT 타입 알람은 resultStatus가 필요합니다."),
+    ALARM_RESULT_STATUS_NOT_ALLOWED("9001", HttpStatus.BAD_REQUEST, "APPLY 타입 알람은 resultStatus를 포함할 수 없습니다."),
+    ALARM_ACCESS_DENIED("9002", HttpStatus.FORBIDDEN, "본인의 알림만 읽음 처리할 수 있습니다."),
+    ALARM_SENDER_EQUALS_RECEIVER("9003", HttpStatus.BAD_REQUEST, "자기 자신에게 알림을 보낼 수 없습니다."),
+    ALARM_SENDER_UNAUTHORIZED("9004", HttpStatus.UNAUTHORIZED, "본인의 알림만 생성할 수 있습니다.")
     ;
+
     private final String code;
     private final HttpStatus status;
     private final String message;
