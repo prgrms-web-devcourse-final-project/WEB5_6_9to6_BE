@@ -13,6 +13,5 @@ public class ItemSetDto
     private Long hair;
     private Long face;
     private Long top;
-    private Long bottom;
 
 }

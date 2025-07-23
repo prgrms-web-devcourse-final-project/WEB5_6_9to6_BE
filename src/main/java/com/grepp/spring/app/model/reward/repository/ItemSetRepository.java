@@ -8,8 +8,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ItemSetRepository extends JpaRepository<ItemSet,Long> {
 
-    Optional<ItemSet> findByHatAndHairAndFaceAndTopAndBottom(
-        Long hat, Long hair, Long face, Long top, Long bottom
+    Optional<ItemSet> findByHatAndHairAndFaceAndTop(
+        Long hat, Long hair, Long face, Long top
     );
 
 

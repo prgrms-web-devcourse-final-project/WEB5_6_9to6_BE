@@ -47,6 +47,8 @@ public enum ResponseCode {
         this.message = message;
     }
 
+
+
     public String code() {
         return code;
     }

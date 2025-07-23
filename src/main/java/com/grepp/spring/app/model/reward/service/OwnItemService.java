@@ -17,10 +17,12 @@ import com.grepp.spring.infra.error.exceptions.NotFoundException;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class OwnItemService {
 
     private final OwnItemRepository ownItemRepository;
@@ -39,7 +41,7 @@ public class OwnItemService {
 
     }
     public ItemSetDto convertToItemSet(List<OwnItem> ownItems) {
-        Long hat = null, hair = null, face = null, top = null, bottom = null;
+        Long hat = null, hair = null, face = null, top = null;
 
         for (OwnItem ownItem : ownItems) {
             RewardItem rewardItem = ownItem.getRewardItem();
@@ -52,7 +54,6 @@ public class OwnItemService {
                 case HAIR -> hair = rewardItemId;
                 case FACE -> face = rewardItemId;
                 case TOP -> top = rewardItemId;
-                case BOTTOM -> bottom = rewardItemId;
             }
         }
 
@@ -60,8 +61,7 @@ public class OwnItemService {
             .hat(hat)
             .hair(hair)
             .face(face)
-            .top(top)
-            .bottom(bottom) // 이미지 생성 로직 필요 시 따로 처리
+            .top(top)// 이미지 생성 로직 필요 시 따로 처리
             .build();
     }
 
@@ -118,9 +118,9 @@ public class OwnItemService {
     }
 
     @Transactional
-    public void changeOwnItems(long ownItemId) {
+    public ItemType changeOwnItems(long ownItemId) {
         OwnItem currentItem = ownItemRepository.findById(ownItemId)
-            .orElseThrow(()-> new NotFoundException("OwnItem not found"));
+            .orElseThrow(()-> new NotFoundException("OwnItem not found" + ownItemId));
 
 
         // 현재 아이템의 타입 판별
@@ -130,15 +130,16 @@ public class OwnItemService {
 
 
 
+        log.info("beforeItem: {}", beforeItem);
         if (beforeItem!= null){
             beforeItem.use(false);
-
+            log.info("beforeItem: {}", beforeItem);
         }
 
         currentItem.use(true);
+        log.info("currentItem: {}", currentItem);
 
 
-
-
+return itemType;
     }
 }
