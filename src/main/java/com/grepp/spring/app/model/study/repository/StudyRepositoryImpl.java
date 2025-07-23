@@ -18,14 +18,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
 import static com.grepp.spring.app.model.member.entity.QMember.member;
 import static com.grepp.spring.app.model.study.entity.QApplicant.applicant;
 import static com.grepp.spring.app.model.study.entity.QStudy.study;
 
-@Repository
 @RequiredArgsConstructor
 public class StudyRepositoryImpl implements StudyRepositoryCustom {
 
@@ -82,12 +80,12 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom {
             .select(study.studyId)
             .from(study)
             .where(
-                study.activated.isTrue(),
                 (req.getCategory() != null && req.getCategory() != Category.ALL) ? study.category.eq(req.getCategory()) : null,
                 (req.getRegion() != null && req.getRegion() != Region.ALL) ? study.region.eq(req.getRegion()) : null,
                 (req.getStatus() != null && req.getStatus() != Status.ALL) ? study.status.eq(req.getStatus()) : null,
                 (req.getStudyType() != null ) ? study.studyType.eq(req.getStudyType()) : null,
-                StringUtils.hasText(req.getName()) ? study.name.contains(req.getName()) : null
+                StringUtils.hasText(req.getName()) ? study.name.contains(req.getName()) : null,
+                study.activated.isTrue()
             )
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
@@ -119,7 +117,7 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom {
                 (req.getStudyType() != null ) ? study.studyType.eq(req.getStudyType()) : null,
                 StringUtils.hasText(req.getName()) ? study.name.contains(req.getName()) : null
             )
-            .fetchFirst();
+            .fetchOne();
 
         return new PageImpl<>(content, pageable, total != null ? total : 0L);
     }
