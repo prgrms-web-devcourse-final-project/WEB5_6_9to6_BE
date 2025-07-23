@@ -13,7 +13,7 @@ public interface OwnItemIdGetRepository extends JpaRepository<OwnItem,Long>{
 
     @Query("select o.rewardItem.itemId "
         + "from OwnItem o where o.isUsed = true "
-        + "and o.rewardItem.itemType != 'BACKGROUND' and o.memberId = :memberId")
+        + "and o.rewardItem.itemType != 'BACKGROUND' and o.rewardItem.itemType != 'THEME' and o.memberId = :memberId")
     List<Long> findOwnItemIdsByMemberId(@Param("memberId") Long memberId);
 
 }
