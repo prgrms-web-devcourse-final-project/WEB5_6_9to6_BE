@@ -8,14 +8,11 @@ import com.grepp.spring.app.model.study.reponse.GoalsResponse;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 
-import static com.grepp.spring.app.model.study.entity.QStudy.study;
-
 @RequiredArgsConstructor
-public class GoalRepositoryImpl implements GoalRepositoryCustom {
+public class GoalRepositoryCustomImpl implements GoalRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
 
@@ -26,7 +23,7 @@ public class GoalRepositoryImpl implements GoalRepositoryCustom {
 
 
     @Override
-    public List<CheckGoalResponse> findAchieveStatusesByStudyId(Long studyId, Long studyMemberId) {
+    public List<CheckGoalResponse> findAchieveStatuses(Long studyId, Long studyMemberId) {
         return queryFactory
             .select(
                 Projections.constructor(CheckGoalResponse.class,
@@ -38,13 +35,13 @@ public class GoalRepositoryImpl implements GoalRepositoryCustom {
             .from(studyGoal)
             .leftJoin(goalAchievement)
                 .on(
-                    studyGoal.goalId.eq(goalAchievement.studyGoal.goalId)
-                        .and(goalAchievement.studyMember.studyMemberId.eq(studyMemberId))
-                        .and(goalAchievement.activated.isTrue())
+                    studyGoal.goalId.eq(goalAchievement.studyGoal.goalId),
+                    goalAchievement.studyMember.studyMemberId.eq(studyMemberId),
+                    goalAchievement.activated.isTrue()
                 )
             .where(
-                studyGoal.study.studyId.eq(studyId)
-                    .and(studyGoal.activated.isTrue())
+                studyGoal.study.studyId.eq(studyId),
+                studyGoal.activated.isTrue()
             )
             .fetch();
     }
@@ -60,29 +57,30 @@ public class GoalRepositoryImpl implements GoalRepositoryCustom {
             )
             .from(studyGoal)
             .where(
-                studyGoal.study.studyId.eq(studyId).and(studyGoal.activated.isTrue())
+                studyGoal.study.studyId.eq(studyId),
+                studyGoal.activated.isTrue()
             )
             .fetch();
     }
 
-    @Override
-    public int countTotalAchievements(Long studyId, Long studyMemberId, LocalDateTime startDateTime,
-        LocalDateTime endDateTime) {
-        Long count = queryFactory
-            .select(goalAchievement.achievementId.countDistinct())
-            .from(goalAchievement)
-            .join(goalAchievement.studyGoal, studyGoal)
-            .join(studyGoal.study, study)
-            .where(
-                study.studyId.eq(studyId),
-                goalAchievement.studyMember.studyMemberId.eq(studyMemberId),
-                goalAchievement.achievedAt.between(startDateTime, endDateTime),
-                goalAchievement.isAccomplished.isTrue()
-            )
-            .fetchOne();
-
-        return count != null ? count.intValue() : 0;
-    }
+//    @Override
+//    public int getTotalAchievementsCount(Long studyId, Long studyMemberId, LocalDateTime startDateTime,
+//        LocalDateTime endDateTime) {
+//        Long count = queryFactory
+//            .select(goalAchievement.achievementId.countDistinct())
+//            .from(goalAchievement)
+//            .join(goalAchievement.studyGoal, studyGoal)
+//            .join(studyGoal.study, study)
+//            .where(
+//                study.studyId.eq(studyId),
+//                goalAchievement.studyMember.studyMemberId.eq(studyMemberId),
+//                goalAchievement.achievedAt.between(startDateTime, endDateTime),
+//                goalAchievement.isAccomplished.isTrue()
+//            )
+//            .fetchOne();
+//
+//        return count != null ? count.intValue() : 0;
+//    }
 
 
 }
