@@ -5,20 +5,20 @@ import com.grepp.spring.app.model.member.dto.response.ApplicantsResponse;
 import com.grepp.spring.app.model.study.code.Category;
 import com.grepp.spring.app.model.study.code.Region;
 import com.grepp.spring.app.model.study.code.Status;
+import com.grepp.spring.app.model.study.code.StudyType;
 import com.grepp.spring.app.model.study.entity.Study;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 import org.springframework.util.StringUtils;
 
 import static com.grepp.spring.app.model.member.entity.QMember.member;
@@ -82,6 +82,7 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom {
             .select(study.studyId)
             .from(study)
             .where(
+                study.activated.isTrue(),
                 (req.getCategory() != null && req.getCategory() != Category.ALL) ? study.category.eq(req.getCategory()) : null,
                 (req.getRegion() != null && req.getRegion() != Region.ALL) ? study.region.eq(req.getRegion()) : null,
                 (req.getStatus() != null && req.getStatus() != Status.ALL) ? study.status.eq(req.getStatus()) : null,
@@ -101,7 +102,10 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom {
             .selectFrom(study)
             .distinct()
             .leftJoin(study.schedules).fetchJoin()
-            .where(study.studyId.in(ids))
+            .where(
+                study.studyId.in(ids),
+                study.activated.isTrue()
+            )
             .orderBy(study.createdAt.desc())
             .fetch();
 
@@ -115,7 +119,7 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom {
                 (req.getStudyType() != null ) ? study.studyType.eq(req.getStudyType()) : null,
                 StringUtils.hasText(req.getName()) ? study.name.contains(req.getName()) : null
             )
-            .fetchOne();
+            .fetchFirst();
 
         return new PageImpl<>(content, pageable, total != null ? total : 0L);
     }
@@ -147,8 +151,59 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom {
                 member.avatarImage))
             .from(applicant)
             .join(applicant.member, member)
-            .where(applicant.study.studyId.eq(studyId))
+            .where(
+                applicant.study.studyId.eq(studyId),
+                applicant.activated.isTrue()
+            )
             .fetch();
+    }
+
+    @Override
+    public Optional<Study> findByIdWithGoals(Long id) {
+        Study res = queryFactory
+            .selectFrom(study)
+            .leftJoin(study.goals).fetchJoin()
+            .where(
+                study.studyId.eq(id),
+                study.activated.isTrue()
+            )
+            .fetchOne();
+        return Optional.ofNullable(res);
+    }
+
+    @Override
+    public Optional<Study> findByIdWithSchedules(Long id) {
+        Study res = queryFactory
+            .select(study)
+            .from(study)
+            .leftJoin(study.schedules).fetchJoin()
+            .where(
+                study.studyId.eq(id),
+                study.activated.isTrue()
+            )
+            .fetchOne();
+        return Optional.ofNullable(res);
+    }
+
+    @Override
+    public StudyType findStudyTypeById(Long studyId) {
+        return queryFactory
+            .select(study.studyType)
+            .from(study)
+            .where(study.studyId.eq(studyId))
+            .fetchOne();
+    }
+
+    @Override
+    public Optional<String> findNoticeByStudyId(Long studyId) {
+        String res = queryFactory
+            .select(study.notice)
+            .from(study)
+            .where(
+                study.studyId.eq(studyId)
+            )
+            .fetchOne();
+        return Optional.ofNullable(res);
     }
 
 }
