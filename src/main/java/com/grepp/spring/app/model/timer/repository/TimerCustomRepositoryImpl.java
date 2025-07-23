@@ -15,6 +15,7 @@ public class TimerCustomRepositoryImpl implements TimerCustomRepository {
 
     private final JPAQueryFactory queryFactory;
 
+    @Override
     public List<Tuple> findDailyStudyLogsByStudyMemberId(Long studyMemberId, Long studyId, LocalDateTime startOfDay, LocalDateTime endOfDay) {
         return queryFactory
             .select(
@@ -26,12 +27,14 @@ public class TimerCustomRepositoryImpl implements TimerCustomRepository {
                 timer.studyMemberId.eq(studyMemberId),
                 timer.createdAt.goe(startOfDay),
                 timer.createdAt.lt(endOfDay),
-                timer.studyId.eq(studyId)
+                timer.studyId.eq(studyId),
+                timer.activated.isTrue()
             )
             .groupBy(Expressions.dateTemplate(LocalDate.class, "DATE({0})", timer.createdAt))
             .fetch();
     }
 
+    @Override
     public Long findTotalStudyTimeInPeriod(Long studyMemberId, Long studyId, LocalDateTime startOfDay, LocalDateTime endOfDay) {
         return queryFactory
             .select(timer.dailyStudyTime.sum().castToNum(Long.class))
@@ -40,12 +43,24 @@ public class TimerCustomRepositoryImpl implements TimerCustomRepository {
                 timer.studyMemberId.eq(studyMemberId),
                 timer.studyId.eq(studyId),
                 timer.createdAt.goe(startOfDay),
-                timer.createdAt.lt(endOfDay)
+                timer.createdAt.lt(endOfDay),
+                timer.activated.isTrue()
             )
 
             .fetchOne();
     }
 
+    @Override
+    public Long findTotalStudyTimeByStudyMemberIds(List<Long> studyMemberIds) {
 
+        return queryFactory
+            .select(timer.dailyStudyTime.sum().castToNum(Long.class))
+            .from(timer)
+            .where(
+                timer.studyMemberId.in(studyMemberIds),
+                timer.activated.isTrue()
+            )
+            .fetchOne();
+    }
 
 }

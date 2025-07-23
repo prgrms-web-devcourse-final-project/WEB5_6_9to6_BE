@@ -10,4 +10,6 @@ public interface TimerCustomRepository {
 
     Long findTotalStudyTimeInPeriod(Long studyMemberId, Long studyId, LocalDateTime startOfDay, LocalDateTime endOfDay);
 
+    Long findTotalStudyTimeByStudyMemberIds(List<Long> studyMemberIds);
+
 }
