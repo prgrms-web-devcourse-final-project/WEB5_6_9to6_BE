@@ -353,7 +353,7 @@ public class StudyService {
         Study study = studyRepository.findById(studyId)
             .orElseThrow(() -> new NotFoundException(ResponseCode.NOT_FOUND.message()));
 
-        if(!studyMemberRepository.isAcceptorHasRight(memberId, studyId)) {
+        if(!studyMemberRepository.checkAcceptorHasRight(memberId, studyId)) {
             throw new HasNotRightException(ResponseCode.UNAUTHORIZED);
         }
 
