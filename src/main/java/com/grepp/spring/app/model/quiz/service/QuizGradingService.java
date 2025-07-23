@@ -3,7 +3,7 @@ package com.grepp.spring.app.model.quiz.service;
 import com.grepp.spring.app.controller.api.quiz.payload.QuizGradingRequest;
 import com.grepp.spring.app.controller.api.quiz.payload.QuizGradingResponse;
 import com.grepp.spring.app.model.quiz.entity.Quiz;
-import com.grepp.spring.app.model.quiz.repository.QuizRepository;
+import com.grepp.spring.app.model.quiz.repository.quizRepository.QuizRepository;
 import com.grepp.spring.infra.error.exceptions.Quiz.InvalidQuizGradeRequestException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,11 +12,11 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class QuizGradingService {
 
     private final QuizRepository quizRepository;
 
-    @Transactional(readOnly = true)
     public QuizGradingResponse grade(QuizGradingRequest request) {
         List<Quiz> quizzes = quizRepository.findQuizzesByStudyIdAndWeek(
                 request.getStudyId(), request.getWeek()
