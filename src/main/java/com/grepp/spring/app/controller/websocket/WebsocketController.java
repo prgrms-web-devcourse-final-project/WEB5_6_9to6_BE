@@ -6,13 +6,12 @@ import com.grepp.spring.app.controller.api.chat.ParticipantResponse;
 import com.grepp.spring.app.controller.websocket.payload.ChatMessageRequest;
 import com.grepp.spring.app.model.auth.domain.Principal;
 import com.grepp.spring.app.model.chat.service.ChatService;
-import com.grepp.spring.app.model.study.service.StudyService;
 import com.grepp.spring.infra.config.Chat.WebSocket.WorkerManager;
 import com.grepp.spring.infra.response.CommonResponse;
+import com.grepp.spring.infra.util.SecurityUtil;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -25,11 +24,9 @@ public class WebsocketController {
 
     private final ChatService chatService;
     private final SimpMessagingTemplate messagingTemplate;
-    private final RedisTemplate<String , String> redisTemplate;
+    private final RedisTemplate<String, String> redisTemplate;
     private final ObjectMapper objectMapper;
     private final WorkerManager workerManager;
-
-
 
 //    @MessageMapping("/chat/{studyId}")
 //    public void sendChatMessageWs(
@@ -51,7 +48,8 @@ public class WebsocketController {
 //
 //        long memberId = principal.getMemberId();
 //
-//// 채팅 저장 및 응답 생성
+
+    /// / 채팅 저장 및 응답 생성
 //        ChatMessageResponse response = chatService.saveChatMessage(studyId, request, memberId);
 //
 //
@@ -86,31 +84,25 @@ public class WebsocketController {
 //
 //        }
 //    }
-
     @MessageMapping("/participants/{studyId}")
-    public void requestParticipants(@DestinationVariable Long studyId, Principal principal) {
-
-
+    public void requestParticipants(@DestinationVariable Long studyId) {
 
         List<ParticipantResponse> participants = chatService.getOnlineParticipants(studyId);
         CommonResponse<List<ParticipantResponse>> response = CommonResponse.success(participants);
         messagingTemplate.convertAndSend("/subscribe/" + studyId + "/participants", response);
     }
 
-// 웹소켓으로 받은 메세지를 레디스로 전송
+    // 웹소켓으로 받은 메세지를 레디스로 전송
     @MessageMapping("/chat.send/{studyId}") // ex. /publish/chat.send
     public void sendMessage(ChatMessageRequest request,
         @DestinationVariable Long studyId,
         Authentication authentication) {
 
-
         System.out.println("WebSocket message received for studyId = " + studyId);
 
         Principal principal = (Principal) authentication.getPrincipal();
 
-
         long memberId = principal.getMemberId();
-
 
         request.setSenderId(memberId);
         request.setStudyId(studyId);
@@ -125,8 +117,8 @@ public class WebsocketController {
         }
 
         String topic = "chat:" + studyId;
-        Long publishedCount= redisTemplate.convertAndSend(topic , message);
-        redisTemplate.opsForList().leftPush("chat:log:"+studyId, message); // List 저장
+        Long publishedCount = redisTemplate.convertAndSend(topic, message);
+        redisTemplate.opsForList().leftPush("chat:log:" + studyId, message); // List 저장
 
         System.out.println(" Redis 발행 완료, 수신 리스너 수: " + publishedCount);
     }

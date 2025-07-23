@@ -88,7 +88,6 @@ public class ChatController {
             + "웹소켓으로 변경해서 안쓸거 같습니다.")
     public ResponseEntity<CommonResponse<List<ParticipantResponse>>> getOnlineParticipants(@PathVariable Long studyId) {
 
-
         List<ParticipantResponse> participants = chatService.getOnlineParticipants(studyId);
 
 
@@ -104,7 +103,6 @@ public class ChatController {
     public ResponseEntity<CommonResponse<List<ChatHistoryResponse>>> getChatHistory(@PathVariable Long studyId,
         Authentication authentication) {
 
-        List<Map<String, Object>> chatHistory = new ArrayList<>();
         Long memberId = SecurityUtil.getCurrentMemberId();
         Principal principal = (Principal) authentication.getPrincipal();
 
