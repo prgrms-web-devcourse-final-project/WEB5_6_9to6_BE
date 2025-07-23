@@ -3,7 +3,7 @@ package com.grepp.spring.app.model.quiz.service;
 import com.grepp.spring.app.controller.api.quiz.payload.QuizListResponse;
 import com.grepp.spring.app.model.quiz.dto.QuizDto;
 import com.grepp.spring.app.model.quiz.dto.QuizProjection;
-import com.grepp.spring.app.model.quiz.repository.QuizSetRepository;
+import com.grepp.spring.app.model.quiz.repository.quizSetRepository.QuizSetRepository;
 import com.grepp.spring.app.model.study.repository.StudyRepository;
 import com.grepp.spring.infra.error.exceptions.Quiz.InvalidQuizException;
 import com.grepp.spring.infra.error.exceptions.Quiz.StudyNotFoundException;
@@ -62,13 +62,6 @@ public class QuizGetService {
             QuizListResponse response = new QuizListResponse(week, quizList);
             responseList.add(response);
         }
-
-        responseList.sort(new Comparator<QuizListResponse>() {
-            @Override
-            public int compare(QuizListResponse o1, QuizListResponse o2) {
-                return Integer.compare(o1.getWeek(), o2.getWeek());
-            }
-        });
 
         return responseList;
     }
