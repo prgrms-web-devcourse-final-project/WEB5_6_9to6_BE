@@ -43,6 +43,7 @@ public class WebSocketEventListener {
             long memberId = principal.getMemberId();
             String email = principal.getUsername();
             String nickname = memberRepository.findNicknameById(memberId);
+            String image = memberRepository.findAvatarImageById(memberId);
 
             String studyIdHeader = accessor.getFirstNativeHeader("studyId");
             String sessionId = accessor.getSessionId();
@@ -52,7 +53,7 @@ public class WebSocketEventListener {
                     Long studyId = Long.valueOf(studyIdHeader);
 
                     // 메모리 및 Redis 등록
-                    tracker.addSession(sessionId, studyId, email, nickname);
+                    tracker.addSession(sessionId, memberId,studyId, email, nickname,image);
                     redisTemplate.opsForHash().put("nicknames:" + studyId, email, memberId + ":" + nickname);
                     redisTemplate.opsForHash().put("participants:" + studyId, sessionId, email);
 

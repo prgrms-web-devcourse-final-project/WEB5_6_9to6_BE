@@ -7,7 +7,7 @@ import com.grepp.spring.app.model.member.repository.StudyMemberRepository;
 import com.grepp.spring.app.model.quiz.entity.QuizRecord;
 import com.grepp.spring.app.model.quiz.entity.QuizSet;
 import com.grepp.spring.app.model.quiz.repository.QuizRecordRepository;
-import com.grepp.spring.app.model.quiz.repository.QuizSetRepository;
+import com.grepp.spring.app.model.quiz.repository.quizSetRepository.QuizSetRepository;
 import com.grepp.spring.infra.error.exceptions.Quiz.QuizResultAlreadySubmittedException;
 import com.grepp.spring.infra.error.exceptions.Quiz.QuizSetNotFoundException;
 import com.grepp.spring.infra.error.exceptions.Quiz.StudyMemberNotFoundException;

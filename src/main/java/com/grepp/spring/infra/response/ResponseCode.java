@@ -34,7 +34,7 @@ public enum ResponseCode {
     ALARM_RESULT_STATUS_NOT_ALLOWED("9001", HttpStatus.BAD_REQUEST, "APPLY 타입 알람은 resultStatus를 포함할 수 없습니다."),
     ALARM_ACCESS_DENIED("9002", HttpStatus.FORBIDDEN, "본인의 알림만 읽음 처리할 수 있습니다."),
     ALARM_SENDER_EQUALS_RECEIVER("9003", HttpStatus.BAD_REQUEST, "자기 자신에게 알림을 보낼 수 없습니다."),
-    ALARM_SENDER_UNAUTHORIZED("9004", HttpStatus.UNAUTHORIZED, "본인의 알림만 생성할 수 있습니다.")
+    ALARM_SENDER_UNAUTHORIZED("9004", HttpStatus.UNAUTHORIZED, "알림 발신자는 본인이어야 합니다.")
     ;
 
     private final String code;

@@ -9,8 +9,8 @@ import com.grepp.spring.app.model.quiz.entity.Choice;
 import com.grepp.spring.app.model.quiz.entity.Quiz;
 import com.grepp.spring.app.model.quiz.entity.QuizSet;
 import com.grepp.spring.app.model.quiz.repository.ChoiceRepository;
-import com.grepp.spring.app.model.quiz.repository.QuizRepository;
-import com.grepp.spring.app.model.quiz.repository.QuizSetRepository;
+import com.grepp.spring.app.model.quiz.repository.quizRepository.QuizRepository;
+import com.grepp.spring.app.model.quiz.repository.quizSetRepository.QuizSetRepository;
 import com.grepp.spring.app.model.study.entity.StudyGoal;
 import com.grepp.spring.app.model.study.repository.StudyGoalRepository;
 import com.grepp.spring.infra.error.exceptions.Quiz.QuizAlreadyExistsException;
@@ -30,6 +30,7 @@ import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class QuizCreateService {
 
     private final QuizSetRepository quizSetRepository;
@@ -132,7 +133,6 @@ public class QuizCreateService {
     }
 
     private QuizSet saveGeneratedQuizzes(Long studyId, int week, StudyGoal goal, List<QuizGenerationDto> dtos) {
-
         QuizSet quizSet = QuizSet.builder()
                 .studyId(studyId)
                 .week(week)
@@ -141,23 +141,30 @@ public class QuizCreateService {
                 .build();
         quizSetRepository.save(quizSet);
 
-        for (QuizGenerationDto dto : dtos) {
-            Quiz quiz = quizRepository.save(Quiz.builder()
-                    .quizSet(quizSet)
-                    .question(dto.getQuestion())
-                    .answer(dto.getAnswer())
-                    .activated(true)
-                    .build());
+        List<Quiz> quizzes = dtos.stream()
+                .map(dto -> Quiz.builder()
+                        .quizSet(quizSet)
+                        .question(dto.getQuestion())
+                        .answer(dto.getAnswer())
+                        .activated(true)
+                        .build())
+                .toList();
+        quizRepository.saveAll(quizzes);
 
-            choiceRepository.save(Choice.builder()
-                    .quiz(quiz)
-                    .choice1(dto.getChoices().get(0))
-                    .choice2(dto.getChoices().get(1))
-                    .choice3(dto.getChoices().get(2))
-                    .choice4(dto.getChoices().get(3))
-                    .activated(true)
-                    .build());
-        }
+        List<Choice> choices = dtos.stream()
+                .map(dto -> {
+                    Quiz correspondingQuiz = quizzes.get(dtos.indexOf(dto));
+                    return Choice.builder()
+                            .quiz(correspondingQuiz)
+                            .choice1(dto.getChoices().get(0))
+                            .choice2(dto.getChoices().get(1))
+                            .choice3(dto.getChoices().get(2))
+                            .choice4(dto.getChoices().get(3))
+                            .activated(true)
+                            .build();
+                })
+                .toList();
+        choiceRepository.saveAll(choices);
 
         return quizSet;
     }
