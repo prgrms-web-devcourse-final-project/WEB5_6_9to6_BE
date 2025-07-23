@@ -361,7 +361,7 @@ public class MemberService {
 
     @Transactional(readOnly = true)
     public AvatarInfoResponse getMemberAvatarInfo(Long memberId) {
-        List<Long> ids = ownItemIdGetRepository.findOwnItemIdsByMemberId(memberId);
+        List<Long> ids = ownItemIdGetRepository.findIdsByMemberId(memberId);
         String memberAvatarImage = memberRepository.findAvatarImageById(memberId);
         AvatarInfoResponse avatarInfoResponse = AvatarInfoResponse.builder()
             .itemIds(ids)

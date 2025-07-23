@@ -112,7 +112,7 @@ public class RewardController {
 
         Long memberId = SecurityUtil.getCurrentMemberId();
 
-        ItemType itemType= ownItemService.changeOwnItems(ownItemId);
+        ItemType itemType= ownItemService.changeOwnItems(memberId, ownItemId);
 
         ImageResponse emptyImage = new ImageResponse();
 

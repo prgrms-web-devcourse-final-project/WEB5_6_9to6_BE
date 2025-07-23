@@ -106,17 +106,34 @@
   }
 
   function showMessage(data) {
+    console.log("받은 메시지:", data);
     const chatBox = document.getElementById("chat-box");
     const messageElement = document.createElement("p");
 
-    if (data.receiverId) {
-      // 귓속말 표시
-      messageElement.style.color = "blue";
-      messageElement.textContent = `(귓속말) ${data.senderId}: ${data.content}`;
-    } else {
-      messageElement.textContent = `${data.senderId}: ${data.content}`;
+    if (data.image) {
+      const img = document.createElement("img");
+      img.src = data.image;
+      img.alt = data.senderNickname + " 프로필 이미지";
+      img.style.width = "24px";
+      img.style.height = "24px";
+      img.style.borderRadius = "50%";
+      img.style.marginRight = "6px";
+      img.style.verticalAlign = "middle";
+      messageElement.appendChild(img);
     }
 
+    // 메시지 텍스트는 appendChild로 추가
+    const textNode = document.createTextNode(
+        data.receiverId
+            ? `(귓속말) ${data.senderId}: ${data.content}`
+            : `${data.senderId}: ${data.content}`
+    );
+
+    if (data.receiverId) {
+      messageElement.style.color = "blue";
+    }
+
+    messageElement.appendChild(textNode);
     chatBox.appendChild(messageElement);
     chatBox.scrollTop = chatBox.scrollHeight;
   }
@@ -145,7 +162,18 @@
     listElement.innerHTML = "";
     participants.forEach(p => {
       const li = document.createElement("li");
-      li.textContent = `${p.nickname} (${p.status})`;
+
+      const img = document.createElement("img");
+      img.src = p.image || 'default-avatar.png';  // 기본 이미지 옵션
+      img.alt = p.nickname + " 프로필 이미지";
+      img.style.width = "30px";
+      img.style.height = "30px";
+      img.style.borderRadius = "50%";
+      img.style.marginRight = "8px";
+      img.style.verticalAlign = "middle";
+
+      li.appendChild(img);
+      li.appendChild(document.createTextNode(`${p.nickname} (${p.status})`));
       listElement.appendChild(li);
     });
   }

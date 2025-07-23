@@ -14,6 +14,7 @@ import com.grepp.spring.infra.error.exceptions.AlreadyExistException;
 import com.grepp.spring.infra.error.exceptions.InsufficientRewardPointsException;
 import com.grepp.spring.infra.response.ResponseCode;
 import com.grepp.spring.infra.error.exceptions.NotFoundException;
+import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,7 @@ public class OwnItemService {
     private final OwnItemRepository ownItemRepository;
     private final RewardItemRepository rewardItemRepository;
     private final MemberRepository memberRepository;
+    private final EntityManager entityManager;
 
 
     public ItemSetDto getUseItemList(Long memberId) {
@@ -118,26 +120,20 @@ public class OwnItemService {
     }
 
     @Transactional
-    public ItemType changeOwnItems(long ownItemId) {
+    public ItemType changeOwnItems(Long memberId, long ownItemId) {
         OwnItem currentItem = ownItemRepository.findById(ownItemId)
             .orElseThrow(()-> new NotFoundException("OwnItem not found" + ownItemId));
 
 
         // 현재 아이템의 타입 판별
             ItemType itemType = currentItem.getRewardItem().getItemType();
-        OwnItem beforeItem= ownItemRepository.findFirstByRewardItem_ItemTypeAndIsUsedTrue(itemType)
-            .orElse(null);
+        ownItemRepository.bulkUnsetUsedItemsByType(memberId, itemType);
 
+        entityManager.flush();
+        entityManager.clear();
 
-
-        log.info("beforeItem: {}", beforeItem);
-        if (beforeItem!= null){
-            beforeItem.use(false);
-            log.info("beforeItem: {}", beforeItem);
-        }
-
-        currentItem.use(true);
-        log.info("currentItem: {}", currentItem);
+        OwnItem freshItem = ownItemRepository.findById(ownItemId).orElseThrow();
+        freshItem.use(true);
 
 
 return itemType;
