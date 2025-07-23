@@ -39,6 +39,12 @@ public class AlarmService {
     @Transactional
     public void createAndSendAlarm(AlarmRequest request) {
 
+        Long currentMemberId = SecurityUtil.getCurrentMemberId();
+
+        if (!request.getSenderId().equals(currentMemberId)) {
+            throw new AlarmValidationException(ResponseCode.ALARM_SENDER_UNAUTHORIZED);
+        }
+
         if (request.getSenderId().equals(request.getReceiverId())) {
             throw new AlarmValidationException(ResponseCode.ALARM_SENDER_EQUALS_RECEIVER);
         }
