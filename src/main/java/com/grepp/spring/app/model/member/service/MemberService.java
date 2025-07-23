@@ -19,7 +19,12 @@ import com.grepp.spring.app.model.member.entity.StudyMember;
 import com.grepp.spring.app.model.member.repository.MemberRepository;
 import com.grepp.spring.app.model.member.repository.StudyAttendanceRepository;
 import com.grepp.spring.app.model.member.repository.StudyMemberRepository;
+import com.grepp.spring.app.model.reward.entity.OwnItem;
+import com.grepp.spring.app.model.reward.entity.RewardItem;
+import com.grepp.spring.app.model.reward.repository.ItemSetRepository;
 import com.grepp.spring.app.model.reward.repository.OwnItemIdGetRepository;
+import com.grepp.spring.app.model.reward.repository.OwnItemRepository;
+import com.grepp.spring.app.model.reward.repository.RewardItemRepository;
 import com.grepp.spring.app.model.study.entity.GoalAchievement;
 import com.grepp.spring.app.model.study.entity.Study;
 import com.grepp.spring.app.model.study.entity.StudySchedule;
@@ -50,12 +55,22 @@ public class MemberService {
     private final StudyAttendanceRepository studyAttendanceRepository;
     private final GoalAchievementRepository goalAchievementRepository;
     private final OwnItemIdGetRepository ownItemIdGetRepository;
+    private final OwnItemRepository ownItemRepository;
+    private final RewardItemRepository rewardItemRepository;
+    private final ItemSetRepository itemSetRepository;
 
     @Transactional
     public Member join(SignupRequest req) {
         if (memberRepository.findByEmail(req.getEmail()).isPresent()) {
             throw new AlreadyExistException(ResponseCode.ALREADY_EXIST);
         }
+
+        // 1. 기본 아이템 rewardItem 중 item_id = 1인 것 가져오기
+        RewardItem defaultThemeItem = getRewardItem(1L);
+
+        // 2. 해당 item 의 image 가져오기
+        String defaultAvatarImage = itemSetRepository.findImageByItemId(1L);
+
 
         Member member = Member.builder()
             .email(req.getEmail())
@@ -67,11 +82,34 @@ public class MemberService {
             .gender(req.getGender())
             .socialType(SocialType.LOCAL)
             .winCount(0)
-            .avatarImage(null)
+            .avatarImage(defaultAvatarImage)
             .build();
 
-        return memberRepository.save(member);
+        // 1. 회원 저장
+        Member savedMember = memberRepository.save(member);
+
+        // 2. 기본 아이템 목록 정의
+        List<OwnItem> defaultItems = List.of(
+            OwnItem.builder().memberId(savedMember.getId()).rewardItem(getRewardItem(1L)).isUsed(true).activated(true).build(),
+            OwnItem.builder().memberId(savedMember.getId()).rewardItem(getRewardItem(11L)).isUsed(true).activated(true).build(),
+            OwnItem.builder().memberId(savedMember.getId()).rewardItem(getRewardItem(21L)).isUsed(true).activated(true).build(),
+            OwnItem.builder().memberId(savedMember.getId()).rewardItem(getRewardItem(31L)).isUsed(true).activated(true).build(),
+            OwnItem.builder().memberId(savedMember.getId()).rewardItem(getRewardItem(51L)).isUsed(false).activated(true).build(),
+            OwnItem.builder().memberId(savedMember.getId()).rewardItem(getRewardItem(52L)).isUsed(true).activated(true).build(),
+            OwnItem.builder().memberId(savedMember.getId()).rewardItem(getRewardItem(61L)).isUsed(true).activated(true).build(),
+            OwnItem.builder().memberId(savedMember.getId()).rewardItem(getRewardItem(62L)).isUsed(false).activated(true).build()
+        );
+
+        ownItemRepository.saveAll(defaultItems);
+
+        return savedMember;
     }
+
+    private RewardItem getRewardItem(Long itemId) {
+        return rewardItemRepository.findById(itemId)
+            .orElseThrow(() -> new NotFoundException("해당 item_id를 찾을 수 없습니다: " + itemId));
+    }
+
 
     @Transactional(readOnly = true)
     public boolean isDuplicatedEmail(String email) {
