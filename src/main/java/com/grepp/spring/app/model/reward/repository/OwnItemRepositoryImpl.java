@@ -1,6 +1,7 @@
 package com.grepp.spring.app.model.reward.repository;
 
 
+import com.grepp.spring.app.model.reward.code.ItemType;
 import com.grepp.spring.app.model.reward.dto.OwnItemDto;
 import com.grepp.spring.app.model.reward.dto.QOwnItemDto;
 import com.grepp.spring.app.model.reward.entity.QOwnItem;
@@ -36,4 +37,16 @@ public class OwnItemRepositoryImpl implements OwnItemRepositoryCustom {
             )
             .fetch();
     }
+    public long bulkUnsetUsedItemsByType(ItemType itemType) {
+        QOwnItem ownItem = QOwnItem.ownItem;
+        return queryFactory.update(ownItem)
+            .set(ownItem.isUsed, false)
+            .where(
+                ownItem.isUsed.eq(true),
+                ownItem.rewardItem.itemType.eq(itemType)
+            )
+            .execute();
+    }
+
+
 }
