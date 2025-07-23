@@ -4,11 +4,10 @@ import com.grepp.spring.app.model.member.code.StudyRole;
 import com.grepp.spring.app.model.member.entity.StudyMember;
 import java.util.List;
 import java.util.Optional;
-import org.springframework.data.repository.query.Param;
 
 public interface StudyMemberRepositoryCustom {
 
-    List<Long> findAllStudies(@Param("memberId") Long memberId);
+    List<Long> findAllStudies(Long memberId);
 
     Optional<Long> findIdByStudyMemberIdAndMemberId(Long studyId,Long memberId);
 
@@ -16,8 +15,8 @@ public interface StudyMemberRepositoryCustom {
 
     Optional<StudyRole> findRoleByStudyAndMember(Long studyId, Long memberId);
 
-    Optional<Long> findStudyMemberIdByStudyIdWithMeberId(Long studyId, Long memberId);
+    Optional<Long> findStudyMemberIdByStudyIdWithMemberId(Long studyId, Long memberId);
 
-    Boolean isAcceptorHasRight(@Param("acceptorId") Long acceptorId, Long studyId);
+    Boolean checkAcceptorHasRight(Long acceptorId, Long studyId);
 
 }

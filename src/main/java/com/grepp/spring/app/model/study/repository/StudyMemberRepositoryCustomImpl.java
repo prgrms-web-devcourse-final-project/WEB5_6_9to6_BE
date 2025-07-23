@@ -11,7 +11,7 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class StudyMemberRepositoryImpl implements StudyMemberRepositoryCustom {
+public class StudyMemberRepositoryCustomImpl implements StudyMemberRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
 
@@ -72,7 +72,7 @@ public class StudyMemberRepositoryImpl implements StudyMemberRepositoryCustom {
     }
 
     @Override
-    public Optional<Long> findStudyMemberIdByStudyIdWithMeberId(Long studyId, Long memberId) {
+    public Optional<Long> findStudyMemberIdByStudyIdWithMemberId(Long studyId, Long memberId) {
         Long smId = queryFactory
             .select(studyMember.studyMemberId)
             .from(studyMember)
@@ -86,14 +86,15 @@ public class StudyMemberRepositoryImpl implements StudyMemberRepositoryCustom {
     }
 
     @Override
-    public Boolean isAcceptorHasRight(Long acceptorId, Long studyId) {
+    public Boolean checkAcceptorHasRight(Long acceptorId, Long studyId) {
         return queryFactory
             .select(studyMember.studyRole.eq(StudyRole.LEADER))
             .from(studyMember)
             .where(
                 studyMember.study.studyId.eq(studyId),
                 studyMember.member.id.eq(acceptorId),
-                studyMember.activated.isTrue()
+                studyMember.activated.isTrue(),
+                studyMember.member.activated.isTrue()
             )
             .fetchOne();
     }
