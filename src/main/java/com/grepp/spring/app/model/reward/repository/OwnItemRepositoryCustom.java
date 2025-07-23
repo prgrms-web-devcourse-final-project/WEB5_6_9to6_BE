@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository;
 public interface OwnItemRepositoryCustom {
     List<OwnItemDto> findOwnItemsByMemberId(Long memberId);
 
-    long bulkUnsetUsedItemsByType(ItemType itemType);
+    long bulkUnsetUsedItemsByType(Long memberId, ItemType itemType);
 }

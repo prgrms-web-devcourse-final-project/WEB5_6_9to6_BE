@@ -120,14 +120,14 @@ public class OwnItemService {
     }
 
     @Transactional
-    public ItemType changeOwnItems(long ownItemId) {
+    public ItemType changeOwnItems(Long memberId, long ownItemId) {
         OwnItem currentItem = ownItemRepository.findById(ownItemId)
             .orElseThrow(()-> new NotFoundException("OwnItem not found" + ownItemId));
 
 
         // 현재 아이템의 타입 판별
             ItemType itemType = currentItem.getRewardItem().getItemType();
-        ownItemRepository.bulkUnsetUsedItemsByType(itemType);
+        ownItemRepository.bulkUnsetUsedItemsByType(memberId, itemType);
 
         entityManager.flush();
         entityManager.clear();

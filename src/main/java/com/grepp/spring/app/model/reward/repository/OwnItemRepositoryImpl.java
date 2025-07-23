@@ -37,13 +37,14 @@ public class OwnItemRepositoryImpl implements OwnItemRepositoryCustom {
             )
             .fetch();
     }
-    public long bulkUnsetUsedItemsByType(ItemType itemType) {
+    public long bulkUnsetUsedItemsByType(Long memberId, ItemType itemType) {
         QOwnItem ownItem = QOwnItem.ownItem;
         return queryFactory.update(ownItem)
             .set(ownItem.isUsed, false)
             .where(
                 ownItem.isUsed.eq(true),
-                ownItem.rewardItem.itemType.eq(itemType)
+                ownItem.rewardItem.itemType.eq(itemType),
+                ownItem.memberId.eq(memberId)
             )
             .execute();
     }
