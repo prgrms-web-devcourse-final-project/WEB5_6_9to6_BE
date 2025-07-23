@@ -8,7 +8,8 @@ public enum SuccessCode {
     NO_IMAGE_FOUND("0002",HttpStatus.OK,"이미지가 없습니다."),
     ALARM_SENT("0003", HttpStatus.OK, "알림 전송이 완료되었습니다."),
     ALARM_READ("0004", HttpStatus.OK, "알림 읽음 처리가 완료되었습니다."),
-    ALARM_ALL_READ("0005", HttpStatus.OK, "알림 모두 읽음 처리가 완료되었습니다.")
+    ALARM_ALL_READ("0005", HttpStatus.OK, "알림 모두 읽음 처리가 완료되었습니다."),
+    ITEM_CHANGED_SUCCESSFULLY("0006",HttpStatus.OK,"아이템 변경이 완료되었습니다.")
     ;
 
     private final String code;
