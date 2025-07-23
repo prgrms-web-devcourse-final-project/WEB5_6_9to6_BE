@@ -5,6 +5,7 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 application-local.properties
+application-gcp.properties
 application.properties
 *.log
 .DS_Store
@@ -45,3 +46,7 @@ bin/
 /dist/
 /nbdist/
 /.nb-gradle/
+
+# 아래 파일들은 Git 추적에서 제외
+.dockerignore
+*.tar

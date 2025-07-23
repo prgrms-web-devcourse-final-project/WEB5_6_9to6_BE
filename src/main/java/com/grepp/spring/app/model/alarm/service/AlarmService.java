@@ -10,8 +10,9 @@ import com.grepp.spring.app.model.alarm.repository.AlarmRepository;
 import com.grepp.spring.app.model.alarm.sse.EmitterRepository;
 import com.grepp.spring.app.model.member.entity.Member;
 import com.grepp.spring.app.model.member.repository.MemberRepository;
-import com.grepp.spring.infra.error.exceptions.BadRequestException;
 import com.grepp.spring.infra.error.exceptions.NotFoundException;
+import com.grepp.spring.infra.error.exceptions.alarm.AlarmValidationException;
+import com.grepp.spring.infra.response.ResponseCode;
 import com.grepp.spring.infra.util.SecurityUtil;
 import java.io.IOException;
 import java.util.HashMap;
@@ -19,11 +20,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.AccessDeniedException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AlarmService {
@@ -37,21 +39,30 @@ public class AlarmService {
     @Transactional
     public void createAndSendAlarm(AlarmRequest request) {
 
+        Long currentMemberId = SecurityUtil.getCurrentMemberId();
+
+        if (!request.getSenderId().equals(currentMemberId)) {
+            throw new AlarmValidationException(ResponseCode.ALARM_SENDER_UNAUTHORIZED);
+        }
+
+        if (request.getSenderId().equals(request.getReceiverId())) {
+            throw new AlarmValidationException(ResponseCode.ALARM_SENDER_EQUALS_RECEIVER);
+        }
+        // result의 경우, resultStatus 필요
+        if (request.getType() == AlarmType.RESULT && request.getResultStatus() == null) {
+            throw new AlarmValidationException(ResponseCode.ALARM_RESULT_STATUS_REQUIRED);
+        }
+        // apply의 경우, resultStatus 불가
+        if (request.getType() == AlarmType.APPLY && request.getResultStatus() != null) {
+            throw new AlarmValidationException(ResponseCode.ALARM_RESULT_STATUS_NOT_ALLOWED);
+        }
+
         Member sender = memberRepository.findById(request.getSenderId())
             .orElseThrow(() -> new NotFoundException("알림을 보낸 사용자가 존재하지 않습니다."));
         Member receiver = memberRepository.findById(request.getReceiverId())
             .orElseThrow(() -> new NotFoundException("알림을 받는 사용자가 존재하지 않습니다."));
 
-        if (request.getMessage() == null || request.getMessage().trim().isEmpty()) {
-            throw new BadRequestException("알림 메시지는 공백일 수 없습니다.");
-        }
-        if (request.getType() == AlarmType.RESULT && request.getResultStatus() == null) {
-            throw new BadRequestException("RESULT 타입 알람은 resultStatus가 필요합니다.");
-        }
-        if (request.getType() == AlarmType.APPLY && request.getResultStatus() != null) {
-            throw new BadRequestException("APPLY 타입 알람은 resultStatus를 포함할 수 없습니다.");
-        }
-
+        // 알림 저장
         Alarm alarm = Alarm.builder()
             .sender(sender)
             .receiver(receiver)
@@ -64,7 +75,7 @@ public class AlarmService {
         AlarmRecipient recipient = new AlarmRecipient(alarm, receiver);
         alarmRecipientRepository.save(recipient);
 
-        // SSE 전송
+        // SSE 실시간 전송
         SseEmitter emitter = emitterRepository.get(receiver.getId());
         if (emitter != null) {
 
@@ -81,6 +92,7 @@ public class AlarmService {
                 }
                 emitter.send(SseEmitter.event().name("alarm").data(payload));
             } catch (IOException e) {
+                log.warn("알림 전송 실패 - 수신자 ID: {}, 사유: {}", receiver.getId(), e.getMessage());
                 emitterRepository.remove(receiver.getId());
             }
         }
@@ -104,7 +116,7 @@ public class AlarmService {
 
         Long currentMemberId = SecurityUtil.getCurrentMemberId();
         if (!recipient.getMember().getId().equals(currentMemberId)) {
-            throw new AccessDeniedException("본인의 알림만 읽음 처리할 수 있습니다.");
+            throw new AlarmValidationException(ResponseCode.ALARM_ACCESS_DENIED);
         }
 
         if (!recipient.getIsRead()) {
@@ -117,5 +129,4 @@ public class AlarmService {
     public void markAllAlarmsAsRead(Long memberId) {
         alarmRecipientRepository.markAllAsReadByMemberId(memberId);
     }
-
 }

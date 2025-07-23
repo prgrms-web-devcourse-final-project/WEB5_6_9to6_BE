@@ -2,6 +2,7 @@ package com.grepp.spring.app.controller.api.study;
 
 import com.grepp.spring.app.controller.api.study.payload.ApplicationRequest;
 import com.grepp.spring.app.controller.api.study.payload.ApplicationResultRequest;
+import com.grepp.spring.app.controller.api.study.payload.CheckGoalResponse;
 import com.grepp.spring.app.controller.api.study.payload.NotificationUpdateRequest;
 import com.grepp.spring.app.controller.api.study.payload.StudyCreationRequest;
 import com.grepp.spring.app.controller.api.study.payload.StudySearchRequest;
@@ -228,6 +229,7 @@ public class StudyController {
         현재 로그인한 사용자가 특정 스터디(`studyId`)의 특정 목표(`goalId`)를 달성했음을 등록합니다.
         - 이 API는 인증이 필요하며, 요청 헤더에 유효한 토큰이 있어야 합니다.
         """)
+    @PostMapping("{studyId}/goal/{goalId}")
     public ResponseEntity<?> successGoal(@PathVariable Long studyId, @PathVariable Long goalId) {
         Long memberId = SecurityUtil.getCurrentMemberId();
         log.info("memberId: {}", memberId);
@@ -314,6 +316,23 @@ public class StudyController {
         StudyNoticeResponse res = new StudyNoticeResponse(studyService.findNotice(studyId));
         return ResponseEntity.ok(CommonResponse.success(res));
     }
+
+    // 맴버의 특정 스터디에 대한 목표 달성여부 체크
+    @Operation(summary = "스터디 목표 달성 여부 조회", description = """
+        현재 로그인한 사용자의 특정 스터디(`studyId`)에 대한 모든 목표의 달성 여부를 조회합니다.
+        - 각 목표별로 달성했는지(`isAchieved`) 여부를 리스트로 반환합니다.
+        - 이 API는 인증이 필요하며, 요청 헤더에 유효한 토큰이 있어야 합니다.
+        """)
+    @GetMapping("/{studyId}/check-goal")
+    public ResponseEntity<CommonResponse<?>> getCheckGoal(
+        @PathVariable Long studyId
+    ){
+        Long memberId = SecurityUtil.getCurrentMemberId();
+        List<CheckGoalResponse> res = studyMemberService.getGoalStatuses(studyId, memberId);
+        return ResponseEntity.ok(CommonResponse.success(res));
+    }
+
+
 
 
 }
