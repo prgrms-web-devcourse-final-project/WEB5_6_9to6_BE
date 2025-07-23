@@ -73,10 +73,10 @@ public class StudyMemberService {
 
     @Transactional(readOnly = true)
     public List<CheckGoalResponse> getGoalStatuses(Long studyId, Long memberId) {
-        Long studyMemberId = studyMemberRepository.findStudyMemberIdByStudyIdWithMeberId(studyId, memberId)
+        Long studyMemberId = studyMemberRepository.findStudyMemberIdByStudyIdWithMemberId(studyId, memberId)
             .orElseThrow(() -> new NotFoundException(ResponseCode.NOT_FOUND.message()));
 
-        List<CheckGoalResponse> res = goalAchievementRepository.findAchieveStatusesByStudyId(studyId, studyMemberId);
+        List<CheckGoalResponse> res = goalAchievementRepository.findAchieveStatuses(studyId, studyMemberId);
         return res;
     }
 
