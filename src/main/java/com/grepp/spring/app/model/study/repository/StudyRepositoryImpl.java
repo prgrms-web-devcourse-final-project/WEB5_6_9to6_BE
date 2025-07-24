@@ -19,7 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
 import static com.grepp.spring.app.model.member.entity.QMember.member;
@@ -27,7 +26,6 @@ import static com.grepp.spring.app.model.study.entity.QApplicant.applicant;
 import static com.grepp.spring.app.model.study.entity.QStudy.study;
 
 @Slf4j
-@Repository
 @RequiredArgsConstructor
 public class StudyRepositoryImpl implements StudyRepositoryCustom {
 
