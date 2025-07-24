@@ -151,7 +151,8 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom {
             .join(applicant.member, member)
             .where(
                 applicant.study.studyId.eq(studyId),
-                applicant.activated.isTrue()
+                applicant.activated.isTrue(),
+                applicant.member.activated.isTrue()
             )
             .orderBy(
                 applicant.createdAt.asc()
