@@ -10,7 +10,6 @@ import com.grepp.spring.app.model.reward.repository.ItemSetRepository;
 import com.grepp.spring.app.model.reward.repository.RewardItemRepository;
 import com.grepp.spring.app.model.s3.service.S3Service;
 import com.grepp.spring.infra.error.exceptions.NotFoundException;
-import jakarta.transaction.Transactional;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -22,6 +21,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -32,6 +32,7 @@ public class ItemSetService {
     private final RewardItemRepository rewardItemRepository;
     private final S3Service s3Service;
 
+    @Transactional(readOnly = true)
     public Optional<ImageResponse> ExistItemSet(ItemSetDto itemSetDto) {
 
         return itemSetRepository.findByHatAndHairAndFaceAndTop(
