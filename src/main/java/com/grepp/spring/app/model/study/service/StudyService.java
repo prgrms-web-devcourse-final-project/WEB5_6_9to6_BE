@@ -124,7 +124,7 @@ public class StudyService {
 
     @Transactional(readOnly = true)
     public List<GoalsResponse> findGoals(Long studyId) {
-        return studyGoalRepository.findGoalsById(studyId);
+        return studyGoalRepository.findStudyGoals(studyId);
     }
 
 

@@ -47,7 +47,7 @@ public class GoalRepositoryCustomImpl implements GoalRepositoryCustom {
     }
 
     @Override
-    public List<GoalsResponse> findGoalsById(Long studyId) {
+    public List<GoalsResponse> findStudyGoals(Long studyId) {
         return queryFactory
             .select(
                 Projections.constructor(GoalsResponse.class,

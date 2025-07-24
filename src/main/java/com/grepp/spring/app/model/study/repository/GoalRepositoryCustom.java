@@ -7,7 +7,7 @@ import java.util.List;
 public interface GoalRepositoryCustom {
     List<CheckGoalResponse> findAchieveStatuses(Long studyId, Long studyMemberId);
 
-    List<GoalsResponse> findGoalsById(Long studyId);
+    List<GoalsResponse> findStudyGoals(Long studyId);
 
 //    int getTotalAchievementsCount(Long studyId, Long studyMemberId, LocalDateTime startDateTime, LocalDateTime endDateTime);
 
