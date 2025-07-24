@@ -153,6 +153,9 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom {
                 applicant.study.studyId.eq(studyId),
                 applicant.activated.isTrue()
             )
+            .orderBy(
+                applicant.createdAt.asc()
+            )
             .fetch();
     }
 
