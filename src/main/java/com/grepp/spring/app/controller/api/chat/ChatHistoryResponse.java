@@ -22,8 +22,8 @@ public record ChatHistoryResponse (
             chat.getSenderNickname(),
             chat.getReceiverId(),
             chat.getReceiverNickname(),
-            chat.getContent(),
             image,
+            chat.getContent(),
             chat.getCreatedAt()
         );
     }
