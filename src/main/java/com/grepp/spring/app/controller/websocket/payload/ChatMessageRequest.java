@@ -12,7 +12,7 @@ public class ChatMessageRequest {
     private Long senderId;
     private Long studyId;
     private String receiverEmail;
-    private String receiverNickName;
+    private String receiverNickname;
     private String content;
     private String senderEmail;
 
@@ -23,7 +23,7 @@ public class ChatMessageRequest {
             .senderId(senderId)
             .senderNickname(senderNickname)
             .receiverId(receiverEmail)
-            .receiverNickname(receiverNickName)
+            .receiverNickname(receiverNickname)
             .content(content)
             .build();
     }

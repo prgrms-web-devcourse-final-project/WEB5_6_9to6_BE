@@ -210,7 +210,7 @@ public class StudyService {
                 return StudyMemberResponse.builder()
                     .studyMemberId(studyMember.getStudyMemberId())
                     .memberId(member.getId())
-                    .nickName(member.getNickname())
+                    .nickname(member.getNickname())
                     .profileImage(member.getAvatarImage())
                     .role(studyMember.getStudyRole())
                     .email(member.getEmail())
