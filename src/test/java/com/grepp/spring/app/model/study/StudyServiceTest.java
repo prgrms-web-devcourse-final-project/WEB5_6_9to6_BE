@@ -41,7 +41,7 @@ class StudyServiceTest {
         );
 
         // studyRepository.findAllApplicants(studyId) 메서드가 호출되면, expectedResponses 리스트를 반환
-        when(studyRepository.findAllApplicants(studyId)).thenReturn(expectedResponses);
+        when(studyRepository.findApplicants(studyId)).thenReturn(expectedResponses);
 
         // when
         List<ApplicantsResponse> actualResponses = studyService.getApplicants(studyId);
@@ -54,7 +54,7 @@ class StudyServiceTest {
         assertThat(actualResponses.get(1).getState()).isEqualTo(ApplicantState.ACCEPT);
 
         // studyRepository.findAllApplicants(studyId)가 정확히 1번 호출되었는지 검증
-        verify(studyRepository, times(1)).findAllApplicants(studyId);
+        verify(studyRepository, times(1)).findApplicants(studyId);
     }
 
 

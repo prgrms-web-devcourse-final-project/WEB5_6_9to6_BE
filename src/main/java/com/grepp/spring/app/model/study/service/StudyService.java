@@ -14,7 +14,6 @@ import com.grepp.spring.app.model.study.code.ApplicantState;
 import com.grepp.spring.app.model.study.code.DayOfWeek;
 import com.grepp.spring.app.model.study.code.GoalType;
 import com.grepp.spring.app.model.study.code.Status;
-import com.grepp.spring.app.model.study.dto.StudyCreationResponse;
 import com.grepp.spring.app.model.study.code.StudyType;
 import com.grepp.spring.app.model.study.dto.StudyCreationResponse;
 import com.grepp.spring.app.model.study.dto.StudyInfoResponse;
@@ -57,6 +56,7 @@ public class StudyService {
     private final ApplicantRepository applicantRepository;
 
     //필터 조건에 따라 스터디 목록 + 현재 인원 수 조회
+    @Transactional(readOnly = true)
     public List<StudyListResponse> searchStudiesWithMemberCount(StudySearchRequest req) {
         if (req == null) {
             throw new StudyDataException(ResponseCode.BAD_REQUEST);
@@ -64,7 +64,7 @@ public class StudyService {
 
         Page<Study> studies;
         try {
-            studies = studyRepository.searchByFilterWithSchedules(req, req.getPageable());
+            studies = studyRepository.searchStudiesPage(req, req.getPageable());
         } catch (Exception e) {
             throw new StudyDataException(ResponseCode.FAIL_SEARCH_STUDY);
         }
@@ -119,12 +119,12 @@ public class StudyService {
     // 스터디 지원자 목록 조회
     @Transactional(readOnly = true)
     public List<ApplicantsResponse> getApplicants(Long studyId) {
-        return studyRepository.findAllApplicants(studyId);
+        return studyRepository.findApplicants(studyId);
     }
 
     @Transactional(readOnly = true)
     public List<GoalsResponse> findGoals(Long studyId) {
-        return studyGoalRepository.findGoalsById(studyId);
+        return studyGoalRepository.findStudyGoals(studyId);
     }
 
 
@@ -132,11 +132,11 @@ public class StudyService {
     public StudyInfoResponse getStudyInfo(Long studyId) {
         try {
             // goals 포함 조회
-            Study studyWithGoals = studyRepository.findByIdWithGoals(studyId)
+            Study studyWithGoals = studyRepository.findWithGoals(studyId)
                 .orElseThrow(() -> new StudyDataException(ResponseCode.FAIL_GET_STUDY_INFO));
 
             // schedules 포함 조회
-            Study studyWithSchedules = studyRepository.findByIdWithSchedules(studyId)
+            Study studyWithSchedules = studyRepository.findWithStudySchedules(studyId)
                 .orElseThrow(() -> new StudyDataException(ResponseCode.FAIL_GET_STUDY_INFO));
 
             // schedules 병합
@@ -188,6 +188,7 @@ public class StudyService {
         }
     }
 
+    @Transactional(readOnly = true)
     public boolean isUserStudyMember(Long memberId, Long studyId) {
         if (!studyRepository.existsById(studyId)) {
             throw new IllegalArgumentException("스터디가 존재하지 않습니다.");
@@ -197,12 +198,13 @@ public class StudyService {
     }
 
     // 스터디 멤버 조회
+    @Transactional(readOnly = true)
     public List<StudyMemberResponse> getStudyMembers(Long studyId) {
         if (!studyRepository.existsById(studyId)) {
             throw new NotFoundException("스터디가 존재하지 않습니다.");
         }
 
-        List<StudyMember> studyMembers = studyMemberRepository.findAllByStudyIdWithMember(studyId);
+        List<StudyMember> studyMembers = studyMemberRepository.findByStudyId(studyId);
 
         return studyMembers.stream()
             .map(studyMember -> {
@@ -343,7 +345,7 @@ public class StudyService {
     }
 
     public boolean isSurvival(Long studyId) {
-        return (StudyType.SURVIVAL == studyRepository.findStudyTypeById(studyId));
+        return (StudyType.SURVIVAL == studyRepository.findStudyType(studyId));
     }
 
     @Transactional
@@ -351,19 +353,20 @@ public class StudyService {
         Study study = studyRepository.findById(studyId)
             .orElseThrow(() -> new NotFoundException(ResponseCode.NOT_FOUND.message()));
 
-        if(!studyMemberRepository.isAcceptorHasRight(memberId, studyId)) {
+        if(!studyMemberRepository.checkAcceptorHasRight(memberId, studyId)) {
             throw new HasNotRightException(ResponseCode.UNAUTHORIZED);
         }
 
         study.updateNotice(notice);
     }
 
+    @Transactional(readOnly = true)
     public String findNotice(Long studyId) {
         if (!studyRepository.existsById(studyId)) {
             throw new IllegalArgumentException("스터디가 존재하지 않습니다.");
         }
 
-        return studyRepository.findNoticeByStudyId(studyId)
+        return studyRepository.findNotice(studyId)
             .orElse("공지사항이 없습니다.");
     }
 }
