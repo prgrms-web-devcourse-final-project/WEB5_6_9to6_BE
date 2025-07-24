@@ -41,6 +41,10 @@ public record CommonResponse<T>(
         return new CommonResponse<>(code, message, null);
     }
 
+    public static <T> CommonResponse<T> success(SuccessCode code, T data) {
+        return new CommonResponse<>(code.code(), code.message(), data);
+    }
+
 //    public CommonResponse<T> withToken(String token) {
 //        return new CommonResponse<>(this.code, this.message, this.data, token);
 //    }

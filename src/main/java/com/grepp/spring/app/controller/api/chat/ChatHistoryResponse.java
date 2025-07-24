@@ -11,16 +11,18 @@ public record ChatHistoryResponse (
     String senderNickname,
     String receiverId,
     String receiverNickname,
+    String image,
     String content,
     LocalDateTime createdAt
 ){
-    public static ChatHistoryResponse from(Chat chat) {
+    public static ChatHistoryResponse from(Chat chat, String image) {
         return new ChatHistoryResponse(
             chat.getId(),
             chat.getSenderId(),
             chat.getSenderNickname(),
             chat.getReceiverId(),
             chat.getReceiverNickname(),
+            image,
             chat.getContent(),
             chat.getCreatedAt()
         );

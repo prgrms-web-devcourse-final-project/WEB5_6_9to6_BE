@@ -35,14 +35,9 @@ public class AlarmListResponse {
         this.isRead = recipient.getIsRead();
         this.sentAt = alarm.getCreatedAt();
 
-        if (sender != null) { // 서버이면, null. 관리자 만들면 null 배제할 예정.
-            this.senderId = sender.getId();
-            this.senderNickname = sender.getNickname();
-            this.senderAvatarImage = sender.getAvatarImage();
-        } else {
-            this.senderId = null;
-            this.senderNickname = null;
-            this.senderAvatarImage = null;
-        }
+        this.senderId = sender.getId();
+        this.senderNickname = sender.getNickname();
+        this.senderAvatarImage = sender.getAvatarImage();
+
     }
 }

@@ -24,7 +24,7 @@ public class ApplicantService {
     public void updateState(long acceptorId, long memberId, long studyId, ApplicantState state) {
         if (state == null) throw new NullStateException(ResponseCode.BAD_REQUEST);
 
-        if(!studyMemberRepository.isAcceptorHasRight(acceptorId, studyId)) {
+        if(!studyMemberRepository.checkAcceptorHasRight(acceptorId, studyId)) {
             throw new HasNotRightException(ResponseCode.UNAUTHORIZED);
         }
 

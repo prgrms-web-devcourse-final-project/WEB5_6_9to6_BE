@@ -1,6 +1,8 @@
 package com.grepp.spring.app.controller.api;
 
+import com.grepp.spring.app.controller.api.chat.ChatCursorRequest;
 import com.grepp.spring.app.controller.api.chat.ChatHistoryResponse;
+import com.grepp.spring.app.controller.api.chat.ChatPageResponse;
 import com.grepp.spring.app.controller.api.chat.ParticipantResponse;
 import com.grepp.spring.app.model.auth.domain.Principal;
 import com.grepp.spring.app.model.chat.service.ChatService;
@@ -22,10 +24,12 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "채팅 API", description = "채팅관련API")
@@ -40,35 +44,6 @@ public class ChatController {
 
 
 
-    // 웹소켓 사용으로 인해 사용안함.
-    // 채팅 메시지 전송
-    @PostMapping("/{studyId}")
-    @ApiResponse(responseCode = "200")
-    @Operation(summary = "※주의※ 이런 메서드는 없습니다.",
-        description = "이 메서드를 발견했다면 당장 뒤로가기를 눌러 도망 가십시오.\n"
-            + "웹소켓으로 변경해서 안쓸거 같습니다.")
-    public ResponseEntity<Map<String, Object>> sendChatMessage(@PathVariable Long studyId,
-        @RequestBody Map<String, Object> request) {
-
-        Long senderId = ((Number) request.get("senderId")).longValue();
-        Long receiverId = request.get("receiverId") != null ? ((Number) request.get("receiverId")).longValue() : null;
-        String message = (String) request.get("message");
-        String sendAt = (String) request.get("sendAt");
-
-        if (message == null || message.trim().isEmpty()) {
-            return errorResponse("bad_request", "메시지를 입력해주세요.", HttpStatus.BAD_REQUEST);
-        }
-
-        if ("throw500".equalsIgnoreCase(message)) {
-            return errorResponse("server_error", "알 수 없는 오류가 발생했습니다. 잠시 후 다시 시도해주세요.", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
-        Map<String, Object> response = new LinkedHashMap<>();
-        response.put("code", "0000");
-        response.put("message", "채팅 메시지 전송 성공");
-
-        return ResponseEntity.ok(response);
-    }
 
     // 공통 에러 응답 메서드
     private ResponseEntity<Map<String, Object>> errorResponse(String code, String message, HttpStatus status) {
@@ -79,7 +54,7 @@ public class ChatController {
     }
 
 
-    // 웹소켓으로 변경해서 안쓸 것 같음
+    // 최초 접속시 사용
     // 현재 접속 중인 사용자 목록 조회
     @GetMapping("/{studyId}/participants")
     @ApiResponse(responseCode = "200")
@@ -87,7 +62,6 @@ public class ChatController {
         description = "이 메서드를 발견했다면 당장 뒤로가기를 눌러 도망 가십시오.\n"
             + "웹소켓으로 변경해서 안쓸거 같습니다.")
     public ResponseEntity<CommonResponse<List<ParticipantResponse>>> getOnlineParticipants(@PathVariable Long studyId) {
-
 
         List<ParticipantResponse> participants = chatService.getOnlineParticipants(studyId);
 
@@ -100,11 +74,20 @@ public class ChatController {
     @GetMapping("/{studyId}/history")
     @ApiResponse(responseCode = "200")
     @Operation(summary = "최근 14일간의 채팅 내역 확인",
-    description = "스터디 내의 전체 채팅, 보낸 귓속말,받은 귓속말이 표시됨니다.")
-    public ResponseEntity<CommonResponse<List<ChatHistoryResponse>>> getChatHistory(@PathVariable Long studyId,
+        description = "스터디 내의 전체 채팅, 보낸 귓속말, 받은 귓속말이 표시됩니다.<br><br>"
+            + "가장 처음 메세지를 보려면 리퀘스트 오브젝트에<br>"
+            + "{<br>"
+            + "  \"cursorCreatedAt\": null,<br>"
+            + "  \"lastChatId\": null<br>"
+            + "}<br><br>"
+            +"를 넣어주세요<br>"
+            + "응답에 cursorCreatedAt, lastChatId가 포함되어 있습니다. 요청으로 다시 requestObject에 넣어 보내주면 다음 메세지가 갑니다.")
+    public ResponseEntity<CommonResponse<ChatPageResponse>> getChatHistory(
+        @PathVariable Long studyId,
+        @ModelAttribute ChatCursorRequest request,
+        @RequestParam(defaultValue = "30") int pageSize,
         Authentication authentication) {
 
-        List<Map<String, Object>> chatHistory = new ArrayList<>();
         Long memberId = SecurityUtil.getCurrentMemberId();
         Principal principal = (Principal) authentication.getPrincipal();
 
@@ -117,7 +100,13 @@ public class ChatController {
         }
 
 
-        List<ChatHistoryResponse> responses = chatService.findChat(studyId,memberId,principal.getUsername());
+        ChatPageResponse responses = chatService.findChat(
+            studyId,
+            memberId,
+            principal.getUsername(),
+            request.cursorCreatedAt(),
+            request.lastChatId(),
+            pageSize);
 
         return ResponseEntity.ok(CommonResponse.success(responses));
     }

@@ -8,7 +8,6 @@ import com.grepp.spring.app.model.reward.entity.RewardItem;
 import com.grepp.spring.app.model.reward.repository.ItemSetRepository;
 import com.grepp.spring.app.model.reward.repository.RewardItemRepository;
 import com.grepp.spring.infra.error.exceptions.NotFoundException;
-import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -18,6 +17,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -26,10 +26,11 @@ public class ItemSetService {
     private final ItemSetRepository itemSetRepository;
     private final RewardItemRepository rewardItemRepository;
 
+    @Transactional(readOnly = true)
     public Optional<ImageResponse> ExistItemSet(ItemSetDto itemSetDto) {
 
-        return itemSetRepository.findByHatAndHairAndFaceAndTopAndBottom(
-            itemSetDto.getHat(), itemSetDto.getHair(), itemSetDto.getFace(), itemSetDto.getTop(), itemSetDto.getBottom()
+        return itemSetRepository.findByHatAndHairAndFaceAndTop(
+            itemSetDto.getHat(), itemSetDto.getHair(), itemSetDto.getFace(), itemSetDto.getTop()
         ).map(ItemSet->new ImageResponse(ItemSet.getImage()));
     }
 
@@ -67,7 +68,6 @@ public class ItemSetService {
             .hair(categoryToItemId.get("hair"))
             .face(categoryToItemId.get("face"))
             .top(categoryToItemId.get("top"))
-            .bottom(categoryToItemId.get("bottom"))
             .image(dto.getWholeImageUrl())
             .build();
 

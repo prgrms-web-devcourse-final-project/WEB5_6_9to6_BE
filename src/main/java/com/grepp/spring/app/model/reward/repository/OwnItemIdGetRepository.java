@@ -9,11 +9,11 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface OwnItemIdGetRepository extends JpaRepository<OwnItem,Long>{
+public interface OwnItemIdGetRepository extends JpaRepository<OwnItem,Long>, OwnItemIdGetRepositoryCustom{
 
-    @Query("select o.rewardItem.itemId "
-        + "from OwnItem o where o.isUsed = true "
-        + "and o.rewardItem.itemType != 'BACKGROUND' and o.memberId = :memberId")
-    List<Long> findOwnItemIdsByMemberId(@Param("memberId") Long memberId);
+//    @Query("select o.rewardItem.itemId "
+//        + "from OwnItem o where o.isUsed = true "
+//        + "and o.rewardItem.itemType != 'BACKGROUND' and o.rewardItem.itemType != 'THEME' and o.memberId = :memberId")
+//    List<Long> findOwnItemIdsByMemberId(@Param("memberId") Long memberId);
 
 }

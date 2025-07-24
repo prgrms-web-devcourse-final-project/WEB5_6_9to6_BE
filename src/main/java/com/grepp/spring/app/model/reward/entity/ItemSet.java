@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "item_set",
 uniqueConstraints = @UniqueConstraint(
-    columnNames = {"hat", "hair", "face", "top", "bottom"}
+    columnNames = {"hat", "hair", "face", "top"}
 
 )
 )
@@ -32,20 +32,18 @@ public class ItemSet {
     private Long hair;
     private Long face;
     private Long top;
-    private Long bottom;
 
     @Column(nullable = false)
     private String image;
 
 
     @Builder
-    public ItemSet(Long setId, Long hat, Long hair, Long face, Long top, Long bottom, String image) {
+    public ItemSet(Long setId, Long hat, Long hair, Long face, Long top, String image) {
         this.setId = setId;
         this.hat = hat;
         this.hair = hair;
         this.face = face;
         this.top = top;
-        this.bottom = bottom;
         this.image = image;
     }
 }

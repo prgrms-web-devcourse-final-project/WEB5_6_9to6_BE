@@ -21,6 +21,7 @@ public interface OwnItemRepository extends JpaRepository<OwnItem,Long>, OwnItemR
     List<OwnItem> findByMemberIdAndIsUsedTrue(Long memberId);
     List<OwnItemDto> findOwnItemsByMemberId(Long memberId);
     boolean existsByMemberIdAndRewardItem_ItemId(Long MemberId, Long itemId);
+    List<OwnItem> findByRewardItem_ItemTypeAndIsUsedTrue(ItemType itemType);
 
 
 }
