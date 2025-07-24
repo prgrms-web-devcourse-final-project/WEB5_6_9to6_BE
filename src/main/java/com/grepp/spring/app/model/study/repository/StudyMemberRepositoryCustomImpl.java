@@ -54,6 +54,10 @@ public class StudyMemberRepositoryCustomImpl implements StudyMemberRepositoryCus
                 studyMember.study.studyId.eq(studyId),
                 studyMember.activated.isTrue()
             )
+            .orderBy(
+                studyMember.studyRole.asc(),
+                studyMember.createdAt.asc()
+            )
             .fetch();
     }
 
