@@ -47,7 +47,7 @@ public class TimerService {
 
     @Transactional
     public List<DailyStudyLogResponse> findDailyStudyLogsByStudyMemberId(Long studyId, Long memberId) {
-        Long studyMemberId = studyMemberRepository.findIdByStudyMemberIdAndMemberId(studyId, memberId)
+        Long studyMemberId = studyMemberRepository.findStudyMemberId(studyId, memberId)
             .orElseThrow(() -> new NotFoundException("Study Member Not Found"));
         LocalDateTime endOfDay = LocalDateTime.now();
         LocalDateTime startOfDay = endOfDay.toLocalDate().minusDays(6).atStartOfDay();
@@ -64,7 +64,7 @@ public class TimerService {
 
     @Transactional(readOnly = true)
     public StudyWeekTimeResponse getStudyTimeForPeriod(Long studyId, Long memberId) {
-        Long studyMemberId = studyMemberRepository.findIdByStudyMemberIdAndMemberId(studyId, memberId)
+        Long studyMemberId = studyMemberRepository.findStudyMemberId(studyId, memberId)
             .orElseThrow(() -> new NotFoundException("Study Member Not Found"));
 
         LocalDateTime endOfDay = LocalDateTime.now();
@@ -80,7 +80,7 @@ public class TimerService {
     @Transactional
     public void recordStudyTime(Long studyId, Long memberId, StudyTimeRecordRequest req) {
 
-        Long studyMemberId = studyMemberRepository.findStudyMemberIdByStudyIdWithMemberId(studyId, memberId)
+        Long studyMemberId = studyMemberRepository.findStudyMemberId(studyId, memberId)
             .orElseThrow(() -> new NotFoundException("Study Member Not Found"));
 
         Timer timer = Timer.builder()

@@ -9,13 +9,11 @@ public interface StudyMemberRepositoryCustom {
 
     List<Long> findAllStudies(Long memberId);
 
-    Optional<Long> findIdByStudyMemberIdAndMemberId(Long studyId,Long memberId);
+    List<StudyMember> findByStudyId(Long studyId);
 
-    List<StudyMember> findAllByStudyIdWithMember(Long studyId);
+    Optional<StudyRole> findStudyRole(Long studyId, Long memberId);
 
-    Optional<StudyRole> findRoleByStudyAndMember(Long studyId, Long memberId);
-
-    Optional<Long> findStudyMemberIdByStudyIdWithMemberId(Long studyId, Long memberId);
+    Optional<Long> findStudyMemberId(Long studyId, Long memberId);
 
     Boolean checkAcceptorHasRight(Long acceptorId, Long studyId);
 

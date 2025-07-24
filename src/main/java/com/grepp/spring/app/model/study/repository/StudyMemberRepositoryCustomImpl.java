@@ -32,7 +32,7 @@ public class StudyMemberRepositoryCustomImpl implements StudyMemberRepositoryCus
     }
 
     @Override
-    public Optional<Long> findIdByStudyMemberIdAndMemberId(Long studyId, Long memberId) {
+    public Optional<Long> findStudyMemberId(Long studyId, Long memberId) {
         Long id =  queryFactory
             .select(studyMember.studyMemberId)
             .from(studyMember)
@@ -46,7 +46,7 @@ public class StudyMemberRepositoryCustomImpl implements StudyMemberRepositoryCus
     }
 
     @Override
-    public List<StudyMember> findAllByStudyIdWithMember(Long studyId) {
+    public List<StudyMember> findByStudyId(Long studyId) {
         return queryFactory
             .selectFrom(studyMember)
             .join(studyMember.member, member).fetchJoin()
@@ -58,7 +58,7 @@ public class StudyMemberRepositoryCustomImpl implements StudyMemberRepositoryCus
     }
 
     @Override
-    public Optional<StudyRole> findRoleByStudyAndMember(Long studyId, Long memberId) {
+    public Optional<StudyRole> findStudyRole(Long studyId, Long memberId) {
         StudyRole res = queryFactory
             .select(studyMember.studyRole)
             .from(studyMember)
@@ -69,20 +69,6 @@ public class StudyMemberRepositoryCustomImpl implements StudyMemberRepositoryCus
             )
             .fetchOne();
         return Optional.ofNullable(res);
-    }
-
-    @Override
-    public Optional<Long> findStudyMemberIdByStudyIdWithMemberId(Long studyId, Long memberId) {
-        Long smId = queryFactory
-            .select(studyMember.studyMemberId)
-            .from(studyMember)
-            .where(
-                studyMember.member.id.eq(memberId),
-                studyMember.study.studyId.eq(studyId),
-                studyMember.activated.isTrue()
-            )
-            .fetchOne();
-        return Optional.ofNullable(smId);
     }
 
     @Override

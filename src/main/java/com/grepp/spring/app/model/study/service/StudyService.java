@@ -204,7 +204,7 @@ public class StudyService {
             throw new NotFoundException("스터디가 존재하지 않습니다.");
         }
 
-        List<StudyMember> studyMembers = studyMemberRepository.findAllByStudyIdWithMember(studyId);
+        List<StudyMember> studyMembers = studyMemberRepository.findByStudyId(studyId);
 
         return studyMembers.stream()
             .map(studyMember -> {
