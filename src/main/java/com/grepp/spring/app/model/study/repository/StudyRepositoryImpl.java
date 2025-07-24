@@ -9,18 +9,19 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 import org.springframework.util.StringUtils;
 
 import static com.grepp.spring.app.model.study.entity.QStudy.study;
 
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class StudyRepositoryImpl implements StudyRepositoryCustom {
@@ -86,8 +87,13 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom {
             )
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
-            .orderBy(study.createdAt.desc())
+            .orderBy(
+                study.createdAt.desc(),
+                study.studyId.desc()
+            )
             .fetch();
+
+        log.debug("Finding studies for page: {}, IDs: {}", pageable.getPageNumber(), ids);
 
         if (ids.isEmpty()) {
             return Page.empty(pageable);
@@ -98,7 +104,10 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom {
             .distinct()
             .leftJoin(study.schedules).fetchJoin()
             .where(study.studyId.in(ids))
-            .orderBy(study.createdAt.desc())
+            .orderBy(
+                study.createdAt.desc(),
+                study.studyId.desc()
+            )
             .fetch();
 
         Long total = queryFactory
