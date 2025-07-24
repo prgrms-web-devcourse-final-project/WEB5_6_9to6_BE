@@ -64,7 +64,7 @@ public class StudyService {
 
         Page<Study> studies;
         try {
-            studies = studyRepository.searchByFilterWithSchedules(req, req.getPageable());
+            studies = studyRepository.searchStudiesPage(req, req.getPageable());
         } catch (Exception e) {
             throw new StudyDataException(ResponseCode.FAIL_SEARCH_STUDY);
         }
@@ -119,7 +119,7 @@ public class StudyService {
     // 스터디 지원자 목록 조회
     @Transactional(readOnly = true)
     public List<ApplicantsResponse> getApplicants(Long studyId) {
-        return studyRepository.findAllApplicants(studyId);
+        return studyRepository.findApplicants(studyId);
     }
 
     @Transactional(readOnly = true)
@@ -132,11 +132,11 @@ public class StudyService {
     public StudyInfoResponse getStudyInfo(Long studyId) {
         try {
             // goals 포함 조회
-            Study studyWithGoals = studyRepository.findByIdWithGoals(studyId)
+            Study studyWithGoals = studyRepository.findWithGoals(studyId)
                 .orElseThrow(() -> new StudyDataException(ResponseCode.FAIL_GET_STUDY_INFO));
 
             // schedules 포함 조회
-            Study studyWithSchedules = studyRepository.findByIdWithSchedules(studyId)
+            Study studyWithSchedules = studyRepository.findWithStudySchedules(studyId)
                 .orElseThrow(() -> new StudyDataException(ResponseCode.FAIL_GET_STUDY_INFO));
 
             // schedules 병합
@@ -345,7 +345,7 @@ public class StudyService {
     }
 
     public boolean isSurvival(Long studyId) {
-        return (StudyType.SURVIVAL == studyRepository.findStudyTypeById(studyId));
+        return (StudyType.SURVIVAL == studyRepository.findStudyType(studyId));
     }
 
     @Transactional
@@ -366,7 +366,7 @@ public class StudyService {
             throw new IllegalArgumentException("스터디가 존재하지 않습니다.");
         }
 
-        return studyRepository.findNoticeByStudyId(studyId)
+        return studyRepository.findNotice(studyId)
             .orElse("공지사항이 없습니다.");
     }
 }

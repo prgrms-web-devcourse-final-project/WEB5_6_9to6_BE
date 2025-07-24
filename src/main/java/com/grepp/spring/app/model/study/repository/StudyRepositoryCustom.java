@@ -10,21 +10,21 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface StudyRepositoryCustom {
-    List<Study> searchByFilterWithSchedules(StudySearchRequest request);
+    List<Study> searchStudiesPage(StudySearchRequest request);
 
-    Page<Study> searchByFilterWithSchedules(StudySearchRequest req, Pageable pageable);
+    Page<Study> searchStudiesPage(StudySearchRequest req, Pageable pageable);
 
     Optional<Study> findByIdWithSchedulesAndGoals(Long studyId);
 
-    List<ApplicantsResponse> findAllApplicants(Long studyId);
+    List<ApplicantsResponse> findApplicants(Long studyId);
 
     // goals 만 fetch join
-    Optional<Study> findByIdWithGoals(Long id);
+    Optional<Study> findWithGoals(Long id);
 
     // schedules 만 fetch join
-    Optional<Study> findByIdWithSchedules(Long id);
+    Optional<Study> findWithStudySchedules(Long id);
 
-    StudyType findStudyTypeById(Long studyId);
+    StudyType findStudyType(Long studyId);
 
-    Optional<String> findNoticeByStudyId(Long studyId);
+    Optional<String> findNotice(Long studyId);
 }

@@ -33,7 +33,7 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<Study> searchByFilterWithSchedules(StudySearchRequest req) {
+    public List<Study> searchStudiesPage(StudySearchRequest req) {
         StringBuilder jpql = new StringBuilder(
             "SELECT DISTINCT s FROM Study s LEFT JOIN FETCH s.schedules WHERE 1=1");
 
@@ -75,7 +75,7 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom {
     }
 
     @Override
-    public Page<Study> searchByFilterWithSchedules(StudySearchRequest req, Pageable pageable) {
+    public Page<Study> searchStudiesPage(StudySearchRequest req, Pageable pageable) {
         List<Long> ids = queryFactory
             .select(study.studyId)
             .from(study)
@@ -138,7 +138,7 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom {
     }
 
     @Override
-    public List<ApplicantsResponse> findAllApplicants(Long studyId) {
+    public List<ApplicantsResponse> findApplicants(Long studyId) {
         return queryFactory
             .select(Projections.constructor(ApplicantsResponse.class,
                 applicant.id,
@@ -157,7 +157,7 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom {
     }
 
     @Override
-    public Optional<Study> findByIdWithGoals(Long id) {
+    public Optional<Study> findWithGoals(Long id) {
         Study res = queryFactory
             .selectFrom(study)
             .leftJoin(study.goals).fetchJoin()
@@ -170,7 +170,7 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom {
     }
 
     @Override
-    public Optional<Study> findByIdWithSchedules(Long id) {
+    public Optional<Study> findWithStudySchedules(Long id) {
         Study res = queryFactory
             .select(study)
             .from(study)
@@ -184,7 +184,7 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom {
     }
 
     @Override
-    public StudyType findStudyTypeById(Long studyId) {
+    public StudyType findStudyType(Long studyId) {
         return queryFactory
             .select(study.studyType)
             .from(study)
@@ -193,7 +193,7 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom {
     }
 
     @Override
-    public Optional<String> findNoticeByStudyId(Long studyId) {
+    public Optional<String> findNotice(Long studyId) {
         String res = queryFactory
             .select(study.notice)
             .from(study)
