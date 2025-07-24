@@ -83,7 +83,8 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom {
                 (req.getRegion() != null && req.getRegion() != Region.ALL) ? study.region.eq(req.getRegion()) : null,
                 (req.getStatus() != null && req.getStatus() != Status.ALL) ? study.status.eq(req.getStatus()) : null,
                 (req.getStudyType() != null ) ? study.studyType.eq(req.getStudyType()) : null,
-                StringUtils.hasText(req.getName()) ? study.name.contains(req.getName()) : null
+                StringUtils.hasText(req.getName()) ? study.name.contains(req.getName()) : null,
+                study.activated.isTrue()
             )
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
