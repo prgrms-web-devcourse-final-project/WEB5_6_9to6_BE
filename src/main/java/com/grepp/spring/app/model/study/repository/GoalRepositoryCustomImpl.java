@@ -47,7 +47,7 @@ public class GoalRepositoryCustomImpl implements GoalRepositoryCustom {
                 studyGoal.goalId.eq(goalAchievement.studyGoal.goalId),
                 goalAchievement.studyMember.studyMemberId.eq(studyMemberId),
                 goalAchievement.activated.isTrue(),
-                goalAchievement.createdAt.between(startOfWeek, now)
+                goalAchievement.achievedAt.between(startOfWeek, now)
             )
             .where(
                 studyGoal.study.studyId.eq(studyId),
