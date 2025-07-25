@@ -26,7 +26,7 @@ public class AlarmRecipientRepositoryImpl implements AlarmRecipientRepositoryCus
             .join(ar.alarm, a).fetchJoin()
             .leftJoin(a.sender, m).fetchJoin()
             .where(ar.member.id.eq(memberId))
-            .orderBy(a.createdAt.desc())
+            .orderBy(a.createdAt.desc(), a.id.desc())
             .fetch();
     }
 
