@@ -314,58 +314,16 @@ public class StudyService {
         applicantRepository.save(applicant);
     }
 
-//    @Transactional(readOnly = true)
-//    public WeeklyGoalStatusResponse getWeeklyGoalStats(Long studyId, Long memberId) {
-//        LocalDate endDate = LocalDate.now();
-//        LocalDate startDate = endDate.minusDays(6);
-//        LocalDateTime startDateTime = startDate.atStartOfDay();
-//        LocalDateTime endDateTime = endDate.atTime(LocalTime.MAX);
-//
-//        // 스터디 존재 여부 확인
-//        if (!studyRepository.existsById(studyId)) {
-//            throw new NotFoundException("스터디가 존재하지 않습니다.");
-//        }
-//
-//        // memberId → studyMemberId 조회
-//        StudyMember studyMember = studyMemberRepository.findByStudyStudyIdAndMemberId(studyId, memberId)
-//            .orElseThrow(() -> new NotFoundException("스터디 멤버 정보를 찾을 수 없습니다."));
-//        Long studyMemberId = studyMember.getStudyMemberId();
-//
-////        // 목표 전체에 대해 중복 없이 총 달성 카운트
-////        int totalCompletedCount = goalAchievementRepository.countTotalAchievements(
-////            studyId, studyMemberId, startDateTime, endDateTime
-////        );
-////
-////        List<WeeklyGoalStatusResponse.GoalStat> goals = List.of(
-////            new WeeklyGoalStatusResponse.GoalStat(totalCompletedCount)
-////        );
-//
-//        List<WeeklyAchievementCount> weeklyCounts = goalAchievementRepository.countWeeklyAchievements(
-//            studyId, studyMemberId, startDateTime, endDateTime
-//        );
-//
-//        // [변경] 조회 결과를 응답 DTO 리스트로 변환
-//        List<WeeklyGoalStatusResponse.GoalStat> goals = weeklyCounts.stream()
-//            .map(wc -> new WeeklyGoalStatusResponse.GoalStat(wc.getWeek(), wc.getCount()))
-//            .toList();
-//
-//        return new WeeklyGoalStatusResponse(
-//            studyId,
-//            startDate,
-//            endDate,
-//            goals
-//        );
-//    }
     @Transactional(readOnly = true)
     public WeeklyGoalStatusResponse getWeeklyGoalStats(Long studyId, Long memberId) {
-        // 스터디 정보를 먼저 조회하여 studyCreationDate를 확보합니다.
+        // studyStartDate
         Study study = studyRepository.findById(studyId)
             .orElseThrow(() -> new NotFoundException("스터디가 존재하지 않습니다."));
-        LocalDate studyCreationDate = study.getCreatedAt().toLocalDate();
+        LocalDate studyStartDate = study.getStartDate();
 
-        // [변경 1] startDate를 스터디 생성일로 변경합니다.
-        LocalDate startDate = studyCreationDate;
-        LocalDate endDate = LocalDate.now(); // endDate는 현재 날짜로 유지합니다.
+        // startDate= 스터디 생성일
+        LocalDate startDate = studyStartDate;
+        LocalDate endDate = LocalDate.now(); // endDate는 현재
 
         LocalDateTime startDateTime = startDate.atStartOfDay();
         LocalDateTime endDateTime = endDate.atTime(LocalTime.MAX);
@@ -374,23 +332,21 @@ public class StudyService {
             .orElseThrow(() -> new NotFoundException("스터디 멤버 정보를 찾을 수 없습니다."));
         Long studyMemberId = studyMember.getStudyMemberId();
 
-        // DB 조회 로직은 그대로 사용합니다. 조회 범위만 넓어졌을 뿐입니다.
-        List<WeeklyAchievementCount> weeklyCountsFromDb = goalAchievementRepository.countWeeklyAchievements(
+        List<WeeklyAchievementCount> weeklyCounts = goalAchievementRepository.countWeeklyAchievements(
             studyId, studyMemberId, startDateTime, endDateTime
         );
 
-        Map<Integer, Long> countsMap = weeklyCountsFromDb.stream()
+        Map<Integer, Long> countsMap = weeklyCounts.stream()
             .collect(Collectors.toMap(
                 dto -> Integer.parseInt(dto.getWeek()),
                 WeeklyAchievementCount::getCount
             ));
 
-        // [변경 2] 주차 계산 로직은 수정할 필요가 없습니다.
-        // startDate가 studyCreationDate이므로 startWeek는 자연스럽게 1이 됩니다.
-        int startWeek = (int) (ChronoUnit.DAYS.between(studyCreationDate, startDate) / 7) + 1; // 결과: 1
-        int endWeek = (int) (ChronoUnit.DAYS.between(studyCreationDate, endDate) / 7) + 1;
+        // 스터디 시작일을 기준으로 주차계산
+        int startWeek = (int) (ChronoUnit.DAYS.between(studyStartDate, startDate) / 7) + 1;
+        int endWeek = (int) (ChronoUnit.DAYS.between(studyStartDate, endDate) / 7) + 1;
 
-        // 전체 주차를 순회하며 결과를 생성하는 로직도 그대로 유지됩니다.
+        // 전체 주차를 순회, 없으면 0
         List<WeeklyGoalStatusResponse.GoalStat> goals = IntStream.rangeClosed(startWeek, endWeek)
             .mapToObj(week -> {
                 long count = countsMap.getOrDefault(week, 0L);
@@ -400,8 +356,6 @@ public class StudyService {
 
         return new WeeklyGoalStatusResponse(
             studyId,
-            startDate, // 응답에 포함되는 시작일도 스터디 생성일로 변경됩니다.
-            endDate,
             goals
         );
     }

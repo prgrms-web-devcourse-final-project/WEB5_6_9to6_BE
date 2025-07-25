@@ -10,8 +10,6 @@ import lombok.Getter;
 public class WeeklyGoalStatusResponse {
 
     private Long studyId;
-    private LocalDate startDate;
-    private LocalDate endDate;
     private List<GoalStat> goals;
 
     @Getter
