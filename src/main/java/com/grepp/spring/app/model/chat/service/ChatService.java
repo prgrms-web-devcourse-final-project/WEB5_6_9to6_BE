@@ -51,6 +51,8 @@ public class ChatService {
 
         String nickname = memberRepository.findNicknameById(senderId);
 
+
+
         Chat chat = request.toEntity(chatRoom, senderId, nickname);
         String image = memberRepository.findAvatarImageById(senderId);
         System.out.println("senderId: " + senderId + ", image: " + image);
