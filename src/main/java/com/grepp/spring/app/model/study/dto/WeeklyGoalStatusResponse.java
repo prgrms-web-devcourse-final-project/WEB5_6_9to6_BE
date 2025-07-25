@@ -17,7 +17,8 @@ public class WeeklyGoalStatusResponse {
     @Getter
     @AllArgsConstructor
     public static class GoalStat {
-        private int completedCount;
+        private String week;
+        private Long count;
     }
 }
 

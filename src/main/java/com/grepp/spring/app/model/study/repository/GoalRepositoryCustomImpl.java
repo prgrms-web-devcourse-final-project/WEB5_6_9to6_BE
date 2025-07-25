@@ -1,13 +1,18 @@
 package com.grepp.spring.app.model.study.repository;
 
 import com.grepp.spring.app.controller.api.study.payload.CheckGoalResponse;
+import com.grepp.spring.app.controller.api.study.payload.WeeklyAchievementCount;
 import com.grepp.spring.app.model.member.entity.QStudyMember;
 import com.grepp.spring.app.model.study.entity.QGoalAchievement;
 import com.grepp.spring.app.model.study.entity.QStudyGoal;
 import com.grepp.spring.app.model.study.reponse.GoalsResponse;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberTemplate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.time.DayOfWeek;
+import java.time.LocalDateTime;
+import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 
@@ -23,26 +28,32 @@ public class GoalRepositoryCustomImpl implements GoalRepositoryCustom {
 
 
     @Override
-    public List<CheckGoalResponse> findAchieveStatuses(Long studyId, Long studyMemberId) {
+    public List<CheckGoalResponse> findAchieveStatuses(Long studyId, Long studyMemberId, LocalDateTime now) {
+        LocalDateTime startOfWeek = now.toLocalDate()
+            .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+            .atStartOfDay();
+
         return queryFactory
             .select(
                 Projections.constructor(CheckGoalResponse.class,
                     studyGoal.goalId,
                     studyGoal.content,
                     Expressions.asBoolean(goalAchievement.isAccomplished).coalesce(false)
-                    )
+                )
             )
             .from(studyGoal)
             .leftJoin(goalAchievement)
-                .on(
-                    studyGoal.goalId.eq(goalAchievement.studyGoal.goalId),
-                    goalAchievement.studyMember.studyMemberId.eq(studyMemberId),
-                    goalAchievement.activated.isTrue()
-                )
+            .on(
+                studyGoal.goalId.eq(goalAchievement.studyGoal.goalId),
+                goalAchievement.studyMember.studyMemberId.eq(studyMemberId),
+                goalAchievement.activated.isTrue(),
+                goalAchievement.createdAt.between(startOfWeek, now)
+            )
             .where(
                 studyGoal.study.studyId.eq(studyId),
                 studyGoal.activated.isTrue()
             )
+            .orderBy(studyGoal.goalId.asc())
             .fetch();
     }
 
@@ -63,24 +74,38 @@ public class GoalRepositoryCustomImpl implements GoalRepositoryCustom {
             .fetch();
     }
 
-//    @Override
-//    public int getTotalAchievementsCount(Long studyId, Long studyMemberId, LocalDateTime startDateTime,
-//        LocalDateTime endDateTime) {
-//        Long count = queryFactory
-//            .select(goalAchievement.achievementId.countDistinct())
-//            .from(goalAchievement)
-//            .join(goalAchievement.studyGoal, studyGoal)
-//            .join(studyGoal.study, study)
-//            .where(
-//                study.studyId.eq(studyId),
-//                goalAchievement.studyMember.studyMemberId.eq(studyMemberId),
-//                goalAchievement.achievedAt.between(startDateTime, endDateTime),
-//                goalAchievement.isAccomplished.isTrue()
-//            )
-//            .fetchOne();
-//
-//        return count != null ? count.intValue() : 0;
-//    }
+    @Override
+    public List<WeeklyAchievementCount> countWeeklyAchievements(
+        Long studyId,
+        Long studyMemberId,
+        LocalDateTime startDateTime,
+        LocalDateTime endDateTime) {
+
+        // PostgreSQL
+        NumberTemplate<Integer> weekExpression = Expressions.numberTemplate(Integer.class,
+            "FLOOR((EXTRACT(EPOCH FROM {0}) - EXTRACT(EPOCH FROM {1})) / 604800) + 1",
+            goalAchievement.achievedAt,
+            studyGoal.study.createdAt
+        );
+
+        return queryFactory
+            .select(Projections.constructor(WeeklyAchievementCount.class,
+                weekExpression.as("week"),
+                goalAchievement.achievementId.countDistinct()
+            ))
+            .from(goalAchievement)
+            .join(goalAchievement.studyGoal, studyGoal)
+            .where(
+                studyGoal.study.studyId.eq(studyId),
+                goalAchievement.studyMember.studyMemberId.eq(studyMemberId),
+                goalAchievement.achievedAt.between(startDateTime, endDateTime),
+                goalAchievement.isAccomplished.isTrue()
+            )
+            .groupBy(weekExpression)
+            .orderBy(weekExpression.asc())
+            .fetch();
+    }
+
 
 
 }
