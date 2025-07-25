@@ -9,7 +9,7 @@ import lombok.Getter;
 public class StudyMemberResponse {
     private Long studyMemberId;
     private Long memberId;
-    private String nickName;
+    private String nickname;
     private String profileImage;
     private StudyRole role;
     private String email;
