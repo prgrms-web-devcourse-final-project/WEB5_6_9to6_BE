@@ -85,7 +85,7 @@ public class GoalRepositoryCustomImpl implements GoalRepositoryCustom {
         NumberTemplate<Integer> weekExpression = Expressions.numberTemplate(Integer.class,
             "FLOOR((EXTRACT(EPOCH FROM {0}) - EXTRACT(EPOCH FROM {1})) / 604800) + 1",
             goalAchievement.achievedAt,
-            studyGoal.study.createdAt
+            studyGoal.study.startDate
         );
 
         return queryFactory
