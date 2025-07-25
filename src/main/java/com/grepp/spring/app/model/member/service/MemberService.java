@@ -4,6 +4,7 @@ import com.grepp.spring.app.controller.api.member.payload.request.MemberUpdateRe
 import com.grepp.spring.app.model.auth.code.Role;
 import com.grepp.spring.app.model.auth.dto.SignupRequest;
 import com.grepp.spring.app.model.auth.dto.SocialMemberInfoRegistRequest;
+import com.grepp.spring.app.model.member.code.Gender;
 import com.grepp.spring.app.model.member.code.SocialType;
 import com.grepp.spring.app.model.member.dto.response.AchievementRecordResponse;
 import com.grepp.spring.app.model.member.dto.response.AvatarInfoResponse;
@@ -34,6 +35,7 @@ import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,6 +52,12 @@ public class MemberService {
     private final StudyAttendanceRepository studyAttendanceRepository;
     private final GoalAchievementRepository goalAchievementRepository;
     private final OwnItemIdGetRepository ownItemIdGetRepository;
+
+    @Value("${app.avatar.female-basic}")
+    private String femaleAvatar;
+
+    @Value("${app.avatar.male-basic}")
+    private String maleAvatar;
 
     @Transactional
     public Member join(SignupRequest req) {
@@ -86,7 +94,8 @@ public class MemberService {
         member.updateSocialInfo(
             req.getNickname(),
             req.getBirthday(),
-            req.getGender()
+            req.getGender(),
+            (req.getGender() == Gender.FEMALE) ? femaleAvatar : maleAvatar
         );
     }
 

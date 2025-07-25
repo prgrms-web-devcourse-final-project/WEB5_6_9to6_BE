@@ -89,10 +89,11 @@ public class Member extends BaseEntity{
         this.nickname = nickname;
     }
 
-    public void updateSocialInfo(String nickname, LocalDate birthday, Gender gender) {
+    public void updateSocialInfo(String nickname, LocalDate birthday, Gender gender, String avatarImage) {
         this.nickname = nickname;
         this.birthday = birthday;
         this.gender = gender;
+        this.avatarImage = avatarImage;
     }
 
     public void updatePassword(String password) {
