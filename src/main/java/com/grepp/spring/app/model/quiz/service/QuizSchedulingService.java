@@ -1,5 +1,6 @@
 package com.grepp.spring.app.model.quiz.service;
 
+import com.grepp.spring.app.model.quiz.amqp.QuizMessageProducer;
 import com.grepp.spring.app.model.study.code.DayOfWeek;
 import com.grepp.spring.app.model.study.entity.StudySchedule;
 import com.grepp.spring.app.model.study.repository.StudyScheduleRepository;
@@ -16,7 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class QuizSchedulingService {
 
-    private final QuizCreateService quizCreateService;
+    private final QuizMessageProducer quizMessageProducer;
     private final StudyScheduleRepository studyScheduleRepository;
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
 
@@ -42,10 +43,12 @@ public class QuizSchedulingService {
         for (StudySchedule schedule : schedulesToRun) {
             try {
                 Long studyId = schedule.getStudy().getStudyId();
-                quizCreateService.createNextQuiz(studyId);
-                log.info("스터디 ID {}: 시작 10분 전 퀴즈가 성공적으로 생성되었습니다.", studyId);
+
+                quizMessageProducer.sendCreateNextQuizRequest(studyId);
+
+                log.info("스터디 ID {}: 퀴즈 생성 요청을 RabbitMQ에 성공적으로 발행했습니다.", studyId);
             } catch (Exception e) {
-                log.error("스터디 ID {}: 예약된 퀴즈 생성 중 오류 발생 - {}",
+                log.error("스터디 ID {}: 퀴즈 생성 요청 발행 중 오류 발생 - {}",
                         schedule.getStudy().getStudyId(), e.getMessage());
             }
         }
