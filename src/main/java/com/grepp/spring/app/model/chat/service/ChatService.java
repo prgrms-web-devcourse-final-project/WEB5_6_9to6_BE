@@ -1,6 +1,7 @@
 package com.grepp.spring.app.model.chat.service;
 
 import com.grepp.spring.app.controller.api.chat.ChatHistoryResponse;
+import com.grepp.spring.app.controller.api.chat.ChatPageResponse;
 import com.grepp.spring.app.controller.api.chat.ParticipantResponse;
 import com.grepp.spring.app.controller.api.chat.SessionUserInfo;
 import com.grepp.spring.app.controller.websocket.payload.ChatMessageRequest;
@@ -15,22 +16,19 @@ import com.grepp.spring.app.model.study.entity.Study;
 import com.grepp.spring.app.model.study.repository.StudyRepository;
 import com.grepp.spring.infra.config.Chat.WebSocket.WebSocketSessionTracker;
 import com.grepp.spring.infra.error.exceptions.NotFoundException;
-import com.grepp.spring.infra.util.SecurityUtil;
-import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -53,6 +51,8 @@ public class ChatService {
 
         String nickname = memberRepository.findNicknameById(senderId);
 
+
+
         Chat chat = request.toEntity(chatRoom, senderId, nickname);
         String image = memberRepository.findAvatarImageById(senderId);
         System.out.println("senderId: " + senderId + ", image: " + image);
@@ -66,10 +66,22 @@ public class ChatService {
     }
 
 
-    @Transactional
-    public List<ChatHistoryResponse> findChat(Long studyId, Long memberId, String username) {
+    @Transactional(readOnly = true)
+    public ChatPageResponse findChat(Long studyId, Long memberId, String username,LocalDateTime cursorCreatedAt, Long lastId,int pageSize) {
 
-        List<Chat> chats = chatRepository.findAllRelevantChats(studyId, username, memberId);
+        List<Chat> chats = chatRepository.findAllRelevantChatsPage(
+            studyId,
+            username,
+            memberId,
+            cursorCreatedAt,
+            lastId,
+            pageSize+1);
+
+        boolean hasNext = chats.size() > pageSize;
+
+        if (hasNext) {
+            chats = chats.subList(0, pageSize); // 딱 pageSize만 남기기
+        }
 
         // 1. senderId만 수집
         Set<Long> senderIds = chats.stream()
@@ -83,15 +95,25 @@ public class ChatService {
         Map<Long, String> idToImage = members.stream()
             .collect(Collectors.toMap(Member::getId, Member::getAvatarImage));
 
-
-
-        return chats.stream()
-            .sorted(Comparator.comparing(Chat::getCreatedAt).reversed())
+        List<ChatHistoryResponse> responses = chats.stream()
             .map(chat -> {
                 String image = idToImage.get(chat.getSenderId());
                 return ChatHistoryResponse.from(chat, image);
             })
-            .collect(Collectors.toList());
+            .toList();
+
+        // 마지막 채팅 정보 (커서 갱신용)
+        Chat lastChat = chats.isEmpty() ? null : chats.get(chats.size() - 1);
+
+        return new ChatPageResponse(
+            responses,
+            lastChat != null ? lastChat.getCreatedAt() : null,
+            lastChat != null ? lastChat.getId() : null,
+            hasNext
+        );
+
+
+
     }
 
     // 채팅방 생성

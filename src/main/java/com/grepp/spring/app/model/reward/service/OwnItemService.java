@@ -15,11 +15,11 @@ import com.grepp.spring.infra.error.exceptions.InsufficientRewardPointsException
 import com.grepp.spring.infra.response.ResponseCode;
 import com.grepp.spring.infra.error.exceptions.NotFoundException;
 import jakarta.persistence.EntityManager;
-import jakarta.transaction.Transactional;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +32,7 @@ public class OwnItemService {
     private final EntityManager entityManager;
 
 
+    @Transactional(readOnly = true)
     public ItemSetDto getUseItemList(Long memberId) {
 
         //1. 멤버가 들고 있는 아이템만 뽑아서 들고오기
@@ -109,6 +110,7 @@ public class OwnItemService {
 
     }
 
+    @Transactional(readOnly = true)
     public List<OwnItemDto> getOwnItems(Long memberId) {
         // 회원 조회
         Member member = memberRepository.findById(memberId)

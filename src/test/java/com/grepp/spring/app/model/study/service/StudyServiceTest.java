@@ -35,12 +35,12 @@ class StudyServiceTest {
             new GoalsResponse(3L, "자주쓰는 원어민 표현 100개 외우기")
         );
 
-        when(studyGoalRepository.findGoalsById(studyId)).thenReturn(expectedGoals);
+        when(studyGoalRepository.findStudyGoals(studyId)).thenReturn(expectedGoals);
 
         List<GoalsResponse> actualResponse = studyService.findGoals(studyId);
 
         assertEquals(expectedGoals, actualResponse);
-        verify(studyGoalRepository, times(1)).findGoalsById(studyId);
+        verify(studyGoalRepository, times(1)).findStudyGoals(studyId);
     }
 
 }

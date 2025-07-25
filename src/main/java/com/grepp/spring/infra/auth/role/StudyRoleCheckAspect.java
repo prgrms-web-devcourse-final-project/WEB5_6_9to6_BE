@@ -43,7 +43,7 @@ public class StudyRoleCheckAspect {
         StudyRole[] requiredRoles = checkStudyRole.value();
 
         // 실제 역할
-        StudyRole userRoleInStudy = studyMemberRepository.findRoleByStudyAndMember(studyId, memberId)
+        StudyRole userRoleInStudy = studyMemberRepository.findStudyRole(studyId, memberId)
             .orElseThrow(() -> new AccessDeniedException("해당 스터디에 가입되지않았습니다."));
 
         boolean isAuthorized = Arrays.stream(requiredRoles)
