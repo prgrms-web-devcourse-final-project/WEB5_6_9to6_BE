@@ -34,8 +34,7 @@ public class QuizSet {
     private List<Quiz> quizzes;
 
     @Builder
-    public QuizSet(Long quizSetId, Long studyId, Integer week, boolean activated, StudyGoal studyGoal, List<Quiz> quizzes) {
-        this.id = quizSetId;
+    public QuizSet(Long studyId, Integer week, boolean activated, StudyGoal studyGoal, List<Quiz> quizzes) {
         this.studyId = studyId;
         this.week = week;
         this.activated = activated;

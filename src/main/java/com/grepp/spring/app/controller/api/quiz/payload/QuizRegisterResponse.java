@@ -1,11 +1,11 @@
 package com.grepp.spring.app.controller.api.quiz.payload;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 @Getter
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class QuizRegisterResponse {
-    private final Long quizSetId;
-    private final int registeredQuizCount;
+    private Long quizSetId;
+    private int registeredQuizCount;
 }

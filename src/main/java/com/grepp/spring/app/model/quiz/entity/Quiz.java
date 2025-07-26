@@ -34,8 +34,7 @@ public class Quiz {
     private Choice choice;
 
     @Builder
-    public Quiz(Long quizId, QuizSet quizSet, String question, Integer answer, boolean activated, Choice choice) {
-        this.id = quizId;
+    public Quiz(QuizSet quizSet, String question, Integer answer, boolean activated, Choice choice) {
         this.quizSet = quizSet;
         this.question = question;
         this.answer = answer;
