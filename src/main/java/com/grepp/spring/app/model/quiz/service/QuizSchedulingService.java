@@ -3,7 +3,7 @@ package com.grepp.spring.app.model.quiz.service;
 import com.grepp.spring.app.model.quiz.amqp.QuizMessageProducer;
 import com.grepp.spring.app.model.study.code.DayOfWeek;
 import com.grepp.spring.app.model.study.entity.StudySchedule;
-import com.grepp.spring.app.model.study.repository.StudyScheduleRepository;
+import com.grepp.spring.app.model.study.repository.StudyScheduleRepository.StudyScheduleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -32,7 +32,7 @@ public class QuizSchedulingService {
         DayOfWeek targetDay = DayOfWeek.valueOf(shortDayName);
 
         String targetStartTimeString = tenMinutesFromNow.format(TIME_FORMATTER);
-        List<StudySchedule> schedulesToRun = studyScheduleRepository.findWithStudyByDayOfWeekAndStartTime(targetDay, targetStartTimeString);
+        List<StudySchedule> schedulesToRun = studyScheduleRepository.findSurvivalSchedules(targetDay, targetStartTimeString);
 
         if (schedulesToRun.isEmpty()) {
             return;

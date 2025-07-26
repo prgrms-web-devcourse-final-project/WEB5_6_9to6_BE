@@ -10,14 +10,13 @@ import lombok.Getter;
 public class WeeklyGoalStatusResponse {
 
     private Long studyId;
-    private LocalDate startDate;
-    private LocalDate endDate;
     private List<GoalStat> goals;
 
     @Getter
     @AllArgsConstructor
     public static class GoalStat {
-        private int completedCount;
+        private String week;
+        private Long count;
     }
 }
 
