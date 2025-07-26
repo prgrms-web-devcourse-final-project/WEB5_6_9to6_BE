@@ -42,8 +42,8 @@ public class WebSocketEventListener {
 
             long memberId = principal.getMemberId();
             String email = principal.getUsername();
-            String nickname = memberRepository.findNicknameById(memberId);
-            String image = memberRepository.findAvatarImageById(memberId);
+            String nickname = memberRepository.getNickname(memberId);
+            String image = memberRepository.getAvatarImage(memberId);
 
             String studyIdHeader = accessor.getFirstNativeHeader("studyId");
             String sessionId = accessor.getSessionId();
