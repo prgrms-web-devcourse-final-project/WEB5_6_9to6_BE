@@ -29,7 +29,10 @@ import com.grepp.spring.infra.response.CommonResponse;
 import com.grepp.spring.infra.util.SecurityUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +41,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -46,6 +50,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "스터디 API", description = "스터디 생성, 조회, 가입, 관리 등 스터디 관련 API 입니다.")
@@ -95,19 +100,28 @@ public class StudyController {
     }
 
     // 주간 출석체크 조회(이번주)
-    @Operation(summary = "주간 출석체크 조회(이번주)", description = """
-        현재 로그인한 사용자의 특정 스터디(`studyId`)에 대한 이번 주 출석 내역을 조회합니다.
-        - 이 API는 인증이 필요하며, 요청 헤더에 유효한 토큰이 있어야 합니다.
-        """)
+    @Operation(
+        summary = "주간 출석 내역 조회 (이번 주)",
+        description = """
+        로그인한 사용자의 특정 스터디(`studyId`)에 대한 이번 주 출석 정보를 조회합니다.
+
+        - 인증된 사용자만 사용할 수 있습니다. (`Authorization` 헤더에 JWT 토큰 필요)
+        - `memberId`를 쿼리 파라미터로 전달하지 않으면, 로그인한 사용자의 정보로 조회합니다.
+        - 응답에는 스터디 멤버 ID와 이번 주 출석 현황이 포함됩니다.
+        """
+    )
     @GetMapping("/{studyId}/attendance")
     public ResponseEntity<CommonResponse<WeeklyAttendanceResponse>> weeklyAttendance(
         @PathVariable Long studyId,
+        @RequestParam(required = false) Long memberId,
         Authentication authentication
     ) {
-        String email = authentication.getName();
-        Long studyMemberId = memberService.findStudyMemberId(email, studyId);
+        if (memberId == null) {
+            String email = authentication.getName();
+            memberId = memberService.findMemberIdByEmail(email); // 이 메서드도 필요함
+        }
 
-        // 이번 주 출석 내역 조회
+        Long studyMemberId = memberService.findStudyMemberId(memberId, studyId);
         List<Attendance> attendanceList = memberService.getWeeklyAttendanceEntities(studyMemberId);
 
         WeeklyAttendanceResponse response = new WeeklyAttendanceResponse(studyMemberId, attendanceList);
@@ -237,18 +251,25 @@ public class StudyController {
         return ResponseEntity.status(200).body(CommonResponse.noContent());
     }
 
-    // 스터디 목표 달성 여부 조회
-    @Operation(summary = "주간 스터디 목표 달성 현황 조회", description = """
-        현재 로그인한 사용자의 특정 스터디(`studyId`)에 대한 주간 목표 달성 현황을 조회합니다.
-        - 이 API는 인증이 필요하며, 요청 헤더에 유효한 토큰이 있어야 합니다.
-        """)
+    @Operation(
+        summary = "주간 스터디 목표 달성 현황 조회",
+        description = """
+        특정 사용자의 특정 스터디(`studyId`)에 대한 이번 주 목표 달성 현황을 조회합니다.
+
+        - `memberId`를 요청 파라미터로 전달하지 않으면, 현재 로그인한 사용자의 ID를 기반으로 조회합니다.
+        - 인증이 필요하며, `Authorization` 헤더에 유효한 JWT 토큰이 있어야 합니다.
+        """
+    )
     @GetMapping("/{studyId}/goals/completed")
     public ResponseEntity<CommonResponse<WeeklyGoalStatusResponse>> getWeeklyGoalStats(
-        @PathVariable Long studyId) {
+        @PathVariable Long studyId,
+        @RequestParam(required = false) Long memberId
+    ) {
+        if (memberId == null) {
+            memberId = SecurityUtil.getCurrentMemberId(); // 로그인된 사용자 ID
+        }
 
-        Long memberId = SecurityUtil.getCurrentMemberId(); // 로그인된 사용자
         WeeklyGoalStatusResponse response = studyService.getWeeklyGoalStats(studyId, memberId);
-
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 
