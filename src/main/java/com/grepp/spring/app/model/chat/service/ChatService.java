@@ -17,6 +17,7 @@ import com.grepp.spring.app.model.study.repository.StudyRepository;
 import com.grepp.spring.infra.config.Chat.WebSocket.WebSocketSessionTracker;
 import com.grepp.spring.infra.error.exceptions.NotFoundException;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -51,6 +52,8 @@ public class ChatService {
 
         String nickname = memberRepository.findNicknameById(senderId);
 
+
+
         Chat chat = request.toEntity(chatRoom, senderId, nickname);
         String image = memberRepository.findAvatarImageById(senderId);
         System.out.println("senderId: " + senderId + ", image: " + image);
@@ -80,6 +83,9 @@ public class ChatService {
         if (hasNext) {
             chats = chats.subList(0, pageSize); // 딱 pageSize만 남기기
         }
+
+        // 3. 정렬 뒤집기 (DESC → ASC)
+        Collections.reverse(chats);
 
         // 1. senderId만 수집
         Set<Long> senderIds = chats.stream()

@@ -1,6 +1,7 @@
 package com.grepp.spring.app.model.study.entity;
 
 import com.grepp.spring.app.model.study.code.GoalType;
+import com.grepp.spring.infra.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,7 +11,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class StudyGoal {
+public class StudyGoal extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,8 +22,6 @@ public class StudyGoal {
     @Enumerated(EnumType.STRING)
     private GoalType goalType;
 
-    private boolean activated;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "study_id", nullable = false)
     private Study study;
@@ -31,10 +30,9 @@ public class StudyGoal {
     private List<GoalAchievement> achievements = new ArrayList<>();
 
     @Builder
-    public StudyGoal(String content, GoalType goalType, boolean activated, Study study) {
+    public StudyGoal(String content, GoalType goalType, Study study) {
         this.content = content;
         this.goalType = goalType;
-        this.activated = activated;
         this.study = study;
     }
 

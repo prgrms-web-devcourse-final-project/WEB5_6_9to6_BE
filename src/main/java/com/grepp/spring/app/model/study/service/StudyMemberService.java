@@ -12,6 +12,7 @@ import com.grepp.spring.app.model.study.repository.StudyRepository;
 import com.grepp.spring.infra.error.exceptions.AlreadyExistException;
 import com.grepp.spring.infra.error.exceptions.NotFoundException;
 import com.grepp.spring.infra.response.ResponseCode;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -75,8 +76,8 @@ public class StudyMemberService {
     public List<CheckGoalResponse> getGoalStatuses(Long studyId, Long memberId) {
         Long studyMemberId = studyMemberRepository.findStudyMemberId(studyId, memberId)
             .orElseThrow(() -> new NotFoundException(ResponseCode.NOT_FOUND.message()));
-
-        List<CheckGoalResponse> res = goalAchievementRepository.findAchieveStatuses(studyId, studyMemberId);
+        List<CheckGoalResponse> res = goalAchievementRepository
+            .findAchieveStatuses(studyId, studyMemberId, LocalDateTime.now());
         return res;
     }
 

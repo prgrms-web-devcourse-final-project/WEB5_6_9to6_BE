@@ -348,6 +348,7 @@ public class MemberService {
         );
     }
 
+    @Transactional
     public void updateProfileImage(Long memberId, String image) {
         Member member = memberRepository.findById(memberId)
             .orElseThrow(() -> new NotFoundException("사용자를 찾을 수 없습니다."));
