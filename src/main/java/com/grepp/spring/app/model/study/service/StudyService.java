@@ -3,6 +3,7 @@ package com.grepp.spring.app.model.study.service;
 import com.grepp.spring.app.controller.api.study.payload.StudyCreationRequest;
 import com.grepp.spring.app.controller.api.study.payload.StudySearchRequest;
 import com.grepp.spring.app.controller.api.study.payload.StudyUpdateRequest;
+import com.grepp.spring.app.controller.api.study.payload.WeeklyAchievementCount;
 import com.grepp.spring.app.model.member.code.StudyRole;
 import com.grepp.spring.app.model.member.dto.response.ApplicantsResponse;
 import com.grepp.spring.app.model.member.dto.response.StudyMemberResponse;
@@ -35,10 +36,13 @@ import com.grepp.spring.infra.response.ResponseCode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -108,7 +112,7 @@ public class StudyService {
             .studyGoal(studyGoal)
             .studyMember(studyMember)
             .isAccomplished(true)
-            .activated(true)
+//            .activated(true)
             .achievedAt(LocalDateTime.now())
             .build();
 
@@ -264,7 +268,7 @@ public class StudyService {
                     StudyGoal goal = StudyGoal.builder()
                         .content(g.getContent())
                         .goalType(GoalType.WEEKLY)
-                        .activated(true)
+//                        .activated(true)
                         .study(study)
                         .build();
                     study.addGoal(goal);
@@ -312,37 +316,50 @@ public class StudyService {
 
     @Transactional(readOnly = true)
     public WeeklyGoalStatusResponse getWeeklyGoalStats(Long studyId, Long memberId) {
-        LocalDate endDate = LocalDate.now();
-        LocalDate startDate = endDate.minusDays(6);
+        // studyStartDate
+        Study study = studyRepository.findById(studyId)
+            .orElseThrow(() -> new NotFoundException("스터디가 존재하지 않습니다."));
+        LocalDate studyStartDate = study.getStartDate();
+
+        // startDate= 스터디 생성일
+        LocalDate startDate = studyStartDate;
+        LocalDate endDate = LocalDate.now(); // endDate는 현재
+
         LocalDateTime startDateTime = startDate.atStartOfDay();
         LocalDateTime endDateTime = endDate.atTime(LocalTime.MAX);
 
-        // 스터디 존재 여부 확인
-        if (!studyRepository.existsById(studyId)) {
-            throw new NotFoundException("스터디가 존재하지 않습니다.");
-        }
-
-        // memberId → studyMemberId 조회
         StudyMember studyMember = studyMemberRepository.findByStudyStudyIdAndMemberId(studyId, memberId)
             .orElseThrow(() -> new NotFoundException("스터디 멤버 정보를 찾을 수 없습니다."));
         Long studyMemberId = studyMember.getStudyMemberId();
 
-        // 목표 전체에 대해 중복 없이 총 달성 카운트
-        int totalCompletedCount = goalAchievementRepository.countTotalAchievements(
+        List<WeeklyAchievementCount> weeklyCounts = goalAchievementRepository.countWeeklyAchievements(
             studyId, studyMemberId, startDateTime, endDateTime
         );
 
-        List<WeeklyGoalStatusResponse.GoalStat> goals = List.of(
-            new WeeklyGoalStatusResponse.GoalStat(totalCompletedCount)
-        );
+        Map<Integer, Long> countsMap = weeklyCounts.stream()
+            .collect(Collectors.toMap(
+                dto -> Integer.parseInt(dto.getWeek()),
+                WeeklyAchievementCount::getCount
+            ));
+
+        // 스터디 시작일을 기준으로 주차계산
+        int startWeek = (int) (ChronoUnit.DAYS.between(studyStartDate, startDate) / 7) + 1;
+        int endWeek = (int) (ChronoUnit.DAYS.between(studyStartDate, endDate) / 7) + 1;
+
+        // 전체 주차를 순회, 없으면 0
+        List<WeeklyGoalStatusResponse.GoalStat> goals = IntStream.rangeClosed(startWeek, endWeek)
+            .mapToObj(week -> {
+                long count = countsMap.getOrDefault(week, 0L);
+                return new WeeklyGoalStatusResponse.GoalStat(String.valueOf(week), count);
+            })
+            .collect(Collectors.toList());
 
         return new WeeklyGoalStatusResponse(
             studyId,
-            startDate,
-            endDate,
             goals
         );
     }
+
 
     public boolean isSurvival(Long studyId) {
         return (StudyType.SURVIVAL == studyRepository.findStudyType(studyId));
