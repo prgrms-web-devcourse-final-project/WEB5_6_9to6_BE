@@ -306,13 +306,13 @@ public class MemberService {
 
     @Transactional(readOnly = true)
     public RequiredMemberInfoResponse getMemberRequiredInfo(Long memberId) {
-        return memberRepository.findRequiredMemberInfo(memberId);
+        return memberRepository.getRequiredMemberInfo(memberId);
     }
 
     @Transactional(readOnly = true)
     public AvatarInfoResponse getMemberAvatarInfo(Long memberId) {
         List<Long> ids = ownItemIdGetRepository.findIdsByMemberId(memberId);
-        String memberAvatarImage = memberRepository.findAvatarImageById(memberId);
+        String memberAvatarImage = memberRepository.getAvatarImage(memberId);
         AvatarInfoResponse avatarInfoResponse = AvatarInfoResponse.builder()
             .itemIds(ids)
             .avatarImage(memberAvatarImage)
