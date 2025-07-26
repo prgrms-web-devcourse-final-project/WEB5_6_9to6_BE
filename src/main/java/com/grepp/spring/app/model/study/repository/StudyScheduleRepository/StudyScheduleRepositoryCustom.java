@@ -5,5 +5,5 @@ import com.grepp.spring.app.model.study.entity.StudySchedule;
 import java.util.List;
 
 public interface StudyScheduleRepositoryCustom {
-    List<StudySchedule> findWithStudyBy(DayOfWeek dayOfWeek, String startTime);
+    List<StudySchedule> findSurvivalSchedules(DayOfWeek dayOfWeek, String startTime);
 }

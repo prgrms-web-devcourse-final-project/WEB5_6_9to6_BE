@@ -31,7 +31,7 @@ public class QuizSchedulingService {
         DayOfWeek targetDay = DayOfWeek.valueOf(shortDayName);
 
         String targetStartTimeString = tenMinutesFromNow.format(TIME_FORMATTER);
-        List<StudySchedule> schedulesToRun = studyScheduleRepository.findWithStudyBy(targetDay, targetStartTimeString);
+        List<StudySchedule> schedulesToRun = studyScheduleRepository.findSurvivalSchedules(targetDay, targetStartTimeString);
 
         if (schedulesToRun.isEmpty()) {
             return;

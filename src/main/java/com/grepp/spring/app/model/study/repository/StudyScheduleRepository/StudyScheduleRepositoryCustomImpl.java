@@ -15,7 +15,7 @@ public class StudyScheduleRepositoryCustomImpl implements StudyScheduleRepositor
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<StudySchedule> findWithStudyBy(DayOfWeek dayOfWeek, String startTime) {
+    public List<StudySchedule> findSurvivalSchedules(DayOfWeek dayOfWeek, String startTime) {
         return queryFactory
                 .selectFrom(studySchedule)
                 .join(studySchedule.study, study).fetchJoin()
