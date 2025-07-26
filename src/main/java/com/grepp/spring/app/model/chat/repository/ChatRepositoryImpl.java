@@ -56,9 +56,9 @@ public class ChatRepositoryImpl implements ChatRepositoryCustom{
 
         if (cursorCreatedAt != null && lastId != null) {
             condition.and(
-                chat.createdAt.gt(cursorCreatedAt)
+                chat.createdAt.lt(cursorCreatedAt)
                     .or(chat.createdAt.eq(cursorCreatedAt)
-                        .and(chat.id.gt(lastId)))
+                        .and(chat.id.lt(lastId)))
             );
         }
 
@@ -67,7 +67,7 @@ public class ChatRepositoryImpl implements ChatRepositoryCustom{
             .join(chat.chatRoom, chatRoom)
             .where(condition
             )
-            .orderBy(chat.createdAt.asc(), chat.id.asc())
+            .orderBy(chat.createdAt.desc(), chat.id.desc())
             .limit(pageSize)
             .fetch();
     }
