@@ -4,6 +4,7 @@ import com.grepp.spring.app.controller.api.study.payload.CheckGoalResponse;
 import com.grepp.spring.app.model.member.entity.QStudyMember;
 import com.grepp.spring.app.model.study.entity.QGoalAchievement;
 import com.grepp.spring.app.model.study.entity.QStudyGoal;
+import com.grepp.spring.app.model.study.entity.StudyGoal;
 import com.grepp.spring.app.model.study.reponse.GoalsResponse;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
@@ -61,6 +62,15 @@ public class GoalRepositoryCustomImpl implements GoalRepositoryCustom {
                 studyGoal.activated.isTrue()
             )
             .fetch();
+    }
+
+    @Override
+    public List<StudyGoal> findGoalsByStudyId(Long studyId) {
+        return queryFactory
+                .selectFrom(studyGoal)
+                .where(studyGoal.study.studyId.eq(studyId))
+                .orderBy(studyGoal.goalId.asc())
+                .fetch();
     }
 
 //    @Override
