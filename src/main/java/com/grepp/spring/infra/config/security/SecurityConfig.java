@@ -21,6 +21,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import static org.springframework.http.HttpMethod.GET;
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
@@ -53,10 +55,10 @@ public class SecurityConfig {
                     .requestMatchers("/favicon.ico", "/img/**", "/js/**","/css/**").permitAll()
                     .requestMatchers("/", "/error", "/auth/login", "/auth/signup").permitAll()
                     .requestMatchers("/api/v1/studies/search", "/api/v1/studies/categories").permitAll()
-                    .requestMatchers("/api/v1/studies/*").permitAll()
-                    .requestMatchers("/api/v1/studies/*/notification").permitAll()
-                    .requestMatchers("/api/v1/studies/*/members").permitAll()
-                    .requestMatchers("/api/v1/studies/*/goals").permitAll()
+                    .requestMatchers(GET,"/api/v1/studies/*").permitAll()
+                    .requestMatchers(GET,"/api/v1/studies/*/notification").permitAll()
+                    .requestMatchers(GET,"/api/v1/studies/*/members").permitAll()
+                    .requestMatchers(GET,"/api/v1/studies/*/goals").permitAll()
                     .anyRequest().authenticated()
 //                    .anyRequest().permitAll()
             )
