@@ -53,7 +53,8 @@ public class SecurityConfig {
             .authorizeHttpRequests(
                 (requests) -> requests
                     .requestMatchers("/favicon.ico", "/img/**", "/js/**","/css/**").permitAll()
-                    .requestMatchers("/", "/error", "/auth/login", "/auth/signup").permitAll()
+                    .requestMatchers("/", "/error").permitAll()
+                    .requestMatchers("/api/v1/auth/signup", "/api/v1/auth/login", "/api/v1/auth/email/**", "/api/v1/auth/oauth/first-regist").permitAll()
                     .requestMatchers("/api/v1/studies/search", "/api/v1/studies/categories").permitAll()
                     .requestMatchers(GET,"/api/v1/studies/*").permitAll()
                     .requestMatchers(GET,"/api/v1/studies/*/notification").permitAll()
