@@ -39,11 +39,30 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final MemberRepository memberRepository;
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        List<String> excludePath = new ArrayList<>();
-        excludePath.addAll(List.of("/auth/signup", "/auth/login",  "/favicon.ico", "/img", "/js","/css","/download"));
-        excludePath.addAll(List.of("/error", "/api/member/exists", "/member/signin", "/member/signup"));
         String path = request.getRequestURI();
-        return excludePath.stream().anyMatch(path::startsWith);
+
+        // 정적 경로 리스트
+        List<String> staticExcludePaths = List.of(
+            "/auth/signup", "/auth/login", "/favicon.ico", "/img", "/js", "/css", "/download",
+            "/error", "/api/member/exists", "/member/signin", "/member/signup",
+            "/api/v1/studies/search", "/api/v1/studies/categories"
+        );
+
+        // 정적 경로
+        if (staticExcludePaths.stream().anyMatch(path::startsWith)) {
+            return true;
+        }
+
+        // 동적 경로 리스트
+        List<String> dynamicExcludePatterns = List.of(
+            "^/api/v1/studies/\\d+$",                // /api/v1/studies/{studyId}
+            "^/api/v1/studies/\\d+/notification$",   // /api/v1/studies/{studyId}/notification
+            "^/api/v1/studies/\\d+/members$",        // /api/v1/studies/{studyId}/members
+            "^/api/v1/studies/\\d+/goals$"           // /api/v1/studies/{studyId}/goals
+        );
+
+        // matches로 정규식 패턴을 확인
+        return dynamicExcludePatterns.stream().anyMatch(path::matches);
     }
     
     @Override
