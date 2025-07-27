@@ -9,7 +9,6 @@ import com.grepp.spring.app.model.study.code.StudyType;
 import com.grepp.spring.app.model.study.dto.StudyListResponse;
 import com.grepp.spring.app.model.study.entity.Study;
 import com.grepp.spring.app.model.study.entity.StudySchedule;
-import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -27,7 +26,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -36,7 +34,6 @@ import static com.grepp.spring.app.model.member.entity.QStudyMember.studyMember;
 import static com.grepp.spring.app.model.study.entity.QApplicant.applicant;
 import static com.grepp.spring.app.model.study.entity.QStudy.study;
 import static com.grepp.spring.app.model.study.entity.QStudySchedule.studySchedule;
-import static com.querydsl.jpa.JPAExpressions.select;
 
 @Slf4j
 @RequiredArgsConstructor
