@@ -43,8 +43,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // 정적 경로 리스트
         List<String> staticExcludePaths = List.of(
-            "/auth/signup", "/auth/login", "/favicon.ico", "/img", "/js", "/css", "/download",
-            "/error", "/api/member/exists", "/member/signin", "/member/signup",
+            "/favicon.ico", "/img", "/js", "/css", "/download", "/error",
+            "/api/v1/auth/signup", "/api/v1/auth/login", "/api/v1/auth/reissue", "/api/v1/auth/email", "/api/v1/auth/oauth",
             "/api/v1/studies/search", "/api/v1/studies/categories"
         );
 
