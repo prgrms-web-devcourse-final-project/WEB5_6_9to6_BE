@@ -77,7 +77,7 @@ public class AlarmService {
             .receiver(receiver)
             .message(request.getMessage())
             .alarmType(request.getType())
-            .resultStatus(request.getResultStatus())
+            .resultStatus(request.getResultStatus()) // APPLY일 경우 null이어도 됨
             .study(study)
             .build();
         alarmRepository.save(alarm);

@@ -1,4 +1,6 @@
-package com.grepp.spring.app.model.study.repository;
+package com.grepp.spring.app.model.member.repository;
+
+import static com.grepp.spring.app.model.member.entity.QStudyMember.studyMember;
 
 import com.grepp.spring.app.model.member.code.StudyRole;
 import com.grepp.spring.app.model.member.entity.QMember;
@@ -16,7 +18,7 @@ public class StudyMemberRepositoryCustomImpl implements StudyMemberRepositoryCus
 
     private final JPAQueryFactory queryFactory;
 
-    private static final QStudyMember sm = QStudyMember.studyMember;
+    private static final QStudyMember sm = studyMember;
     private static final QStudy s = QStudy.study;
     private static final QMember m = QMember.member;
     private static final QStudySchedule sch = QStudySchedule.studySchedule;
@@ -46,8 +48,26 @@ public class StudyMemberRepositoryCustomImpl implements StudyMemberRepositoryCus
             .selectFrom(sm)
             .join(sm.member, m).fetchJoin()
             .where(sm.study.studyId.eq(studyId), sm.activated.isTrue())
-            .orderBy(sm.studyRole.asc(), sm.createdAt.asc())
-            .fetch();
+            .orderBy(
+                sm.studyRole.asc(),
+                sm.createdAt.asc(),
+                sm.studyMemberId.asc()
+            )            .fetch();
+    }
+
+    @Override
+    public Optional<StudyMember> findStudyMember(Long studyId, Long memberId) {
+        StudyMember res = queryFactory
+            .select(studyMember)
+            .from(studyMember)
+            .where(
+                studyMember.study.studyId.eq(studyId),
+                studyMember.member.id.eq(memberId),
+                studyMember.member.activated.isTrue(),
+                studyMember.study.activated.isTrue()
+            )
+            .fetchOne();
+        return Optional.ofNullable(res);
     }
 
     @Override
@@ -61,17 +81,19 @@ public class StudyMemberRepositoryCustomImpl implements StudyMemberRepositoryCus
     }
 
     @Override
-    public Boolean checkAcceptorHasRight(Long acceptorId, Long studyId) {
-        return queryFactory
+    public Boolean checkAcceptorHasRight(Long memberId, Long studyId) {
+        Boolean result = queryFactory
             .select(sm.studyRole.eq(StudyRole.LEADER))
             .from(sm)
             .where(
                 sm.study.studyId.eq(studyId),
-                sm.member.id.eq(acceptorId),
+                sm.member.id.eq(memberId),
                 sm.activated.isTrue(),
                 sm.member.activated.isTrue()
             )
-            .fetchOne();
+            .fetchFirst();
+
+        return Boolean.TRUE.equals(result);
     }
 
     @Override
@@ -112,6 +134,55 @@ public class StudyMemberRepositoryCustomImpl implements StudyMemberRepositoryCus
             .where(sm.study.studyId.eq(studyId), sm.activated.isTrue())
             .fetch();
     }
+
+    @Override
+    public Optional<StudyMember> findByStudyIdAndMemberId(Long studyId, Long memberId) {
+        return Optional.ofNullable(
+            queryFactory.selectFrom(studyMember)
+                .where(
+                    studyMember.study.studyId.eq(studyId),
+                    studyMember.member.id.eq(memberId)
+                )
+                .fetchOne()
+        );
+    }
+
+    @Override
+    public int countByStudyId(Long studyId) {
+        Long count = queryFactory
+            .select(sm.count())
+            .from(sm)
+            .where(sm.study.studyId.eq(studyId))
+            .fetchOne();
+        return count != null ? count.intValue() : 0;
+    }
+
+    @Override
+    public boolean existsActivatedByMemberIdAndStudyId(Long memberId, Long studyId) {
+        Integer result = queryFactory
+            .selectOne()
+            .from(sm)
+            .where(
+                sm.member.id.eq(memberId),
+                sm.study.studyId.eq(studyId),
+                sm.activated.isTrue()
+            )
+            .fetchFirst();
+        return result != null;
+    }
+
+    @Override
+    public Optional<StudyMember> findByStudyIdAndStudyMemberId(Long studyId, Long studyMemberId) {
+        StudyMember result = queryFactory
+            .selectFrom(sm)
+            .where(
+                sm.study.studyId.eq(studyId),
+                sm.studyMemberId.eq(studyMemberId)
+            )
+            .fetchOne();
+        return Optional.ofNullable(result);
+    }
+
 
     @Override
     public boolean existStudyMember(Long memberId, Long studyId) {

@@ -15,7 +15,7 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.TypedQuery;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -58,7 +58,10 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom {
                 req.getStudyType() != null ? study.studyType.eq(req.getStudyType()) : null,
                 StringUtils.hasText(req.getName()) ? study.name.contains(req.getName()) : null
             )
-            .orderBy(study.createdAt.desc())
+            .orderBy(
+                study.createdAt.desc(),
+                study.studyId.desc()
+            )
             .fetch();
     }
 
@@ -100,7 +103,10 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom {
                 study.studyId.desc()
             )
             .where(study.activated.isTrue(),study.studyId.in(ids))
-            .orderBy(study.createdAt.desc())
+            .orderBy(
+                study.createdAt.desc(),
+                study.studyId.desc()
+            )
             .fetch();
 
         Long total = queryFactory
@@ -268,6 +274,18 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom {
             .where(searchConditions(req));
 
         return new PageImpl<>(content, pageable, countQuery.fetchOne());
+    }
+
+    @Override
+    public LocalDate findStudyStartDate(Long studyId) {
+        return queryFactory
+            .select(study.startDate)
+            .from(study)
+            .where(
+                study.studyId.eq(studyId),
+                study.activated.isTrue()
+            )
+            .fetchOne();
     }
 
     private BooleanExpression[] searchConditions(StudySearchRequest req) {
