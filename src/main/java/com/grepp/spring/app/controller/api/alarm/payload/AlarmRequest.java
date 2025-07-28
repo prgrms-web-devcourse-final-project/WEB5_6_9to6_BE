@@ -1,9 +1,10 @@
 package com.grepp.spring.app.controller.api.alarm.payload;
 
 import com.grepp.spring.app.model.alarm.code.AlarmType;
-import com.grepp.spring.app.model.alarm.code.ResultStatus;
+import com.grepp.spring.app.model.study.code.ApplicantState;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -27,5 +28,17 @@ public class AlarmRequest {
     @NotNull(message = "알림 타입(type)은 필수입니다.")
     private AlarmType type;
 
-    private ResultStatus resultStatus;
+    private ApplicantState resultStatus;
+
+    @Builder
+    public AlarmRequest(Long studyId, Long senderId, Long receiverId, String message,
+        AlarmType type,
+        ApplicantState resultStatus) {
+        this.studyId = studyId;
+        this.senderId = senderId;
+        this.receiverId = receiverId;
+        this.message = message;
+        this.type = type;
+        this.resultStatus = resultStatus;
+    }
 }
