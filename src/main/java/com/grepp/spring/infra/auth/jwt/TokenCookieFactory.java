@@ -7,6 +7,7 @@ public class TokenCookieFactory {
         return ResponseCookie.from(name, value)
                    .maxAge(expires)
                    .path("/")
+//                   .domain("")
                    .httpOnly(false)             // HttpOnly
                    .secure(true)
                    .sameSite("None")// Secure
