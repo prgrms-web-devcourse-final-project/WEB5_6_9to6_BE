@@ -58,7 +58,10 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom {
                 req.getStudyType() != null ? study.studyType.eq(req.getStudyType()) : null,
                 StringUtils.hasText(req.getName()) ? study.name.contains(req.getName()) : null
             )
-            .orderBy(study.createdAt.desc())
+            .orderBy(
+                study.createdAt.desc(),
+                study.studyId.desc()
+            )
             .fetch();
     }
 
@@ -100,7 +103,10 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom {
                 study.studyId.desc()
             )
             .where(study.activated.isTrue(),study.studyId.in(ids))
-            .orderBy(study.createdAt.desc())
+            .orderBy(
+                study.createdAt.desc(),
+                study.studyId.desc()
+            )
             .fetch();
 
         Long total = queryFactory
