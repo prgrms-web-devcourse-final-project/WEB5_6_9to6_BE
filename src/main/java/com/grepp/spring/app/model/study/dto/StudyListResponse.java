@@ -6,37 +6,55 @@ import com.grepp.spring.app.model.study.code.Status;
 import com.grepp.spring.app.model.study.code.StudyType;
 import com.grepp.spring.app.model.study.entity.Study;
 import com.grepp.spring.app.model.study.entity.StudySchedule;
-import java.time.LocalDate;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
-@Builder
 public class StudyListResponse {
 
-    private Long studyId;
-    private String title;
-    private Category category;
-    private int currentMemberCount;
-    private int maxMemberCount;
-    private List<String> schedules;
-    private String startTime;
-    private String endTime;
-    private Status status;
-    private String createdAt;
-    private LocalDate startDate;
-    private Region region;
-    private StudyType studyType;
-    private String description;
+    private final Long studyId;
+    private final String title;
+    private final Category category;
+    private final int currentMemberCount;
+    private final int maxMemberCount;
+    private final List<String> schedules;
+    private final String startTime;
+    private final String endTime;
+    private final Status status;
+    private final String createdAt;
+    private final LocalDate startDate;
+    private final Region region;
+    private final StudyType studyType;
+    private final String description;
 
-    public static StudyListResponse fromEntity(Study study, int currentMemberCount) {
-        List<StudySchedule> scheduleList = study.getSchedules();
+    @Builder
+    public StudyListResponse(Long studyId, String title, Category category, int currentMemberCount,
+        int maxMemberCount, List<String> schedules, String startTime, String endTime,
+        Status status, String createdAt, LocalDate startDate, Region region,
+        StudyType studyType, String description) {
+        this.studyId = studyId;
+        this.title = title;
+        this.category = category;
+        this.currentMemberCount = currentMemberCount;
+        this.maxMemberCount = maxMemberCount;
+        this.schedules = schedules;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.status = status;
+        this.createdAt = createdAt;
+        this.startDate = startDate;
+        this.region = region;
+        this.studyType = studyType;
+        this.description = description;
+    }
 
+    public static StudyListResponse fromEntity(Study study, int currentMemberCount, List<StudySchedule> scheduleList) {
         // 요일 리스트 추출
         List<String> days = scheduleList != null
             ? scheduleList.stream()

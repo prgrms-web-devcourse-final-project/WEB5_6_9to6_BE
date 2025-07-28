@@ -1,5 +1,7 @@
 package com.grepp.spring.app.model.study.repository;
 
+import static com.grepp.spring.app.model.member.entity.QStudyMember.studyMember;
+
 import com.grepp.spring.app.model.member.code.StudyRole;
 import com.grepp.spring.app.model.member.entity.QMember;
 import com.grepp.spring.app.model.member.entity.QStudyMember;
@@ -16,7 +18,7 @@ public class StudyMemberRepositoryCustomImpl implements StudyMemberRepositoryCus
 
     private final JPAQueryFactory queryFactory;
 
-    private static final QStudyMember sm = QStudyMember.studyMember;
+    private static final QStudyMember sm = studyMember;
     private static final QStudy s = QStudy.study;
     private static final QMember m = QMember.member;
     private static final QStudySchedule sch = QStudySchedule.studySchedule;
@@ -112,4 +114,20 @@ public class StudyMemberRepositoryCustomImpl implements StudyMemberRepositoryCus
             .where(sm.study.studyId.eq(studyId), sm.activated.isTrue())
             .fetch();
     }
+
+    @Override
+    public boolean existStudyMember(Long memberId, Long studyId) {
+        return queryFactory
+            .selectOne()
+            .from(studyMember)
+            .where(
+                studyMember.member.id.eq(memberId),
+                studyMember.study.studyId.eq(studyId),
+                studyMember.activated.isTrue(),
+                studyMember.member.activated.isTrue(),
+                studyMember.study.activated.isTrue()
+            )
+            .fetchFirst() != null;
+    }
+
 }

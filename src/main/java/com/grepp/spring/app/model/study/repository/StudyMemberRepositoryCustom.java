@@ -18,9 +18,12 @@ public interface StudyMemberRepositoryCustom {
 
     Boolean checkAcceptorHasRight(Long acceptorId, Long studyId);
 
+
     List<StudyMember> findActiveStudyMemberships(Long memberId);
 
     Optional<StudyMember> findActiveStudyMember(Long memberId, Long studyId);
 
     List<StudyMember> findAllByStudyIdWithMember(Long studyId);
+
+    boolean existStudyMember(Long memberId, Long studyId);
 }

@@ -1,5 +1,6 @@
 package com.grepp.spring.infra.config.security;
 
+import com.grepp.spring.infra.auth.jwt.JwtAuthenticationEntryPoint;
 import com.grepp.spring.infra.auth.jwt.filter.JwtAuthenticationFilter;
 import com.grepp.spring.infra.auth.jwt.filter.JwtExceptionFilter;
 import com.grepp.spring.infra.auth.oauth2.OAuth2FailureHandler;
@@ -19,6 +20,8 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import static org.springframework.http.HttpMethod.GET;
 
 @Configuration
 @EnableWebSecurity
@@ -49,11 +52,16 @@ public class SecurityConfig {
             .logout(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(
                 (requests) -> requests
-//                    .requestMatchers("/favicon.ico", "/img/**", "/js/**","/css/**").permitAll()
-//                    .requestMatchers("/", "/error", "/auth/login", "/auth/signup").permitAll()
-//                    .requestMatchers("/api/v1/studies/search").permitAll()
-//                    .anyRequest().authenticated()
-                    .anyRequest().permitAll()
+                    .requestMatchers("/favicon.ico", "/img/**", "/js/**","/css/**").permitAll()
+                    .requestMatchers("/", "/error").permitAll()
+                    .requestMatchers("/api/v1/auth/signup", "/api/v1/auth/login", "/api/v1/auth/email/**", "/api/v1/auth/oauth/first-regist").permitAll()
+                    .requestMatchers("/api/v1/studies/search", "/api/v1/studies/categories").permitAll()
+                    .requestMatchers(GET,"/api/v1/studies/*").permitAll()
+                    .requestMatchers(GET,"/api/v1/studies/*/notification").permitAll()
+                    .requestMatchers(GET,"/api/v1/studies/*/members").permitAll()
+                    .requestMatchers(GET,"/api/v1/studies/*/goals").permitAll()
+                    .anyRequest().authenticated()
+//                    .anyRequest().permitAll()
             )
             // jwtAuthenticationEntryPoint 는 oauth 인증을 사용할 경우 제거
 //            .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint))
