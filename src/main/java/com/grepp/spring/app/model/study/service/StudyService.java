@@ -237,11 +237,6 @@ public class StudyService {
             throw new NotFoundException("스터디가 존재하지 않거나 비활성화 상태입니다.");
         }
 
-        Long memberId = SecurityUtil.getCurrentMemberId();
-        if(!studyMemberRepository.existStudyMember(memberId, studyId)) {
-            throw new HasNotRightException(ResponseCode.UNAUTHORIZED);
-         }
-
         List<StudyMember> studyMembers = studyMemberRepository.findByStudyId(studyId);
 
         return studyMembers.stream()
