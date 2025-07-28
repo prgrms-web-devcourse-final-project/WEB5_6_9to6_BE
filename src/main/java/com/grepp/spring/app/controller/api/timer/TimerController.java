@@ -79,7 +79,7 @@ public class TimerController {
         @PathVariable Long studyId,
         @PathVariable Long memberId
     ) {
-        List<DailyStudyLogResponse> response = timerService.findDailyStudyLogsByStudyMemberId(studyId, memberId);
+        List<DailyStudyLogResponse> response = timerService.findDailyStudyLogs(studyId, memberId);
         return ResponseEntity.ok(CommonResponse.success(response));
     }
 

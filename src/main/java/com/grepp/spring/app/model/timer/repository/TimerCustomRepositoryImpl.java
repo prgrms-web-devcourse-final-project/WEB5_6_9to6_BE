@@ -16,7 +16,7 @@ public class TimerCustomRepositoryImpl implements TimerCustomRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<Tuple> findDailyStudyLogsByStudyMemberId(Long studyMemberId, Long studyId, LocalDateTime startOfDay, LocalDateTime endOfDay) {
+    public List<Tuple> findDailyStudyLogs(Long studyMemberId, Long studyId, LocalDateTime startOfDay, LocalDateTime endOfDay) {
         return queryFactory
             .select(
                 Expressions.dateTemplate(LocalDate.class, "DATE({0})", timer.createdAt),
@@ -35,7 +35,7 @@ public class TimerCustomRepositoryImpl implements TimerCustomRepository {
     }
 
     @Override
-    public Long findTotalStudyTimeInPeriod(Long studyMemberId, Long studyId, LocalDateTime startOfDay, LocalDateTime endOfDay) {
+    public Long findTotalStudyLogsInWeek(Long studyMemberId, Long studyId, LocalDateTime startOfDay, LocalDateTime endOfDay) {
         return queryFactory
             .select(timer.dailyStudyTime.sum().castToNum(Long.class))
             .from(timer)
@@ -51,7 +51,7 @@ public class TimerCustomRepositoryImpl implements TimerCustomRepository {
     }
 
     @Override
-    public Long findTotalStudyTimeByStudyMemberIds(List<Long> studyMemberIds) {
+    public Long findTotalStudyTime(List<Long> studyMemberIds) {
 
         return queryFactory
             .select(timer.dailyStudyTime.sum().castToNum(Long.class))

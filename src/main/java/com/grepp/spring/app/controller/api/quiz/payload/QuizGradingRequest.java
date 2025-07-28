@@ -6,8 +6,8 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class QuizGradingRequest {
     private Long memberId;
     private Long studyId;
