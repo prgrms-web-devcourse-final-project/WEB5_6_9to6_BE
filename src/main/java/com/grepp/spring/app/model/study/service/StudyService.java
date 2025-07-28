@@ -61,41 +61,51 @@ public class StudyService {
     private final ApplicantRepository applicantRepository;
 
     //필터 조건에 따라 스터디 목록 + 현재 인원 수 조회
+//    @Transactional(readOnly = true)
+//    public List<StudyListResponse> searchStudiesWithMemberCount(StudySearchRequest req) {
+//        if (req == null) {
+//            throw new StudyDataException(ResponseCode.BAD_REQUEST);
+//        }
+//
+//        Page<Study> studies;
+//        try {
+//            studies = studyRepository.searchStudiesPage(req, req.getPageable());
+//        } catch (Exception e) {
+//            throw new StudyDataException(ResponseCode.FAIL_SEARCH_STUDY);
+//        }
+//
+//        return studies.getContent().stream()
+//            .map(study -> {
+//                if (study.getStudyId() == null) {
+//                    throw new StudyDataException(ResponseCode.FAIL_SEARCH_STUDY);
+//                }
+//
+//                int currentMemberCount;
+//                try {
+//                    currentMemberCount = studyMemberRepository.countByStudy_StudyId(study.getStudyId());
+//                } catch (Exception e) {
+//                    throw new StudyDataException(ResponseCode.FAIL_SEARCH_STUDY);
+//                }
+//
+//                try {
+//                    return StudyListResponse.fromEntity(study, currentMemberCount);
+//                } catch (Exception e) {
+//                    throw new StudyDataException(ResponseCode.FAIL_SEARCH_STUDY);
+//                }
+//            })
+//            .collect(Collectors.toList());
+//    }
+
     @Transactional(readOnly = true)
     public List<StudyListResponse> searchStudiesWithMemberCount(StudySearchRequest req) {
         if (req == null) {
             throw new StudyDataException(ResponseCode.BAD_REQUEST);
         }
 
-        Page<Study> studies;
-        try {
-            studies = studyRepository.searchStudiesPage(req, req.getPageable());
-        } catch (Exception e) {
-            throw new StudyDataException(ResponseCode.FAIL_SEARCH_STUDY);
-        }
+        Page<StudyListResponse> pageResult = studyRepository.searchStudiesWithMemberCount(req, req.getPageable());
 
-        return studies.getContent().stream()
-            .map(study -> {
-                if (study.getStudyId() == null) {
-                    throw new StudyDataException(ResponseCode.FAIL_SEARCH_STUDY);
-                }
-
-                int currentMemberCount;
-                try {
-                    currentMemberCount = studyMemberRepository.countByStudy_StudyId(study.getStudyId());
-                } catch (Exception e) {
-                    throw new StudyDataException(ResponseCode.FAIL_SEARCH_STUDY);
-                }
-
-                try {
-                    return StudyListResponse.fromEntity(study, currentMemberCount);
-                } catch (Exception e) {
-                    throw new StudyDataException(ResponseCode.FAIL_SEARCH_STUDY);
-                }
-            })
-            .collect(Collectors.toList());
+        return pageResult.getContent();
     }
-
 
 
     @Transactional
