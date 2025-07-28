@@ -29,6 +29,7 @@ import com.grepp.spring.app.model.study.repository.ApplicantRepository;
 import com.grepp.spring.app.model.study.repository.GoalAchievementRepository;
 import com.grepp.spring.app.model.study.repository.StudyGoalRepository;
 import com.grepp.spring.app.model.study.repository.StudyRepository;
+import com.grepp.spring.infra.error.exceptions.EarlierDateException;
 import com.grepp.spring.infra.error.exceptions.HasNotRightException;
 import com.grepp.spring.infra.error.exceptions.NotFoundException;
 import com.grepp.spring.infra.error.exceptions.StudyDataException;
@@ -123,6 +124,12 @@ public class StudyService {
             throw new NotFoundException("존재하지 않거나 비활성화된 스터디입니다.");
         }
 
+        // 스터디 시작 전
+        LocalDate studyStartDate = studyRepository.findStudyStartDate(studyId);
+        if (studyStartDate.isAfter(LocalDate.now())) {
+            throw new EarlierDateException(ResponseCode.BAD_REQUEST);
+        }
+
         StudyGoal studyGoal = studyGoalRepository.findById(goalId)
             .orElseThrow(() -> new NotFoundException("해당 목표를 찾을 수 없습니다."));
         StudyMember studyMember = studyMemberRepository.findByStudyIdAndMemberId(studyId, memberId)
@@ -142,10 +149,6 @@ public class StudyService {
     // 스터디 지원자 목록 조회
     @Transactional(readOnly = true)
     public List<ApplicantsResponse> getApplicants(Long studyId) {
-        Long memberId = SecurityUtil.getCurrentMemberId();
-        if (!studyMemberRepository.checkAcceptorHasRight(memberId, studyId)) {
-            throw new HasNotRightException(ResponseCode.UNAUTHORIZED);
-        }
         return studyRepository.findApplicants(studyId);
     }
 

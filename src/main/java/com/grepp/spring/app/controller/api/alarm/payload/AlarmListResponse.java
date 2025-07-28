@@ -22,6 +22,8 @@ public class AlarmListResponse {
     private String senderNickname;
     private String senderAvatarImage;
 
+    private Long studyId;
+
     @Builder
     public AlarmListResponse(AlarmRecipient recipient) {
         Alarm alarm = recipient.getAlarm();
@@ -39,5 +41,6 @@ public class AlarmListResponse {
         this.senderNickname = sender.getNickname();
         this.senderAvatarImage = sender.getAvatarImage();
 
+        this.studyId = alarm.getStudy() != null ? alarm.getStudy().getStudyId() : null;
     }
 }
