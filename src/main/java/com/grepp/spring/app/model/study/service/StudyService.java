@@ -142,10 +142,6 @@ public class StudyService {
     // 스터디 지원자 목록 조회
     @Transactional(readOnly = true)
     public List<ApplicantsResponse> getApplicants(Long studyId) {
-        Long memberId = SecurityUtil.getCurrentMemberId();
-        if (!studyMemberRepository.checkAcceptorHasRight(memberId, studyId)) {
-            throw new HasNotRightException(ResponseCode.UNAUTHORIZED);
-        }
         return studyRepository.findApplicants(studyId);
     }
 
