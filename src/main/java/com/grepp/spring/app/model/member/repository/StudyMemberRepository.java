@@ -1,7 +1,6 @@
 package com.grepp.spring.app.model.member.repository;
 
 import com.grepp.spring.app.model.member.entity.StudyMember;
-import com.grepp.spring.app.model.study.repository.StudyMemberRepositoryCustom;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;

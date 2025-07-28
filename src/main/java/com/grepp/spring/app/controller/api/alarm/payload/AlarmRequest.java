@@ -13,6 +13,8 @@ import lombok.Setter;
 @NoArgsConstructor
 public class AlarmRequest {
 
+    private Long studyId;
+
     @NotNull(message = "알림 발신자 ID는 필수입니다.")
     private Long senderId;
 

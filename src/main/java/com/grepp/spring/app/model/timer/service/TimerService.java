@@ -36,7 +36,7 @@ public class TimerService {
         }
 
         log.info("조회된 studyMemberIds: {}", studyMemberIds);
-        Long totalStudyTime = timerRepository.findTotalStudyTimeByStudyMemberIds(studyMemberIds);
+        Long totalStudyTime = timerRepository.findTotalStudyTime(studyMemberIds);
 
         return TotalStudyTimeResponse.builder()
             .totalStudyTime(totalStudyTime != null ? totalStudyTime : 0L)
@@ -44,13 +44,13 @@ public class TimerService {
     }
 
     @Transactional
-    public List<DailyStudyLogResponse> findDailyStudyLogsByStudyMemberId(Long studyId, Long memberId) {
+    public List<DailyStudyLogResponse> findDailyStudyLogs(Long studyId, Long memberId) {
         Long studyMemberId = studyMemberRepository.findStudyMemberId(studyId, memberId)
             .orElseThrow(() -> new NotFoundException("Study Member Not Found"));
         LocalDateTime endOfDay = LocalDateTime.now();
         LocalDateTime startOfDay = endOfDay.toLocalDate().minusDays(6).atStartOfDay();
 
-        List<Tuple> results = timerRepository.findDailyStudyLogsByStudyMemberId(studyMemberId, studyId, startOfDay, endOfDay);
+        List<Tuple> results = timerRepository.findDailyStudyLogs(studyMemberId, studyId, startOfDay, endOfDay);
 
         return results.stream()
             .map(tuple -> new DailyStudyLogResponse(
@@ -68,7 +68,7 @@ public class TimerService {
         LocalDateTime endOfDay = LocalDateTime.now();
         LocalDateTime startOfDay = endOfDay.toLocalDate().minusDays(6).atStartOfDay();
 
-        Long totalTime = timerRepository.findTotalStudyTimeInPeriod(studyMemberId, studyId, startOfDay, endOfDay);
+        Long totalTime = timerRepository.findTotalStudyLogsInWeek(studyMemberId, studyId, startOfDay, endOfDay);
 
         return StudyWeekTimeResponse.builder()
             .totalStudyTime(totalTime != null ? totalTime : 0L)

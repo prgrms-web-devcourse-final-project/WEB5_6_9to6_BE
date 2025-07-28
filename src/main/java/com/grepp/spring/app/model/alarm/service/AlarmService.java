@@ -10,6 +10,8 @@ import com.grepp.spring.app.model.alarm.repository.AlarmRepository;
 import com.grepp.spring.app.model.alarm.sse.EmitterRepository;
 import com.grepp.spring.app.model.member.entity.Member;
 import com.grepp.spring.app.model.member.repository.MemberRepository;
+import com.grepp.spring.app.model.study.entity.Study;
+import com.grepp.spring.app.model.study.repository.StudyRepository;
 import com.grepp.spring.infra.error.exceptions.NotFoundException;
 import com.grepp.spring.infra.error.exceptions.alarm.AlarmValidationException;
 import com.grepp.spring.infra.response.ResponseCode;
@@ -34,6 +36,7 @@ public class AlarmService {
     private final AlarmRecipientRepository alarmRecipientRepository;
     private final MemberRepository memberRepository;
     private final EmitterRepository emitterRepository;
+    private final StudyRepository studyRepository;
 
     // 알림 생성, 전송
     @Transactional
@@ -57,10 +60,16 @@ public class AlarmService {
             throw new AlarmValidationException(ResponseCode.ALARM_RESULT_STATUS_NOT_ALLOWED);
         }
 
+        if (request.getStudyId() == null) {
+            throw new AlarmValidationException(ResponseCode.ALARM_STUDY_ID_REQUIRED);
+        }
+
         Member sender = memberRepository.findById(request.getSenderId())
             .orElseThrow(() -> new NotFoundException("알림을 보낸 사용자가 존재하지 않습니다."));
         Member receiver = memberRepository.findById(request.getReceiverId())
             .orElseThrow(() -> new NotFoundException("알림을 받는 사용자가 존재하지 않습니다."));
+        Study study = studyRepository.findById(request.getStudyId())
+            .orElseThrow(() -> new NotFoundException("해당 스터디를 찾을 수 없습니다."));
 
         // 알림 저장
         Alarm alarm = Alarm.builder()
@@ -69,6 +78,7 @@ public class AlarmService {
             .message(request.getMessage())
             .alarmType(request.getType())
             .resultStatus(request.getResultStatus()) // APPLY일 경우 null이어도 됨
+            .study(study)
             .build();
         alarmRepository.save(alarm);
 
@@ -86,6 +96,7 @@ public class AlarmService {
                 payload.put("message", alarm.getMessage());
                 payload.put("sentAt", alarm.getCreatedAt());
                 payload.put("isRead", recipient.getIsRead());
+                payload.put("studyId", study.getStudyId());
 
                 if (alarm.getAlarmType() == AlarmType.RESULT && alarm.getResultStatus() != null) {
                     payload.put("resultStatus", alarm.getResultStatus().name());

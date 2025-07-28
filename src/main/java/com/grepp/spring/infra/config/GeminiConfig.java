@@ -5,6 +5,7 @@ import com.google.cloud.vertexai.api.GenerationConfig;
 import com.google.cloud.vertexai.api.HarmCategory;
 import com.google.cloud.vertexai.api.SafetySetting;
 import com.google.cloud.vertexai.generativeai.GenerativeModel;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import java.io.IOException;
@@ -14,9 +15,14 @@ import java.util.List;
 @Configuration
 public class GeminiConfig {
 
-    private final String projectId = "able-coast-463406-n9";
-    private final String location = "us-central1";
-    private final String modelName = "gemini-2.5-pro";
+    @Value("${gcp.project-id}")
+    private String projectId;
+
+    @Value("${gcp.location}")
+    private String location;
+
+    @Value("${gcp.model-name}")
+    private String modelName;
 
     @Bean
     public VertexAI vertexAI() throws IOException {
