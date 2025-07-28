@@ -11,6 +11,8 @@ public interface StudyMemberRepositoryCustom {
 
     List<StudyMember> findByStudyId(Long studyId);
 
+    Optional<StudyMember> findStudyMember(Long studyId, Long memberId);
+
     Optional<StudyRole> findStudyRole(Long studyId, Long memberId);
 
     Optional<Long> findStudyMemberId(Long studyId, Long memberId);

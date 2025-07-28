@@ -116,7 +116,7 @@ public class StudyService {
 
         StudyGoal studyGoal = studyGoalRepository.findById(goalId)
             .orElseThrow(() -> new NotFoundException("해당 목표를 찾을 수 없습니다."));
-        StudyMember studyMember = studyMemberRepository.findByStudyStudyIdAndMemberId(studyId, memberId)
+        StudyMember studyMember = studyMemberRepository.findStudyMember(studyId, memberId)
             .orElseThrow(() -> new NotFoundException("스터디 멤버 정보를 찾을 수 없습니다."));
 
         GoalAchievement newAchievement = GoalAchievement.builder()
@@ -351,7 +351,7 @@ public class StudyService {
         LocalDateTime startDateTime = startDate.atStartOfDay();
         LocalDateTime endDateTime = endDate.atTime(LocalTime.MAX);
 
-        StudyMember studyMember = studyMemberRepository.findByStudyStudyIdAndMemberId(studyId, memberId)
+        StudyMember studyMember = studyMemberRepository.findStudyMember(studyId, memberId)
             .orElseThrow(() -> new NotFoundException("스터디 멤버 정보를 찾을 수 없습니다."));
         Long studyMemberId = studyMember.getStudyMemberId();
 

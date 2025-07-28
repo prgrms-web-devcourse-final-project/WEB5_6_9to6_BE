@@ -62,6 +62,21 @@ public class StudyMemberRepositoryCustomImpl implements StudyMemberRepositoryCus
     }
 
     @Override
+    public Optional<StudyMember> findStudyMember(Long studyId, Long memberId) {
+        StudyMember res = queryFactory
+            .select(studyMember)
+            .from(studyMember)
+            .where(
+                studyMember.study.studyId.eq(studyId),
+                studyMember.member.id.eq(memberId),
+                studyMember.member.activated.isTrue(),
+                studyMember.study.activated.isTrue()
+            )
+            .fetchOne();
+        return Optional.ofNullable(res);
+    }
+
+    @Override
     public Optional<StudyRole> findStudyRole(Long studyId, Long memberId) {
         StudyRole res = queryFactory
             .select(studyMember.studyRole)

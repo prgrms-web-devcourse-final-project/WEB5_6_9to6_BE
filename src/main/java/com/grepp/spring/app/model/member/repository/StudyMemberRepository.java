@@ -13,8 +13,6 @@ public interface StudyMemberRepository extends JpaRepository<StudyMember, Long>,
 
     List<StudyMember> findByMemberId(Long memberId);
 
-    Optional<StudyMember> findByStudyStudyIdAndMemberId(Long studyId, Long memberId);
-
     Optional<StudyMember> findByMember_IdAndStudy_StudyId(Long memberId, Long studyId);
 
     int countByStudy_StudyId(Long studyId);
