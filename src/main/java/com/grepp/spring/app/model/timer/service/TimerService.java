@@ -8,6 +8,7 @@ import com.grepp.spring.app.model.timer.dto.StudyWeekTimeResponse;
 import com.grepp.spring.app.model.timer.dto.TotalStudyTimeResponse;
 import com.grepp.spring.app.model.timer.entity.Timer;
 import com.grepp.spring.app.model.timer.repository.TimerRepository;
+import com.grepp.spring.infra.error.exceptions.EarlierDateException;
 import com.grepp.spring.infra.error.exceptions.NotFoundException;
 import com.grepp.spring.infra.error.exceptions.StudyDataException;
 import com.grepp.spring.infra.response.ResponseCode;
@@ -85,7 +86,7 @@ public class TimerService {
 
         LocalDate studyStartDate = studyRepository.findStudyStartDate(studyId);
         if (studyStartDate.isAfter(LocalDate.now())) {
-            throw new StudyDataException(ResponseCode.BAD_REQUEST);
+            throw new EarlierDateException(ResponseCode.BAD_REQUEST);
         }
 
         Long studyMemberId = studyMemberRepository.findStudyMemberId(studyId, memberId)
