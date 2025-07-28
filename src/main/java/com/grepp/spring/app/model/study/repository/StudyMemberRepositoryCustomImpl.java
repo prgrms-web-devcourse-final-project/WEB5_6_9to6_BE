@@ -88,4 +88,20 @@ public class StudyMemberRepositoryCustomImpl implements StudyMemberRepositoryCus
             )
             .fetchOne();
     }
+
+    @Override
+    public boolean existStudyMember(Long memberId, Long studyId) {
+        return queryFactory
+            .selectOne()
+            .from(studyMember)
+            .where(
+                studyMember.member.id.eq(memberId),
+                studyMember.study.studyId.eq(studyId),
+                studyMember.activated.isTrue(),
+                studyMember.member.activated.isTrue(),
+                studyMember.study.activated.isTrue()
+            )
+            .fetchFirst() != null;
+    }
+
 }
