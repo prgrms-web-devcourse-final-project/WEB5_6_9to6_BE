@@ -274,6 +274,7 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom {
     public LocalDate findStudyStartDate(Long studyId) {
         return queryFactory
             .select(study.startDate)
+            .from(study)
             .where(
                 study.studyId.eq(studyId),
                 study.activated.isTrue()
