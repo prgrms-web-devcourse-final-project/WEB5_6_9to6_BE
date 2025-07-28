@@ -12,6 +12,7 @@ import com.grepp.spring.app.model.study.repository.StudyRepository;
 import com.grepp.spring.infra.error.exceptions.AlreadyExistException;
 import com.grepp.spring.infra.error.exceptions.NotFoundException;
 import com.grepp.spring.infra.response.ResponseCode;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,7 +31,7 @@ public class StudyMemberService {
     public void saveMember(Long studyId, Long memberId) {
 
         // 중복 등록 방지
-        if (studyMemberRepository.existsByMember_IdAndStudy_StudyId(memberId, studyId)) {
+        if (studyMemberRepository.existsByMember_IdAndStudy_StudyIdAndActivatedTrue(memberId, studyId)) {
             throw new AlreadyExistException(ResponseCode.ALREADY_EXIST);
         }
 
@@ -59,7 +60,7 @@ public class StudyMemberService {
             .orElseThrow(() -> new NotFoundException("회원 정보를 찾을 수 없습니다."));
 
         // 중복 가입 방지
-        if (studyMemberRepository.existsByMember_IdAndStudy_StudyId(memberId, studyId)) {
+        if (studyMemberRepository.existStudyMember(memberId, studyId)) {
             throw new AlreadyExistException(ResponseCode.ALREADY_EXIST);
         }
 
@@ -75,8 +76,8 @@ public class StudyMemberService {
     public List<CheckGoalResponse> getGoalStatuses(Long studyId, Long memberId) {
         Long studyMemberId = studyMemberRepository.findStudyMemberId(studyId, memberId)
             .orElseThrow(() -> new NotFoundException(ResponseCode.NOT_FOUND.message()));
-
-        List<CheckGoalResponse> res = goalAchievementRepository.findAchieveStatuses(studyId, studyMemberId);
+        List<CheckGoalResponse> res = goalAchievementRepository
+            .findAchieveStatuses(studyId, studyMemberId, LocalDateTime.now());
         return res;
     }
 

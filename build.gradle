@@ -37,6 +37,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security' // Spring Security를 위한 스타터
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf' // Thymeleaf 템플릿 엔진을 위한 스타터
     implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta' // QUeryDSL JPA
+    implementation 'org.springframework.boot:spring-boot-starter-amqp'
 
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-websocket
     implementation("org.springframework.boot:spring-boot-starter-websocket:3.4.4")
@@ -103,6 +104,9 @@ dependencies {
     // AOP 관련
     implementation 'org.springframework.retry:spring-retry'
     implementation 'org.springframework.boot:spring-boot-starter-aop'
+
+    // S3 버킷 설정
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 }
 
 sourceSets {

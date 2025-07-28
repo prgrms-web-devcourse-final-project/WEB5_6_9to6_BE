@@ -17,14 +17,13 @@ import com.grepp.spring.app.model.study.repository.StudyRepository;
 import com.grepp.spring.infra.config.Chat.WebSocket.WebSocketSessionTracker;
 import com.grepp.spring.infra.error.exceptions.NotFoundException;
 import java.time.LocalDateTime;
-import java.util.Comparator;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -49,10 +48,12 @@ public class ChatService {
         ChatRoom chatRoom = chatRoomRepository.findByStudy_StudyId(studyId)
             .orElseThrow(() -> new NotFoundException("Invalid studyId"));
 
-        String nickname = memberRepository.findNicknameById(senderId);
+        String nickname = memberRepository.getNickname(senderId);
+
+
 
         Chat chat = request.toEntity(chatRoom, senderId, nickname);
-        String image = memberRepository.findAvatarImageById(senderId);
+        String image = memberRepository.getAvatarImage(senderId);
         System.out.println("senderId: " + senderId + ", image: " + image);
 
         chatRepository.save(chat);
@@ -80,6 +81,9 @@ public class ChatService {
         if (hasNext) {
             chats = chats.subList(0, pageSize); // 딱 pageSize만 남기기
         }
+
+        // 3. 정렬 뒤집기 (DESC → ASC)
+        Collections.reverse(chats);
 
         // 1. senderId만 수집
         Set<Long> senderIds = chats.stream()

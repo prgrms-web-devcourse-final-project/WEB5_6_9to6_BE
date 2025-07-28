@@ -35,8 +35,7 @@ public class Choice {
     private Quiz quiz;
 
     @Builder
-    public Choice(Long choiceId, String choice1, String choice2, String choice3, String choice4, boolean activated, Quiz quiz) {
-        this.id = choiceId;
+    public Choice(String choice1, String choice2, String choice3, String choice4, boolean activated, Quiz quiz) {
         this.choice1 = choice1;
         this.choice2 = choice2;
         this.choice3 = choice3;

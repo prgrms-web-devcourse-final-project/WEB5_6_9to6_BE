@@ -14,3 +14,6 @@ COPY ${JAR_FILE} app.jar
 
 # 컨테이너가 시작될 때 실행할 명령어를 설정합니다.
 ENTRYPOINT ["java", "-jar", "app.jar"]
+
+#  Docker 컨테이너의 리눅스 시스템 타임존을 아예 한국(KST)으로 바꿔줍니다.
+ENV TZ=Asia/Seoul
