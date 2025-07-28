@@ -123,7 +123,7 @@ public class StudyService {
 
         StudyGoal studyGoal = studyGoalRepository.findById(goalId)
             .orElseThrow(() -> new NotFoundException("해당 목표를 찾을 수 없습니다."));
-        StudyMember studyMember = studyMemberRepository.findByStudyStudyIdAndMemberId(studyId, memberId)
+        StudyMember studyMember = studyMemberRepository.findByStudyIdAndMemberId(studyId, memberId)
             .orElseThrow(() -> new NotFoundException("스터디 멤버 정보를 찾을 수 없습니다."));
 
         GoalAchievement newAchievement = GoalAchievement.builder()
@@ -169,7 +169,7 @@ public class StudyService {
 
             // schedules 병합
             studyWithGoals.getSchedules().addAll(studyWithSchedules.getSchedules());
-            int currentMemberCount = studyMemberRepository.countByStudy_StudyId(studyId);
+            int currentMemberCount = studyMemberRepository.countByStudyId(studyId);
 
             return StudyInfoResponse.fromEntity(studyWithGoals, currentMemberCount);
         } catch (StudyDataException e) {
@@ -226,7 +226,7 @@ public class StudyService {
             throw new IllegalArgumentException("존재하지 않거나 비활성화된 스터디입니다.");
         }
 
-        return studyMemberRepository.existsByMember_IdAndStudy_StudyIdAndActivatedTrue(memberId, studyId);
+        return studyMemberRepository.existsActivatedByMemberIdAndStudyId(memberId, studyId);
     }
 
     // 스터디 멤버 조회
@@ -368,7 +368,7 @@ public class StudyService {
         }
 
         // memberId → studyMemberId 조회
-        StudyMember studyMember = studyMemberRepository.findByStudyStudyIdAndMemberId(studyId, memberId)
+        StudyMember studyMember = studyMemberRepository.findByStudyIdAndMemberId(studyId, memberId)
             .orElseThrow(() -> new NotFoundException("스터디 멤버 정보를 찾을 수 없습니다."));
         Long studyMemberId = studyMember.getStudyMemberId();
 
@@ -400,7 +400,7 @@ public class StudyService {
         );
     }
 
-
+    @Transactional(readOnly = true)
     public boolean isSurvival(Long studyId) {
         if (!studyRepository.existsByStudyIdAndActivatedTrue(studyId)) {
             throw new NotFoundException("존재하지 않거나 비활성화된 스터디입니다.");
