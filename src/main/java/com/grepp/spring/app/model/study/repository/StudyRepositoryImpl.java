@@ -15,7 +15,7 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.TypedQuery;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -268,6 +268,17 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom {
             .where(searchConditions(req));
 
         return new PageImpl<>(content, pageable, countQuery.fetchOne());
+    }
+
+    @Override
+    public LocalDate findStudyStartDate(Long studyId) {
+        return queryFactory
+            .select(study.startDate)
+            .where(
+                study.studyId.eq(studyId),
+                study.activated.isTrue()
+            )
+            .fetchOne();
     }
 
     private BooleanExpression[] searchConditions(StudySearchRequest req) {

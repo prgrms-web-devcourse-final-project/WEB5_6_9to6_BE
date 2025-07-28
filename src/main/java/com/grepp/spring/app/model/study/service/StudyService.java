@@ -121,6 +121,12 @@ public class StudyService {
             throw new NotFoundException("존재하지 않거나 비활성화된 스터디입니다.");
         }
 
+        // 스터디 시작 전
+        LocalDate studyStartDate = studyRepository.findStudyStartDate(studyId);
+        if (studyStartDate.isAfter(LocalDate.now())) {
+            throw new StudyDataException(ResponseCode.BAD_REQUEST);
+        }
+
         StudyGoal studyGoal = studyGoalRepository.findById(goalId)
             .orElseThrow(() -> new NotFoundException("해당 목표를 찾을 수 없습니다."));
         StudyMember studyMember = studyMemberRepository.findByStudyStudyIdAndMemberId(studyId, memberId)
