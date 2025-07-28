@@ -7,7 +7,6 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 public class QuizDto {
-
     private Long quizId;
     private String question;
     private List<String> choices;
