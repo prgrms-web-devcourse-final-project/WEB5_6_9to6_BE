@@ -60,6 +60,7 @@ public class SecurityConfig {
                     .requestMatchers(GET,"/api/v1/studies/*/notification").permitAll()
                     .requestMatchers(GET,"/api/v1/studies/*/members").permitAll()
                     .requestMatchers(GET,"/api/v1/studies/*/goals").permitAll()
+                    .requestMatchers(GET,"/api/v1/studies/*/applications-list").permitAll()
                     .anyRequest().authenticated()
 //                    .anyRequest().permitAll()
             )
