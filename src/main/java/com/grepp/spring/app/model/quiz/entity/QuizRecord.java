@@ -29,8 +29,7 @@ public class QuizRecord {
     private boolean activated;
 
     @Builder
-    public QuizRecord(Long quizRecordId, Long studyMemberId, QuizSet quizSet, boolean isSurvived, boolean activated) {
-        this.id = quizRecordId;
+    public QuizRecord(Long studyMemberId, QuizSet quizSet, boolean isSurvived, boolean activated) {
         this.studyMemberId = studyMemberId;
         this.quizSet = quizSet;
         this.isSurvived = isSurvived;

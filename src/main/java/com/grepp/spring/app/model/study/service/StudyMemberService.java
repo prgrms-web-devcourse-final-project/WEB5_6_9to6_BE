@@ -31,7 +31,7 @@ public class StudyMemberService {
     public void saveMember(Long studyId, Long memberId) {
 
         // 중복 등록 방지
-        if (studyMemberRepository.existsByMember_IdAndStudy_StudyId(memberId, studyId)) {
+        if (studyMemberRepository.existsActivatedByMemberIdAndStudyId(memberId, studyId)) {
             throw new AlreadyExistException(ResponseCode.ALREADY_EXIST);
         }
 
@@ -60,7 +60,7 @@ public class StudyMemberService {
             .orElseThrow(() -> new NotFoundException("회원 정보를 찾을 수 없습니다."));
 
         // 중복 가입 방지
-        if (studyMemberRepository.existsByMember_IdAndStudy_StudyId(memberId, studyId)) {
+        if (studyMemberRepository.existsActivatedByMemberIdAndStudyId(memberId, studyId)) {
             throw new AlreadyExistException(ResponseCode.ALREADY_EXIST);
         }
 

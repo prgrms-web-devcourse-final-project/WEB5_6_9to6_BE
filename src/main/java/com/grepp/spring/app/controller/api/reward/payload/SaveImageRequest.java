@@ -1,5 +1,6 @@
 package com.grepp.spring.app.controller.api.reward.payload;
 
+import com.grepp.spring.app.model.reward.code.ItemType;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -17,8 +18,7 @@ import lombok.ToString;
 @ToString
 public class SaveImageRequest {
     private List<ClothesDto> clothes;
-    @NotNull
-    private String wholeImageUrl;
+
     @Getter
     @Setter
     @NoArgsConstructor
@@ -30,7 +30,7 @@ public class SaveImageRequest {
 
         private String name;
         @NotNull
-        private String category;
+        private ItemType category;
         @NotNull
         private List<Long> itemId;
     }

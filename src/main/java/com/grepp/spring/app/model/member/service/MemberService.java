@@ -19,7 +19,12 @@ import com.grepp.spring.app.model.member.entity.StudyMember;
 import com.grepp.spring.app.model.member.repository.MemberRepository;
 import com.grepp.spring.app.model.member.repository.StudyAttendanceRepository;
 import com.grepp.spring.app.model.member.repository.StudyMemberRepository;
+import com.grepp.spring.app.model.reward.entity.OwnItem;
+import com.grepp.spring.app.model.reward.entity.RewardItem;
+import com.grepp.spring.app.model.reward.repository.ItemSetRepository;
 import com.grepp.spring.app.model.reward.repository.OwnItemIdGetRepository;
+import com.grepp.spring.app.model.reward.repository.OwnItemRepository;
+import com.grepp.spring.app.model.reward.repository.RewardItemRepository;
 import com.grepp.spring.app.model.study.entity.GoalAchievement;
 import com.grepp.spring.app.model.study.entity.Study;
 import com.grepp.spring.app.model.study.entity.StudySchedule;
@@ -50,12 +55,22 @@ public class MemberService {
     private final StudyAttendanceRepository studyAttendanceRepository;
     private final GoalAchievementRepository goalAchievementRepository;
     private final OwnItemIdGetRepository ownItemIdGetRepository;
+    private final OwnItemRepository ownItemRepository;
+    private final RewardItemRepository rewardItemRepository;
+    private final ItemSetRepository itemSetRepository;
 
     @Transactional
     public Member join(SignupRequest req) {
         if (memberRepository.findByEmail(req.getEmail()).isPresent()) {
             throw new AlreadyExistException(ResponseCode.ALREADY_EXIST);
         }
+
+        // 1. 기본 아이템 rewardItem 중 item_id = 1인 것 가져오기
+        RewardItem defaultThemeItem = getRewardItem(1L);
+
+        // 2. 해당 item 의 image 가져오기
+        String defaultAvatarImage = itemSetRepository.findImageByItemId(1L);
+
 
         Member member = Member.builder()
             .email(req.getEmail())
@@ -67,11 +82,34 @@ public class MemberService {
             .gender(req.getGender())
             .socialType(SocialType.LOCAL)
             .winCount(0)
-            .avatarImage(null)
+            .avatarImage(defaultAvatarImage)
             .build();
 
-        return memberRepository.save(member);
+        // 1. 회원 저장
+        Member savedMember = memberRepository.save(member);
+
+        // 2. 기본 아이템 목록 정의
+        List<OwnItem> defaultItems = List.of(
+            OwnItem.builder().memberId(savedMember.getId()).rewardItem(getRewardItem(1L)).isUsed(true).activated(true).build(),
+            OwnItem.builder().memberId(savedMember.getId()).rewardItem(getRewardItem(11L)).isUsed(true).activated(true).build(),
+            OwnItem.builder().memberId(savedMember.getId()).rewardItem(getRewardItem(21L)).isUsed(true).activated(true).build(),
+            OwnItem.builder().memberId(savedMember.getId()).rewardItem(getRewardItem(31L)).isUsed(true).activated(true).build(),
+            OwnItem.builder().memberId(savedMember.getId()).rewardItem(getRewardItem(51L)).isUsed(false).activated(true).build(),
+            OwnItem.builder().memberId(savedMember.getId()).rewardItem(getRewardItem(52L)).isUsed(true).activated(true).build(),
+            OwnItem.builder().memberId(savedMember.getId()).rewardItem(getRewardItem(61L)).isUsed(true).activated(true).build(),
+            OwnItem.builder().memberId(savedMember.getId()).rewardItem(getRewardItem(62L)).isUsed(false).activated(true).build()
+        );
+
+        ownItemRepository.saveAll(defaultItems);
+
+        return savedMember;
     }
+
+    private RewardItem getRewardItem(Long itemId) {
+        return rewardItemRepository.findById(itemId)
+            .orElseThrow(() -> new NotFoundException("해당 item_id를 찾을 수 없습니다: " + itemId));
+    }
+
 
     @Transactional(readOnly = true)
     public boolean isDuplicatedEmail(String email) {
@@ -83,11 +121,35 @@ public class MemberService {
         Member member = memberRepository.findById(memberId)
             .orElseThrow(() -> new NotFoundException("사용자를 찾을 수 없습니다."));
 
+        // 1. 기본 아이템 rewardItem 중 item_id = 1인 것 가져오기
+        RewardItem defaultThemeItem = getRewardItem(1L);
+
+        // 2. 해당 item 의 image 가져오기
+        String defaultAvatarImage = itemSetRepository.findImageByItemId(1L);
+
+        // 3. 사용자 정보 업데이트
         member.updateSocialInfo(
             req.getNickname(),
             req.getBirthday(),
             req.getGender()
         );
+
+        // 4. 프로필 이미지 설정
+        member.updateAvatarImage(defaultAvatarImage);
+
+        // 5. 기본 아이템 목록 정의 및 저장
+        List<OwnItem> defaultItems = List.of(
+            OwnItem.builder().memberId(memberId).rewardItem(getRewardItem(1L)).isUsed(true).activated(true).build(),
+            OwnItem.builder().memberId(memberId).rewardItem(getRewardItem(11L)).isUsed(true).activated(true).build(),
+            OwnItem.builder().memberId(memberId).rewardItem(getRewardItem(21L)).isUsed(true).activated(true).build(),
+            OwnItem.builder().memberId(memberId).rewardItem(getRewardItem(31L)).isUsed(true).activated(true).build(),
+            OwnItem.builder().memberId(memberId).rewardItem(getRewardItem(51L)).isUsed(false).activated(true).build(),
+            OwnItem.builder().memberId(memberId).rewardItem(getRewardItem(52L)).isUsed(true).activated(true).build(),
+            OwnItem.builder().memberId(memberId).rewardItem(getRewardItem(61L)).isUsed(true).activated(true).build(),
+            OwnItem.builder().memberId(memberId).rewardItem(getRewardItem(62L)).isUsed(false).activated(true).build()
+        );
+
+        ownItemRepository.saveAll(defaultItems);
     }
 
     // 개인 정보 조회(이메일, 닉네임, 아바타)
@@ -147,7 +209,7 @@ public class MemberService {
         Member member = memberRepository.findById(memberId)
             .orElseThrow(() -> new NotFoundException("사용자를 찾을 수 없습니다."));
 
-        List<StudyInfoResponse> studyList = studyMemberRepository.findByMemberId(memberId)
+        List<StudyInfoResponse> studyList = studyMemberRepository.findActiveStudyMemberships(memberId)
             .stream()
             .map(sm -> {
                 Study study = sm.getStudy();
@@ -194,7 +256,7 @@ public class MemberService {
         Member member = memberRepository.findById(memberId)
             .orElseThrow(() -> new NotFoundException("사용자를 찾을 수 없습니다."));
 
-        List<StudyMember> studyMembers = studyMemberRepository.findByMemberId(memberId);
+        List<StudyMember> studyMembers = studyMemberRepository.findActiveStudyMemberships(memberId);
 
         List<MypageStudyInfoResponse> userStudies = studyMembers.stream()
             .map(sm -> {
@@ -245,13 +307,26 @@ public class MemberService {
             .build();
     }
 
+    public Long findMemberIdByEmail(String email) {
+        Member member = memberRepository.findByEmail(email)
+            .orElseThrow(() -> new NotFoundException("해당 이메일의 회원이 존재하지 않습니다."));
+        return member.getId();
+    }
+
     public Long findStudyMemberId(String email, Long studyId) {
         // email → member
         Member member = memberRepository.findByEmail(email)
             .orElseThrow(() -> new NotFoundException("해당 이메일의 회원이 존재하지 않습니다: " + email));
 
         // memberId → studyMember
-        StudyMember studyMember = studyMemberRepository.findByMember_IdAndStudy_StudyId(member.getId(), studyId)
+        StudyMember studyMember = studyMemberRepository.findActiveStudyMember(member.getId(), studyId)
+            .orElseThrow(() -> new NotFoundException("활성화된 스터디 멤버를 찾을 수 없습니다."));
+
+        return studyMember.getStudyMemberId();
+    }
+
+    public Long findStudyMemberId(Long memberId, Long studyId) {
+        StudyMember studyMember = studyMemberRepository.findActiveStudyMember(memberId, studyId)
             .orElseThrow(() -> new NotFoundException("스터디 멤버를 찾을 수 없습니다."));
 
         return studyMember.getStudyMemberId();
@@ -306,13 +381,13 @@ public class MemberService {
 
     @Transactional(readOnly = true)
     public RequiredMemberInfoResponse getMemberRequiredInfo(Long memberId) {
-        return memberRepository.findRequiredMemberInfo(memberId);
+        return memberRepository.getRequiredMemberInfo(memberId);
     }
 
     @Transactional(readOnly = true)
     public AvatarInfoResponse getMemberAvatarInfo(Long memberId) {
         List<Long> ids = ownItemIdGetRepository.findIdsByMemberId(memberId);
-        String memberAvatarImage = memberRepository.findAvatarImageById(memberId);
+        String memberAvatarImage = memberRepository.getAvatarImage(memberId);
         AvatarInfoResponse avatarInfoResponse = AvatarInfoResponse.builder()
             .itemIds(ids)
             .avatarImage(memberAvatarImage)

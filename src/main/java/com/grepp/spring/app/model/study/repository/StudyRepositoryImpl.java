@@ -6,24 +6,34 @@ import com.grepp.spring.app.model.study.code.Category;
 import com.grepp.spring.app.model.study.code.Region;
 import com.grepp.spring.app.model.study.code.Status;
 import com.grepp.spring.app.model.study.code.StudyType;
+import com.grepp.spring.app.model.study.dto.StudyListResponse;
 import com.grepp.spring.app.model.study.entity.Study;
+import com.grepp.spring.app.model.study.entity.StudySchedule;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.TypedQuery;
+import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import static com.grepp.spring.app.model.member.entity.QMember.member;
+import static com.grepp.spring.app.model.member.entity.QStudyMember.studyMember;
 import static com.grepp.spring.app.model.study.entity.QApplicant.applicant;
 import static com.grepp.spring.app.model.study.entity.QStudy.study;
+import static com.grepp.spring.app.model.study.entity.QStudySchedule.studySchedule;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -36,45 +46,25 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom {
 
     @Override
     public List<Study> searchStudiesPage(StudySearchRequest req) {
-        StringBuilder jpql = new StringBuilder(
-            "SELECT DISTINCT s FROM Study s LEFT JOIN FETCH s.schedules WHERE 1=1");
-
-        if (req.getCategory() != null && req.getCategory() != Category.ALL) {
-            jpql.append(" AND s.category = :category");
-        }
-        if (req.getRegion() != null && req.getRegion() != Region.ALL) {
-            jpql.append(" AND s.region = :region");
-        }
-        if (req.getStatus() != null && req.getStatus() != Status.ALL) {
-            jpql.append(" AND s.status = :status");
-        }
-        if (req.getStudyType() != null) {
-            jpql.append(" AND s.studyType = :studyType");
-        }
-        if (StringUtils.hasText(req.getName())) {
-            jpql.append(" AND s.name LIKE :name");
-        }
-
-        TypedQuery<Study> query = em.createQuery(jpql.toString(), Study.class);
-
-        if (req.getCategory() != null && req.getCategory() != Category.ALL) {
-            query.setParameter("category", req.getCategory());
-        }
-        if (req.getRegion() != null && req.getRegion() != Region.ALL) {
-            query.setParameter("region", req.getRegion());
-        }
-        if (req.getStatus() != null && req.getStatus() != Status.ALL) {
-            query.setParameter("status", req.getStatus());
-        }
-        if (req.getStudyType() != null) {
-            query.setParameter("studyType", req.getStudyType());
-        }
-        if (StringUtils.hasText(req.getName())) {
-            query.setParameter("name", "%" + req.getName() + "%");
-        }
-
-        return query.getResultList();
+        return queryFactory
+            .selectFrom(study)
+            .distinct()
+            .leftJoin(study.schedules).fetchJoin()
+            .where(
+                study.activated.isTrue(),
+                req.getCategory() != null && req.getCategory() != Category.ALL ? study.category.eq(req.getCategory()) : null,
+                req.getRegion() != null && req.getRegion() != Region.ALL ? study.region.eq(req.getRegion()) : null,
+                req.getStatus() != null && req.getStatus() != Status.ALL ? study.status.eq(req.getStatus()) : null,
+                req.getStudyType() != null ? study.studyType.eq(req.getStudyType()) : null,
+                StringUtils.hasText(req.getName()) ? study.name.contains(req.getName()) : null
+            )
+            .orderBy(
+                study.createdAt.desc(),
+                study.studyId.desc()
+            )
+            .fetch();
     }
+
 
     @Override
     public Page<Study> searchStudiesPage(StudySearchRequest req, Pageable pageable) {
@@ -82,12 +72,12 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom {
             .select(study.studyId)
             .from(study)
             .where(
+                study.activated.isTrue(),
                 (req.getCategory() != null && req.getCategory() != Category.ALL) ? study.category.eq(req.getCategory()) : null,
                 (req.getRegion() != null && req.getRegion() != Region.ALL) ? study.region.eq(req.getRegion()) : null,
                 (req.getStatus() != null && req.getStatus() != Status.ALL) ? study.status.eq(req.getStatus()) : null,
                 (req.getStudyType() != null ) ? study.studyType.eq(req.getStudyType()) : null,
-                StringUtils.hasText(req.getName()) ? study.name.contains(req.getName()) : null,
-                study.activated.isTrue()
+                StringUtils.hasText(req.getName()) ? study.name.contains(req.getName()) : null
             )
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
@@ -112,12 +102,18 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom {
                 study.createdAt.desc(),
                 study.studyId.desc()
             )
+            .where(study.activated.isTrue(),study.studyId.in(ids))
+            .orderBy(
+                study.createdAt.desc(),
+                study.studyId.desc()
+            )
             .fetch();
 
         Long total = queryFactory
             .select(study.count())
             .from(study)
             .where(
+                study.activated.isTrue(),
                 (req.getCategory() != null && req.getCategory() != Category.ALL) ? study.category.eq(req.getCategory()) : null,
                 (req.getRegion() != null && req.getRegion() != Region.ALL) ? study.region.eq(req.getRegion()) : null,
                 (req.getStatus() != null && req.getStatus() != Status.ALL) ? study.status.eq(req.getStatus()) : null,
@@ -213,6 +209,114 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom {
             )
             .fetchOne();
         return Optional.ofNullable(res);
+    }
+
+    @Override
+    public Page<StudyListResponse> searchStudiesWithMemberCount(StudySearchRequest req, Pageable pageable) {
+
+        // 페이징이 적용 studyId 목록
+        List<Long> ids = queryFactory
+            .select(study.studyId)
+            .from(study)
+            .where(searchConditions(req))
+            .orderBy(study.createdAt.desc(), study.studyId.desc())
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .fetch();
+
+        if (CollectionUtils.isEmpty(ids)) {
+            return new PageImpl<>(Collections.emptyList(), pageable, 0);
+        }
+
+        // 스터디 조회
+        List<Study> studies = queryFactory
+            .selectFrom(study)
+            .where(study.studyId.in(ids))
+            .orderBy(study.createdAt.desc(), study.studyId.desc())
+            .fetch();
+
+        // 멤버 수를 조회, Map으로 변환
+        Map<Long, Long> memberCountsMap = queryFactory
+            .select(studyMember.study.studyId, studyMember.count())
+            .from(studyMember)
+            .where(studyMember.study.studyId.in(ids))
+            .groupBy(studyMember.study.studyId)
+            .fetch()
+            .stream()
+            .collect(Collectors.toMap(
+                tuple -> tuple.get(0, Long.class), // key: studyId
+                tuple -> tuple.get(1, Long.class)  // value: member count
+            ));
+
+        // 스케줄 정보 조회
+        List<StudySchedule> schedules = queryFactory
+            .selectFrom(studySchedule)
+            .where(studySchedule.study.studyId.in(ids))
+            .fetch();
+
+        // 스케줄을 studyId 기준으로 그룹화, Map으로 변환
+        Map<Long, List<StudySchedule>> schedulesMap = schedules.stream()
+            .collect(Collectors.groupingBy(s -> s.getStudy().getStudyId()));
+
+        // DTO 리스트 생성
+        List<StudyListResponse> content = studies.stream()
+            .map(s -> {
+                int currentMemberCount = memberCountsMap.getOrDefault(s.getStudyId(), 0L).intValue();
+                List<StudySchedule> studySchedules = schedulesMap.getOrDefault(s.getStudyId(), Collections.emptyList());
+                return StudyListResponse.fromEntity(s, currentMemberCount, studySchedules);
+            })
+            .collect(Collectors.toList());
+
+        // 전체 카운트 조회
+        JPAQuery<Long> countQuery = queryFactory
+            .select(study.count())
+            .from(study)
+            .where(searchConditions(req));
+
+        return new PageImpl<>(content, pageable, countQuery.fetchOne());
+    }
+
+    @Override
+    public LocalDate findStudyStartDate(Long studyId) {
+        return queryFactory
+            .select(study.startDate)
+            .from(study)
+            .where(
+                study.studyId.eq(studyId),
+                study.activated.isTrue()
+            )
+            .fetchOne();
+    }
+
+    private BooleanExpression[] searchConditions(StudySearchRequest req) {
+        return new BooleanExpression[] {
+            categoryEq(req.getCategory()),
+            regionEq(req.getRegion()),
+            statusEq(req.getStatus()),
+            studyTypeEq(req.getStudyType()),
+            nameContains(req.getName()),
+            study.activated.isTrue()
+        };
+    }
+
+    private BooleanExpression categoryEq(Category category) {
+        return (category != null && category != Category.ALL) ? study.category.eq(category) : null;
+    }
+
+    private BooleanExpression regionEq(Region region) {
+        return (region != null && region != Region.ALL) ? study.region.eq(region) : null;
+    }
+
+    private BooleanExpression statusEq(Status status) {
+        return (status != null && status != Status.ALL) ? study.status.eq(status) : null;
+    }
+
+    private BooleanExpression studyTypeEq(StudyType studyType) {
+        return (studyType != null) ? study.studyType.eq(studyType) : null;
+    }
+
+    private BooleanExpression nameContains(String name) {
+        return StringUtils.hasText(name) ? study.name.contains(name) : null;
     }
 
 }

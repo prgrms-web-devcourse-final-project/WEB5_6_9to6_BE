@@ -3,6 +3,7 @@ package com.grepp.spring.infra.error;
 import com.grepp.spring.infra.error.exceptions.AlreadyCheckedAttendanceException;
 import com.grepp.spring.infra.error.exceptions.AlreadyExistException;
 import com.grepp.spring.infra.error.exceptions.CommonException;
+import com.grepp.spring.infra.error.exceptions.EarlierDateException;
 import com.grepp.spring.infra.error.exceptions.InsufficientRewardPointsException;
 import com.grepp.spring.infra.error.exceptions.MailSendFailureException;
 import com.grepp.spring.infra.error.exceptions.NotFoundException;
@@ -279,6 +280,14 @@ public class RestApiExceptionAdvice {
         return ResponseEntity
             .status(ex.getCode().status())
             .body(CommonResponse.error(ex.getCode()));
+    }
+
+    @ExceptionHandler(EarlierDateException.class)
+    public ResponseEntity<CommonResponse<Void>> handlerEarlierDateException(EarlierDateException ex) {
+        log.error(ex.getMessage(), ex);
+        return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .body(CommonResponse.error(ResponseCode.BAD_REQUEST.code(), ex.getMessage()));
     }
 }
 

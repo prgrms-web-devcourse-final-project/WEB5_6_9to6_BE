@@ -107,6 +107,8 @@ dependencies {
 
     //캐싱
     implementation 'com.github.ben-manes.caffeine:caffeine:3.1.8'
+    // S3 버킷 설정
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 }
 
 sourceSets {

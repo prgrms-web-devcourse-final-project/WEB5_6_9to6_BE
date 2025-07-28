@@ -29,25 +29,32 @@ import com.grepp.spring.app.model.study.repository.ApplicantRepository;
 import com.grepp.spring.app.model.study.repository.GoalAchievementRepository;
 import com.grepp.spring.app.model.study.repository.StudyGoalRepository;
 import com.grepp.spring.app.model.study.repository.StudyRepository;
+import com.grepp.spring.infra.error.exceptions.EarlierDateException;
 import com.grepp.spring.infra.error.exceptions.HasNotRightException;
 import com.grepp.spring.infra.error.exceptions.NotFoundException;
 import com.grepp.spring.infra.error.exceptions.StudyDataException;
 import com.grepp.spring.infra.response.ResponseCode;
+import com.grepp.spring.infra.util.SecurityUtil;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class StudyService {
@@ -60,41 +67,51 @@ public class StudyService {
     private final ApplicantRepository applicantRepository;
 
     //필터 조건에 따라 스터디 목록 + 현재 인원 수 조회
+//    @Transactional(readOnly = true)
+//    public List<StudyListResponse> searchStudiesWithMemberCount(StudySearchRequest req) {
+//        if (req == null) {
+//            throw new StudyDataException(ResponseCode.BAD_REQUEST);
+//        }
+//
+//        Page<Study> studies;
+//        try {
+//            studies = studyRepository.searchStudiesPage(req, req.getPageable());
+//        } catch (Exception e) {
+//            throw new StudyDataException(ResponseCode.FAIL_SEARCH_STUDY);
+//        }
+//
+//        return studies.getContent().stream()
+//            .map(study -> {
+//                if (study.getStudyId() == null) {
+//                    throw new StudyDataException(ResponseCode.FAIL_SEARCH_STUDY);
+//                }
+//
+//                int currentMemberCount;
+//                try {
+//                    currentMemberCount = studyMemberRepository.countByStudy_StudyId(study.getStudyId());
+//                } catch (Exception e) {
+//                    throw new StudyDataException(ResponseCode.FAIL_SEARCH_STUDY);
+//                }
+//
+//                try {
+//                    return StudyListResponse.fromEntity(study, currentMemberCount);
+//                } catch (Exception e) {
+//                    throw new StudyDataException(ResponseCode.FAIL_SEARCH_STUDY);
+//                }
+//            })
+//            .collect(Collectors.toList());
+//    }
+
     @Transactional(readOnly = true)
     public List<StudyListResponse> searchStudiesWithMemberCount(StudySearchRequest req) {
         if (req == null) {
             throw new StudyDataException(ResponseCode.BAD_REQUEST);
         }
 
-        Page<Study> studies;
-        try {
-            studies = studyRepository.searchStudiesPage(req, req.getPageable());
-        } catch (Exception e) {
-            throw new StudyDataException(ResponseCode.FAIL_SEARCH_STUDY);
-        }
+        Page<StudyListResponse> pageResult = studyRepository.searchStudiesWithMemberCount(req, req.getPageable());
 
-        return studies.getContent().stream()
-            .map(study -> {
-                if (study.getStudyId() == null) {
-                    throw new StudyDataException(ResponseCode.FAIL_SEARCH_STUDY);
-                }
-
-                int currentMemberCount;
-                try {
-                    currentMemberCount = studyMemberRepository.countByStudy_StudyId(study.getStudyId());
-                } catch (Exception e) {
-                    throw new StudyDataException(ResponseCode.FAIL_SEARCH_STUDY);
-                }
-
-                try {
-                    return StudyListResponse.fromEntity(study, currentMemberCount);
-                } catch (Exception e) {
-                    throw new StudyDataException(ResponseCode.FAIL_SEARCH_STUDY);
-                }
-            })
-            .collect(Collectors.toList());
+        return pageResult.getContent();
     }
-
 
 
     @Transactional
@@ -103,16 +120,25 @@ public class StudyService {
         Long memberId = ids.get(1);
         Long goalId = ids.get(2);
 
+        if (!studyRepository.existsByStudyIdAndActivatedTrue(studyId)) {
+            throw new NotFoundException("존재하지 않거나 비활성화된 스터디입니다.");
+        }
+
+        // 스터디 시작 전
+        LocalDate studyStartDate = studyRepository.findStudyStartDate(studyId);
+        if (studyStartDate.isAfter(LocalDate.now())) {
+            throw new EarlierDateException(ResponseCode.BAD_REQUEST);
+        }
+
         StudyGoal studyGoal = studyGoalRepository.findById(goalId)
             .orElseThrow(() -> new NotFoundException("해당 목표를 찾을 수 없습니다."));
-        StudyMember studyMember = studyMemberRepository.findByStudyStudyIdAndMemberId(studyId, memberId)
+        StudyMember studyMember = studyMemberRepository.findByStudyIdAndMemberId(studyId, memberId)
             .orElseThrow(() -> new NotFoundException("스터디 멤버 정보를 찾을 수 없습니다."));
 
         GoalAchievement newAchievement = GoalAchievement.builder()
             .studyGoal(studyGoal)
             .studyMember(studyMember)
             .isAccomplished(true)
-//            .activated(true)
             .achievedAt(LocalDateTime.now())
             .build();
 
@@ -128,6 +154,9 @@ public class StudyService {
 
     @Transactional(readOnly = true)
     public List<GoalsResponse> findGoals(Long studyId) {
+        if (!studyRepository.existsByStudyIdAndActivatedTrue(studyId)) {
+            throw new NotFoundException("존재하지 않거나 비활성화된 스터디입니다.");
+        }
         return studyGoalRepository.findStudyGoals(studyId);
     }
 
@@ -145,7 +174,7 @@ public class StudyService {
 
             // schedules 병합
             studyWithGoals.getSchedules().addAll(studyWithSchedules.getSchedules());
-            int currentMemberCount = studyMemberRepository.countByStudy_StudyId(studyId);
+            int currentMemberCount = studyMemberRepository.countByStudyId(studyId);
 
             return StudyInfoResponse.fromEntity(studyWithGoals, currentMemberCount);
         } catch (StudyDataException e) {
@@ -156,13 +185,17 @@ public class StudyService {
         }
     }
 
-    // 스터디 수정
     @Transactional
     public void updateStudy(Long studyId, StudyUpdateRequest req) {
         Study study = studyRepository.findById(studyId)
             .orElseThrow(() -> new IllegalArgumentException("스터디가 존재하지 않습니다."));
+        Long memberId = SecurityUtil.getCurrentMemberId();
 
-        // 기본 정보 업데이트
+        if (!Boolean.TRUE.equals(studyMemberRepository.checkAcceptorHasRight(memberId, studyId))) {
+            throw new HasNotRightException(ResponseCode.UNAUTHORIZED);
+        }
+
+        // 1. 스터디 기본 정보 업데이트
         study.updateBaseInfo(
             req.getName(),
             req.getCategory(),
@@ -175,37 +208,56 @@ public class StudyService {
         );
         study.setEndDate(req.getEndDate());
 
-        // 기존 일정 제거 후 다시 생성
+        // 2. 스터디 일정 업데이트 (기존 제거 후 추가)
         study.getSchedules().clear();
         for (DayOfWeek day : req.getSchedules()) {
             study.addSchedule(day, req.getStartTime(), req.getEndTime());
         }
 
-        // 목표 업데이트 (목표 ID 기준으로 수정)
-        for (StudyUpdateRequest.GoalUpdateDTO g : req.getGoals()) {
-            StudyGoal goal = study.getGoals().stream()
-                .filter(existing -> existing.getGoalId().equals(g.getGoalId()))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 목표입니다."));
+        // 3-1. 목표 수정/삭제: goalId가 있는 것만 매핑
+        Map<Long, StudyUpdateRequest.GoalUpdateDTO> goalUpdateMap = req.getGoals().stream()
+            .filter(g -> g.getGoalId() != null)
+            .collect(Collectors.toMap(StudyUpdateRequest.GoalUpdateDTO::getGoalId, g -> g));
 
-            goal.update(g.getContent(), g.getType());
+        // 3-2. 기존 목표 목록에서 수정 또는 삭제
+        Iterator<StudyGoal> iterator = study.getGoals().iterator();
+        while (iterator.hasNext()) {
+            StudyGoal goal = iterator.next();
+            StudyUpdateRequest.GoalUpdateDTO dto = goalUpdateMap.get(goal.getGoalId());
+
+            if (dto != null) {
+                // 수정
+                goal.update(dto.getContent(), dto.getType());
+            } else {
+                // 삭제
+                iterator.remove();      // JPA에서 인식되도록 원본 리스트에서 직접 제거
+                goal.setStudy(null);    // 연관관계 정리
+            }
         }
+
+        // 3-3. 추가: goalId가 없는 새로운 목표들
+        req.getGoals().stream()
+            .filter(g -> g.getGoalId() == null)
+            .forEach(g -> study.addGoal(g.getContent(), g.getType()));
     }
+
+
 
     @Transactional(readOnly = true)
     public boolean isUserStudyMember(Long memberId, Long studyId) {
-        if (!studyRepository.existsById(studyId)) {
-            throw new IllegalArgumentException("스터디가 존재하지 않습니다.");
+        if (!studyRepository.existsByStudyIdAndActivatedTrue(studyId)) {
+            throw new IllegalArgumentException("존재하지 않거나 비활성화된 스터디입니다.");
         }
 
-        return studyMemberRepository.existsByMember_IdAndStudy_StudyId(memberId, studyId);
+        return studyMemberRepository.existsActivatedByMemberIdAndStudyId(memberId, studyId);
     }
 
     // 스터디 멤버 조회
     @Transactional(readOnly = true)
     public List<StudyMemberResponse> getStudyMembers(Long studyId) {
-        if (!studyRepository.existsById(studyId)) {
-            throw new NotFoundException("스터디가 존재하지 않습니다.");
+        // 활성화된 스터디만 조회 가능
+        if (!studyRepository.existsByStudyIdAndActivatedTrue(studyId)) {
+            throw new NotFoundException("스터디가 존재하지 않거나 비활성화 상태입니다.");
         }
 
         List<StudyMember> studyMembers = studyMemberRepository.findByStudyId(studyId);
@@ -292,8 +344,8 @@ public class StudyService {
 
     @Transactional
     public void applyToStudy(Long memberId, Long studyId, String introduction) {
-        Study study = studyRepository.findById(studyId)
-            .orElseThrow(() -> new NotFoundException("해당 스터디가 존재하지 않습니다."));
+        Study study = studyRepository.findByStudyIdAndActivatedTrue(studyId)
+            .orElseThrow(() -> new NotFoundException("존재하지 않거나 비활성화된 스터디입니다."));
 
         Member member = memberRepository.findById(memberId)
             .orElseThrow(() -> new NotFoundException("회원 정보를 찾을 수 없습니다."));
@@ -321,14 +373,20 @@ public class StudyService {
             .orElseThrow(() -> new NotFoundException("스터디가 존재하지 않습니다."));
         LocalDate studyStartDate = study.getStartDate();
 
-        // startDate= 스터디 생성일
+        // startDate = 스터디 생성일
         LocalDate startDate = studyStartDate;
         LocalDate endDate = LocalDate.now(); // endDate는 현재
 
         LocalDateTime startDateTime = startDate.atStartOfDay();
         LocalDateTime endDateTime = endDate.atTime(LocalTime.MAX);
 
-        StudyMember studyMember = studyMemberRepository.findByStudyStudyIdAndMemberId(studyId, memberId)
+        // 활성화된 스터디만 허용
+        if (!studyRepository.existsByStudyIdAndActivatedTrue(studyId)) {
+            throw new NotFoundException("존재하지 않거나 비활성화된 스터디입니다.");
+        }
+
+        // memberId → studyMemberId 조회
+        StudyMember studyMember = studyMemberRepository.findByStudyIdAndMemberId(studyId, memberId)
             .orElseThrow(() -> new NotFoundException("스터디 멤버 정보를 찾을 수 없습니다."));
         Long studyMemberId = studyMember.getStudyMemberId();
 
@@ -360,17 +418,22 @@ public class StudyService {
         );
     }
 
-
+    @Transactional(readOnly = true)
     public boolean isSurvival(Long studyId) {
+        if (!studyRepository.existsByStudyIdAndActivatedTrue(studyId)) {
+            throw new NotFoundException("존재하지 않거나 비활성화된 스터디입니다.");
+        }
+
         return (StudyType.SURVIVAL == studyRepository.findStudyType(studyId));
     }
 
     @Transactional
     public void updateStudyNotification(Long memberId, Long studyId, String notice) {
-        Study study = studyRepository.findById(studyId)
+        // 비활성 스터디 접근 방지
+        Study study = studyRepository.findByStudyIdAndActivatedTrue(studyId)
             .orElseThrow(() -> new NotFoundException(ResponseCode.NOT_FOUND.message()));
 
-        if(!studyMemberRepository.checkAcceptorHasRight(memberId, studyId)) {
+        if (!Boolean.TRUE.equals(studyMemberRepository.checkAcceptorHasRight(memberId, studyId))) {
             throw new HasNotRightException(ResponseCode.UNAUTHORIZED);
         }
 
@@ -379,11 +442,36 @@ public class StudyService {
 
     @Transactional(readOnly = true)
     public String findNotice(Long studyId) {
-        if (!studyRepository.existsById(studyId)) {
-            throw new IllegalArgumentException("스터디가 존재하지 않습니다.");
+        if (!studyRepository.existsByStudyIdAndActivatedTrue(studyId)) {
+            throw new IllegalArgumentException("존재하지 않거나 비활성화된 스터디입니다.");
         }
 
         return studyRepository.findNotice(studyId)
             .orElse("공지사항이 없습니다.");
     }
+
+    // 매일 자정(00:00:00)에 종료일이 지난 스터디를 일괄 삭제
+    @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Seoul")
+    @Transactional
+    public void deactivateExpiredStudies() {
+        LocalDate today = LocalDate.now();
+        List<Study> expiredStudies = studyRepository.findAllByEndDateBefore(today);
+
+        if (expiredStudies.isEmpty()) {
+            log.info("만료된 스터디 없음 - 비활성화 생략");
+            return;
+        }
+
+        log.info("만료된 스터디 {}개 비활성화 시작...", expiredStudies.size());
+
+        for (Study study : expiredStudies) {
+            if (study.isActivated()) {
+                study.setActivated(false);
+            }
+        }
+
+        log.info("만료된 스터디 비활성화 완료");
+    }
+
+
 }
