@@ -3,6 +3,7 @@ package com.grepp.spring.app.model.alarm.entity;
 import com.grepp.spring.app.model.alarm.code.AlarmType;
 import com.grepp.spring.app.model.alarm.code.ResultStatus;
 import com.grepp.spring.app.model.member.entity.Member;
+import com.grepp.spring.app.model.study.entity.Study;
 import com.grepp.spring.infra.entity.BaseEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -53,13 +54,18 @@ public class Alarm extends BaseEntity {
     @OneToMany(mappedBy = "alarm", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AlarmRecipient> recipients = new ArrayList<>();
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "study_id")
+    private Study study;
+
     @Builder
     public Alarm(Member receiver, Member sender, String message, AlarmType alarmType,
-        ResultStatus resultStatus) {
+        ResultStatus resultStatus, Study study) {
         this.receiver = receiver;
         this.sender = sender;
         this.message = message;
         this.alarmType = alarmType;
         this.resultStatus = resultStatus;
+        this.study = study;
     }
 }

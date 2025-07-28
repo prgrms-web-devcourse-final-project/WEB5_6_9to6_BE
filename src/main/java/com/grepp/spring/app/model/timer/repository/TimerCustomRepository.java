@@ -6,10 +6,10 @@ import java.util.List;
 
 public interface TimerCustomRepository {
 
-    List<Tuple> findDailyStudyLogsByStudyMemberId(Long studyMemberId, Long studyId, LocalDateTime startOfDay, LocalDateTime endOfDay);
+    List<Tuple> findDailyStudyLogs(Long studyMemberId, Long studyId, LocalDateTime startOfDay, LocalDateTime endOfDay);
 
-    Long findTotalStudyTimeInPeriod(Long studyMemberId, Long studyId, LocalDateTime startOfDay, LocalDateTime endOfDay);
+    Long findTotalStudyLogsInWeek(Long studyMemberId, Long studyId, LocalDateTime startOfDay, LocalDateTime endOfDay);
 
-    Long findTotalStudyTimeByStudyMemberIds(List<Long> studyMemberIds);
+    Long findTotalStudyTime(List<Long> studyMemberIds);
 
 }

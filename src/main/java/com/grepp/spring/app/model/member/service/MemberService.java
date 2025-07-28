@@ -121,11 +121,35 @@ public class MemberService {
         Member member = memberRepository.findById(memberId)
             .orElseThrow(() -> new NotFoundException("사용자를 찾을 수 없습니다."));
 
+        // 1. 기본 아이템 rewardItem 중 item_id = 1인 것 가져오기
+        RewardItem defaultThemeItem = getRewardItem(1L);
+
+        // 2. 해당 item 의 image 가져오기
+        String defaultAvatarImage = itemSetRepository.findImageByItemId(1L);
+
+        // 3. 사용자 정보 업데이트
         member.updateSocialInfo(
             req.getNickname(),
             req.getBirthday(),
             req.getGender()
         );
+
+        // 4. 프로필 이미지 설정
+        member.updateAvatarImage(defaultAvatarImage);
+
+        // 5. 기본 아이템 목록 정의 및 저장
+        List<OwnItem> defaultItems = List.of(
+            OwnItem.builder().memberId(memberId).rewardItem(getRewardItem(1L)).isUsed(true).activated(true).build(),
+            OwnItem.builder().memberId(memberId).rewardItem(getRewardItem(11L)).isUsed(true).activated(true).build(),
+            OwnItem.builder().memberId(memberId).rewardItem(getRewardItem(21L)).isUsed(true).activated(true).build(),
+            OwnItem.builder().memberId(memberId).rewardItem(getRewardItem(31L)).isUsed(true).activated(true).build(),
+            OwnItem.builder().memberId(memberId).rewardItem(getRewardItem(51L)).isUsed(false).activated(true).build(),
+            OwnItem.builder().memberId(memberId).rewardItem(getRewardItem(52L)).isUsed(true).activated(true).build(),
+            OwnItem.builder().memberId(memberId).rewardItem(getRewardItem(61L)).isUsed(true).activated(true).build(),
+            OwnItem.builder().memberId(memberId).rewardItem(getRewardItem(62L)).isUsed(false).activated(true).build()
+        );
+
+        ownItemRepository.saveAll(defaultItems);
     }
 
     // 개인 정보 조회(이메일, 닉네임, 아바타)

@@ -3,6 +3,7 @@ package com.grepp.spring.app.model.study.entity;
 import com.grepp.spring.app.model.member.entity.StudyMember;
 import com.grepp.spring.app.model.study.code.Category;
 import com.grepp.spring.app.model.study.code.DayOfWeek;
+import com.grepp.spring.app.model.study.code.GoalType;
 import com.grepp.spring.app.model.study.code.Region;
 import com.grepp.spring.app.model.study.code.Status;
 import com.grepp.spring.app.model.study.code.StudyType;
@@ -141,5 +142,15 @@ public class Study {
 
     public void setActivated(boolean activated) {
         this.activated = activated;
+    }
+
+    public void addGoal(String content, GoalType type) {
+        StudyGoal newGoal = new StudyGoal(content, type, this);
+        this.goals.add(newGoal);
+    }
+
+    public void removeGoal(StudyGoal goal) {
+        this.goals.remove(goal);
+        goal.setStudy(null); // 연관관계 해제
     }
 }
