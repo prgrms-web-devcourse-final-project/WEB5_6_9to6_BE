@@ -117,13 +117,13 @@ public class StudyMemberRepositoryCustomImpl implements StudyMemberRepositoryCus
     public boolean existStudyMember(Long memberId, Long studyId) {
         return queryFactory
             .selectOne()
-            .from(studyMember)
+            .from(sm)
             .where(
-                studyMember.member.id.eq(memberId),
-                studyMember.study.studyId.eq(studyId),
-                studyMember.activated.isTrue(),
-                studyMember.member.activated.isTrue(),
-                studyMember.study.activated.isTrue()
+                sm.member.id.eq(memberId),
+                sm.study.studyId.eq(studyId),
+                sm.activated.isTrue(),
+                sm.member.activated.isTrue(),
+                sm.study.activated.isTrue()
             )
             .fetchFirst() != null;
     }
