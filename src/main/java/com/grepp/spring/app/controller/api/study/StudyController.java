@@ -152,7 +152,8 @@ public class StudyController {
     // 스터디 정보 수정
     @Operation(summary = "스터디 정보 수정", description = """
         요청 body에 `StudyUpdateRequest`를 포함해야합니다.
-        - 스터디 ID(`studyId`)에 해당하는 스터디의 정보를 수정합니다. 스터디장만 호출 가능합니다.
+        - 스터디 ID(`studyId`)에 해당하는 스터디의 정보를 수정합니다. 
+        - 스터디장만 호출 가능합니다.
         """)
     @PutMapping("/{studyId}")
     public ResponseEntity<CommonResponse<Void>> updateStudyInfo(
@@ -164,7 +165,7 @@ public class StudyController {
     }
 
     // 스터디 신청자 목록 조회
-    @Operation(summary = "스터디 신청자 목록 조회", description = "스터디 ID(`studyId`)에 해당하는 스터디의 가입 신청자 목록을 조회합니다. 스터디장만 호출 가능합니다.")
+    @Operation(summary = "스터디 신청자 목록 조회", description = "스터디 ID(`studyId`)에 해당하는 스터디의 가입 신청자 목록을 조회합니다.")
     @GetMapping("/{studyId}/applications-list")
     public ResponseEntity<CommonResponse<List<ApplicantsResponse>>> getApplications(@PathVariable Long studyId) {
         List<ApplicantsResponse> applicants = studyService.getApplicants(studyId);
