@@ -66,17 +66,19 @@ public class StudyMemberRepositoryCustomImpl implements StudyMemberRepositoryCus
     }
 
     @Override
-    public Boolean checkAcceptorHasRight(Long acceptorId, Long studyId) {
-        return queryFactory
+    public Boolean checkAcceptorHasRight(Long memberId, Long studyId) {
+        Boolean result = queryFactory
             .select(sm.studyRole.eq(StudyRole.LEADER))
             .from(sm)
             .where(
                 sm.study.studyId.eq(studyId),
-                sm.member.id.eq(acceptorId),
+                sm.member.id.eq(memberId),
                 sm.activated.isTrue(),
                 sm.member.activated.isTrue()
             )
-            .fetchOne();
+            .fetchFirst();
+
+        return Boolean.TRUE.equals(result);
     }
 
     @Override
