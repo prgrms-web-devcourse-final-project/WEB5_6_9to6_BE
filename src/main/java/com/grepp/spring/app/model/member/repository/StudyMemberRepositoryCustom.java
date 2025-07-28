@@ -1,4 +1,4 @@
-package com.grepp.spring.app.model.study.repository;
+package com.grepp.spring.app.model.member.repository;
 
 import com.grepp.spring.app.model.member.code.StudyRole;
 import com.grepp.spring.app.model.member.entity.StudyMember;
@@ -20,12 +20,19 @@ public interface StudyMemberRepositoryCustom {
 
     Boolean checkAcceptorHasRight(Long acceptorId, Long studyId);
 
-
     List<StudyMember> findActiveStudyMemberships(Long memberId);
 
     Optional<StudyMember> findActiveStudyMember(Long memberId, Long studyId);
 
     List<StudyMember> findAllByStudyIdWithMember(Long studyId);
-  
+
+    Optional<StudyMember> findByStudyIdAndMemberId(Long studyId, Long memberId);
+
+    int countByStudyId(Long studyId);
+
+    boolean existsActivatedByMemberIdAndStudyId(Long memberId, Long studyId);
+
+    Optional<StudyMember> findByStudyIdAndStudyMemberId(Long studyId, Long studyMemberId);
+
     boolean existStudyMember(Long memberId, Long studyId);
 }
