@@ -2,14 +2,19 @@ package com.grepp.spring.app.model.timer.service;
 
 import com.grepp.spring.app.controller.api.timer.payload.StudyTimeRecordRequest;
 import com.grepp.spring.app.model.member.repository.StudyMemberRepository;
+import com.grepp.spring.app.model.study.repository.StudyRepository;
 import com.grepp.spring.app.model.timer.dto.DailyStudyLogResponse;
 import com.grepp.spring.app.model.timer.dto.StudyWeekTimeResponse;
 import com.grepp.spring.app.model.timer.dto.TotalStudyTimeResponse;
 import com.grepp.spring.app.model.timer.entity.Timer;
 import com.grepp.spring.app.model.timer.repository.TimerRepository;
+import com.grepp.spring.infra.error.exceptions.EarlierDateException;
 import com.grepp.spring.infra.error.exceptions.NotFoundException;
+import com.grepp.spring.infra.error.exceptions.StudyDataException;
+import com.grepp.spring.infra.response.ResponseCode;
 import com.querydsl.core.Tuple;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +29,7 @@ public class TimerService {
 
     private final TimerRepository timerRepository;
     private final StudyMemberRepository studyMemberRepository;
+    private final StudyRepository studyRepository;
 
     @Transactional(readOnly = true)
     public TotalStudyTimeResponse getAllStudyTime(Long memberId) {
@@ -77,6 +83,11 @@ public class TimerService {
 
     @Transactional
     public void recordStudyTime(Long studyId, Long memberId, StudyTimeRecordRequest req) {
+
+        LocalDate studyStartDate = studyRepository.findStudyStartDate(studyId);
+        if (studyStartDate.isAfter(LocalDate.now())) {
+            throw new EarlierDateException(ResponseCode.BAD_REQUEST);
+        }
 
         Long studyMemberId = studyMemberRepository.findStudyMemberId(studyId, memberId)
             .orElseThrow(() -> new NotFoundException("Study Member Not Found"));

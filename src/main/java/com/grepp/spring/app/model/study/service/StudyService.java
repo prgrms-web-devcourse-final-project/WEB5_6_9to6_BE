@@ -29,6 +29,7 @@ import com.grepp.spring.app.model.study.repository.ApplicantRepository;
 import com.grepp.spring.app.model.study.repository.GoalAchievementRepository;
 import com.grepp.spring.app.model.study.repository.StudyGoalRepository;
 import com.grepp.spring.app.model.study.repository.StudyRepository;
+import com.grepp.spring.infra.error.exceptions.EarlierDateException;
 import com.grepp.spring.infra.error.exceptions.HasNotRightException;
 import com.grepp.spring.infra.error.exceptions.NotFoundException;
 import com.grepp.spring.infra.error.exceptions.StudyDataException;
@@ -121,6 +122,12 @@ public class StudyService {
 
         if (!studyRepository.existsByStudyIdAndActivatedTrue(studyId)) {
             throw new NotFoundException("존재하지 않거나 비활성화된 스터디입니다.");
+        }
+
+        // 스터디 시작 전
+        LocalDate studyStartDate = studyRepository.findStudyStartDate(studyId);
+        if (studyStartDate.isAfter(LocalDate.now())) {
+            throw new EarlierDateException(ResponseCode.BAD_REQUEST);
         }
 
         StudyGoal studyGoal = studyGoalRepository.findById(goalId)

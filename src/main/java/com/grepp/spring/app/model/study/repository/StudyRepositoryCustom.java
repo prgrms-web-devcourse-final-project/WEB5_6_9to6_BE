@@ -5,6 +5,7 @@ import com.grepp.spring.app.model.member.dto.response.ApplicantsResponse;
 import com.grepp.spring.app.model.study.code.StudyType;
 import com.grepp.spring.app.model.study.dto.StudyListResponse;
 import com.grepp.spring.app.model.study.entity.Study;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -30,4 +31,6 @@ public interface StudyRepositoryCustom {
     Optional<String> findNotice(Long studyId);
 
     Page<StudyListResponse> searchStudiesWithMemberCount(StudySearchRequest req, Pageable pageable);
+
+    LocalDate findStudyStartDate(Long studyId);
 }
