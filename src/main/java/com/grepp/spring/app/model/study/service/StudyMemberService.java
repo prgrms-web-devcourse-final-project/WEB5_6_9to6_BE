@@ -31,7 +31,7 @@ public class StudyMemberService {
     public void saveMember(Long studyId, Long memberId) {
 
         // 중복 등록 방지
-        if (studyMemberRepository.existsByMember_IdAndStudy_StudyId(memberId, studyId)) {
+        if (studyMemberRepository.existsByMember_IdAndStudy_StudyIdAndActivatedTrue(memberId, studyId)) {
             throw new AlreadyExistException(ResponseCode.ALREADY_EXIST);
         }
 

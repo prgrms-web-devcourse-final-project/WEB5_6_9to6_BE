@@ -46,45 +46,22 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom {
 
     @Override
     public List<Study> searchStudiesPage(StudySearchRequest req) {
-        StringBuilder jpql = new StringBuilder(
-            "SELECT DISTINCT s FROM Study s LEFT JOIN FETCH s.schedules WHERE 1=1");
-
-        if (req.getCategory() != null && req.getCategory() != Category.ALL) {
-            jpql.append(" AND s.category = :category");
-        }
-        if (req.getRegion() != null && req.getRegion() != Region.ALL) {
-            jpql.append(" AND s.region = :region");
-        }
-        if (req.getStatus() != null && req.getStatus() != Status.ALL) {
-            jpql.append(" AND s.status = :status");
-        }
-        if (req.getStudyType() != null) {
-            jpql.append(" AND s.studyType = :studyType");
-        }
-        if (StringUtils.hasText(req.getName())) {
-            jpql.append(" AND s.name LIKE :name");
-        }
-
-        TypedQuery<Study> query = em.createQuery(jpql.toString(), Study.class);
-
-        if (req.getCategory() != null && req.getCategory() != Category.ALL) {
-            query.setParameter("category", req.getCategory());
-        }
-        if (req.getRegion() != null && req.getRegion() != Region.ALL) {
-            query.setParameter("region", req.getRegion());
-        }
-        if (req.getStatus() != null && req.getStatus() != Status.ALL) {
-            query.setParameter("status", req.getStatus());
-        }
-        if (req.getStudyType() != null) {
-            query.setParameter("studyType", req.getStudyType());
-        }
-        if (StringUtils.hasText(req.getName())) {
-            query.setParameter("name", "%" + req.getName() + "%");
-        }
-
-        return query.getResultList();
+        return queryFactory
+            .selectFrom(study)
+            .distinct()
+            .leftJoin(study.schedules).fetchJoin()
+            .where(
+                study.activated.isTrue(),
+                req.getCategory() != null && req.getCategory() != Category.ALL ? study.category.eq(req.getCategory()) : null,
+                req.getRegion() != null && req.getRegion() != Region.ALL ? study.region.eq(req.getRegion()) : null,
+                req.getStatus() != null && req.getStatus() != Status.ALL ? study.status.eq(req.getStatus()) : null,
+                req.getStudyType() != null ? study.studyType.eq(req.getStudyType()) : null,
+                StringUtils.hasText(req.getName()) ? study.name.contains(req.getName()) : null
+            )
+            .orderBy(study.createdAt.desc())
+            .fetch();
     }
+
 
     @Override
     public Page<Study> searchStudiesPage(StudySearchRequest req, Pageable pageable) {
@@ -92,12 +69,12 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom {
             .select(study.studyId)
             .from(study)
             .where(
+                study.activated.isTrue(),
                 (req.getCategory() != null && req.getCategory() != Category.ALL) ? study.category.eq(req.getCategory()) : null,
                 (req.getRegion() != null && req.getRegion() != Region.ALL) ? study.region.eq(req.getRegion()) : null,
                 (req.getStatus() != null && req.getStatus() != Status.ALL) ? study.status.eq(req.getStatus()) : null,
                 (req.getStudyType() != null ) ? study.studyType.eq(req.getStudyType()) : null,
-                StringUtils.hasText(req.getName()) ? study.name.contains(req.getName()) : null,
-                study.activated.isTrue()
+                StringUtils.hasText(req.getName()) ? study.name.contains(req.getName()) : null
             )
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
@@ -122,12 +99,15 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom {
                 study.createdAt.desc(),
                 study.studyId.desc()
             )
+            .where(study.activated.isTrue(),study.studyId.in(ids))
+            .orderBy(study.createdAt.desc())
             .fetch();
 
         Long total = queryFactory
             .select(study.count())
             .from(study)
             .where(
+                study.activated.isTrue(),
                 (req.getCategory() != null && req.getCategory() != Category.ALL) ? study.category.eq(req.getCategory()) : null,
                 (req.getRegion() != null && req.getRegion() != Region.ALL) ? study.region.eq(req.getRegion()) : null,
                 (req.getStatus() != null && req.getStatus() != Status.ALL) ? study.status.eq(req.getStatus()) : null,
