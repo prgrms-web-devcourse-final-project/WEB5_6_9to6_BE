@@ -1,6 +1,7 @@
 package com.grepp.spring.app.model.study.entity;
 
 import com.grepp.spring.app.model.member.entity.StudyMember;
+import com.grepp.spring.infra.entity.BaseEntity;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import lombok.*;
@@ -8,7 +9,7 @@ import lombok.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class GoalAchievement {
+public class GoalAchievement extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,18 +25,14 @@ public class GoalAchievement {
 
     private boolean isAccomplished;
 
-    private boolean activated;
-
     private LocalDateTime achievedAt;
 
     @Builder
     public GoalAchievement(StudyGoal studyGoal, StudyMember studyMember,
-        boolean isAccomplished, boolean activated,
-        LocalDateTime achievedAt) {
+        boolean isAccomplished, LocalDateTime achievedAt) {
         this.studyGoal = studyGoal;
         this.studyMember = studyMember;
         this.isAccomplished = isAccomplished;
-        this.activated = activated;
         this.achievedAt = achievedAt;
     }
 }

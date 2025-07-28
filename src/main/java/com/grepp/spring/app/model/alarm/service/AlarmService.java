@@ -2,7 +2,7 @@ package com.grepp.spring.app.model.alarm.service;
 
 import com.grepp.spring.app.controller.api.alarm.payload.AlarmRequest;
 import com.grepp.spring.app.model.alarm.code.AlarmType;
-import com.grepp.spring.app.model.alarm.dto.AlarmListResponse;
+import com.grepp.spring.app.controller.api.alarm.payload.AlarmListResponse;
 import com.grepp.spring.app.model.alarm.entity.Alarm;
 import com.grepp.spring.app.model.alarm.entity.AlarmRecipient;
 import com.grepp.spring.app.model.alarm.repository.AlarmRecipientRepository;
@@ -101,7 +101,7 @@ public class AlarmService {
     // 알림 목록 조회
     @Transactional(readOnly = true)
     public List<AlarmListResponse> getAlarmsByMemberId(Long memberId) {
-        List<AlarmRecipient> recipients = alarmRecipientRepository.findAllWithSenderByMemberId(memberId);
+        List<AlarmRecipient> recipients = alarmRecipientRepository.findMyAlarms(memberId);
 
         return recipients.stream()
             .map(AlarmListResponse::new)
@@ -127,6 +127,6 @@ public class AlarmService {
     // 알림 모두 읽음 처리
     @Transactional
     public void markAllAlarmsAsRead(Long memberId) {
-        alarmRecipientRepository.markAllAsReadByMemberId(memberId);
+        alarmRecipientRepository.markAllAsRead(memberId);
     }
 }
