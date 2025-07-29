@@ -542,15 +542,16 @@ public class StudyService {
 
         for (Study study : expiredStudies) {
 
-            if (study.getStudyType() != StudyType.SURVIVAL) {
-                continue;
-            }
-
             if (!study.isActivated()) {
                 continue;
             }
 
             study.setActivated(false);
+
+            if (study.getStudyType() != StudyType.SURVIVAL) {
+                continue;
+            }
+
 
             List<Member> activeMembers = study.getStudyMembers().stream()
                     .filter(StudyMember::isActivated)
