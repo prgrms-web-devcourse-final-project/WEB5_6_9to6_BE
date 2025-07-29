@@ -44,7 +44,6 @@ public class StudyMemberService {
             .member(member)
             .study(study)
             .studyRole(StudyRole.MEMBER)
-            .activated(true)
             .build();
 
         studyMemberRepository.save(studyMember);

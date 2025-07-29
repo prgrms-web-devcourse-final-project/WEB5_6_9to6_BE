@@ -38,10 +38,9 @@ public class StudyMember extends BaseEntity {
     private Study study;
 
     @Builder
-    public StudyMember(Member member, Study study, boolean activated, StudyRole studyRole) {
+    public StudyMember(Member member, Study study, StudyRole studyRole) {
         this.member = member;
         this.study = study;
-        this.activated = activated;
         this.studyRole = studyRole;
     }
 }

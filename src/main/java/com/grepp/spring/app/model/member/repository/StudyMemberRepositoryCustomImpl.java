@@ -53,7 +53,8 @@ public class StudyMemberRepositoryCustomImpl implements StudyMemberRepositoryCus
                 sm.studyRole.asc(),
                 sm.createdAt.asc(),
                 sm.studyMemberId.asc()
-            )            .fetch();
+            )
+            .fetch();
     }
 
     @Override
