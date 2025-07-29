@@ -351,7 +351,6 @@ public class StudyService {
             .member(leader)
             .study(study)
             .studyRole(StudyRole.LEADER)
-            .activated(true)
             .build();
         studyMemberRepository.save(studyLeader);
 
