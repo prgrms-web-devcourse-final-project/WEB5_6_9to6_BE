@@ -271,6 +271,7 @@ public class StudyService {
         List<StudyMember> studyMembers = studyMemberRepository.findByStudyId(studyId);
 
         return studyMembers.stream()
+            .filter(sm -> sm.getMember().getRole() != Role.ROLE_ADMIN)
             .map(studyMember -> {
                 Member member = studyMember.getMember();
                 return StudyMemberResponse.builder()
