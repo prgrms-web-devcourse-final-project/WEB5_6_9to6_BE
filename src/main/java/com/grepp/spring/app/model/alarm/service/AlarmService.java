@@ -18,7 +18,6 @@ import com.grepp.spring.infra.error.exceptions.alarm.AlarmValidationException;
 import com.grepp.spring.infra.response.ResponseCode;
 import com.grepp.spring.infra.util.SecurityUtil;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
