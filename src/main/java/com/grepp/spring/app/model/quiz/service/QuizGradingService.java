@@ -17,6 +17,7 @@ public class QuizGradingService {
 
     private final QuizRepository quizRepository;
 
+    // 주차별 퀴즈 답안 채점
     public QuizGradingResponse grade(QuizGradingRequest request) {
         List<Quiz> quizzes = quizRepository.findQuizzesByStudyIdAndWeek(
                 request.getStudyId(), request.getWeek()

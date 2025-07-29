@@ -47,7 +47,7 @@ class QuizGetServiceTest {
         when(quizSetRepository.findQuizSetsByStudyId(studyId)).thenReturn(projections);
 
         // when: 서비스 메소드 호출
-        List<QuizListResponse> result = quizGetService.getQuizzesByStudyId(studyId);
+        List<QuizListResponse> result = quizGetService.getQuizzes(studyId);
 
         // then: 결과 검증
         assertThat(result.size()).isEqualTo(2);
@@ -72,7 +72,7 @@ class QuizGetServiceTest {
 
         // when & then: 지정된 예외가 발생하는지 검증
         assertThrows(MemberNotFoundException.class, () -> {
-            quizGetService.getQuizzesByStudyId(nonExistentStudyId);
+            quizGetService.getQuizzes(nonExistentStudyId);
         });
     }
 
@@ -86,7 +86,7 @@ class QuizGetServiceTest {
 
         // when & then: 지정된 예외가 발생하는지 검증
         assertThrows(InvalidQuizException.class, () -> {
-            quizGetService.getQuizzesByStudyId(studyId);
+            quizGetService.getQuizzes(studyId);
         });
     }
 }
