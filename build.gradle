@@ -107,6 +107,9 @@ dependencies {
 
     // S3 버킷 설정
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
+    // RabbitMQ (Spring AMQP) 관련 의존성
+    implementation 'org.springframework.boot:spring-boot-starter-amqp'
 }
 
 sourceSets {

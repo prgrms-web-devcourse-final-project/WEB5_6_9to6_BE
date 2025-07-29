@@ -12,7 +12,6 @@ import com.grepp.spring.app.model.member.dto.response.ApplicantsResponse;
 import com.grepp.spring.app.model.member.dto.response.StudyMemberResponse;
 import com.grepp.spring.app.model.member.entity.Attendance;
 import com.grepp.spring.app.model.member.service.MemberService;
-import com.grepp.spring.app.model.study.code.ApplicantState;
 import com.grepp.spring.app.model.study.code.Category;
 import com.grepp.spring.app.model.study.code.Status;
 import com.grepp.spring.app.model.study.dto.StudyCreationResponse;
@@ -29,10 +28,7 @@ import com.grepp.spring.infra.response.CommonResponse;
 import com.grepp.spring.infra.util.SecurityUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +37,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -280,9 +275,9 @@ public class StudyController {
         요청 body에 `ApplicationResultRequest`를 포함해야합니다.
         스터디 가입 신청에 대해 승인 또는 거절을 처리합니다.
         - 서바이벌 스터디인 경우 바로 신청이 됩니다.
-        - 요청 body에 `memberId`와 `applicationResult`(APPROVED, REJECTED 등)를 포함해야 합니다.
-        - **승인(APPROVED)** 시 신청자는 스터디 멤버로 추가됩니다.
-        - **거절(REJECTED)** 시 신청자의 상태만 업데이트됩니다.
+        - 요청 body에 `memberId`와 `applicationResult`(ACCEPT, REJECT 등)를 포함해야 합니다.
+        - **승인(ACCEPT)** 시 신청자는 스터디 멤버로 추가됩니다.
+        - **거절(REJECT)** 시 신청자의 상태만 업데이트됩니다.
         - 일반 스터디에 한해 스터디장만 호출 가능합니다.
         """
     )
@@ -291,24 +286,36 @@ public class StudyController {
         @PathVariable Long studyId,
         @RequestBody ApplicationResultRequest req) {
 
-        boolean isSurvival = studyService.isSurvival(studyId);
-
-        // 신청자 상태변경
-        if(!isSurvival) {
-            Long acceptorId = SecurityUtil.getCurrentMemberId();
-            applicantService.updateState(acceptorId, req.getMemberId(), studyId, req.getApplicationResult());
-
-            // 스터디 맴버에 저장
-            if (req.getApplicationResult() == ApplicantState.ACCEPT) {
-                studyMemberService.saveMember(studyId, req.getMemberId());
-            }
-        }
-        else {
-            studyMemberService.applyToStudy(req.getMemberId(), studyId);
-        }
+        Long senderId = SecurityUtil.getCurrentMemberId();
+        studyService.processApplicationResult(senderId, studyId, req);
 
         return ResponseEntity.ok(CommonResponse.noContent());
     }
+
+// 수정했는데 혹시 문제 생길까봐 기존 코드 주석 처리
+//    @PostMapping("/{studyId}/applications/respond")
+//    public ResponseEntity<CommonResponse<Void>> responseStudyApplication(
+//        @PathVariable Long studyId,
+//        @RequestBody ApplicationResultRequest req) {
+//
+//        boolean isSurvival = studyService.isSurvival(studyId);
+//
+//        // 신청자 상태 변경
+//        if(!isSurvival) {
+//            Long acceptorId = SecurityUtil.getCurrentMemberId();
+//            applicantService.updateState(acceptorId, req.getMemberId(), studyId, req.getApplicationResult());
+//
+//            // 스터디 멤버에 저장
+//            if (req.getApplicationResult() == ApplicantState.ACCEPT) {
+//                studyMemberService.saveMember(studyId, req.getMemberId());
+//            }
+//        }
+//        else {
+//            studyMemberService.applyToStudy(req.getMemberId(), studyId);
+//        }
+//
+//        return ResponseEntity.ok(CommonResponse.noContent());
+//    }
 
     @Operation(summary = "스터디 공지사항 수정", description = """
         요청 body에 `NotificationUpdateRequest`를 포함해야합니다.
@@ -352,8 +359,4 @@ public class StudyController {
         List<CheckGoalResponse> res = studyMemberService.getGoalStatuses(studyId, memberId);
         return ResponseEntity.ok(CommonResponse.success(res));
     }
-
-
-
-
 }
