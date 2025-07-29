@@ -20,16 +20,15 @@ public class QuizGetService {
     private final QuizSetRepository quizSetRepository;
     private final StudyRepository studyRepository;
 
-    public List<QuizListResponse> getQuizzesByStudyId(Long studyId) {
+    // 스터디에 속한 모든 퀴즈 조회
+    public List<QuizListResponse> getQuizzes(Long studyId) {
 
-        // 존재 하지 않는 스터디
         if (!studyRepository.existsById(studyId)) {
             throw new StudyNotFoundException("존재하지 않는 스터디입니다. studyId: " + studyId);
         }
 
         List<QuizProjection> projections = quizSetRepository.findQuizSetsByStudyId(studyId);
 
-        // 스터디에 퀴즈 없음
         if (projections.isEmpty()) {
             throw new InvalidQuizException("해당 스터디에 생성된 퀴즈가 없습니다. studyId: " + studyId);
         }
