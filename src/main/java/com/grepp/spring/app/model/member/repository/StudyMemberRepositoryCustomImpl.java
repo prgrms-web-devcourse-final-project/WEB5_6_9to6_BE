@@ -165,7 +165,7 @@ public class StudyMemberRepositoryCustomImpl implements StudyMemberRepositoryCus
     }
 
     @Override
-    public boolean existsActivatedByMemberIdAndStudyId(Long memberId, Long studyId) {
+    public boolean existStudyMember(Long memberId, Long studyId) {
         Integer result = queryFactory
             .selectOne()
             .from(sm)
@@ -191,19 +191,19 @@ public class StudyMemberRepositoryCustomImpl implements StudyMemberRepositoryCus
     }
 
 
-    @Override
-    public boolean existStudyMember(Long memberId, Long studyId) {
-        return queryFactory
-            .selectOne()
-            .from(sm)
-            .where(
-                sm.member.id.eq(memberId),
-                sm.study.studyId.eq(studyId),
-                sm.activated.isTrue(),
-                sm.member.activated.isTrue(),
-                sm.study.activated.isTrue()
-            )
-            .fetchFirst() != null;
-    }
+//    @Override
+//    public boolean existStudyMember(Long memberId, Long studyId) {
+//        return queryFactory
+//            .selectOne()
+//            .from(sm)
+//            .where(
+//                sm.member.id.eq(memberId),
+//                sm.study.studyId.eq(studyId),
+//                sm.activated.isTrue(),
+//                sm.member.activated.isTrue(),
+//                sm.study.activated.isTrue()
+//            )
+//            .fetchFirst() != null;
+//    }
 
 }
