@@ -8,6 +8,7 @@ import com.grepp.spring.app.controller.api.study.payload.StudyUpdateRequest;
 import com.grepp.spring.app.controller.api.study.payload.WeeklyAchievementCount;
 import com.grepp.spring.app.model.alarm.code.AlarmType;
 import com.grepp.spring.app.model.alarm.service.AlarmService;
+import com.grepp.spring.app.model.auth.code.Role;
 import com.grepp.spring.app.model.member.code.StudyRole;
 import com.grepp.spring.app.model.member.dto.response.ApplicantsResponse;
 import com.grepp.spring.app.model.member.dto.response.StudyMemberResponse;
@@ -290,6 +291,10 @@ public class StudyService {
         Member leader = memberRepository.findById(memberId)
             .orElseThrow(() -> new NotFoundException("회원 정보를 찾을 수 없습니다."));
 
+        if(req.getStudyType().equals(StudyType.SURVIVAL) && memberRepository.findRole(memberId) == Role.ROLE_USER) {
+            throw new HasNotRightException(ResponseCode.UNAUTHORIZED);
+        }
+
         // 1. 스터디 생성
         Study study = Study.builder()
             .name(req.getName())
@@ -327,7 +332,6 @@ public class StudyService {
                     StudyGoal goal = StudyGoal.builder()
                         .content(g.getContent())
                         .goalType(GoalType.WEEKLY)
-//                        .activated(true)
                         .study(study)
                         .build();
                     study.addGoal(goal);

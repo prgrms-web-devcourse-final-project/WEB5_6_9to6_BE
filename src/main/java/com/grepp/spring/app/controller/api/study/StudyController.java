@@ -147,7 +147,8 @@ public class StudyController {
     // 스터디 정보 수정
     @Operation(summary = "스터디 정보 수정", description = """
         요청 body에 `StudyUpdateRequest`를 포함해야합니다.
-        - 스터디 ID(`studyId`)에 해당하는 스터디의 정보를 수정합니다. 스터디장만 호출 가능합니다.
+        - 스터디 ID(`studyId`)에 해당하는 스터디의 정보를 수정합니다. 
+        - 스터디장만 호출 가능합니다.
         """)
     @PutMapping("/{studyId}")
     public ResponseEntity<CommonResponse<Void>> updateStudyInfo(
@@ -159,7 +160,7 @@ public class StudyController {
     }
 
     // 스터디 신청자 목록 조회
-    @Operation(summary = "스터디 신청자 목록 조회", description = "스터디 ID(`studyId`)에 해당하는 스터디의 가입 신청자 목록을 조회합니다. 스터디장만 호출 가능합니다.")
+    @Operation(summary = "스터디 신청자 목록 조회", description = "스터디 ID(`studyId`)에 해당하는 스터디의 가입 신청자 목록을 조회합니다.")
     @GetMapping("/{studyId}/applications-list")
     public ResponseEntity<CommonResponse<List<ApplicantsResponse>>> getApplications(@PathVariable Long studyId) {
         List<ApplicantsResponse> applicants = studyService.getApplicants(studyId);
@@ -275,7 +276,7 @@ public class StudyController {
         요청 body에 `ApplicationResultRequest`를 포함해야합니다.
         스터디 가입 신청에 대해 승인 또는 거절을 처리합니다.
         - 서바이벌 스터디인 경우 바로 신청이 됩니다.
-        - 요청 body에 `memberId`와 `applicationResult`(ACCEPT, REJECT 등)를 포함해야 합니다.
+        - 요청 body에 `memberId`와 `applicationResult`(ACCEPT, REJECT)를 포함해야 합니다.
         - **승인(ACCEPT)** 시 신청자는 스터디 멤버로 추가됩니다.
         - **거절(REJECT)** 시 신청자의 상태만 업데이트됩니다.
         - 일반 스터디에 한해 스터디장만 호출 가능합니다.
