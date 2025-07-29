@@ -27,11 +27,11 @@ Notion: [프로젝트 노션 링크](https://)
 
 <div align="center">
 
-| <img src="https://img.shields.io/badge/Project_Leader-FF5733" /> | <img src="https://img.shields.io/badge/Tech_Leader-%2300264B" /> | <img src="https://img.shields.io/badge/Documentation_Leader-%2310069F%20" /> | <img src="https://img.shields.io/badge/Design_Leader-blue" /> |
-| :--------------------------------------------------------------: | :--------------------------------------------------------------: | :--------------------------------------------------------------------------: | :-----------------------------------------------------------: |
-|      <img src="https://github.com/" width="120px;" alt=""/>      |      <img src="https://github.com/" width="120px;" alt=""/>      |            <img src="https://github.com/" width="120px;" alt=""/>            |    <img src="https://github.com/" width="120px;" alt=""/>     |
-|           [팀원1 이름](https://github.com/팀원1아이디)           |           [팀원2 이름](https://github.com/팀원2아이디)           |                 [팀원3 이름](https://github.com/팀원3아이디)                 |         [팀원4 이름](https://github.com/팀원4아이디)          |
-|                            기능1 설명                            |                            기능2 설명                            |                                  기능3 설명                                  |                          기능4 설명                           |
+| <img src="https://img.shields.io/badge/BE_Team_member-4CAF50" /> | <img src="https://img.shields.io/badge/BE_Team_member-4CAF50" /> | <img src="https://img.shields.io/badge/BE_Team_member-4CAF50" /> | <img src="https://img.shields.io/badge/BE_Team_member-4CAF50" /> | <img src="https://img.shields.io/badge/BE_Team_Leader-0073B7" /> |
+| :--------------------------------------------------------------: | :--------------------------------------------------------------: | :--------------------------------------------------------------: | :--------------------------------------------------------------------------: | :-----------------------------------------------------------: |
+|      <img src="https://github.com/" width="120px;" alt=""/>      |       <img src="https://github.com/" width="120px;" alt=""/>      |      <img src="https://github.com/" width="120px;" alt=""/>      |            <img src="https://github.com/" width="120px;" alt=""/>            |    <img src="https://github.com/" width="120px;" alt=""/>     |
+|           [김준형](https://github.com/NoviceWyatt19)           |           [이인선](https://github.com/팀원2아이디)           |                 [최종우](https://github.com/팀원3아이디)                 |                  [황영준](https://github.com/팀원4아이디)                 |         [남다빈](https://github.com/팀원5아이디)          |
+|                            기능1 설명                            |                            기능2 설명                            |                                  기능3 설명                                  |                                  기능4 설명                                  |                          기능4 설명                           |
 
 </div>
 
