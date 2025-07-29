@@ -19,6 +19,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -121,7 +122,7 @@ public class OwnItemService {
 
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public ItemType changeOwnItems(Long memberId, long ownItemId) {
         OwnItem currentItem = ownItemRepository.findById(ownItemId)
             .orElseThrow(()-> new NotFoundException("OwnItem not found" + ownItemId));
