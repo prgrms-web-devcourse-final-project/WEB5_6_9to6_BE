@@ -169,7 +169,11 @@ public class StudyMemberRepositoryCustomImpl implements StudyMemberRepositoryCus
         Integer result = queryFactory
             .selectOne()
             .from(sm)
-            .where(sm.study.studyId.eq(studyId))
+            .where(
+                sm.study.studyId.eq(studyId),
+                sm.member.id.eq(memberId),
+                sm.activated.isTrue()
+            )
             .fetchFirst();
         return result != null;
     }
