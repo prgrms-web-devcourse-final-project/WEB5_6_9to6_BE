@@ -12,6 +12,7 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberTemplate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalAdjusters;
 import java.util.List;
@@ -105,6 +106,27 @@ public class GoalRepositoryCustomImpl implements GoalRepositoryCustom {
             .groupBy(weekExpression)
             .orderBy(weekExpression.asc())
             .fetch();
+    }
+
+    @Override
+    public boolean findSameLog(Long goalId, Long memberId, LocalDate today) {
+        Integer fetchResult = queryFactory
+            .selectOne()
+            .from(goalAchievement)
+            .where(
+                goalAchievement.studyGoal.goalId.eq(goalId),
+                goalAchievement.studyMember.member.id.eq(memberId),
+                goalAchievement.isAccomplished.isTrue(),
+                goalAchievement.activated.isTrue(),
+                goalAchievement.studyMember.activated.isTrue(),
+                goalAchievement.achievedAt.between(
+                    today.atStartOfDay(),
+                    today.plusDays(1).atStartOfDay()
+                )
+            )
+            .fetchFirst();
+
+        return fetchResult != null;
     }
 
     public List<StudyGoal> findGoalsByStudyId(Long studyId) {
