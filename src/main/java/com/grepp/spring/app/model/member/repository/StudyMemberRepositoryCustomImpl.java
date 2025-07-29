@@ -2,6 +2,7 @@ package com.grepp.spring.app.model.member.repository;
 
 import static com.grepp.spring.app.model.member.entity.QStudyMember.studyMember;
 
+import com.grepp.spring.app.model.auth.code.Role;
 import com.grepp.spring.app.model.member.code.StudyRole;
 import com.grepp.spring.app.model.member.entity.QMember;
 import com.grepp.spring.app.model.member.entity.QStudyMember;
@@ -83,7 +84,7 @@ public class StudyMemberRepositoryCustomImpl implements StudyMemberRepositoryCus
     @Override
     public Boolean checkAcceptorHasRight(Long memberId, Long studyId) {
         Boolean result = queryFactory
-            .select(sm.studyRole.eq(StudyRole.LEADER))
+            .select(sm.studyRole.eq(StudyRole.LEADER).or(sm.member.role.eq(Role.ROLE_ADMIN)))
             .from(sm)
             .where(
                 sm.study.studyId.eq(studyId),

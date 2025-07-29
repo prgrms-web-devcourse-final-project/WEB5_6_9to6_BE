@@ -2,6 +2,7 @@ package com.grepp.spring.app.model.member.repository;
 
 import static com.grepp.spring.app.model.member.entity.QMember.member;
 
+import com.grepp.spring.app.model.auth.code.Role;
 import com.grepp.spring.app.model.member.dto.response.RequiredMemberInfoResponse;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -75,6 +76,18 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
             .execute();
         em.flush();
         em.clear();
+    }
+
+    @Override
+    public Role findRole(Long memberId) {
+        return queryFactory
+            .select(member.role)
+            .from(member)
+            .where(
+                member.activated.isTrue(),
+                member.id.eq(memberId)
+            )
+            .fetchOne();
     }
 }
 
