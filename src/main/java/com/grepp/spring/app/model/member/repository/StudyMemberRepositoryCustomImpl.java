@@ -154,7 +154,12 @@ public class StudyMemberRepositoryCustomImpl implements StudyMemberRepositoryCus
         Long count = queryFactory
             .select(sm.count())
             .from(sm)
-            .where(sm.study.studyId.eq(studyId))
+            .where(
+                sm.study.studyId.eq(studyId),
+                sm.activated.isTrue(),
+                sm.member.activated.isTrue(),
+                sm.study.activated.isTrue()
+            )
             .fetchOne();
         return count != null ? count.intValue() : 0;
     }
