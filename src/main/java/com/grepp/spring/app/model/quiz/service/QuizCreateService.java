@@ -37,7 +37,8 @@ public class QuizCreateService {
     private final ChoiceRepository choiceRepository;
     private final StudyGoalRepository studyGoalRepository;
     private final GenerativeModel generativeModel;
-
+    
+    // 스터디 주차별 목표에 맞는 퀴즈 생성
     @Transactional
     public void createNextQuiz(Long studyId) throws IOException {
         int lastWeek = quizSetRepository.findTopByStudyIdOrderByWeekDesc(studyId).map(QuizSet::getWeek).orElse(0);
@@ -116,11 +117,24 @@ public class QuizCreateService {
     private QuizSet saveGeneratedQuizzes(Long studyId, int week, StudyGoal goal, List<QuizGenerationDto> dtos) {
         QuizSet quizSet = QuizSet.builder().studyId(studyId).week(week).studyGoal(goal).activated(true).build();
         quizSetRepository.save(quizSet);
-        List<Quiz> quizzes = dtos.stream().map(dto -> Quiz.builder().quizSet(quizSet).question(dto.getQuestion()).answer(dto.getAnswer()).activated(true).build()).toList();
+        List<Quiz> quizzes = dtos.stream().map(dto -> Quiz.builder()
+                .quizSet(quizSet)
+                .question(dto.getQuestion())
+                .answer(dto.getAnswer())
+                .activated(true)
+                .build())
+                .toList();
         quizRepository.saveAll(quizzes);
         List<Choice> choices = dtos.stream().map(dto -> {
             Quiz correspondingQuiz = quizzes.get(dtos.indexOf(dto));
-            return Choice.builder().quiz(correspondingQuiz).choice1(dto.getChoices().get(0)).choice2(dto.getChoices().get(1)).choice3(dto.getChoices().get(2)).choice4(dto.getChoices().get(3)).activated(true).build();
+            return Choice.builder()
+                    .quiz(correspondingQuiz)
+                    .choice1(dto.getChoices().get(0))
+                    .choice2(dto.getChoices().get(1))
+                    .choice3(dto.getChoices().get(2))
+                    .choice4(dto.getChoices().get(3))
+                    .activated(true)
+                    .build();
         }).toList();
         choiceRepository.saveAll(choices);
         return quizSet;

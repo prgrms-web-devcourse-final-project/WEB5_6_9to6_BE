@@ -21,7 +21,8 @@ public class QuizSchedulingService {
     private final StudyScheduleRepository studyScheduleRepository;
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
 
-    @Scheduled(cron = "0 * * * * *")
+    // 10분 후 시작하는 서바이벌 스터디 존재 시 퀴즈 생성 요청
+    @Scheduled(cron = "0 * * * * *", zone = "Asia/Seoul")
     public void createQuizBeforeStudyStarts() {
 
         LocalDateTime tenMinutesFromNow = LocalDateTime.now().plusMinutes(10);

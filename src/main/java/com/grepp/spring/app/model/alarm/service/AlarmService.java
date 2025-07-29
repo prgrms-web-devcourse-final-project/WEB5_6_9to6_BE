@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -139,5 +140,22 @@ public class AlarmService {
     @Transactional
     public void markAllAlarmsAsRead(Long memberId) {
         alarmRecipientRepository.markAllAsRead(memberId);
+    }
+
+    // 30초마다 모든 SSE 연결에 heartbeat 이벤트 전송
+    @Scheduled(fixedRate = 30000)
+    public void sendHeartbeats() {
+        Map<Long, SseEmitter> emitters = emitterRepository.getAllEmitters();
+
+        emitters.forEach((memberId, emitter) -> {
+            try {
+                emitter.send(SseEmitter.event()
+                    .name("heartbeat")
+                    .data("💓 alive")
+                    .reconnectTime(3000)); // 재연결 시간 (ms)
+            } catch (IOException e) {
+                emitterRepository.remove(memberId); // 실패 시 정리
+            }
+        });
     }
 }

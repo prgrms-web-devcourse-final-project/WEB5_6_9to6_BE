@@ -26,6 +26,7 @@ public class SurvivalResultService {
 
     private static final int SURVIVAL_REWARD_POINTS = 10;
 
+    // 서바이벌 스터디 생존 결과에 따른 로직 처리
     @Transactional
     public void processSurvivalResult(Long studyId, int week, SurvivalResultRequest request) {
 

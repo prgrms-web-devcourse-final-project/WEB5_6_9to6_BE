@@ -1,7 +1,6 @@
 package com.grepp.spring.app.controller.api;
 
 import com.grepp.spring.app.controller.api.quiz.payload.*;
-import com.grepp.spring.app.model.quiz.amqp.QuizMessageProducer;
 import com.grepp.spring.app.model.quiz.entity.QuizSet;
 import com.grepp.spring.app.model.quiz.service.QuizGetService;
 import com.grepp.spring.app.model.quiz.service.QuizGradingService;
@@ -32,7 +31,7 @@ public class QuizController {
     @Operation(summary = "스터디별 퀴즈 문제 목록 조회", description = "스터디 ID(`studyId`)를 이용하여 해당 스터디에 생성된 모든 퀴즈 문제 목록을 조회합니다.")
     @GetMapping("/{studyId}/problems")
     public ResponseEntity<CommonResponse<List<QuizListResponse>>> findQuizProblems (@PathVariable Long studyId) throws MemberNotFoundException {
-        List<QuizListResponse> data = quizGetService.getQuizzesByStudyId(studyId);
+        List<QuizListResponse> data = quizGetService.getQuizzes(studyId);
         return ResponseEntity.ok(CommonResponse.success(data));
     }
 
