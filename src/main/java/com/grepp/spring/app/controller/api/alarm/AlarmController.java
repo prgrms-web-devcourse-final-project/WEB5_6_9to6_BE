@@ -1,7 +1,7 @@
 package com.grepp.spring.app.controller.api.alarm;
 
-import com.grepp.spring.app.controller.api.alarm.payload.AlarmRequest;
 import com.grepp.spring.app.controller.api.alarm.payload.AlarmListResponse;
+import com.grepp.spring.app.controller.api.alarm.payload.AlarmRequest;
 import com.grepp.spring.app.model.alarm.service.AlarmService;
 import com.grepp.spring.app.model.alarm.sse.EmitterRepository;
 import com.grepp.spring.infra.response.CommonResponse;
@@ -10,6 +10,7 @@ import com.grepp.spring.infra.util.SecurityUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -52,6 +53,15 @@ public class AlarmController {
         emitter.onTimeout(() -> emitterRepository.remove(memberId));
         emitter.onCompletion(() -> emitterRepository.remove(memberId));
 
+        try {
+            // 연결 직후 1회 전송 (프론트 연결 확인용)
+            emitter.send(SseEmitter.event()
+                .name("connect")
+                .data("SSE 연결 성공")
+                .reconnectTime(3000));
+        } catch (IOException e) {
+            emitterRepository.remove(memberId);
+        }
         return emitter;
     }
 

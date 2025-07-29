@@ -22,4 +22,9 @@ public class EmitterRepository {
         emitters.remove(memberId);
     }
 
+    // 모든 emitter 반환 (heartbeat용)
+    public Map<Long, SseEmitter> getAllEmitters() {
+        return emitters;
+    }
+
 }
