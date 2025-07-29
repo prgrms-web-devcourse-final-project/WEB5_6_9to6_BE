@@ -147,6 +147,8 @@ public class StudyService {
             throw new AlreadyExistException(ResponseCode.ALREADY_EXIST);
         }
 
+        memberRepository.addRewardPoints(memberId, 100);
+
         GoalAchievement newAchievement = GoalAchievement.builder()
             .studyGoal(studyGoal)
             .studyMember(studyMember)
