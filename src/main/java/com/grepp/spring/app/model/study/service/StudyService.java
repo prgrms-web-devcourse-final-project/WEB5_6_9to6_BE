@@ -449,7 +449,7 @@ public class StudyService {
             );
         } else {
             // 서바이벌 스터디는 자동 승인
-            studyMemberService.applyToStudy(receiverId, studyId);
+            studyMemberService.enrollInStudy(receiverId, studyId);
         }
     }
 

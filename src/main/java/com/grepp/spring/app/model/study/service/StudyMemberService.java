@@ -51,7 +51,7 @@ public class StudyMemberService {
     }
 
     @Transactional
-    public void applyToStudy(Long memberId, Long studyId) {
+    public void enrollInStudy(Long memberId, Long studyId) {
         Study study = studyRepository.findById(studyId)
             .orElseThrow(() -> new NotFoundException("해당 스터디가 존재하지 않습니다."));
 
