@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>실시간 알림 테스트</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    .alarm {
+      margin: 10px 0;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      background-color: #f9f9f9;
+    }
+    .unread {
+      background-color: #fff8e1;
+      font-weight: bold;
+    }
+    .nickname {
+      font-weight: bold;
+    }
+    .time {
+      font-size: 0.85em;
+      color: gray;
+    }
+    .avatar {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+  </style>
+</head>
+<body>
+<h2>📬 실시간 알림 수신 테스트</h2>
+<div id="status">SSE 연결 상태: 연결 중...</div>
+<ul id="notifications"></ul>
+
+<script>
+  const eventSource = new EventSource("/api/v1/alarms/subscribe", {
+    withCredentials: true  // 세션 기반 인증 필요 시 필수
+  });
+
+  eventSource.addEventListener("connect", e => {
+    document.getElementById("status").textContent = "✅ SSE 연결 성공";
+    console.log("SSE 연결 확인:", e.data);
+  });
+
+  eventSource.addEventListener("heartbeat", e => {
+    console.log("💓 heartbeat:", e.data);
+  });
+
+  eventSource.addEventListener("alarm", e => {
+    const data = JSON.parse(e.data);
+    console.log("📨 알림 수신:", data);
+
+    const li = document.createElement("li");
+    li.className = "alarm";
+    if (data.isRead === false) {
+      li.classList.add("unread");
+    }
+
+    li.innerHTML = `
+        <div>
+          <img class="avatar" src="${data.senderAvatarImage}" alt="avatar" />
+          <span class="nickname">${data.senderNickname}</span>
+          <span class="message">${data.message}</span>
+        </div>
+        <div class="meta">
+          <div class="time">받은 시각: ${data.sentAt}</div>
+          <div class="info">
+            알림 유형: <b>${data.type}</b>
+            ${data.resultStatus ? ` | 결과: <b>${data.resultStatus}</b>` : ""}
+            | 스터디 ID: <b>${data.studyId}</b>
+            | senderId: <b>${data.senderId}</b>
+            | 읽음 여부: <b>${data.isRead}</b>
+            | 알림 수신 ID: <b>${data.alarmRecipientId}</b>
+          </div>
+        </div>
+      `;
+
+    document.getElementById("notifications").prepend(li);
+  });
+
+  eventSource.onerror = e => {
+    document.getElementById("status").textContent = "❌ SSE 연결 오류";
+    console.error("SSE 오류 발생", e);
+  };
+</script>
+</body>
+</html>

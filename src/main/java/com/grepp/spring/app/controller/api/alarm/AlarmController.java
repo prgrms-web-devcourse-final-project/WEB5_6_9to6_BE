@@ -13,6 +13,7 @@ import jakarta.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 @Tag(name = "알림 API", description = "실시간 알림(SSE) 및 알림 목록 관련 API 입니다.")
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/v1/alarms")
@@ -60,6 +62,7 @@ public class AlarmController {
                 .data("SSE 연결 성공")
                 .reconnectTime(3000));
         } catch (IOException e) {
+            log.warn("SSE 연결 초기 전송 실패 - memberId: {}, 사유: {}", memberId, e.getMessage());
             emitterRepository.remove(memberId);
         }
         return emitter;

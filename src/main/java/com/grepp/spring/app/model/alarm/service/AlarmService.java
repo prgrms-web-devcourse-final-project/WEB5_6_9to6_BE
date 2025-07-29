@@ -2,6 +2,7 @@ package com.grepp.spring.app.model.alarm.service;
 
 import com.grepp.spring.app.controller.api.alarm.payload.AlarmListResponse;
 import com.grepp.spring.app.controller.api.alarm.payload.AlarmRequest;
+import com.grepp.spring.app.controller.api.alarm.payload.AlarmSseResponse;
 import com.grepp.spring.app.model.alarm.code.AlarmType;
 import com.grepp.spring.app.model.alarm.entity.Alarm;
 import com.grepp.spring.app.model.alarm.entity.AlarmRecipient;
@@ -88,25 +89,30 @@ public class AlarmService {
 
         // SSE 실시간 전송
         SseEmitter emitter = emitterRepository.get(receiver.getId());
-        if (emitter != null) {
+        if (emitter == null) {
+            log.warn("❌ emitter 없음 - 실시간 전송 불가 (receiverId={})", receiver.getId());
+            return;
+        }
 
-            try {
-                Map<String, Object> payload = new HashMap<>();
-                payload.put("alarmRecipientId", recipient.getId());
-                payload.put("type", alarm.getAlarmType().name());
-                payload.put("message", alarm.getMessage());
-                payload.put("sentAt", alarm.getCreatedAt());
-                payload.put("isRead", recipient.getIsRead());
-                payload.put("studyId", study.getStudyId());
+        AlarmSseResponse response = AlarmSseResponse.builder()
+            .alarmRecipientId(recipient.getId())
+            .type(alarm.getAlarmType())
+            .message(alarm.getMessage())
+            .sentAt(alarm.getCreatedAt())
+            .isRead(recipient.getIsRead())
+            .studyId(study.getStudyId())
+            .resultStatus(alarm.getResultStatus())
+            .senderId(sender.getId())
+            .senderNickname(sender.getNickname())
+            .senderAvatarImage(sender.getAvatarImage())
+            .build();
 
-                if (alarm.getAlarmType() == AlarmType.RESULT && alarm.getResultStatus() != null) {
-                    payload.put("resultStatus", alarm.getResultStatus().name());
-                }
-                emitter.send(SseEmitter.event().name("alarm").data(payload));
-            } catch (IOException e) {
-                log.warn("알림 전송 실패 - 수신자 ID: {}, 사유: {}", receiver.getId(), e.getMessage());
-                emitterRepository.remove(receiver.getId());
-            }
+        try {
+            emitter.send(SseEmitter.event().name("alarm").data(response));
+            log.info("✅ 알림 SSE 전송 완료: {}", response);
+        } catch (IOException e) {
+            log.warn("❌ 알림 전송 실패 - 수신자 ID: {}, 사유: {}", receiver.getId(), e.getMessage());
+            emitterRepository.remove(receiver.getId());
         }
     }
 
