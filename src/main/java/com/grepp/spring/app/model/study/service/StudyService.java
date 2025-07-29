@@ -527,7 +527,7 @@ public class StudyService {
     }
 
     // 매일 자정(00:00:00)에 종료일이 지난 스터디를 일괄 삭제
-    @Scheduled(cron = "* * * * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Seoul")
     @Transactional
     public void deactivateExpiredStudies() {
         LocalDate today = LocalDate.now();
