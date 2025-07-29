@@ -34,6 +34,7 @@ import com.grepp.spring.app.model.study.repository.ApplicantRepository;
 import com.grepp.spring.app.model.study.repository.GoalAchievementRepository;
 import com.grepp.spring.app.model.study.repository.StudyGoalRepository;
 import com.grepp.spring.app.model.study.repository.StudyRepository;
+import com.grepp.spring.infra.error.exceptions.AlreadyExistException;
 import com.grepp.spring.infra.error.exceptions.EarlierDateException;
 import com.grepp.spring.infra.error.exceptions.HasNotRightException;
 import com.grepp.spring.infra.error.exceptions.NotFoundException;
@@ -44,7 +45,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -142,6 +142,10 @@ public class StudyService {
             .orElseThrow(() -> new NotFoundException("해당 목표를 찾을 수 없습니다."));
         StudyMember studyMember = studyMemberRepository.findByStudyIdAndMemberId(studyId, memberId)
             .orElseThrow(() -> new NotFoundException("스터디 멤버 정보를 찾을 수 없습니다."));
+
+        if(goalAchievementRepository.findSameLog(goalId, memberId, LocalDate.now())) {
+            throw new AlreadyExistException(ResponseCode.ALREADY_EXIST);
+        }
 
         GoalAchievement newAchievement = GoalAchievement.builder()
             .studyGoal(studyGoal)
@@ -257,7 +261,7 @@ public class StudyService {
             throw new IllegalArgumentException("존재하지 않거나 비활성화된 스터디입니다.");
         }
 
-        return studyMemberRepository.existsActivatedByMemberIdAndStudyId(memberId, studyId);
+        return studyMemberRepository.existStudyMember(memberId, studyId);
     }
 
     // 스터디 멤버 조회
@@ -347,7 +351,6 @@ public class StudyService {
             .member(leader)
             .study(study)
             .studyRole(StudyRole.LEADER)
-            .activated(true)
             .build();
         studyMemberRepository.save(studyLeader);
 
