@@ -30,9 +30,9 @@ public interface StudyMemberRepositoryCustom {
 
     int countByStudyId(Long studyId);
 
-    boolean existsActivatedByMemberIdAndStudyId(Long memberId, Long studyId);
+    boolean existStudyMember(Long memberId, Long studyId);
 
     Optional<StudyMember> findByStudyIdAndStudyMemberId(Long studyId, Long studyMemberId);
 
-    boolean existStudyMember(Long memberId, Long studyId);
+//    boolean existStudyMember(Long memberId, Long studyId);
 }

@@ -45,7 +45,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -262,7 +261,7 @@ public class StudyService {
             throw new IllegalArgumentException("존재하지 않거나 비활성화된 스터디입니다.");
         }
 
-        return studyMemberRepository.existsActivatedByMemberIdAndStudyId(memberId, studyId);
+        return studyMemberRepository.existStudyMember(memberId, studyId);
     }
 
     // 스터디 멤버 조회
