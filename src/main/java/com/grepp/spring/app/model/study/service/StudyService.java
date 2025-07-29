@@ -1,9 +1,13 @@
 package com.grepp.spring.app.model.study.service;
 
+import com.grepp.spring.app.controller.api.alarm.payload.AlarmRequest;
+import com.grepp.spring.app.controller.api.study.payload.ApplicationResultRequest;
 import com.grepp.spring.app.controller.api.study.payload.StudyCreationRequest;
 import com.grepp.spring.app.controller.api.study.payload.StudySearchRequest;
 import com.grepp.spring.app.controller.api.study.payload.StudyUpdateRequest;
 import com.grepp.spring.app.controller.api.study.payload.WeeklyAchievementCount;
+import com.grepp.spring.app.model.alarm.code.AlarmType;
+import com.grepp.spring.app.model.alarm.service.AlarmService;
 import com.grepp.spring.app.model.member.code.StudyRole;
 import com.grepp.spring.app.model.member.dto.response.ApplicantsResponse;
 import com.grepp.spring.app.model.member.dto.response.StudyMemberResponse;
@@ -65,6 +69,9 @@ public class StudyService {
     private final StudyMemberRepository studyMemberRepository;
     private final MemberRepository memberRepository;
     private final ApplicantRepository applicantRepository;
+    private final AlarmService alarmService;
+    private final StudyMemberService studyMemberService;
+    private final ApplicantService applicantService;
 
     //필터 조건에 따라 스터디 목록 + 현재 인원 수 조회
 //    @Transactional(readOnly = true)
@@ -342,6 +349,7 @@ public class StudyService {
         return new StudyCreationResponse(study.getStudyId());
     }
 
+    // 스터디 신청(+ 알림)
     @Transactional
     public void applyToStudy(Long memberId, Long studyId, String introduction) {
         Study study = studyRepository.findByStudyIdAndActivatedTrue(studyId)
@@ -349,7 +357,6 @@ public class StudyService {
 
         Member member = memberRepository.findById(memberId)
             .orElseThrow(() -> new NotFoundException("회원 정보를 찾을 수 없습니다."));
-
 
         // 이미 신청한 경우 예외 발생
         if (applicantRepository.existsByStudyAndMember(study, member)) {
@@ -364,6 +371,77 @@ public class StudyService {
             .build();
 
         applicantRepository.save(applicant);
+
+        // 신청 알림 스터디장에게 전송
+        StudyMember leader = studyMemberRepository.findByStudyAndStudyRole(study, StudyRole.LEADER)
+            .orElseThrow(() -> new NotFoundException("스터디장 정보를 찾을 수 없습니다."));
+
+        Member leaderMember = leader.getMember();
+
+        alarmService.createAndSendAlarm(AlarmRequest.builder()
+            .senderId(memberId)  // 신청자
+            .receiverId(leaderMember.getId())  // 스터디장
+            .message(member.getNickname() + "님이 " + study.getName() + " 에 가입요청을 보냈습니다.")
+            .type(AlarmType.APPLY)
+            .studyId(studyId)
+            .build());
+
+    }
+
+    // 서바이벌 스터디 판별
+    @Transactional(readOnly = true)
+    public boolean isSurvival(Long studyId) {
+        if (!studyRepository.existsByStudyIdAndActivatedTrue(studyId)) {
+            throw new NotFoundException("존재하지 않거나 비활성화된 스터디입니다.");
+        }
+
+        return (StudyType.SURVIVAL == studyRepository.findStudyType(studyId));
+    }
+
+    // 스터디 신청 결과(승인/거절 + 알림)
+    @Transactional
+    public void processApplicationResult(Long senderId, Long studyId, ApplicationResultRequest req) {
+
+        boolean isSurvival = isSurvival(studyId);
+        Long receiverId = req.getMemberId();
+        ApplicantState result = req.getApplicationResult();
+
+        if (!isSurvival) {
+            // 스터디 이름 조회 (알림 메시지용)
+            Study study = studyRepository.findById(studyId)
+                .orElseThrow(() -> new NotFoundException("스터디를 찾을 수 없습니다."));
+            String studyName = study.getName();
+
+            // 신청 상태 업데이트
+            applicantService.updateState(senderId, receiverId, studyId, result);
+
+            // 승인 시 멤버로 등록
+            if (result == ApplicantState.ACCEPT) {
+                studyMemberService.saveMember(studyId, receiverId);
+            }
+
+            // 결과 메시지 생성
+            String message = switch (result) {
+                case ACCEPT -> String.format("스터디 [%s] 가입신청이 승인되었습니다.", studyName);
+                case REJECT -> String.format("스터디 [%s] 가입신청이 거절되었습니다.", studyName);
+                default -> throw new IllegalArgumentException("잘못된 신청 결과입니다.");
+            };
+
+            // 알림 전송
+            alarmService.createAndSendAlarm(
+                AlarmRequest.builder()
+                    .senderId(senderId)
+                    .receiverId(receiverId)
+                    .studyId(studyId)
+                    .type(AlarmType.RESULT)
+                    .resultStatus(result)
+                    .message(message)
+                    .build()
+            );
+        } else {
+            // 서바이벌 스터디는 자동 승인
+            studyMemberService.applyToStudy(receiverId, studyId);
+        }
     }
 
     @Transactional(readOnly = true)
@@ -418,15 +496,6 @@ public class StudyService {
         );
     }
 
-    @Transactional(readOnly = true)
-    public boolean isSurvival(Long studyId) {
-        if (!studyRepository.existsByStudyIdAndActivatedTrue(studyId)) {
-            throw new NotFoundException("존재하지 않거나 비활성화된 스터디입니다.");
-        }
-
-        return (StudyType.SURVIVAL == studyRepository.findStudyType(studyId));
-    }
-
     @Transactional
     public void updateStudyNotification(Long memberId, Long studyId, String notice) {
         // 비활성 스터디 접근 방지
@@ -472,6 +541,4 @@ public class StudyService {
 
         log.info("만료된 스터디 비활성화 완료");
     }
-
-
 }
