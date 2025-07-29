@@ -376,20 +376,6 @@ public class StudyService {
             throw new IllegalStateException("이미 해당 스터디에 가입되어 있습니다.");
         }
 
-        // 서바이벌 스터디는 바로 가입 처리
-        if (study.getStudyType() == StudyType.SURVIVAL) {
-            StudyMember studyMember = StudyMember.builder()
-                .study(study)
-                .member(member)
-                .studyRole(StudyRole.MEMBER)
-                .activated(true)
-                .build();
-
-            studyMemberRepository.save(studyMember);
-
-            return;
-        }
-
         Applicant applicant = Applicant.builder()
             .study(study)
             .member(member)
