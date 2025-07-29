@@ -29,7 +29,7 @@ public class WebSocketEventListener {
     private final MemberRepository memberRepository;
     private final SimpMessagingTemplate messagingTemplate;
     private final ChatService chatService;
-    private final RedisTemplate redisTemplate;
+    private final RedisTemplate<String,String> redisTemplate;
     private final WorkerManager workerManager;
 
     @EventListener
@@ -54,8 +54,8 @@ public class WebSocketEventListener {
 
                     // 메모리 및 Redis 등록
                     tracker.addSession(sessionId, memberId,studyId, email, nickname,image);
-                    redisTemplate.opsForHash().put("nicknames:" + studyId, email, memberId + ":" + nickname);
-                    redisTemplate.opsForHash().put("participants:" + studyId, sessionId, email);
+                    redisTemplate.<String,String>opsForHash().put("nicknames:" + studyId, email, memberId + ":" + nickname);
+                    redisTemplate.<String,String>opsForHash().put("participants:" + studyId, sessionId, email);
 
                     //접속자 broadcast
                     broadcastParticipants(studyId);
@@ -84,7 +84,7 @@ public class WebSocketEventListener {
                 tracker.removeUser(studyId, email);
 
                 // Redis 제거
-                redisTemplate.opsForHash().delete("participants:" + studyId, sessionId);
+                redisTemplate.<String,String>opsForHash().delete("participants:" + studyId, sessionId);
 
 
                 broadcastParticipants(studyId);

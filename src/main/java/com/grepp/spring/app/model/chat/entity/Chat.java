@@ -6,6 +6,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -16,7 +17,11 @@ import lombok.NoArgsConstructor;
 
 
 @Entity
-@Table(name="chat")
+@Table(name="chat",
+    indexes = {
+        @Index(name = "idx_chat_room_created_id", columnList = "room_id, created_at, id")
+    }
+)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class Chat extends BaseEntity {
