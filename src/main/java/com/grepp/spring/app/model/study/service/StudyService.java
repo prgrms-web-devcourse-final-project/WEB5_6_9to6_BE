@@ -295,9 +295,9 @@ public class StudyService {
         Member leader = memberRepository.findById(memberId)
             .orElseThrow(() -> new NotFoundException("회원 정보를 찾을 수 없습니다."));
 
-        if(req.getStudyType().equals(StudyType.SURVIVAL) && memberRepository.findRole(memberId) == Role.ROLE_USER) {
-            throw new HasNotRightException(ResponseCode.UNAUTHORIZED);
-        }
+//        if(req.getStudyType().equals(StudyType.SURVIVAL) && memberRepository.findRole(memberId) == Role.ROLE_USER) {
+//            throw new HasNotRightException(ResponseCode.UNAUTHORIZED);
+//        }
 
         // 1. 스터디 생성
         Study study = Study.builder()

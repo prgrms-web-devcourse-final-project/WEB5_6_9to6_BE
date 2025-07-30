@@ -288,7 +288,7 @@ public class RestApiExceptionAdvice {
         log.error(ex.getMessage(), ex);
         return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
-            .body(CommonResponse.error(ResponseCode.BAD_REQUEST.code(), ex.getMessage()));
+            .body(CommonResponse.error(ResponseCode.BAD_REQUEST));
     }
 
     @ExceptionHandler(LateApplyException.class)
@@ -296,7 +296,7 @@ public class RestApiExceptionAdvice {
         log.error(ex.getMessage(), ex);
         return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
-            .body(CommonResponse.error(ResponseCode.BAD_REQUEST.code(), ex.getMessage()));
+            .body(CommonResponse.error(ResponseCode.BAD_REQUEST));
     }
 }
 
