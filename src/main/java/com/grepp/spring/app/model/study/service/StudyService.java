@@ -147,6 +147,8 @@ public class StudyService {
             throw new AlreadyExistException(ResponseCode.ALREADY_EXIST);
         }
 
+        memberRepository.addRewardPoints(memberId, 100);
+
         GoalAchievement newAchievement = GoalAchievement.builder()
             .studyGoal(studyGoal)
             .studyMember(studyMember)
@@ -453,7 +455,7 @@ public class StudyService {
             );
         } else {
             // 서바이벌 스터디는 자동 승인
-            studyMemberService.applyToStudy(receiverId, studyId);
+            studyMemberService.enrollInStudy(receiverId, studyId);
         }
     }
 

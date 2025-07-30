@@ -400,6 +400,6 @@ public class MemberService {
         Member member = memberRepository.findById(memberId)
             .orElseThrow(() -> new NotFoundException("사용자를 찾을 수 없습니다."));
 
-        member.addRewardPoints(100);
+        member.addRewardPoints(10);
     }
 }
