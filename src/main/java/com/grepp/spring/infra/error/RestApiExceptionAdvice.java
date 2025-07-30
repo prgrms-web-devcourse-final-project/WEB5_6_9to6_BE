@@ -5,6 +5,7 @@ import com.grepp.spring.infra.error.exceptions.AlreadyExistException;
 import com.grepp.spring.infra.error.exceptions.CommonException;
 import com.grepp.spring.infra.error.exceptions.EarlierDateException;
 import com.grepp.spring.infra.error.exceptions.InsufficientRewardPointsException;
+import com.grepp.spring.infra.error.exceptions.LateApplyException;
 import com.grepp.spring.infra.error.exceptions.MailSendFailureException;
 import com.grepp.spring.infra.error.exceptions.NotFoundException;
 import com.grepp.spring.infra.error.exceptions.NullStateException;
@@ -284,6 +285,14 @@ public class RestApiExceptionAdvice {
 
     @ExceptionHandler(EarlierDateException.class)
     public ResponseEntity<CommonResponse<Void>> handlerEarlierDateException(EarlierDateException ex) {
+        log.error(ex.getMessage(), ex);
+        return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .body(CommonResponse.error(ResponseCode.BAD_REQUEST.code(), ex.getMessage()));
+    }
+
+    @ExceptionHandler(LateApplyException.class)
+    public ResponseEntity<CommonResponse<Void>> handlerLateApplyException(LateApplyException ex) {
         log.error(ex.getMessage(), ex);
         return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
