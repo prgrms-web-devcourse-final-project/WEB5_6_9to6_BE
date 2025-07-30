@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>스터디 채팅방</title>
+  <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+  <style>
+    #chat-box p {
+      margin: 5px 0;
+      font-size: 14px;
+      color: black;
+    }
+  </style>
+</head>
+<body>
+
+<h2>스터디 채팅방 (ID: <span id="study-id"></span>)</h2>
+<p>접속자 수: <span id="participant-count">0</span>명</p>
+<ul id="participant-list"></ul>
+<div id="chat-box" style="border: 1px solid #ccc; height: 300px; overflow-y: scroll;"></div>
+
+<!-- 귓속말 대상 선택 드롭다운 (receiverId에 이메일을 담음) -->
+<select id="receiver-select" style="margin-top: 10px;">
+  <option value="">전체에게</option>
+  <option value="alice@example.com">회원 1 (Alice)</option>
+  <option value="bob@example.com">회원 2 (Bob)</option>
+  <option value="carol@example.com">회원 3 (Carol)</option>
+</select>
+
+<br />
+<input type="text" id="message" placeholder="메시지 입력" style="width: 300px;" />
+<button onclick="sendMessage()">보내기</button>
+
+<script>
+  // studyId 가져오기 (URL 쿼리에서), 기본값 1
+
+  const studyId = new URLSearchParams(window.location.search).get("studyId") || 1;
+  document.getElementById("study-id").textContent = studyId;
+
+  let stompClient = null;
+
+  function connect() {
+    // const jwt = localStorage.getItem("jwt"); 채팅 서버 분리 시 추가
+    const socket = new SockJS("/ws-connect");
+    stompClient = Stomp.over(socket);
+
+    stompClient.connect(
+        { studyId: studyId
+       // , Authorization: `Bearer ${jwt}` 채팅 서버 분리 시 추가
+        },
+        () => {
+          console.log("웹소켓 연결됨");
+
+          // 채팅 구독
+          stompClient.subscribe(`/subscribe/${studyId}`, (message) => {
+            const response = JSON.parse(message.body);
+
+            if (response.code === "0000") {
+              showMessage(response.data);  // 여긴 기존 ChatMessageResponse
+            } else {
+              console.error("채팅 메시지 수신 실패:", response.message);
+            }
+          });
+
+          // 귓속말 수신
+          stompClient.subscribe(`/user/queue/messages`, (message) => {
+            const response = JSON.parse(message.body);
+            if (response.code === "0000") {
+              showMessage(response.data);  // 여긴 기존 ChatMessageResponse
+            } else {
+              console.error("채팅 메시지 수신 실패:", response.message);
+            }
+          });
+
+          // 실시간 참가자 목록 구독
+          stompClient.subscribe(`/subscribe/${studyId}/participants`, (message) => {
+            const response = JSON.parse(message.body);
+
+            // 코드 체크
+            if (response.code === "0000") {
+              const participants = response.data || [];
+
+              // UI 갱신
+              updateParticipantList(participants);
+            } else {
+              console.error(" 참가자 목록 조회 실패:", response.message);
+            }
+          });
+
+          // 최초 진입 시 현재 참가자 상태 fetch
+          fetch(`/api/v1/chats/${studyId}/participants`)
+          .then(response => response.json())
+          .then(data => {
+            const participants = data.data || [];
+            updateParticipantList(participants);
+          });
+
+          // 참가자 요청 트리거
+          stompClient.send(`/app/participants/${studyId}`, {}, {});
+        },
+        (error) => {
+          console.error("웹소켓 연결 실패:", error);
+        }
+    );
+  }
+
+  function showMessage(data) {
+    console.log("받은 메시지:", data);
+    const chatBox = document.getElementById("chat-box");
+    const messageElement = document.createElement("p");
+
+    if (data.image) {
+      const img = document.createElement("img");
+      img.src = data.image;
+      img.alt = data.senderNickname + " 프로필 이미지";
+      img.style.width = "24px";
+      img.style.height = "24px";
+      img.style.borderRadius = "50%";
+      img.style.marginRight = "6px";
+      img.style.verticalAlign = "middle";
+      messageElement.appendChild(img);
+    }
+
+    // 메시지 텍스트는 appendChild로 추가
+    const textNode = document.createTextNode(
+        data.receiverId
+            ? `(귓속말) ${data.senderId}: ${data.content}`
+            : `${data.senderId}: ${data.content}`
+    );
+
+    if (data.receiverId) {
+      messageElement.style.color = "blue";
+    }
+
+    messageElement.appendChild(textNode);
+    chatBox.appendChild(messageElement);
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+
+  function sendMessage() {
+    const message = document.getElementById("message").value.trim();
+    if (!message) return;
+
+    const select = document.getElementById("receiver-select");
+    const receiverId = select.value === "" ? null : select.value;
+
+    const payload = {
+      content: message,
+      receiverNickName: "아 하기싫다!", // 없을 경우 null
+      receiverEmail: receiverId // 필드 이름은 receiverId지만 값은 이메일
+    };
+
+    stompClient.send(`/publish/chat.send/${studyId}`, {}, JSON.stringify(payload));
+    document.getElementById("message").value = "";
+  }
+
+  function updateParticipantList(participants) {
+    document.getElementById("participant-count").textContent = participants.length;
+
+    const listElement = document.getElementById("participant-list");
+    listElement.innerHTML = "";
+    participants.forEach(p => {
+      const li = document.createElement("li");
+
+      const img = document.createElement("img");
+      img.src = p.image || 'default-avatar.png';  // 기본 이미지 옵션
+      img.alt = p.nickname + " 프로필 이미지";
+      img.style.width = "30px";
+      img.style.height = "30px";
+      img.style.borderRadius = "50%";
+      img.style.marginRight = "8px";
+      img.style.verticalAlign = "middle";
+
+      li.appendChild(img);
+      li.appendChild(document.createTextNode(`${p.nickname} (${p.status})`));
+      listElement.appendChild(li);
+    });
+  }
+
+  connect();
+</script>
+
+</body>
+</html>

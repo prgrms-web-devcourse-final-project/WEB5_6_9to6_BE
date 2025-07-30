@@ -14,7 +14,48 @@
     </p>
     <div class="col-md-4 mb-5">
         <h4 class="mb-3">[[#{home.index.exploreEntities}]]</h4>
+        <div class="list-group">
+            <a href="/oauth2/authorization/kakao">카카오 로그인</a>
+            <a href="/oauth2/authorization/google">구글 로그인</a>
+        </div>
     </div>
-</div>
+    <div>
+        <button id="logoutBtn" type="button">로그아웃</button>
+    </div>
+
+</div> <th:block layout:fragment="script">
+    <script>
+      // 페이지 로드가 완료되면 스크립트 실행
+      document.addEventListener('DOMContentLoaded', function () {
+        const logoutButton = document.getElementById('logoutBtn');
+
+        if (logoutButton) {
+          logoutButton.addEventListener('click', function (event) {
+            // 기본 동작 방지
+            event.preventDefault();
+
+            // fetch API를 사용해 POST 방식으로 로그아웃 요청
+            fetch('/auth/logout', {
+              method: 'POST'
+            }).then(response => {
+              // 서버에서 200 OK 응답을 받으면
+              if (response.ok) {
+                // 로그아웃 성공 알림 후 홈페이지로 이동
+                alert('로그아웃 되었습니다.');
+                // window.location.href = '/'; // 홈페이지나 로그인 페이지로 이동
+              } else {
+                // 실패 처리
+                alert('로그아웃에 실패했습니다.');
+              }
+            }).catch(error => {
+              console.error('Logout error:', error);
+              alert('오류가 발생했습니다.');
+            });
+          });
+        }
+      });
+    </script>
+</th:block>
+
 </body>
 </html>
