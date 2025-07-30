@@ -549,8 +549,33 @@ public class StudyService {
         log.info("만료된 스터디 {}개 비활성화 시작...", expiredStudies.size());
 
         for (Study study : expiredStudies) {
-            if (study.isActivated()) {
-                study.setActivated(false);
+
+            if (!study.isActivated()) {
+                continue;
+            }
+
+            study.setActivated(false);
+
+            if (study.getStudyType() != StudyType.SURVIVAL) {
+                continue;
+            }
+
+
+            List<Member> activeMembers = study.getStudyMembers().stream()
+                    .filter(StudyMember::isActivated)
+                    .map(StudyMember::getMember)
+                    .filter(Member::isActivated)
+                    .toList();
+
+            if (!activeMembers.isEmpty()) {
+                int rewardPerMember = 10000 / activeMembers.size();
+                log.info("스터디 ID {}: {}명의 활성 멤버에게 각각 {} 포인트 지급", study.getStudyId(), activeMembers.size(), rewardPerMember);
+
+                for (Member member : activeMembers) {
+                    member.addRewardPoints(rewardPerMember);
+                }
+            } else {
+                log.info("스터디 ID {}: 보상을 지급할 활성 멤버가 없습니다.", study.getStudyId());
             }
         }
 

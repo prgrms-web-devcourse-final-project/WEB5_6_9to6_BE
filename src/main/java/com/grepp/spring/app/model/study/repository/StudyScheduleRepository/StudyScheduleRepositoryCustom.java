@@ -8,4 +8,7 @@ import java.util.List;
 public interface StudyScheduleRepositoryCustom {
     @EntityGraph(attributePaths = {"study"})
     List<StudySchedule> findSurvivalSchedules(DayOfWeek dayOfWeek, String startTime);
+
+    @EntityGraph(attributePaths = {"study"})
+    List<StudySchedule> findWithStudyByDayOfWeekAndEndTime(DayOfWeek dayOfWeek, String endTime);
 }

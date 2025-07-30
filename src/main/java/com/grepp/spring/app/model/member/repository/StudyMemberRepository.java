@@ -3,6 +3,8 @@ package com.grepp.spring.app.model.member.repository;
 import com.grepp.spring.app.model.member.code.StudyRole;
 import com.grepp.spring.app.model.member.entity.StudyMember;
 import com.grepp.spring.app.model.study.entity.Study;
+
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,4 +23,6 @@ public interface StudyMemberRepository extends JpaRepository<StudyMember, Long>,
     Optional<StudyMember> findByStudy_StudyIdAndStudyMemberId(Long studyId, Long studyMemberId);
 
     Optional<StudyMember> findByStudyAndStudyRole(Study study, StudyRole studyRole);
+
+    List<StudyMember> findAllByStudy_StudyIdAndActivatedIsTrue(Long studyId);
 }
