@@ -113,4 +113,8 @@ public class Member extends BaseEntity{
     public void addRewardPoints(int amount) {
         this.rewardPoints += amount;
     }
+
+    public void incrementWinCount() {
+        this.winCount++;
+    }
 }
