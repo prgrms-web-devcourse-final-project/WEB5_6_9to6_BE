@@ -573,6 +573,7 @@ public class StudyService {
 
                 for (Member member : activeMembers) {
                     member.addRewardPoints(rewardPerMember);
+                    member.incrementWinCount();
                 }
             } else {
                 log.info("스터디 ID {}: 보상을 지급할 활성 멤버가 없습니다.", study.getStudyId());
