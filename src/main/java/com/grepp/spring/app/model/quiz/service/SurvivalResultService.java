@@ -24,7 +24,7 @@ public class SurvivalResultService {
     private final QuizRecordRepository quizRecordRepository;
     private final MemberRepository memberRepository;
 
-    private static final int SURVIVAL_REWARD_POINTS = 10;
+    private static final int SURVIVAL_REWARD_POINTS = 500;
 
     // 서바이벌 스터디 생존 결과에 따른 로직 처리
     @Transactional
