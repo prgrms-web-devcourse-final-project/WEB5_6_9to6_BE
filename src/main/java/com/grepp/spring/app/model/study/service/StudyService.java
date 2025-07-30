@@ -275,6 +275,7 @@ public class StudyService {
         List<StudyMember> studyMembers = studyMemberRepository.findByStudyId(studyId);
 
         return studyMembers.stream()
+            .filter(sm -> sm.getMember().getRole() != Role.ROLE_ADMIN)
             .map(studyMember -> {
                 Member member = studyMember.getMember();
                 return StudyMemberResponse.builder()
@@ -367,7 +368,12 @@ public class StudyService {
 
         // 이미 신청한 경우 예외 발생
         if (applicantRepository.existsByStudyAndMember(study, member)) {
-            throw new IllegalStateException("이미 해당 스터디에 신청하셨습니다.");
+            throw new AlreadyExistException(ResponseCode.ALREADY_EXIST);
+        }
+
+        //  이미 가입한 경우 예외 발생
+        if (studyMemberRepository.existStudyMember(member.getId(), study.getStudyId())) {
+            throw new AlreadyExistException(ResponseCode.ALREADY_EXIST);
         }
 
         Applicant applicant = Applicant.builder()
