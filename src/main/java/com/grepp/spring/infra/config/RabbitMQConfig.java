@@ -36,4 +36,9 @@ public class RabbitMQConfig {
     public MessageConverter messageConverter(ObjectMapper objectMapper) {
         return new Jackson2JsonMessageConverter(objectMapper);
     }
+
+    @Bean
+    public Queue myQueue() {
+        return new Queue("test", true); // durable=true
+    }
 }

@@ -32,6 +32,8 @@ public interface StudyMemberRepositoryCustom {
 
     boolean existStudyMember(Long memberId, Long studyId);
 
+    boolean existSurvivalMember(Long memberId, Long studyId);
+
     Optional<StudyMember> findByStudyIdAndStudyMemberId(Long studyId, Long studyMemberId);
 
 //    boolean existStudyMember(Long memberId, Long studyId);

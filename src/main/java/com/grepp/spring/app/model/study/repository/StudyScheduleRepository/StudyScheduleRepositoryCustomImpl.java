@@ -26,4 +26,16 @@ public class StudyScheduleRepositoryCustomImpl implements StudyScheduleRepositor
                 )
                 .fetch();
     }
+
+    @Override
+    public List<StudySchedule> findWithStudyByDayOfWeekAndEndTime(DayOfWeek dayOfWeek, String endTime) {
+        return queryFactory
+                .selectFrom(studySchedule)
+                .join(studySchedule.study, study).fetchJoin()
+                .where(
+                        studySchedule.dayOfWeek.eq(dayOfWeek),
+                        studySchedule.endTime.eq(endTime)
+                )
+                .fetch();
+    }
 }

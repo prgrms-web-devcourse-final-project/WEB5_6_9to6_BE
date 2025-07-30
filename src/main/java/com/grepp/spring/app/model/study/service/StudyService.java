@@ -147,6 +147,8 @@ public class StudyService {
             throw new AlreadyExistException(ResponseCode.ALREADY_EXIST);
         }
 
+        memberRepository.addRewardPoints(memberId, 100);
+
         GoalAchievement newAchievement = GoalAchievement.builder()
             .studyGoal(studyGoal)
             .studyMember(studyMember)
@@ -296,9 +298,9 @@ public class StudyService {
         Member leader = memberRepository.findById(memberId)
             .orElseThrow(() -> new NotFoundException("회원 정보를 찾을 수 없습니다."));
 
-        if(req.getStudyType().equals(StudyType.SURVIVAL) && memberRepository.findRole(memberId) == Role.ROLE_USER) {
-            throw new HasNotRightException(ResponseCode.UNAUTHORIZED);
-        }
+//        if(req.getStudyType().equals(StudyType.SURVIVAL) && memberRepository.findRole(memberId) == Role.ROLE_USER) {
+//            throw new HasNotRightException(ResponseCode.UNAUTHORIZED);
+//        }
 
         // 1. 스터디 생성
         Study study = Study.builder()
@@ -453,7 +455,7 @@ public class StudyService {
             );
         } else {
             // 서바이벌 스터디는 자동 승인
-            studyMemberService.applyToStudy(receiverId, studyId);
+            studyMemberService.enrollInStudy(receiverId, studyId);
         }
     }
 
@@ -547,8 +549,33 @@ public class StudyService {
         log.info("만료된 스터디 {}개 비활성화 시작...", expiredStudies.size());
 
         for (Study study : expiredStudies) {
-            if (study.isActivated()) {
-                study.setActivated(false);
+
+            if (!study.isActivated()) {
+                continue;
+            }
+
+            study.setActivated(false);
+
+            if (study.getStudyType() != StudyType.SURVIVAL) {
+                continue;
+            }
+
+
+            List<Member> activeMembers = study.getStudyMembers().stream()
+                    .filter(StudyMember::isActivated)
+                    .map(StudyMember::getMember)
+                    .filter(Member::isActivated)
+                    .toList();
+
+            if (!activeMembers.isEmpty()) {
+                int rewardPerMember = 10000 / activeMembers.size();
+                log.info("스터디 ID {}: {}명의 활성 멤버에게 각각 {} 포인트 지급", study.getStudyId(), activeMembers.size(), rewardPerMember);
+
+                for (Member member : activeMembers) {
+                    member.addRewardPoints(rewardPerMember);
+                }
+            } else {
+                log.info("스터디 ID {}: 보상을 지급할 활성 멤버가 없습니다.", study.getStudyId());
             }
         }
 
