@@ -61,7 +61,7 @@ public class StudyMemberService {
             .orElseThrow(() -> new NotFoundException("회원 정보를 찾을 수 없습니다."));
 
         // 시작일 이후이면 등록 금지
-        if(study.getStartDate().isBefore(LocalDate.now()) || study.getEndDate().isAfter(LocalDate.now())) {
+        if( study.getStartDate().isBefore(LocalDate.now()) ) {
             throw new LateApplyException(ResponseCode.BAD_REQUEST);
         }
         else if(study.getStartDate() == null) {
