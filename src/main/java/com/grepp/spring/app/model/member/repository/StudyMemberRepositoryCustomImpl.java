@@ -179,6 +179,19 @@ public class StudyMemberRepositoryCustomImpl implements StudyMemberRepositoryCus
     }
 
     @Override
+    public boolean existSurvivalMember(Long memberId, Long studyId) {
+        Integer result = queryFactory
+            .selectOne()
+            .from(sm)
+            .where(
+                sm.study.studyId.eq(studyId),
+                sm.member.id.eq(memberId)
+            )
+            .fetchFirst();
+        return result != null;
+    }
+
+    @Override
     public Optional<StudyMember> findByStudyIdAndStudyMemberId(Long studyId, Long studyMemberId) {
         StudyMember result = queryFactory
             .selectFrom(sm)
