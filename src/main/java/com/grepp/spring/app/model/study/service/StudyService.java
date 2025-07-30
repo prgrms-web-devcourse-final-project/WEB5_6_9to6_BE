@@ -368,12 +368,12 @@ public class StudyService {
 
         // 이미 신청한 경우 예외 발생
         if (applicantRepository.existsByStudyAndMember(study, member)) {
-            throw new IllegalStateException("이미 해당 스터디에 신청하셨습니다.");
+            throw new AlreadyExistException(ResponseCode.ALREADY_EXIST);
         }
 
         //  이미 가입한 경우 예외 발생
         if (studyMemberRepository.existStudyMember(member.getId(), study.getStudyId())) {
-            throw new IllegalStateException("이미 해당 스터디에 가입되어 있습니다.");
+            throw new AlreadyExistException(ResponseCode.ALREADY_EXIST);
         }
 
         Applicant applicant = Applicant.builder()
