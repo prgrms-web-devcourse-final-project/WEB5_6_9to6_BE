@@ -7,7 +7,7 @@ public class TokenCookieFactory {
         return ResponseCookie.from(name, value)
             .maxAge(expires)
             .path("/")
-            .domain(".studium-9to6.vercel.app")
+//            .domain(".studium-9to6.vercel.app")
             .httpOnly(true)             // HttpOnly
             .secure(true)
             .sameSite("None")// Secure
