@@ -28,13 +28,13 @@ import static org.springframework.http.HttpMethod.GET;
 @EnableMethodSecurity(prePostEnabled = true)
 @RequiredArgsConstructor
 public class SecurityConfig {
-    
+
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final JwtExceptionFilter jwtExceptionFilter;
 //    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
     private final OAuth2FailureHandler oAuth2FailureHandler;
-    
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -55,7 +55,7 @@ public class SecurityConfig {
                     .requestMatchers("/favicon.ico", "/img/**", "/js/**","/css/**").permitAll()
                     .requestMatchers("/", "/error", "/oauth2/**",  "/login/**").permitAll()
                     // NOTE 아래의 스웨거관련 엔드포인트는 정식 배포 이후에 주석처리 해주세요
-                    .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                    .requestMatchers("/v3/api-docs/", "/swagger-ui/", "/swagger-ui.html").hasAnyRole("ADMIN")
                     .requestMatchers("/api/v1/auth/signup", "/api/v1/auth/login", "/api/v1/auth/email/**").permitAll()
                     .requestMatchers("/api/v1/studies/search", "/api/v1/studies/categories").permitAll()
                     .requestMatchers(GET,"/api/v1/studies/*").permitAll()
@@ -75,8 +75,8 @@ public class SecurityConfig {
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring()
-                            .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
-        .requestMatchers("/ws-connect/**");
+            .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
+            .requestMatchers("/ws-connect/**");
     }
 
     @Bean
