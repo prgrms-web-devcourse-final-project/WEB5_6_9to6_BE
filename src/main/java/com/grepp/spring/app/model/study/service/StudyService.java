@@ -6,7 +6,7 @@ import com.grepp.spring.app.model.applicant.dto.request.ApplicationResultRequest
 import com.grepp.spring.app.model.study.dto.request.StudyCreationRequest;
 import com.grepp.spring.app.model.study.dto.request.StudySearchRequest;
 import com.grepp.spring.app.model.study.dto.request.StudyUpdateRequest;
-import com.grepp.spring.app.model.study.dto.response.WeeklyAchievementCount;
+import com.grepp.spring.app.model.studyMmeber.dto.response.WeeklyAchievementCount;
 import com.grepp.spring.app.model.alarm.code.AlarmType;
 import com.grepp.spring.app.model.alarm.service.AlarmService;
 import com.grepp.spring.app.model.auth.code.Role;
@@ -25,7 +25,7 @@ import com.grepp.spring.app.model.study.code.StudyType;
 import com.grepp.spring.app.model.study.dto.response.StudyCreationResponse;
 import com.grepp.spring.app.model.study.dto.response.StudyInfoResponse;
 import com.grepp.spring.app.model.study.dto.response.StudyListResponse;
-import com.grepp.spring.app.model.study.dto.response.WeeklyGoalStatusResponse;
+import com.grepp.spring.app.model.studyMmeber.dto.response.WeeklyGoalStatusResponse;
 import com.grepp.spring.app.model.applicant.entity.Applicant;
 import com.grepp.spring.app.model.studyMmeber.entity.GoalAchievement;
 import com.grepp.spring.app.model.study.entity.Study;

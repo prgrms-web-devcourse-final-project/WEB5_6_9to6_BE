@@ -1,4 +1,4 @@
-package com.grepp.spring.app.model.study.dto.response;
+package com.grepp.spring.app.model.studyMmeber.dto.response;
 
 import com.grepp.spring.app.model.member.dto.response.AttendanceResponse;
 import com.grepp.spring.app.model.studyMmeber.entity.Attendance;

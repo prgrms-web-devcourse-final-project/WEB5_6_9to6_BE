@@ -1,6 +1,6 @@
 package com.grepp.spring.app.model.studyMmeber.serivce;
 
-import com.grepp.spring.app.model.study.dto.response.CheckGoalResponse;
+import com.grepp.spring.app.model.studyMmeber.dto.response.CheckGoalResponse;
 import com.grepp.spring.app.model.studyMmeber.code.StudyRole;
 import com.grepp.spring.app.model.member.entity.Member;
 import com.grepp.spring.app.model.studyMmeber.entity.StudyMember;

@@ -1,7 +1,7 @@
 package com.grepp.spring.app.model.studyMmeber.repository.goalAchievement;
 
-import com.grepp.spring.app.model.study.dto.response.CheckGoalResponse;
-import com.grepp.spring.app.model.study.dto.response.WeeklyAchievementCount;
+import com.grepp.spring.app.model.studyMmeber.dto.response.CheckGoalResponse;
+import com.grepp.spring.app.model.studyMmeber.dto.response.WeeklyAchievementCount;
 import com.grepp.spring.app.model.member.entity.QStudyMember;
 import com.grepp.spring.app.model.study.entity.QGoalAchievement;
 import com.grepp.spring.app.model.study.entity.QStudyGoal;
