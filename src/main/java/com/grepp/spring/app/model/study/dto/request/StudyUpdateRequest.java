@@ -1,10 +1,9 @@
-package com.grepp.spring.app.controller.api.study.payload;
+package com.grepp.spring.app.model.study.dto.request;
 
 import com.grepp.spring.app.model.study.code.Category;
 import com.grepp.spring.app.model.study.code.DayOfWeek;
 import com.grepp.spring.app.model.study.code.GoalType;
 import com.grepp.spring.app.model.study.code.Region;
-import com.grepp.spring.app.model.study.code.Status;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.Data;

@@ -1,6 +1,5 @@
-package com.grepp.spring.app.model.study.dto;
+package com.grepp.spring.app.model.study.dto.response;
 
-import java.time.LocalDate;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

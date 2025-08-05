@@ -1,15 +1,13 @@
-package com.grepp.spring.app.controller.api.study.payload;
+package com.grepp.spring.app.model.study.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.grepp.spring.app.model.study.code.Category;
-import com.grepp.spring.app.model.study.code.DayOfWeek;
 import com.grepp.spring.app.model.study.code.GoalType;
 import com.grepp.spring.app.model.study.code.Region;
 import com.grepp.spring.app.model.study.code.StudyType;
 import lombok.Getter;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 
 @Getter

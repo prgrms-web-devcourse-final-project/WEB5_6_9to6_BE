@@ -1,4 +1,4 @@
-package com.grepp.spring.app.controller.api.study.payload;
+package com.grepp.spring.app.model.study.dto.request;
 
 import lombok.Getter;
 

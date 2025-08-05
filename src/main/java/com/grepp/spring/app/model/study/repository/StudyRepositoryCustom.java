@@ -1,9 +1,9 @@
 package com.grepp.spring.app.model.study.repository;
 
-import com.grepp.spring.app.controller.api.study.payload.StudySearchRequest;
+import com.grepp.spring.app.model.study.dto.request.StudySearchRequest;
 import com.grepp.spring.app.model.member.dto.response.ApplicantsResponse;
 import com.grepp.spring.app.model.study.code.StudyType;
-import com.grepp.spring.app.model.study.dto.StudyListResponse;
+import com.grepp.spring.app.model.study.dto.response.StudyListResponse;
 import com.grepp.spring.app.model.study.entity.Study;
 import java.time.LocalDate;
 import java.util.List;
