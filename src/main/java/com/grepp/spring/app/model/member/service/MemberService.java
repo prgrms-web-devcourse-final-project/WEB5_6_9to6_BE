@@ -13,7 +13,7 @@ import com.grepp.spring.app.model.member.dto.response.MemberStudyListResponse;
 import com.grepp.spring.app.model.member.dto.response.MypageStudyInfoResponse;
 import com.grepp.spring.app.model.member.dto.response.RequiredMemberInfoResponse;
 import com.grepp.spring.app.model.member.dto.response.StudyInfoResponse;
-import com.grepp.spring.app.model.member.entity.Attendance;
+import com.grepp.spring.app.model.study.entity.Attendance;
 import com.grepp.spring.app.model.member.entity.Member;
 import com.grepp.spring.app.model.member.entity.StudyMember;
 import com.grepp.spring.app.model.member.repository.MemberRepository;

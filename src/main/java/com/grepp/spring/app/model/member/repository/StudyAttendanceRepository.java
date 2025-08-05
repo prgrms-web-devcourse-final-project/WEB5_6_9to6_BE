@@ -1,6 +1,6 @@
 package com.grepp.spring.app.model.member.repository;
 
-import com.grepp.spring.app.model.member.entity.Attendance;
+import com.grepp.spring.app.model.study.entity.Attendance;
 import com.grepp.spring.app.model.member.entity.StudyMember;
 import java.time.LocalDate;
 import java.util.List;

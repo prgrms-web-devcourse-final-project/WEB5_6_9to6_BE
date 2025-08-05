@@ -1,7 +1,7 @@
 package com.grepp.spring.app.model.study.dto;
 
 import com.grepp.spring.app.model.member.dto.response.AttendanceResponse;
-import com.grepp.spring.app.model.member.entity.Attendance;
+import com.grepp.spring.app.model.study.entity.Attendance;
 import lombok.Getter;
 
 import java.util.List;
