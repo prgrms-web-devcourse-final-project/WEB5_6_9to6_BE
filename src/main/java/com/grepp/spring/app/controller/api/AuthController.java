@@ -1,7 +1,7 @@
-package com.grepp.spring.app.controller.api.auth;
+package com.grepp.spring.app.controller.api;
 
-import com.grepp.spring.app.controller.api.auth.payload.LoginRequest;
-import com.grepp.spring.app.controller.api.auth.payload.TokenResponse;
+import com.grepp.spring.app.model.alarm.dto.request.LoginRequest;
+import com.grepp.spring.app.model.alarm.dto.response.TokenResponse;
 import com.grepp.spring.app.model.auth.AuthService;
 import com.grepp.spring.app.model.auth.code.AuthToken;
 import com.grepp.spring.app.model.auth.domain.Principal;
@@ -31,7 +31,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 

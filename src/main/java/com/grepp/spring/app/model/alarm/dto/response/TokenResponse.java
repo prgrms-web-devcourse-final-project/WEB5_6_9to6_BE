@@ -1,4 +1,4 @@
-package com.grepp.spring.app.controller.api.auth.payload;
+package com.grepp.spring.app.model.alarm.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
