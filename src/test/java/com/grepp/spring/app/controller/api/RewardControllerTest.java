@@ -1,6 +1,6 @@
 package com.grepp.spring.app.controller.api;
 
-import com.grepp.spring.app.controller.api.reward.payload.RewardItemResponse;
+import com.grepp.spring.app.model.reward.dto.response.RewardItemResponse;
 import com.grepp.spring.app.model.auth.domain.Principal;
 import com.grepp.spring.app.model.member.service.MemberService;
 import com.grepp.spring.app.model.reward.code.ItemType;

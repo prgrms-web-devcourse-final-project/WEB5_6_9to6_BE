@@ -1,4 +1,4 @@
-package com.grepp.spring.app.controller.api.reward.payload;
+package com.grepp.spring.app.model.reward.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,4 +1,4 @@
-package com.grepp.spring.app.controller.api.reward.payload;
+package com.grepp.spring.app.model.reward.dto.request;
 
 import com.grepp.spring.app.model.reward.code.ItemType;
 import jakarta.validation.constraints.NotNull;

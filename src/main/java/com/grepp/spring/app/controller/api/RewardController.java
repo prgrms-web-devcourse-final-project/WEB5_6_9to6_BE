@@ -1,13 +1,13 @@
 package com.grepp.spring.app.controller.api;
 
-import com.grepp.spring.app.controller.api.reward.payload.ImageResponse;
-import com.grepp.spring.app.controller.api.reward.payload.SaveImageRequest;
+import com.grepp.spring.app.model.reward.dto.response.ImageResponse;
+import com.grepp.spring.app.model.reward.dto.request.SaveImageRequest;
 import com.grepp.spring.app.model.member.service.MemberService;
 import com.grepp.spring.app.model.reward.code.ItemType;
 import com.grepp.spring.app.model.reward.dto.internal.CreateRewardItemRequest;
 import com.grepp.spring.app.model.reward.dto.internal.ItemSetDto;
-import com.grepp.spring.app.controller.api.reward.payload.OwnItemResponse;
-import com.grepp.spring.app.controller.api.reward.payload.RewardItemResponse;
+import com.grepp.spring.app.model.reward.dto.response.OwnItemResponse;
+import com.grepp.spring.app.model.reward.dto.response.RewardItemResponse;
 import com.grepp.spring.app.model.reward.dto.internal.OwnItemDto;
 import com.grepp.spring.app.model.reward.dto.internal.RewardItemDto;
 import com.grepp.spring.app.model.reward.service.ItemSetService;

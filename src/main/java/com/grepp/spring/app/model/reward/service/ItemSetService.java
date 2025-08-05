@@ -1,7 +1,7 @@
 package com.grepp.spring.app.model.reward.service;
 
-import com.grepp.spring.app.controller.api.reward.payload.ImageResponse;
-import com.grepp.spring.app.controller.api.reward.payload.SaveImageRequest;
+import com.grepp.spring.app.model.reward.dto.response.ImageResponse;
+import com.grepp.spring.app.model.reward.dto.request.SaveImageRequest;
 import com.grepp.spring.app.model.reward.code.ItemType;
 import com.grepp.spring.app.model.reward.dto.internal.ItemSetDto;
 import com.grepp.spring.app.model.reward.entity.ItemSet;
