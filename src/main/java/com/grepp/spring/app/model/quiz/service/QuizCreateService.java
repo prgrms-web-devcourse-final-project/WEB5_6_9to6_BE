@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.cloud.vertexai.generativeai.GenerativeModel;
 import com.google.cloud.vertexai.generativeai.ResponseHandler;
-import com.grepp.spring.app.model.quiz.dto.maybeResponse.QuizGenerationDto;
+import com.grepp.spring.app.model.quiz.dto.internal.QuizGenerationDto;
 import com.grepp.spring.app.model.quiz.entity.Choice;
 import com.grepp.spring.app.model.quiz.entity.Quiz;
 import com.grepp.spring.app.model.quiz.entity.QuizSet;

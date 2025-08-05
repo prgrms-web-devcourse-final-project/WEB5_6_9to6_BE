@@ -1,7 +1,7 @@
 package com.grepp.spring.app.model.quiz.service;
 
 import com.grepp.spring.app.model.quiz.dto.response.QuizListResponse;
-import com.grepp.spring.app.model.quiz.dto.maybeResponse.QuizProjection;
+import com.grepp.spring.app.model.quiz.dto.internal.QuizProjection;
 import com.grepp.spring.app.model.quiz.repository.quizSetRepository.QuizSetRepository;
 import com.grepp.spring.app.model.study.repository.StudyRepository;
 import com.grepp.spring.infra.error.exceptions.Quiz.InvalidQuizException;
