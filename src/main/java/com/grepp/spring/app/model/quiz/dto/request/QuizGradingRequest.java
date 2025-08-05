@@ -1,4 +1,4 @@
-package com.grepp.spring.app.controller.api.quiz.payload;
+package com.grepp.spring.app.model.quiz.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

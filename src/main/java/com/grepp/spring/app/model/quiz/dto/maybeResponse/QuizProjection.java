@@ -1,4 +1,4 @@
-package com.grepp.spring.app.model.quiz.dto;
+package com.grepp.spring.app.model.quiz.dto.maybeResponse;
 
 import lombok.Getter;
 import java.util.List;

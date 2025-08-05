@@ -1,7 +1,7 @@
 package com.grepp.spring.app.model.quiz.service;
 
-import com.grepp.spring.app.controller.api.quiz.payload.QuizGradingRequest;
-import com.grepp.spring.app.controller.api.quiz.payload.QuizGradingResponse;
+import com.grepp.spring.app.model.quiz.dto.request.QuizGradingRequest;
+import com.grepp.spring.app.model.quiz.dto.response.QuizGradingResponse;
 import com.grepp.spring.app.model.quiz.entity.Quiz;
 import com.grepp.spring.app.model.quiz.repository.quizRepository.QuizRepository;
 import com.grepp.spring.infra.error.exceptions.Quiz.InvalidQuizGradeRequestException;

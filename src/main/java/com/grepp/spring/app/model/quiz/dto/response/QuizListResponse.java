@@ -1,6 +1,6 @@
-package com.grepp.spring.app.controller.api.quiz.payload;
+package com.grepp.spring.app.model.quiz.dto.response;
 
-import com.grepp.spring.app.model.quiz.dto.QuizDto;
+import com.grepp.spring.app.model.quiz.dto.maybeResponse.QuizDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import java.util.List;

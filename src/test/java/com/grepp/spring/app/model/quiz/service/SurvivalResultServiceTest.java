@@ -1,6 +1,6 @@
 package com.grepp.spring.app.model.quiz.service;
 
-import com.grepp.spring.app.controller.api.quiz.payload.SurvivalResultRequest;
+import com.grepp.spring.app.model.quiz.dto.request.SurvivalResultRequest;
 import com.grepp.spring.app.model.member.entity.Member;
 import com.grepp.spring.app.model.quiz.repository.quizSetRepository.QuizSetRepository;
 import com.grepp.spring.app.model.study.entity.StudyMember;
