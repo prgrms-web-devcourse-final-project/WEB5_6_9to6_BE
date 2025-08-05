@@ -1,7 +1,7 @@
 package com.grepp.spring.app.controller.api.reward.payload;
 
 
-import com.grepp.spring.app.model.reward.dto.OwnItemDto;
+import com.grepp.spring.app.model.reward.dto.internal.OwnItemDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

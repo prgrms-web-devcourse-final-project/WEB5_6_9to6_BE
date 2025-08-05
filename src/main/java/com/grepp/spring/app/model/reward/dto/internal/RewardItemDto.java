@@ -1,4 +1,4 @@
-package com.grepp.spring.app.model.reward.dto;
+package com.grepp.spring.app.model.reward.dto.internal;
 
 import com.grepp.spring.app.model.reward.code.ItemType;
 import com.grepp.spring.app.model.reward.entity.RewardItem;

@@ -8,9 +8,7 @@ import com.grepp.spring.app.model.reward.entity.OwnItem;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
-import com.grepp.spring.app.model.reward.dto.OwnItemDto;
-import java.util.List;
-import org.springframework.data.jpa.repository.Query;
+import com.grepp.spring.app.model.reward.dto.internal.OwnItemDto;
 import org.springframework.stereotype.Repository;
 
 @Repository

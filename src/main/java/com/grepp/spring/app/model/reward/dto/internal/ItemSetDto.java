@@ -1,10 +1,9 @@
-package com.grepp.spring.app.model.reward.dto;
+package com.grepp.spring.app.model.reward.dto.internal;
 
 
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.ToString;
 
 @Getter
 @Builder

@@ -2,7 +2,7 @@ package com.grepp.spring.app.model.reward.repository;
 
 
 import com.grepp.spring.app.model.reward.code.ItemType;
-import com.grepp.spring.app.model.reward.dto.OwnItemDto;
+import com.grepp.spring.app.model.reward.dto.internal.OwnItemDto;
 import com.grepp.spring.app.model.reward.dto.QOwnItemDto;
 import com.grepp.spring.app.model.reward.entity.QOwnItem;
 import com.grepp.spring.app.model.reward.entity.QRewardItem;
