@@ -1,40 +1,40 @@
 package com.grepp.spring.app.model.study.service;
 
-import com.grepp.spring.app.model.alarm.dto.request.AlarmRequest;
-import com.grepp.spring.app.model.applicant.service.ApplicantService;
-import com.grepp.spring.app.model.applicant.dto.request.ApplicationResultRequest;
-import com.grepp.spring.app.model.study.dto.request.StudyCreationRequest;
-import com.grepp.spring.app.model.study.dto.request.StudySearchRequest;
-import com.grepp.spring.app.model.study.dto.request.StudyUpdateRequest;
-import com.grepp.spring.app.model.studyMmeber.dto.response.WeeklyAchievementCount;
 import com.grepp.spring.app.model.alarm.code.AlarmType;
+import com.grepp.spring.app.model.alarm.dto.request.AlarmRequest;
 import com.grepp.spring.app.model.alarm.service.AlarmService;
+import com.grepp.spring.app.model.applicant.code.ApplicantState;
+import com.grepp.spring.app.model.applicant.dto.request.ApplicationResultRequest;
+import com.grepp.spring.app.model.applicant.entity.Applicant;
+import com.grepp.spring.app.model.applicant.repository.ApplicantRepository;
+import com.grepp.spring.app.model.applicant.service.ApplicantService;
 import com.grepp.spring.app.model.auth.code.Role;
-import com.grepp.spring.app.model.studyMmeber.code.StudyRole;
 import com.grepp.spring.app.model.member.dto.response.ApplicantsResponse;
 import com.grepp.spring.app.model.member.dto.response.StudyMemberResponse;
 import com.grepp.spring.app.model.member.entity.Member;
-import com.grepp.spring.app.model.studyMmeber.entity.StudyMember;
 import com.grepp.spring.app.model.member.repository.MemberRepository;
-import com.grepp.spring.app.model.studyMmeber.repository.StudyMemberRepository;
-import com.grepp.spring.app.model.applicant.code.ApplicantState;
 import com.grepp.spring.app.model.study.code.DayOfWeek;
 import com.grepp.spring.app.model.study.code.GoalType;
 import com.grepp.spring.app.model.study.code.Status;
 import com.grepp.spring.app.model.study.code.StudyType;
+import com.grepp.spring.app.model.study.dto.request.StudyCreationRequest;
+import com.grepp.spring.app.model.study.dto.request.StudySearchRequest;
+import com.grepp.spring.app.model.study.dto.request.StudyUpdateRequest;
+import com.grepp.spring.app.model.study.dto.response.GoalsResponse;
 import com.grepp.spring.app.model.study.dto.response.StudyCreationResponse;
 import com.grepp.spring.app.model.study.dto.response.StudyInfoResponse;
 import com.grepp.spring.app.model.study.dto.response.StudyListResponse;
-import com.grepp.spring.app.model.studyMmeber.dto.response.WeeklyGoalStatusResponse;
-import com.grepp.spring.app.model.applicant.entity.Applicant;
-import com.grepp.spring.app.model.studyMmeber.entity.GoalAchievement;
 import com.grepp.spring.app.model.study.entity.Study;
 import com.grepp.spring.app.model.study.entity.StudyGoal;
-import com.grepp.spring.app.model.study.dto.response.GoalsResponse;
-import com.grepp.spring.app.model.applicant.repository.ApplicantRepository;
-import com.grepp.spring.app.model.studyMmeber.repository.goalAchievement.GoalAchievementRepository;
-import com.grepp.spring.app.model.study.repository.goal.StudyGoalRepository;
 import com.grepp.spring.app.model.study.repository.StudyRepository;
+import com.grepp.spring.app.model.study.repository.goal.StudyGoalRepository;
+import com.grepp.spring.app.model.studyMmeber.code.StudyRole;
+import com.grepp.spring.app.model.studyMmeber.dto.response.WeeklyAchievementCount;
+import com.grepp.spring.app.model.studyMmeber.dto.response.WeeklyGoalStatusResponse;
+import com.grepp.spring.app.model.studyMmeber.entity.GoalAchievement;
+import com.grepp.spring.app.model.studyMmeber.entity.StudyMember;
+import com.grepp.spring.app.model.studyMmeber.repository.StudyMemberRepository;
+import com.grepp.spring.app.model.studyMmeber.repository.goalAchievement.GoalAchievementRepository;
 import com.grepp.spring.app.model.studyMmeber.serivce.StudyMemberService;
 import com.grepp.spring.infra.error.exceptions.AlreadyExistException;
 import com.grepp.spring.infra.error.exceptions.EarlierDateException;
@@ -77,41 +77,6 @@ public class StudyService {
     private final ApplicantService applicantService;
 
     //필터 조건에 따라 스터디 목록 + 현재 인원 수 조회
-//    @Transactional(readOnly = true)
-//    public List<StudyListResponse> searchStudiesWithMemberCount(StudySearchRequest req) {
-//        if (req == null) {
-//            throw new StudyDataException(ResponseCode.BAD_REQUEST);
-//        }
-//
-//        Page<Study> studies;
-//        try {
-//            studies = studyRepository.searchStudiesPage(req, req.getPageable());
-//        } catch (Exception e) {
-//            throw new StudyDataException(ResponseCode.FAIL_SEARCH_STUDY);
-//        }
-//
-//        return studies.getContent().stream()
-//            .map(study -> {
-//                if (study.getStudyId() == null) {
-//                    throw new StudyDataException(ResponseCode.FAIL_SEARCH_STUDY);
-//                }
-//
-//                int currentMemberCount;
-//                try {
-//                    currentMemberCount = studyMemberRepository.countByStudy_StudyId(study.getStudyId());
-//                } catch (Exception e) {
-//                    throw new StudyDataException(ResponseCode.FAIL_SEARCH_STUDY);
-//                }
-//
-//                try {
-//                    return StudyListResponse.fromEntity(study, currentMemberCount);
-//                } catch (Exception e) {
-//                    throw new StudyDataException(ResponseCode.FAIL_SEARCH_STUDY);
-//                }
-//            })
-//            .collect(Collectors.toList());
-//    }
-
     @Transactional(readOnly = true)
     public List<StudyListResponse> searchStudiesWithMemberCount(StudySearchRequest req) {
         if (req == null) {

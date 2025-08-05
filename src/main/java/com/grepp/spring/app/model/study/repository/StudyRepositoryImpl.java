@@ -1,11 +1,11 @@
 package com.grepp.spring.app.model.study.repository;
 
-import com.grepp.spring.app.model.study.dto.request.StudySearchRequest;
 import com.grepp.spring.app.model.member.dto.response.ApplicantsResponse;
 import com.grepp.spring.app.model.study.code.Category;
 import com.grepp.spring.app.model.study.code.Region;
 import com.grepp.spring.app.model.study.code.Status;
 import com.grepp.spring.app.model.study.code.StudyType;
+import com.grepp.spring.app.model.study.dto.request.StudySearchRequest;
 import com.grepp.spring.app.model.study.dto.response.StudyListResponse;
 import com.grepp.spring.app.model.study.entity.Study;
 import com.grepp.spring.app.model.study.entity.StudySchedule;
@@ -43,102 +43,6 @@ public class StudyRepositoryImpl implements StudyRepositoryCustom {
     private EntityManager em;
 
     private final JPAQueryFactory queryFactory;
-
-    @Override
-    public List<Study> searchStudiesPage(StudySearchRequest req) {
-        return queryFactory
-            .selectFrom(study)
-            .distinct()
-            .leftJoin(study.schedules).fetchJoin()
-            .where(
-                study.activated.isTrue(),
-                req.getCategory() != null && req.getCategory() != Category.ALL ? study.category.eq(req.getCategory()) : null,
-                req.getRegion() != null && req.getRegion() != Region.ALL ? study.region.eq(req.getRegion()) : null,
-                req.getStatus() != null && req.getStatus() != Status.ALL ? study.status.eq(req.getStatus()) : null,
-                req.getStudyType() != null ? study.studyType.eq(req.getStudyType()) : null,
-                StringUtils.hasText(req.getName()) ? study.name.contains(req.getName()) : null
-            )
-            .orderBy(
-                study.createdAt.desc(),
-                study.studyId.desc()
-            )
-            .fetch();
-    }
-
-
-    @Override
-    public Page<Study> searchStudiesPage(StudySearchRequest req, Pageable pageable) {
-        List<Long> ids = queryFactory
-            .select(study.studyId)
-            .from(study)
-            .where(
-                study.activated.isTrue(),
-                (req.getCategory() != null && req.getCategory() != Category.ALL) ? study.category.eq(req.getCategory()) : null,
-                (req.getRegion() != null && req.getRegion() != Region.ALL) ? study.region.eq(req.getRegion()) : null,
-                (req.getStatus() != null && req.getStatus() != Status.ALL) ? study.status.eq(req.getStatus()) : null,
-                (req.getStudyType() != null ) ? study.studyType.eq(req.getStudyType()) : null,
-                StringUtils.hasText(req.getName()) ? study.name.contains(req.getName()) : null
-            )
-            .offset(pageable.getOffset())
-            .limit(pageable.getPageSize())
-            .orderBy(
-                study.createdAt.desc(),
-                study.studyId.desc()
-            )
-            .fetch();
-
-        log.debug("Finding studies for page: {}, IDs: {}", pageable.getPageNumber(), ids);
-
-        if (ids.isEmpty()) {
-            return Page.empty(pageable);
-        }
-
-        List<Study> content = queryFactory
-            .selectFrom(study)
-            .distinct()
-            .leftJoin(study.schedules).fetchJoin()
-            .where(study.studyId.in(ids))
-            .orderBy(
-                study.createdAt.desc(),
-                study.studyId.desc()
-            )
-            .where(study.activated.isTrue(),study.studyId.in(ids))
-            .orderBy(
-                study.createdAt.desc(),
-                study.studyId.desc()
-            )
-            .fetch();
-
-        Long total = queryFactory
-            .select(study.count())
-            .from(study)
-            .where(
-                study.activated.isTrue(),
-                (req.getCategory() != null && req.getCategory() != Category.ALL) ? study.category.eq(req.getCategory()) : null,
-                (req.getRegion() != null && req.getRegion() != Region.ALL) ? study.region.eq(req.getRegion()) : null,
-                (req.getStatus() != null && req.getStatus() != Status.ALL) ? study.status.eq(req.getStatus()) : null,
-                (req.getStudyType() != null ) ? study.studyType.eq(req.getStudyType()) : null,
-                StringUtils.hasText(req.getName()) ? study.name.contains(req.getName()) : null
-            )
-            .fetchOne();
-
-        return new PageImpl<>(content, pageable, total != null ? total : 0L);
-    }
-
-    @Override
-    public Optional<Study> findByIdWithSchedulesAndGoals(Long studyId) {
-        String jpql = """
-            SELECT s FROM Study s
-            LEFT JOIN FETCH s.schedules
-            LEFT JOIN FETCH s.goals
-            WHERE s.studyId = :studyId
-            """;
-        return em.createQuery(jpql, Study.class)
-            .setParameter("studyId", studyId)
-            .getResultList()
-            .stream()
-            .findFirst();
-    }
 
     @Override
     public List<ApplicantsResponse> findApplicants(Long studyId) {

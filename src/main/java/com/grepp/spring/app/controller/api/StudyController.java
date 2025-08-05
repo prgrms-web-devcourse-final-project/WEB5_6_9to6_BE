@@ -293,31 +293,6 @@ public class StudyController {
         return ResponseEntity.ok(CommonResponse.noContent());
     }
 
-// 수정했는데 혹시 문제 생길까봐 기존 코드 주석 처리
-//    @PostMapping("/{studyId}/applications/respond")
-//    public ResponseEntity<CommonResponse<Void>> responseStudyApplication(
-//        @PathVariable Long studyId,
-//        @RequestBody ApplicationResultRequest req) {
-//
-//        boolean isSurvival = studyService.isSurvival(studyId);
-//
-//        // 신청자 상태 변경
-//        if(!isSurvival) {
-//            Long acceptorId = SecurityUtil.getCurrentMemberId();
-//            applicantService.updateState(acceptorId, req.getMemberId(), studyId, req.getApplicationResult());
-//
-//            // 스터디 멤버에 저장
-//            if (req.getApplicationResult() == ApplicantState.ACCEPT) {
-//                studyMemberService.saveMember(studyId, req.getMemberId());
-//            }
-//        }
-//        else {
-//            studyMemberService.applyToStudy(req.getMemberId(), studyId);
-//        }
-//
-//        return ResponseEntity.ok(CommonResponse.noContent());
-//    }
-
     @Operation(summary = "스터디 공지사항 수정", description = """
         요청 body에 `NotificationUpdateRequest`를 포함해야합니다.
         - 특정 스터디(`studyId`)의 공지사항을 수정합니다.
