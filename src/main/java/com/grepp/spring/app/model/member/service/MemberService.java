@@ -1,6 +1,6 @@
 package com.grepp.spring.app.model.member.service;
 
-import com.grepp.spring.app.controller.api.member.payload.request.MemberUpdateRequest;
+import com.grepp.spring.app.model.member.dto.request.MemberUpdateRequest;
 import com.grepp.spring.app.model.auth.code.Role;
 import com.grepp.spring.app.model.auth.dto.SignupRequest;
 import com.grepp.spring.app.model.auth.dto.SocialMemberInfoRegistRequest;

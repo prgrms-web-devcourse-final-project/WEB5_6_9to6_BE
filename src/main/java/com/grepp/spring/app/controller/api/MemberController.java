@@ -1,7 +1,7 @@
-package com.grepp.spring.app.controller.api.member;
+package com.grepp.spring.app.controller.api;
 
-import com.grepp.spring.app.controller.api.member.payload.request.MemberUpdateRequest;
-import com.grepp.spring.app.controller.api.member.payload.request.PasswordVerifyRequest;
+import com.grepp.spring.app.model.member.dto.request.MemberUpdateRequest;
+import com.grepp.spring.app.model.member.dto.request.PasswordVerifyRequest;
 import com.grepp.spring.app.model.member.dto.response.AvatarInfoResponse;
 import com.grepp.spring.app.model.member.dto.response.MemberInfoResponse;
 import com.grepp.spring.app.model.member.dto.response.MemberMyPageResponse;
