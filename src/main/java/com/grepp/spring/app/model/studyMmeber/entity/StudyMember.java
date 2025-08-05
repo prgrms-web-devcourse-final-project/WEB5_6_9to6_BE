@@ -1,7 +1,8 @@
-package com.grepp.spring.app.model.study.entity;
+package com.grepp.spring.app.model.studyMmeber.entity;
 
-import com.grepp.spring.app.model.member.code.StudyRole;
+import com.grepp.spring.app.model.studyMmeber.code.StudyRole;
 import com.grepp.spring.app.model.member.entity.Member;
+import com.grepp.spring.app.model.study.entity.Study;
 import com.grepp.spring.infra.entity.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

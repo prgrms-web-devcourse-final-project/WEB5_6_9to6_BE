@@ -1,13 +1,13 @@
-package com.grepp.spring.app.model.study.service;
+package com.grepp.spring.app.model.studyMmeber.serivce;
 
 import com.grepp.spring.app.model.study.dto.response.CheckGoalResponse;
-import com.grepp.spring.app.model.member.code.StudyRole;
+import com.grepp.spring.app.model.studyMmeber.code.StudyRole;
 import com.grepp.spring.app.model.member.entity.Member;
-import com.grepp.spring.app.model.study.entity.StudyMember;
+import com.grepp.spring.app.model.studyMmeber.entity.StudyMember;
 import com.grepp.spring.app.model.member.repository.MemberRepository;
-import com.grepp.spring.app.model.member.repository.StudyMemberRepository;
+import com.grepp.spring.app.model.studyMmeber.repository.StudyMemberRepository;
 import com.grepp.spring.app.model.study.entity.Study;
-import com.grepp.spring.app.model.study.repository.GoalAchievementRepository;
+import com.grepp.spring.app.model.studyMmeber.repository.goalAchievement.GoalAchievementRepository;
 import com.grepp.spring.app.model.study.repository.StudyRepository;
 import com.grepp.spring.infra.error.exceptions.AlreadyExistException;
 import com.grepp.spring.infra.error.exceptions.LateApplyException;

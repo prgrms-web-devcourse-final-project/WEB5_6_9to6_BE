@@ -10,7 +10,7 @@ import com.grepp.spring.app.model.quiz.repository.quizRepository.QuizRepository;
 import com.grepp.spring.app.model.quiz.repository.quizSetRepository.QuizSetRepository;
 import com.grepp.spring.app.model.study.entity.Study;
 import com.grepp.spring.app.model.study.entity.StudyGoal;
-import com.grepp.spring.app.model.study.repository.StudyGoalRepository;
+import com.grepp.spring.app.model.study.repository.goal.StudyGoalRepository;
 import com.grepp.spring.infra.error.exceptions.Quiz.QuizAlreadyExistsException;
 import com.grepp.spring.infra.error.exceptions.Quiz.QuizGenerationFailedException;
 import com.grepp.spring.infra.error.exceptions.Quiz.StudyGoalNotFoundException;

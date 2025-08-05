@@ -1,6 +1,6 @@
 package com.grepp.spring.app.model.member.dto.response;
 
-import com.grepp.spring.app.model.member.code.StudyRole;
+import com.grepp.spring.app.model.studyMmeber.code.StudyRole;
 import lombok.Builder;
 import lombok.Getter;
 

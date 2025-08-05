@@ -1,7 +1,7 @@
 package com.grepp.spring.infra.auth.role;
 
-import com.grepp.spring.app.model.member.code.StudyRole;
-import com.grepp.spring.app.model.member.repository.StudyMemberRepository;
+import com.grepp.spring.app.model.studyMmeber.code.StudyRole;
+import com.grepp.spring.app.model.studyMmeber.repository.StudyMemberRepository;
 import com.grepp.spring.infra.util.SecurityUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Arrays;

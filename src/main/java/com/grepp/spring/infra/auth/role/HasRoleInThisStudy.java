@@ -1,6 +1,6 @@
 package com.grepp.spring.infra.auth.role;
 
-import com.grepp.spring.app.model.member.code.StudyRole;
+import com.grepp.spring.app.model.studyMmeber.code.StudyRole;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

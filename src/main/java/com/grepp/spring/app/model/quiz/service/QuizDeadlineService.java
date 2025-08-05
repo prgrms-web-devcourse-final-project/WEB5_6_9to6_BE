@@ -1,13 +1,13 @@
 package com.grepp.spring.app.model.quiz.service;
 
-import com.grepp.spring.app.model.study.entity.StudyMember;
-import com.grepp.spring.app.model.member.repository.StudyMemberRepository;
+import com.grepp.spring.app.model.studyMmeber.entity.StudyMember;
+import com.grepp.spring.app.model.studyMmeber.repository.StudyMemberRepository;
 import com.grepp.spring.app.model.quiz.entity.QuizRecord;
 import com.grepp.spring.app.model.quiz.repository.QuizRecordRepository;
 import com.grepp.spring.app.model.quiz.repository.quizSetRepository.QuizSetRepository;
 import com.grepp.spring.app.model.study.code.DayOfWeek;
 import com.grepp.spring.app.model.study.entity.StudySchedule;
-import com.grepp.spring.app.model.study.repository.StudyScheduleRepository.StudyScheduleRepository;
+import com.grepp.spring.app.model.study.repository.studyScheduleRepository.StudyScheduleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;

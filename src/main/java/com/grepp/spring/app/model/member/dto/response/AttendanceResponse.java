@@ -1,6 +1,6 @@
 package com.grepp.spring.app.model.member.dto.response;
 
-import com.grepp.spring.app.model.study.entity.Attendance;
+import com.grepp.spring.app.model.studyMmeber.entity.Attendance;
 import java.time.LocalDate;
 import lombok.Builder;
 import lombok.Data;

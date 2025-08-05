@@ -1,4 +1,4 @@
-package com.grepp.spring.app.model.study.entity;
+package com.grepp.spring.app.model.studyMmeber.entity;
 
 import jakarta.persistence.*;
 import lombok.*;

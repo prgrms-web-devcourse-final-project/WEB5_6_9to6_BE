@@ -1,12 +1,12 @@
-package com.grepp.spring.app.model.member.repository;
+package com.grepp.spring.app.model.studyMmeber.repository;
 
 import static com.grepp.spring.app.model.member.entity.QStudyMember.studyMember;
 
 import com.grepp.spring.app.model.auth.code.Role;
-import com.grepp.spring.app.model.member.code.StudyRole;
+import com.grepp.spring.app.model.studyMmeber.code.StudyRole;
 import com.grepp.spring.app.model.member.entity.QMember;
 import com.grepp.spring.app.model.member.entity.QStudyMember;
-import com.grepp.spring.app.model.study.entity.StudyMember;
+import com.grepp.spring.app.model.studyMmeber.entity.StudyMember;
 import com.grepp.spring.app.model.study.entity.QStudy;
 import com.grepp.spring.app.model.study.entity.QStudySchedule;
 import com.querydsl.jpa.impl.JPAQueryFactory;

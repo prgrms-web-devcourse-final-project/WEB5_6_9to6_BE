@@ -6,6 +6,7 @@ import com.grepp.spring.app.model.study.code.GoalType;
 import com.grepp.spring.app.model.study.code.Region;
 import com.grepp.spring.app.model.study.code.Status;
 import com.grepp.spring.app.model.study.code.StudyType;
+import com.grepp.spring.app.model.studyMmeber.entity.StudyMember;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

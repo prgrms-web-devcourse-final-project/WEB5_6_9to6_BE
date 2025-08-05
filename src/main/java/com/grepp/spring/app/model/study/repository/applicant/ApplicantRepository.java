@@ -1,4 +1,4 @@
-package com.grepp.spring.app.model.study.repository;
+package com.grepp.spring.app.model.study.repository.applicant;
 
 import com.grepp.spring.app.model.member.entity.Member;
 import com.grepp.spring.app.model.study.code.ApplicantState;

@@ -1,4 +1,4 @@
-package com.grepp.spring.app.model.study.repository.StudyScheduleRepository;
+package com.grepp.spring.app.model.study.repository.studyScheduleRepository;
 
 import com.grepp.spring.app.model.study.code.DayOfWeek;
 import com.grepp.spring.app.model.study.code.StudyType;

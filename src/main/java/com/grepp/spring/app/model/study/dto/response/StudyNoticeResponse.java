@@ -1,4 +1,4 @@
-package com.grepp.spring.app.model.study.reponse;
+package com.grepp.spring.app.model.study.dto.response;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

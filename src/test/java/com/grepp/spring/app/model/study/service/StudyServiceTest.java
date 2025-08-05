@@ -1,7 +1,7 @@
 package com.grepp.spring.app.model.study.service;
 
-import com.grepp.spring.app.model.study.reponse.GoalsResponse;
-import com.grepp.spring.app.model.study.repository.StudyGoalRepository;
+import com.grepp.spring.app.model.study.dto.response.GoalsResponse;
+import com.grepp.spring.app.model.study.repository.goal.StudyGoalRepository;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
