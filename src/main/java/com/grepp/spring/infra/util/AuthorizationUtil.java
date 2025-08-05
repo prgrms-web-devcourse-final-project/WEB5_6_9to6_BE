@@ -7,9 +7,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 @Slf4j
-public class SecurityUtil {
+public class AuthorizationUtil {
 
-    private SecurityUtil() {}
+    private AuthorizationUtil() {}
 
     public static Long getCurrentMemberId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

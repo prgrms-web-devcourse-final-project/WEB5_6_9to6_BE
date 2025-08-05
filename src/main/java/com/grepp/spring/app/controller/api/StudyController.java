@@ -25,7 +25,7 @@ import com.grepp.spring.app.model.applicant.service.ApplicantService;
 import com.grepp.spring.app.model.studyMmeber.serivce.StudyMemberService;
 import com.grepp.spring.app.model.study.service.StudyService;
 import com.grepp.spring.infra.response.CommonResponse;
-import com.grepp.spring.infra.util.SecurityUtil;
+import com.grepp.spring.infra.util.AuthorizationUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -85,7 +85,7 @@ public class StudyController {
     ) {
         String email = authentication.getName();
         Long studyMemberId = memberService.findStudyMemberId(email, studyId);
-        Long memberId = SecurityUtil.getCurrentMemberId();
+        Long memberId = AuthorizationUtil.getCurrentMemberId();
 
         memberService.markAttendance(studyMemberId);
         // 100 point 지급 받음
@@ -178,7 +178,7 @@ public class StudyController {
         @PathVariable Long studyId,
         @RequestBody ApplicationRequest req
     ) {
-        Long memberId = SecurityUtil.getCurrentMemberId();
+        Long memberId = AuthorizationUtil.getCurrentMemberId();
         studyService.applyToStudy(memberId, studyId, req.getIntroduction());
         return ResponseEntity.ok(CommonResponse.success(""));
     }
@@ -191,7 +191,7 @@ public class StudyController {
         """)
     @GetMapping("/{studyId}/members/me/check")
     public ResponseEntity<CommonResponse<Map<String, Boolean>>> isMember(@PathVariable Long studyId) {
-        Long memberId = SecurityUtil.getCurrentMemberId();
+        Long memberId = AuthorizationUtil.getCurrentMemberId();
 
         boolean isMember = studyService.isUserStudyMember(memberId, studyId);
 
@@ -217,7 +217,7 @@ public class StudyController {
         """)
     @PostMapping
     public ResponseEntity<CommonResponse<StudyCreationResponse>> createStudy(@RequestBody StudyCreationRequest req) {
-        Long memberId = SecurityUtil.getCurrentMemberId();
+        Long memberId = AuthorizationUtil.getCurrentMemberId();
         StudyCreationResponse response = studyService.createStudy(req, memberId);
 
         chatService.createChatRoom(response.getStudyId());
@@ -241,7 +241,7 @@ public class StudyController {
         """)
     @PostMapping("{studyId}/goal/{goalId}")
     public ResponseEntity<CommonResponse<Void>> successGoal(@PathVariable Long studyId, @PathVariable Long goalId) {
-        Long memberId = SecurityUtil.getCurrentMemberId();
+        Long memberId = AuthorizationUtil.getCurrentMemberId();
         log.info("memberId: {}", memberId);
         studyService.registGoal(List.of(studyId, memberId, goalId));
         return ResponseEntity.status(200).body(CommonResponse.noContent());
@@ -262,7 +262,7 @@ public class StudyController {
         @RequestParam(required = false) Long memberId
     ) {
         if (memberId == null) {
-            memberId = SecurityUtil.getCurrentMemberId(); // 로그인된 사용자 ID
+            memberId = AuthorizationUtil.getCurrentMemberId(); // 로그인된 사용자 ID
         }
 
         WeeklyGoalStatusResponse response = studyService.getWeeklyGoalStats(studyId, memberId);
@@ -287,7 +287,7 @@ public class StudyController {
         @PathVariable Long studyId,
         @RequestBody ApplicationResultRequest req) {
 
-        Long senderId = SecurityUtil.getCurrentMemberId();
+        Long senderId = AuthorizationUtil.getCurrentMemberId();
         studyService.processApplicationResult(senderId, studyId, req);
 
         return ResponseEntity.ok(CommonResponse.noContent());
@@ -330,7 +330,7 @@ public class StudyController {
         @RequestBody NotificationUpdateRequest req
     ) {
 
-        Long memberId = SecurityUtil.getCurrentMemberId();
+        Long memberId = AuthorizationUtil.getCurrentMemberId();
         studyService.updateStudyNotification(memberId, studyId, req.getNotice());
 
         return ResponseEntity.ok(CommonResponse.noContent());
@@ -356,7 +356,7 @@ public class StudyController {
     public ResponseEntity<CommonResponse<List<CheckGoalResponse>>> getCheckGoal(
         @PathVariable Long studyId
     ){
-        Long memberId = SecurityUtil.getCurrentMemberId();
+        Long memberId = AuthorizationUtil.getCurrentMemberId();
         List<CheckGoalResponse> res = studyMemberService.getGoalStatuses(studyId, memberId);
         return ResponseEntity.ok(CommonResponse.success(res));
     }

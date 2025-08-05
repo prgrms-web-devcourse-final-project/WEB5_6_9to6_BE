@@ -12,7 +12,7 @@ import com.grepp.spring.app.model.member.service.MemberService;
 import com.grepp.spring.app.model.reward.service.OwnItemService;
 import com.grepp.spring.app.model.reward.service.RewardItemService;
 import com.grepp.spring.infra.response.CommonResponse;
-import com.grepp.spring.infra.util.SecurityUtil;
+import com.grepp.spring.infra.util.AuthorizationUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.LinkedHashMap;
@@ -64,7 +64,7 @@ public class MemberController {
     public ResponseEntity<CommonResponse<Void>> updateMemberInfo(
         @RequestBody MemberUpdateRequest request) {
 
-        Long memberId = SecurityUtil.getCurrentMemberId();
+        Long memberId = AuthorizationUtil.getCurrentMemberId();
         memberService.updateMemberInfo(memberId, request);
         return ResponseEntity.ok(CommonResponse.noContent());
     }
@@ -80,7 +80,7 @@ public class MemberController {
     public ResponseEntity<CommonResponse<PasswordVerifyResponse>> verifyPassword(
         @RequestBody PasswordVerifyRequest request) {
 
-        Long memberId = SecurityUtil.getCurrentMemberId();
+        Long memberId = AuthorizationUtil.getCurrentMemberId();
         boolean isMatched = memberService.verifyPassword(memberId, request.getPassword());
         var responseData = new PasswordVerifyResponse(isMatched);
 
@@ -124,7 +124,7 @@ public class MemberController {
     )
     @GetMapping("/info-all")
     public ResponseEntity<CommonResponse<?>> infoAll() {
-        Long memberId = SecurityUtil.getCurrentMemberId();
+        Long memberId = AuthorizationUtil.getCurrentMemberId();
         RequiredMemberInfoResponse memberInfoRes =  memberService.getMemberRequiredInfo(memberId);
         AvatarInfoResponse avatarRes = memberService.getMemberAvatarInfo(memberId);
         LinkedHashMap<String, Object> responseData = new LinkedHashMap<>();

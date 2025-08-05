@@ -1,8 +1,6 @@
 package com.grepp.spring.infra.config.Chat.WebSocket.Auth;
 
-import com.grepp.spring.app.model.auth.domain.Principal;
 import com.grepp.spring.app.model.study.service.StudyService;
-import com.grepp.spring.infra.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;

@@ -7,7 +7,7 @@ import com.grepp.spring.app.model.timer.dto.response.TotalStudyTimeResponse;
 import com.grepp.spring.app.model.timer.service.TimerService;
 import com.grepp.spring.infra.response.CommonResponse;
 import com.grepp.spring.infra.response.SuccessCode;
-import com.grepp.spring.infra.util.SecurityUtil;
+import com.grepp.spring.infra.util.AuthorizationUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -44,7 +44,7 @@ public class TimerController {
         @PathVariable Long studyId,
         @Valid @RequestBody StudyTimeRecordRequest req
     ) {
-        Long memberId = SecurityUtil.getCurrentMemberId();
+        Long memberId = AuthorizationUtil.getCurrentMemberId();
        timerService.recordStudyTime(studyId, memberId, req);
        return ResponseEntity.ok(CommonResponse.noContent(SuccessCode.SUCCESS));
     }

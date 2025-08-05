@@ -9,7 +9,7 @@ import com.grepp.spring.app.model.study.service.StudyService;
 import com.grepp.spring.infra.config.Chat.WebSocket.WebSocketSessionTracker;
 import com.grepp.spring.infra.response.CommonResponse;
 import com.grepp.spring.infra.response.ResponseCode;
-import com.grepp.spring.infra.util.SecurityUtil;
+import com.grepp.spring.infra.util.AuthorizationUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -84,7 +84,7 @@ public class ChatController {
         @RequestParam(defaultValue = "30") int pageSize,
         Authentication authentication) {
 
-        Long memberId = SecurityUtil.getCurrentMemberId();
+        Long memberId = AuthorizationUtil.getCurrentMemberId();
         Principal principal = (Principal) authentication.getPrincipal();
 
         boolean isMember = studyService.isUserStudyMember(memberId, studyId);

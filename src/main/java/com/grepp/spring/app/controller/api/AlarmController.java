@@ -6,7 +6,7 @@ import com.grepp.spring.app.model.alarm.service.AlarmService;
 import com.grepp.spring.app.model.alarm.sse.EmitterRepository;
 import com.grepp.spring.infra.response.CommonResponse;
 import com.grepp.spring.infra.response.SuccessCode;
-import com.grepp.spring.infra.util.SecurityUtil;
+import com.grepp.spring.infra.util.AuthorizationUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -48,7 +48,7 @@ public class AlarmController {
     )
     @GetMapping(value = "/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter subscribe() {
-        Long memberId = SecurityUtil.getCurrentMemberId();
+        Long memberId = AuthorizationUtil.getCurrentMemberId();
         SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
         emitterRepository.save(memberId, emitter);
 
@@ -93,7 +93,7 @@ public class AlarmController {
     )
     @GetMapping
     public ResponseEntity<CommonResponse<List<AlarmListResponse>>> getMyAlarms() {
-        Long memberId = SecurityUtil.getCurrentMemberId();
+        Long memberId = AuthorizationUtil.getCurrentMemberId();
 
         List<AlarmListResponse> alarms = alarmService.getAlarmsByMemberId(memberId);
         return ResponseEntity.ok(CommonResponse.success(alarms));
@@ -119,7 +119,7 @@ public class AlarmController {
     )
     @PatchMapping("/read-all")
     public ResponseEntity<CommonResponse<Void>> markAllAlarmsAsRead() {
-        Long memberId = SecurityUtil.getCurrentMemberId();
+        Long memberId = AuthorizationUtil.getCurrentMemberId();
 
         alarmService.markAllAlarmsAsRead(memberId);
         return ResponseEntity

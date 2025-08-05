@@ -15,7 +15,7 @@ import com.grepp.spring.app.model.reward.service.OwnItemService;
 import com.grepp.spring.app.model.reward.service.RewardItemService;
 import com.grepp.spring.infra.response.CommonResponse;
 import com.grepp.spring.infra.response.SuccessCode;
-import com.grepp.spring.infra.util.SecurityUtil;
+import com.grepp.spring.infra.util.AuthorizationUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -76,7 +76,7 @@ public class RewardController {
     public ResponseEntity<CommonResponse<Map<String, Object>>> purchaseItem(
          @PathVariable long itemId
     ) {
-        Long memberId = SecurityUtil.getCurrentMemberId();
+        Long memberId = AuthorizationUtil.getCurrentMemberId();
         ownItemService.purchaseItem(memberId,itemId);
 
         Map<String, Object> data = new HashMap<>();
@@ -89,7 +89,7 @@ public class RewardController {
     @GetMapping("/own-items")
     @Operation(summary = "소유 아이템 목록", description="소유한 아이템을 표시합니다.")
     public ResponseEntity<CommonResponse<List<OwnItemResponse>>> getOwnItems() {
-        Long memberId = SecurityUtil.getCurrentMemberId();
+        Long memberId = AuthorizationUtil.getCurrentMemberId();
         List<OwnItemDto> dtos = ownItemService.getOwnItems(memberId);
 
          List<OwnItemResponse> responses = dtos.stream()
@@ -106,7 +106,7 @@ public class RewardController {
         @PathVariable long ownItemId
     ) {
 
-        Long memberId = SecurityUtil.getCurrentMemberId();
+        Long memberId = AuthorizationUtil.getCurrentMemberId();
 
         ItemType itemType= ownItemService.changeOwnItems(memberId, ownItemId);
 
@@ -141,7 +141,7 @@ public class RewardController {
     @ApiResponse(responseCode = "200")
     @Operation(summary = "서버에 조합된 이미지 있는지 없는지 판단", description="서버에 조합된 이미지가 있는지 없는지 판단합니다. \n 아이템 변경에서 같은 로직을 수행하기 때문에 안쓰셔도 됩니다.")
     public ResponseEntity<CommonResponse<ImageResponse>> getItemImages(@PathVariable Long itemId) {
-        Long memberId = SecurityUtil.getCurrentMemberId();
+        Long memberId = AuthorizationUtil.getCurrentMemberId();
         ItemSetDto itemSetDto = ownItemService.getUseItemList(memberId);
         Optional<ImageResponse> image = itemSetService.ExistItemSet(itemSetDto);
 

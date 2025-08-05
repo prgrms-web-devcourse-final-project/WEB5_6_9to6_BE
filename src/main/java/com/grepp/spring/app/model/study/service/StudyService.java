@@ -42,7 +42,7 @@ import com.grepp.spring.infra.error.exceptions.HasNotRightException;
 import com.grepp.spring.infra.error.exceptions.NotFoundException;
 import com.grepp.spring.infra.error.exceptions.StudyDataException;
 import com.grepp.spring.infra.response.ResponseCode;
-import com.grepp.spring.infra.util.SecurityUtil;
+import com.grepp.spring.infra.util.AuthorizationUtil;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -205,7 +205,7 @@ public class StudyService {
     public void updateStudy(Long studyId, StudyUpdateRequest req) {
         Study study = studyRepository.findById(studyId)
             .orElseThrow(() -> new IllegalArgumentException("스터디가 존재하지 않습니다."));
-        Long memberId = SecurityUtil.getCurrentMemberId();
+        Long memberId = AuthorizationUtil.getCurrentMemberId();
 
         if (!Boolean.TRUE.equals(studyMemberRepository.checkAcceptorHasRight(memberId, studyId))) {
             throw new HasNotRightException(ResponseCode.UNAUTHORIZED);
