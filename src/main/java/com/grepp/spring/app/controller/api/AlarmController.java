@@ -1,7 +1,7 @@
-package com.grepp.spring.app.controller.api.alarm;
+package com.grepp.spring.app.controller.api;
 
-import com.grepp.spring.app.controller.api.alarm.payload.AlarmListResponse;
-import com.grepp.spring.app.controller.api.alarm.payload.AlarmRequest;
+import com.grepp.spring.app.model.alarm.dto.response.AlarmListResponse;
+import com.grepp.spring.app.model.alarm.dto.request.AlarmRequest;
 import com.grepp.spring.app.model.alarm.service.AlarmService;
 import com.grepp.spring.app.model.alarm.sse.EmitterRepository;
 import com.grepp.spring.infra.response.CommonResponse;

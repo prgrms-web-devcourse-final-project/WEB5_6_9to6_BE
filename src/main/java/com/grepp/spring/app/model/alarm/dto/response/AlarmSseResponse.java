@@ -1,4 +1,4 @@
-package com.grepp.spring.app.controller.api.alarm.payload;
+package com.grepp.spring.app.model.alarm.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.grepp.spring.app.model.alarm.code.AlarmType;

@@ -1,6 +1,6 @@
 package com.grepp.spring.app.model.study.service;
 
-import com.grepp.spring.app.controller.api.alarm.payload.AlarmRequest;
+import com.grepp.spring.app.model.alarm.dto.request.AlarmRequest;
 import com.grepp.spring.app.controller.api.study.payload.ApplicationResultRequest;
 import com.grepp.spring.app.controller.api.study.payload.StudyCreationRequest;
 import com.grepp.spring.app.controller.api.study.payload.StudySearchRequest;

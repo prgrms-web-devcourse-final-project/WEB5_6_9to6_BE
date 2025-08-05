@@ -1,4 +1,4 @@
-package com.grepp.spring.app.controller.api.alarm.payload;
+package com.grepp.spring.app.model.alarm.dto.request;
 
 import com.grepp.spring.app.model.alarm.code.AlarmType;
 import com.grepp.spring.app.model.study.code.ApplicantState;
