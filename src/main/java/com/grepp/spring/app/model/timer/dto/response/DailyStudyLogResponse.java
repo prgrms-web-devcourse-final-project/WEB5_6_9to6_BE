@@ -1,4 +1,4 @@
-package com.grepp.spring.app.model.timer.dto;
+package com.grepp.spring.app.model.timer.dto.response;
 
 import java.time.LocalDate;
 import lombok.Getter;

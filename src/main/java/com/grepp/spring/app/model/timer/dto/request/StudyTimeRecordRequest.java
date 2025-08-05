@@ -1,4 +1,4 @@
-package com.grepp.spring.app.controller.api.timer.payload;
+package com.grepp.spring.app.model.timer.dto.request;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;

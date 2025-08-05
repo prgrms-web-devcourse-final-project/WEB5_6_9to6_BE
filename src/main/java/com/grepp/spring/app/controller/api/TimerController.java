@@ -1,9 +1,9 @@
-package com.grepp.spring.app.controller.api.timer;
+package com.grepp.spring.app.controller.api;
 
-import com.grepp.spring.app.controller.api.timer.payload.StudyTimeRecordRequest;
-import com.grepp.spring.app.model.timer.dto.DailyStudyLogResponse;
-import com.grepp.spring.app.model.timer.dto.StudyWeekTimeResponse;
-import com.grepp.spring.app.model.timer.dto.TotalStudyTimeResponse;
+import com.grepp.spring.app.model.timer.dto.request.StudyTimeRecordRequest;
+import com.grepp.spring.app.model.timer.dto.response.DailyStudyLogResponse;
+import com.grepp.spring.app.model.timer.dto.response.StudyWeekTimeResponse;
+import com.grepp.spring.app.model.timer.dto.response.TotalStudyTimeResponse;
 import com.grepp.spring.app.model.timer.service.TimerService;
 import com.grepp.spring.infra.response.CommonResponse;
 import com.grepp.spring.infra.response.SuccessCode;
