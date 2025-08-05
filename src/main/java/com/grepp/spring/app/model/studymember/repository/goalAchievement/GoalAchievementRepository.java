@@ -1,7 +1,7 @@
-package com.grepp.spring.app.model.studyMmeber.repository.goalAchievement;
+package com.grepp.spring.app.model.studymember.repository.goalAchievement;
 
-import com.grepp.spring.app.model.studyMmeber.entity.StudyMember;
-import com.grepp.spring.app.model.studyMmeber.entity.GoalAchievement;
+import com.grepp.spring.app.model.studymember.entity.StudyMember;
+import com.grepp.spring.app.model.studymember.entity.GoalAchievement;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;

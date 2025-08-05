@@ -1,4 +1,4 @@
-package com.grepp.spring.app.model.studyMmeber.dto.response;
+package com.grepp.spring.app.model.studymember.dto.response;
 
 import lombok.Getter;
 

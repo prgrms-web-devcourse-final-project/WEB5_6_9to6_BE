@@ -1,7 +1,7 @@
-package com.grepp.spring.app.model.studyMmeber.repository.goalAchievement;
+package com.grepp.spring.app.model.studymember.repository.goalAchievement;
 
-import com.grepp.spring.app.model.studyMmeber.dto.response.CheckGoalResponse;
-import com.grepp.spring.app.model.studyMmeber.dto.response.WeeklyAchievementCount;
+import com.grepp.spring.app.model.studymember.dto.response.CheckGoalResponse;
+import com.grepp.spring.app.model.studymember.dto.response.WeeklyAchievementCount;
 import com.grepp.spring.app.model.study.entity.StudyGoal;
 import com.grepp.spring.app.model.study.dto.response.GoalsResponse;
 import java.time.LocalDate;

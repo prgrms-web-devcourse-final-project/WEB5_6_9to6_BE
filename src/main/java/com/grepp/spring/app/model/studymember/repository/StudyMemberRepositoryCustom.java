@@ -1,7 +1,7 @@
-package com.grepp.spring.app.model.studyMmeber.repository;
+package com.grepp.spring.app.model.studymember.repository;
 
-import com.grepp.spring.app.model.studyMmeber.code.StudyRole;
-import com.grepp.spring.app.model.studyMmeber.entity.StudyMember;
+import com.grepp.spring.app.model.studymember.code.StudyRole;
+import com.grepp.spring.app.model.studymember.entity.StudyMember;
 
 import java.util.List;
 import java.util.Optional;

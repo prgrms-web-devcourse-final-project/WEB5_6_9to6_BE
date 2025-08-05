@@ -1,7 +1,7 @@
 package com.grepp.spring.app.model.quiz.service;
 
-import com.grepp.spring.app.model.studyMmeber.entity.StudyMember;
-import com.grepp.spring.app.model.studyMmeber.repository.StudyMemberRepository;
+import com.grepp.spring.app.model.studymember.entity.StudyMember;
+import com.grepp.spring.app.model.studymember.repository.StudyMemberRepository;
 import com.grepp.spring.app.model.quiz.entity.QuizRecord;
 import com.grepp.spring.app.model.quiz.repository.QuizRecordRepository;
 import com.grepp.spring.app.model.quiz.repository.quizSetRepository.QuizSetRepository;

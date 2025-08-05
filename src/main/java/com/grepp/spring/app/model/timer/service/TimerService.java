@@ -1,7 +1,7 @@
 package com.grepp.spring.app.model.timer.service;
 
 import com.grepp.spring.app.model.timer.dto.request.StudyTimeRecordRequest;
-import com.grepp.spring.app.model.studyMmeber.repository.StudyMemberRepository;
+import com.grepp.spring.app.model.studymember.repository.StudyMemberRepository;
 import com.grepp.spring.app.model.study.repository.StudyRepository;
 import com.grepp.spring.app.model.timer.dto.response.DailyStudyLogResponse;
 import com.grepp.spring.app.model.timer.dto.response.StudyWeekTimeResponse;

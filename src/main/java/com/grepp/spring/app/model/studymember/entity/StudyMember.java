@@ -1,6 +1,6 @@
-package com.grepp.spring.app.model.studyMmeber.entity;
+package com.grepp.spring.app.model.studymember.entity;
 
-import com.grepp.spring.app.model.studyMmeber.code.StudyRole;
+import com.grepp.spring.app.model.studymember.code.StudyRole;
 import com.grepp.spring.app.model.member.entity.Member;
 import com.grepp.spring.app.model.study.entity.Study;
 import com.grepp.spring.infra.entity.BaseEntity;

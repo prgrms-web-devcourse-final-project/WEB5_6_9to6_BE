@@ -1,7 +1,7 @@
 package com.grepp.spring.app.model.study.repository.goal;
 
 import com.grepp.spring.app.model.study.entity.StudyGoal;
-import com.grepp.spring.app.model.studyMmeber.repository.goalAchievement.GoalRepositoryCustom;
+import com.grepp.spring.app.model.studymember.repository.goalAchievement.GoalRepositoryCustom;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

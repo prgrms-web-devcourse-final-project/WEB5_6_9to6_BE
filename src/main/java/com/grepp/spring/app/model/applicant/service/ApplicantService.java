@@ -1,6 +1,6 @@
 package com.grepp.spring.app.model.applicant.service;
 
-import com.grepp.spring.app.model.studyMmeber.repository.StudyMemberRepository;
+import com.grepp.spring.app.model.studymember.repository.StudyMemberRepository;
 import com.grepp.spring.app.model.applicant.code.ApplicantState;
 import com.grepp.spring.app.model.applicant.entity.Applicant;
 import com.grepp.spring.app.model.applicant.repository.ApplicantRepository;
