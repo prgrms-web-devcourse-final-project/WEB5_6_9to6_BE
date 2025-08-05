@@ -1,6 +1,5 @@
 package com.grepp.spring.app.model.study.entity;
 
-import com.grepp.spring.app.model.member.entity.StudyMember;
 import com.grepp.spring.infra.entity.BaseEntity;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;

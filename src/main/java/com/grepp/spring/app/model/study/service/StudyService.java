@@ -13,7 +13,7 @@ import com.grepp.spring.app.model.member.code.StudyRole;
 import com.grepp.spring.app.model.member.dto.response.ApplicantsResponse;
 import com.grepp.spring.app.model.member.dto.response.StudyMemberResponse;
 import com.grepp.spring.app.model.member.entity.Member;
-import com.grepp.spring.app.model.member.entity.StudyMember;
+import com.grepp.spring.app.model.study.entity.StudyMember;
 import com.grepp.spring.app.model.member.repository.MemberRepository;
 import com.grepp.spring.app.model.member.repository.StudyMemberRepository;
 import com.grepp.spring.app.model.study.code.ApplicantState;

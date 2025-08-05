@@ -3,7 +3,7 @@ package com.grepp.spring.app.model.study.service;
 import com.grepp.spring.app.controller.api.study.payload.CheckGoalResponse;
 import com.grepp.spring.app.model.member.code.StudyRole;
 import com.grepp.spring.app.model.member.entity.Member;
-import com.grepp.spring.app.model.member.entity.StudyMember;
+import com.grepp.spring.app.model.study.entity.StudyMember;
 import com.grepp.spring.app.model.member.repository.MemberRepository;
 import com.grepp.spring.app.model.member.repository.StudyMemberRepository;
 import com.grepp.spring.app.model.study.entity.Study;

@@ -1,6 +1,5 @@
 package com.grepp.spring.app.model.study.entity;
 
-import com.grepp.spring.app.model.member.entity.StudyMember;
 import com.grepp.spring.app.model.study.code.Category;
 import com.grepp.spring.app.model.study.code.DayOfWeek;
 import com.grepp.spring.app.model.study.code.GoalType;
