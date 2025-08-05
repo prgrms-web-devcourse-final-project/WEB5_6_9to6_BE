@@ -1,4 +1,4 @@
-package com.grepp.spring.app.model.study.dto.request;
+package com.grepp.spring.app.model.applicant.dto.request;
 
 import lombok.Getter;
 

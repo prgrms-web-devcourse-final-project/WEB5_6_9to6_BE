@@ -2,7 +2,7 @@ package com.grepp.spring.app.model.alarm.entity;
 
 import com.grepp.spring.app.model.alarm.code.AlarmType;
 import com.grepp.spring.app.model.member.entity.Member;
-import com.grepp.spring.app.model.study.code.ApplicantState;
+import com.grepp.spring.app.model.applicant.code.ApplicantState;
 import com.grepp.spring.app.model.study.entity.Study;
 import com.grepp.spring.infra.entity.BaseEntity;
 import jakarta.persistence.CascadeType;

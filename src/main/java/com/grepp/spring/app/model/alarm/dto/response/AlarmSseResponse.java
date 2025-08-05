@@ -2,7 +2,7 @@ package com.grepp.spring.app.model.alarm.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.grepp.spring.app.model.alarm.code.AlarmType;
-import com.grepp.spring.app.model.study.code.ApplicantState;
+import com.grepp.spring.app.model.applicant.code.ApplicantState;
 import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;

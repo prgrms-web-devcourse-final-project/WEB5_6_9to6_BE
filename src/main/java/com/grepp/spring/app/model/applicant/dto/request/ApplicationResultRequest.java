@@ -1,6 +1,6 @@
-package com.grepp.spring.app.model.study.dto.request;
+package com.grepp.spring.app.model.applicant.dto.request;
 
-import com.grepp.spring.app.model.study.code.ApplicantState;
+import com.grepp.spring.app.model.applicant.code.ApplicantState;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;

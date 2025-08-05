@@ -1,8 +1,9 @@
-package com.grepp.spring.app.model.study.entity;
+package com.grepp.spring.app.model.applicant.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.grepp.spring.app.model.member.entity.Member;
-import com.grepp.spring.app.model.study.code.ApplicantState;
+import com.grepp.spring.app.model.applicant.code.ApplicantState;
+import com.grepp.spring.app.model.study.entity.Study;
 import com.grepp.spring.infra.entity.BaseEntity;
 import com.grepp.spring.infra.error.exceptions.AlreadyProcessedException;
 import com.grepp.spring.infra.error.exceptions.SameStateException;

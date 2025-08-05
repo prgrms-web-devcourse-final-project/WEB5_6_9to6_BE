@@ -1,7 +1,7 @@
 package com.grepp.spring.app.model.alarm.dto.request;
 
 import com.grepp.spring.app.model.alarm.code.AlarmType;
-import com.grepp.spring.app.model.study.code.ApplicantState;
+import com.grepp.spring.app.model.applicant.code.ApplicantState;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;

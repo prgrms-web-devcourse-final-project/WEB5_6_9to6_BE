@@ -1,8 +1,8 @@
-package com.grepp.spring.app.model.study.repository.applicant;
+package com.grepp.spring.app.model.applicant.repository;
 
 import com.grepp.spring.app.model.member.entity.Member;
-import com.grepp.spring.app.model.study.code.ApplicantState;
-import com.grepp.spring.app.model.study.entity.Applicant;
+import com.grepp.spring.app.model.applicant.code.ApplicantState;
+import com.grepp.spring.app.model.applicant.entity.Applicant;
 import com.grepp.spring.app.model.study.entity.Study;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;

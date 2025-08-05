@@ -1,7 +1,7 @@
 package com.grepp.spring.app.controller.api;
 
-import com.grepp.spring.app.model.study.dto.request.ApplicationRequest;
-import com.grepp.spring.app.model.study.dto.request.ApplicationResultRequest;
+import com.grepp.spring.app.model.applicant.dto.request.ApplicationRequest;
+import com.grepp.spring.app.model.applicant.dto.request.ApplicationResultRequest;
 import com.grepp.spring.app.model.study.dto.response.CheckGoalResponse;
 import com.grepp.spring.app.model.study.dto.request.NotificationUpdateRequest;
 import com.grepp.spring.app.model.study.dto.request.StudyCreationRequest;
@@ -21,7 +21,7 @@ import com.grepp.spring.app.model.study.dto.response.WeeklyAttendanceResponse;
 import com.grepp.spring.app.model.study.dto.response.WeeklyGoalStatusResponse;
 import com.grepp.spring.app.model.study.dto.response.GoalsResponse;
 import com.grepp.spring.app.model.study.dto.response.StudyNoticeResponse;
-import com.grepp.spring.app.model.study.service.ApplicantService;
+import com.grepp.spring.app.model.applicant.service.ApplicantService;
 import com.grepp.spring.app.model.studyMmeber.serivce.StudyMemberService;
 import com.grepp.spring.app.model.study.service.StudyService;
 import com.grepp.spring.infra.response.CommonResponse;
