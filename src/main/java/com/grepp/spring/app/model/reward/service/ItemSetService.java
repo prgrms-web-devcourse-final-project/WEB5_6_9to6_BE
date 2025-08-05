@@ -1,9 +1,9 @@
 package com.grepp.spring.app.model.reward.service;
 
-import com.grepp.spring.app.controller.api.reward.payload.ImageResponse;
-import com.grepp.spring.app.controller.api.reward.payload.SaveImageRequest;
+import com.grepp.spring.app.model.reward.dto.response.ImageResponse;
+import com.grepp.spring.app.model.reward.dto.request.SaveImageRequest;
 import com.grepp.spring.app.model.reward.code.ItemType;
-import com.grepp.spring.app.model.reward.dto.ItemSetDto;
+import com.grepp.spring.app.model.reward.dto.internal.ItemSetDto;
 import com.grepp.spring.app.model.reward.entity.ItemSet;
 import com.grepp.spring.app.model.reward.entity.RewardItem;
 import com.grepp.spring.app.model.reward.repository.ItemSetRepository;
@@ -12,12 +12,10 @@ import com.grepp.spring.app.model.s3.service.S3Service;
 import com.grepp.spring.infra.error.exceptions.NotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;

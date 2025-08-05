@@ -1,8 +1,8 @@
 package com.grepp.spring.app.model.alarm.service;
 
-import com.grepp.spring.app.controller.api.alarm.payload.AlarmListResponse;
-import com.grepp.spring.app.controller.api.alarm.payload.AlarmRequest;
-import com.grepp.spring.app.controller.api.alarm.payload.AlarmSseResponse;
+import com.grepp.spring.app.model.alarm.dto.response.AlarmListResponse;
+import com.grepp.spring.app.model.alarm.dto.request.AlarmRequest;
+import com.grepp.spring.app.model.alarm.dto.response.AlarmSseResponse;
 import com.grepp.spring.app.model.alarm.code.AlarmType;
 import com.grepp.spring.app.model.alarm.entity.Alarm;
 import com.grepp.spring.app.model.alarm.entity.AlarmRecipient;
@@ -16,7 +16,7 @@ import com.grepp.spring.app.model.study.repository.StudyRepository;
 import com.grepp.spring.infra.error.exceptions.NotFoundException;
 import com.grepp.spring.infra.error.exceptions.alarm.AlarmValidationException;
 import com.grepp.spring.infra.response.ResponseCode;
-import com.grepp.spring.infra.util.SecurityUtil;
+import com.grepp.spring.infra.util.AuthorizationUtil;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -43,7 +43,7 @@ public class AlarmService {
     @Transactional
     public void createAndSendAlarm(AlarmRequest request) {
 
-        Long currentMemberId = SecurityUtil.getCurrentMemberId();
+        Long currentMemberId = AuthorizationUtil.getCurrentMemberId();
 
         if (!request.getSenderId().equals(currentMemberId)) {
             throw new AlarmValidationException(ResponseCode.ALARM_SENDER_UNAUTHORIZED);
@@ -131,7 +131,7 @@ public class AlarmService {
         AlarmRecipient recipient = alarmRecipientRepository.findById(alarmRecipientId)
             .orElseThrow(() -> new NotFoundException("알림 수신 정보를 찾을 수 없습니다."));
 
-        Long currentMemberId = SecurityUtil.getCurrentMemberId();
+        Long currentMemberId = AuthorizationUtil.getCurrentMemberId();
         if (!recipient.getMember().getId().equals(currentMemberId)) {
             throw new AlarmValidationException(ResponseCode.ALARM_ACCESS_DENIED);
         }

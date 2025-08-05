@@ -1,8 +1,8 @@
 package com.grepp.spring.infra.auth.role;
 
-import com.grepp.spring.app.model.member.code.StudyRole;
-import com.grepp.spring.app.model.member.repository.StudyMemberRepository;
-import com.grepp.spring.infra.util.SecurityUtil;
+import com.grepp.spring.app.model.studymember.code.StudyRole;
+import com.grepp.spring.app.model.studymember.repository.StudyMemberRepository;
+import com.grepp.spring.infra.util.AuthorizationUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.Map;
@@ -26,7 +26,7 @@ public class StudyRoleCheckAspect {
 
     @Before("@annotation(com.grepp.spring.infra.auth.role.HasRoleInThisStudy)")
     public void checkRole(JoinPoint joinPoint) throws AccessDeniedException {
-        Long memberId = SecurityUtil.getCurrentMemberId();
+        Long memberId = AuthorizationUtil.getCurrentMemberId();
 
         // HttpServletRequest 에서 studyId 획득
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();

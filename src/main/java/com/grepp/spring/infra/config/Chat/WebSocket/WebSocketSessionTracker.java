@@ -1,11 +1,8 @@
 package com.grepp.spring.infra.config.Chat.WebSocket;
 
-import com.grepp.spring.app.controller.api.chat.SessionUserInfo;
-import com.grepp.spring.app.model.auth.domain.Principal;
-import com.grepp.spring.infra.util.SecurityUtil;
+import com.grepp.spring.app.model.chat.dto.response.SessionUserInfo;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.stereotype.Component;
 

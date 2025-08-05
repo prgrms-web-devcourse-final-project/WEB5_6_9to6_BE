@@ -3,7 +3,7 @@ package com.grepp.spring.app.model.quiz.service;
 import com.grepp.spring.app.model.quiz.amqp.QuizMessageProducer;
 import com.grepp.spring.app.model.study.code.DayOfWeek;
 import com.grepp.spring.app.model.study.entity.StudySchedule;
-import com.grepp.spring.app.model.study.repository.StudyScheduleRepository.StudyScheduleRepository;
+import com.grepp.spring.app.model.study.repository.studyScheduleRepository.StudyScheduleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;

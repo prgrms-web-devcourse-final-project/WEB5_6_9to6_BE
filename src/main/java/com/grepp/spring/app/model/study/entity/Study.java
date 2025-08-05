@@ -1,12 +1,12 @@
 package com.grepp.spring.app.model.study.entity;
 
-import com.grepp.spring.app.model.member.entity.StudyMember;
 import com.grepp.spring.app.model.study.code.Category;
 import com.grepp.spring.app.model.study.code.DayOfWeek;
 import com.grepp.spring.app.model.study.code.GoalType;
 import com.grepp.spring.app.model.study.code.Region;
 import com.grepp.spring.app.model.study.code.Status;
 import com.grepp.spring.app.model.study.code.StudyType;
+import com.grepp.spring.app.model.studymember.entity.StudyMember;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

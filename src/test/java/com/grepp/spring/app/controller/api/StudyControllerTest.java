@@ -1,7 +1,6 @@
 package com.grepp.spring.app.controller.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.grepp.spring.app.controller.api.study.StudyController;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,7 +1,7 @@
 package com.grepp.spring.app.model.reward.repository;
 
 import com.grepp.spring.app.model.reward.code.ItemType;
-import com.grepp.spring.app.model.reward.dto.OwnItemDto;
+import com.grepp.spring.app.model.reward.dto.internal.OwnItemDto;
 import java.util.List;
 import org.springframework.stereotype.Repository;
 

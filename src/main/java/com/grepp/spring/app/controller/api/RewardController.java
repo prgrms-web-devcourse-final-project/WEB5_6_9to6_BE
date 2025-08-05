@@ -1,25 +1,23 @@
 package com.grepp.spring.app.controller.api;
 
-import com.grepp.spring.app.controller.api.reward.payload.ImageResponse;
-import com.grepp.spring.app.controller.api.reward.payload.SaveImageRequest;
-import com.grepp.spring.app.model.auth.domain.Principal;
+import com.grepp.spring.app.model.reward.dto.response.ImageResponse;
+import com.grepp.spring.app.model.reward.dto.request.SaveImageRequest;
 import com.grepp.spring.app.model.member.service.MemberService;
 import com.grepp.spring.app.model.reward.code.ItemType;
-import com.grepp.spring.app.model.reward.dto.CreateRewardItemRequest;
-import com.grepp.spring.app.model.reward.dto.ItemSetDto;
-import com.grepp.spring.app.controller.api.reward.payload.OwnItemResponse;
-import com.grepp.spring.app.controller.api.reward.payload.RewardItemResponse;
-import com.grepp.spring.app.model.reward.dto.OwnItemDto;
-import com.grepp.spring.app.model.reward.dto.RewardItemDto;
+import com.grepp.spring.app.model.reward.dto.internal.CreateRewardItemRequest;
+import com.grepp.spring.app.model.reward.dto.internal.ItemSetDto;
+import com.grepp.spring.app.model.reward.dto.response.OwnItemResponse;
+import com.grepp.spring.app.model.reward.dto.response.RewardItemResponse;
+import com.grepp.spring.app.model.reward.dto.internal.OwnItemDto;
+import com.grepp.spring.app.model.reward.dto.internal.RewardItemDto;
 import com.grepp.spring.app.model.reward.service.ItemSetService;
 import com.grepp.spring.app.model.reward.service.OwnItemService;
 import com.grepp.spring.app.model.reward.service.RewardItemService;
 import com.grepp.spring.infra.response.CommonResponse;
 import com.grepp.spring.infra.response.SuccessCode;
-import com.grepp.spring.infra.util.SecurityUtil;
+import com.grepp.spring.infra.util.AuthorizationUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -32,13 +30,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -80,7 +76,7 @@ public class RewardController {
     public ResponseEntity<CommonResponse<Map<String, Object>>> purchaseItem(
          @PathVariable long itemId
     ) {
-        Long memberId = SecurityUtil.getCurrentMemberId();
+        Long memberId = AuthorizationUtil.getCurrentMemberId();
         ownItemService.purchaseItem(memberId,itemId);
 
         Map<String, Object> data = new HashMap<>();
@@ -93,7 +89,7 @@ public class RewardController {
     @GetMapping("/own-items")
     @Operation(summary = "소유 아이템 목록", description="소유한 아이템을 표시합니다.")
     public ResponseEntity<CommonResponse<List<OwnItemResponse>>> getOwnItems() {
-        Long memberId = SecurityUtil.getCurrentMemberId();
+        Long memberId = AuthorizationUtil.getCurrentMemberId();
         List<OwnItemDto> dtos = ownItemService.getOwnItems(memberId);
 
          List<OwnItemResponse> responses = dtos.stream()
@@ -110,7 +106,7 @@ public class RewardController {
         @PathVariable long ownItemId
     ) {
 
-        Long memberId = SecurityUtil.getCurrentMemberId();
+        Long memberId = AuthorizationUtil.getCurrentMemberId();
 
         ItemType itemType= ownItemService.changeOwnItems(memberId, ownItemId);
 
@@ -145,7 +141,7 @@ public class RewardController {
     @ApiResponse(responseCode = "200")
     @Operation(summary = "서버에 조합된 이미지 있는지 없는지 판단", description="서버에 조합된 이미지가 있는지 없는지 판단합니다. \n 아이템 변경에서 같은 로직을 수행하기 때문에 안쓰셔도 됩니다.")
     public ResponseEntity<CommonResponse<ImageResponse>> getItemImages(@PathVariable Long itemId) {
-        Long memberId = SecurityUtil.getCurrentMemberId();
+        Long memberId = AuthorizationUtil.getCurrentMemberId();
         ItemSetDto itemSetDto = ownItemService.getUseItemList(memberId);
         Optional<ImageResponse> image = itemSetService.ExistItemSet(itemSetDto);
 

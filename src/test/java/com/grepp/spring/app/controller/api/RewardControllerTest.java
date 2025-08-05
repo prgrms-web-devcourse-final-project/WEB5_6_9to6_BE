@@ -1,16 +1,10 @@
 package com.grepp.spring.app.controller.api;
 
-import com.grepp.spring.app.controller.api.reward.payload.ImageResponse;
-import com.grepp.spring.app.controller.api.reward.payload.OwnItemResponse;
-import com.grepp.spring.app.controller.api.reward.payload.RewardItemResponse;
-import com.grepp.spring.app.controller.api.reward.payload.SaveImageRequest;
-import com.grepp.spring.app.controller.api.reward.payload.SaveImageRequest.ClothesDto;
+import com.grepp.spring.app.model.reward.dto.response.RewardItemResponse;
 import com.grepp.spring.app.model.auth.domain.Principal;
 import com.grepp.spring.app.model.member.service.MemberService;
 import com.grepp.spring.app.model.reward.code.ItemType;
-import com.grepp.spring.app.model.reward.dto.ItemSetDto;
-import com.grepp.spring.app.model.reward.dto.OwnItemDto;
-import com.grepp.spring.app.model.reward.dto.RewardItemDto;
+import com.grepp.spring.app.model.reward.dto.internal.RewardItemDto;
 import com.grepp.spring.app.model.reward.service.ItemSetService;
 import com.grepp.spring.app.model.reward.service.OwnItemService;
 import com.grepp.spring.app.model.reward.service.RewardItemService;
@@ -22,7 +16,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -31,9 +24,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.mockito.Mockito.*;
 

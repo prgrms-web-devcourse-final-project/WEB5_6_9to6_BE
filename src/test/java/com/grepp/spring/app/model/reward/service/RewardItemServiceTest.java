@@ -1,21 +1,16 @@
 package com.grepp.spring.app.model.reward.service;
 
 import com.grepp.spring.app.model.reward.code.ItemType;
-import com.grepp.spring.app.model.reward.dto.RewardItemDto;
+import com.grepp.spring.app.model.reward.dto.internal.RewardItemDto;
 import com.grepp.spring.app.model.reward.entity.RewardItem;
 import com.grepp.spring.app.model.reward.repository.RewardItemRepository;
 import java.util.List;
-import org.eclipse.angus.mail.imap.protocol.Item;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 
 import static org.mockito.Mockito.*;
 

@@ -3,6 +3,7 @@ package com.grepp.spring.app.model.member.entity;
 import com.grepp.spring.app.model.auth.code.Role;
 import com.grepp.spring.app.model.member.code.Gender;
 import com.grepp.spring.app.model.member.code.SocialType;
+import com.grepp.spring.app.model.studymember.entity.StudyMember;
 import com.grepp.spring.infra.entity.BaseEntity;
 import com.grepp.spring.infra.error.exceptions.InsufficientRewardPointsException;
 import jakarta.persistence.CascadeType;

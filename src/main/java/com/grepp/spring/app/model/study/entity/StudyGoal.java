@@ -1,6 +1,7 @@
 package com.grepp.spring.app.model.study.entity;
 
 import com.grepp.spring.app.model.study.code.GoalType;
+import com.grepp.spring.app.model.studymember.entity.GoalAchievement;
 import com.grepp.spring.infra.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;

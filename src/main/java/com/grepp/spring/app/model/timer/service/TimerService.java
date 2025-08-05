@@ -1,16 +1,15 @@
 package com.grepp.spring.app.model.timer.service;
 
-import com.grepp.spring.app.controller.api.timer.payload.StudyTimeRecordRequest;
-import com.grepp.spring.app.model.member.repository.StudyMemberRepository;
+import com.grepp.spring.app.model.timer.dto.request.StudyTimeRecordRequest;
+import com.grepp.spring.app.model.studymember.repository.StudyMemberRepository;
 import com.grepp.spring.app.model.study.repository.StudyRepository;
-import com.grepp.spring.app.model.timer.dto.DailyStudyLogResponse;
-import com.grepp.spring.app.model.timer.dto.StudyWeekTimeResponse;
-import com.grepp.spring.app.model.timer.dto.TotalStudyTimeResponse;
+import com.grepp.spring.app.model.timer.dto.response.DailyStudyLogResponse;
+import com.grepp.spring.app.model.timer.dto.response.StudyWeekTimeResponse;
+import com.grepp.spring.app.model.timer.dto.response.TotalStudyTimeResponse;
 import com.grepp.spring.app.model.timer.entity.Timer;
 import com.grepp.spring.app.model.timer.repository.TimerRepository;
 import com.grepp.spring.infra.error.exceptions.EarlierDateException;
 import com.grepp.spring.infra.error.exceptions.NotFoundException;
-import com.grepp.spring.infra.error.exceptions.StudyDataException;
 import com.grepp.spring.infra.response.ResponseCode;
 import com.querydsl.core.Tuple;
 import java.sql.Date;

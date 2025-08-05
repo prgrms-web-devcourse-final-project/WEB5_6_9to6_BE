@@ -1,9 +1,9 @@
 package com.grepp.spring.app.model.quiz.service;
 
-import com.grepp.spring.app.controller.api.quiz.payload.SurvivalResultRequest;
-import com.grepp.spring.app.model.member.entity.StudyMember;
+import com.grepp.spring.app.model.quiz.dto.request.SurvivalResultRequest;
+import com.grepp.spring.app.model.studymember.entity.StudyMember;
 import com.grepp.spring.app.model.member.repository.MemberRepository;
-import com.grepp.spring.app.model.member.repository.StudyMemberRepository;
+import com.grepp.spring.app.model.studymember.repository.StudyMemberRepository;
 import com.grepp.spring.app.model.quiz.entity.QuizRecord;
 import com.grepp.spring.app.model.quiz.entity.QuizSet;
 import com.grepp.spring.app.model.quiz.repository.QuizRecordRepository;

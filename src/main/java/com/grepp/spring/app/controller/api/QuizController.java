@@ -1,6 +1,11 @@
 package com.grepp.spring.app.controller.api;
 
-import com.grepp.spring.app.controller.api.quiz.payload.*;
+import com.grepp.spring.app.model.quiz.dto.request.QuizGradingRequest;
+import com.grepp.spring.app.model.quiz.dto.request.QuizRegisterRequest;
+import com.grepp.spring.app.model.quiz.dto.request.SurvivalResultRequest;
+import com.grepp.spring.app.model.quiz.dto.response.QuizGradingResponse;
+import com.grepp.spring.app.model.quiz.dto.response.QuizListResponse;
+import com.grepp.spring.app.model.quiz.dto.response.QuizRegisterResponse;
 import com.grepp.spring.app.model.quiz.entity.QuizSet;
 import com.grepp.spring.app.model.quiz.service.QuizGetService;
 import com.grepp.spring.app.model.quiz.service.QuizGradingService;

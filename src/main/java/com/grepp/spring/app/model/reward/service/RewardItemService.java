@@ -1,7 +1,7 @@
 package com.grepp.spring.app.model.reward.service;
 
-import com.grepp.spring.app.model.reward.dto.CreateRewardItemRequest;
-import com.grepp.spring.app.model.reward.dto.RewardItemDto;
+import com.grepp.spring.app.model.reward.dto.internal.CreateRewardItemRequest;
+import com.grepp.spring.app.model.reward.dto.internal.RewardItemDto;
 import com.grepp.spring.app.model.reward.entity.RewardItem;
 import com.grepp.spring.app.model.reward.repository.RewardItemRepository;
 import com.grepp.spring.app.model.s3.service.S3Service;

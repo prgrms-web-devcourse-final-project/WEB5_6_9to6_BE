@@ -1,6 +1,6 @@
 package com.grepp.spring.app.model.member.dto.response;
 
-import com.grepp.spring.app.model.study.code.ApplicantState;
+import com.grepp.spring.app.model.applicant.code.ApplicantState;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;

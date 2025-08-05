@@ -1,20 +1,18 @@
 package com.grepp.spring.app.controller.api;
 
-import com.grepp.spring.app.controller.api.chat.ChatCursorRequest;
-import com.grepp.spring.app.controller.api.chat.ChatHistoryResponse;
-import com.grepp.spring.app.controller.api.chat.ChatPageResponse;
-import com.grepp.spring.app.controller.api.chat.ParticipantResponse;
+import com.grepp.spring.app.model.chat.dto.request.ChatCursorRequest;
+import com.grepp.spring.app.model.chat.dto.response.ChatPageResponse;
+import com.grepp.spring.app.model.chat.dto.response.ParticipantResponse;
 import com.grepp.spring.app.model.auth.domain.Principal;
 import com.grepp.spring.app.model.chat.service.ChatService;
 import com.grepp.spring.app.model.study.service.StudyService;
 import com.grepp.spring.infra.config.Chat.WebSocket.WebSocketSessionTracker;
 import com.grepp.spring.infra.response.CommonResponse;
 import com.grepp.spring.infra.response.ResponseCode;
-import com.grepp.spring.infra.util.SecurityUtil;
+import com.grepp.spring.infra.util.AuthorizationUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,8 +24,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -88,7 +84,7 @@ public class ChatController {
         @RequestParam(defaultValue = "30") int pageSize,
         Authentication authentication) {
 
-        Long memberId = SecurityUtil.getCurrentMemberId();
+        Long memberId = AuthorizationUtil.getCurrentMemberId();
         Principal principal = (Principal) authentication.getPrincipal();
 
         boolean isMember = studyService.isUserStudyMember(memberId, studyId);

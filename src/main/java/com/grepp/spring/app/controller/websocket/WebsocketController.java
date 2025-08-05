@@ -2,13 +2,12 @@ package com.grepp.spring.app.controller.websocket;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.grepp.spring.app.controller.api.chat.ParticipantResponse;
+import com.grepp.spring.app.model.chat.dto.response.ParticipantResponse;
 import com.grepp.spring.app.controller.websocket.payload.ChatMessageRequest;
 import com.grepp.spring.app.model.auth.domain.Principal;
 import com.grepp.spring.app.model.chat.service.ChatService;
 import com.grepp.spring.infra.config.Chat.WebSocket.WorkerManager;
 import com.grepp.spring.infra.response.CommonResponse;
-import com.grepp.spring.infra.util.SecurityUtil;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;

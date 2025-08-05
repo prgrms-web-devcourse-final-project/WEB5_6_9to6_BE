@@ -1,6 +1,6 @@
 package com.grepp.spring.app.model.auth;
 
-import com.grepp.spring.app.controller.api.auth.payload.LoginRequest;
+import com.grepp.spring.app.model.alarm.dto.request.LoginRequest;
 import com.grepp.spring.app.model.auth.dto.TokenDto;
 import com.grepp.spring.app.model.auth.token.RefreshTokenService;
 import com.grepp.spring.app.model.auth.token.UserBlackListRepository;

@@ -2,7 +2,7 @@ package com.grepp.spring.app.model.study;
 
 
 import com.grepp.spring.app.model.member.dto.response.ApplicantsResponse;
-import com.grepp.spring.app.model.study.code.ApplicantState;
+import com.grepp.spring.app.model.applicant.code.ApplicantState;
 import com.grepp.spring.app.model.study.repository.StudyRepository;
 import com.grepp.spring.app.model.study.service.StudyService;
 import java.util.Arrays;
