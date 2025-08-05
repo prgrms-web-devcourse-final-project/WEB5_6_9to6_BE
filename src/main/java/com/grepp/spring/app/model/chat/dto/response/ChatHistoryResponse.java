@@ -1,4 +1,4 @@
-package com.grepp.spring.app.controller.api.chat;
+package com.grepp.spring.app.model.chat.dto.response;
 
 
 import com.grepp.spring.app.model.chat.entity.Chat;

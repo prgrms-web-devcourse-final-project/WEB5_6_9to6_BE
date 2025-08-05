@@ -1,9 +1,9 @@
 package com.grepp.spring.app.model.chat.service;
 
-import com.grepp.spring.app.controller.api.chat.ChatHistoryResponse;
-import com.grepp.spring.app.controller.api.chat.ChatPageResponse;
-import com.grepp.spring.app.controller.api.chat.ParticipantResponse;
-import com.grepp.spring.app.controller.api.chat.SessionUserInfo;
+import com.grepp.spring.app.model.chat.dto.response.ChatHistoryResponse;
+import com.grepp.spring.app.model.chat.dto.response.ChatPageResponse;
+import com.grepp.spring.app.model.chat.dto.response.ParticipantResponse;
+import com.grepp.spring.app.model.chat.dto.response.SessionUserInfo;
 import com.grepp.spring.app.controller.websocket.payload.ChatMessageRequest;
 import com.grepp.spring.app.controller.websocket.payload.ChatMessageResponse;
 import com.grepp.spring.app.model.chat.entity.Chat;

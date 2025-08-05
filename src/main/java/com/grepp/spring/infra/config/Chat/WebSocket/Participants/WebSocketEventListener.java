@@ -1,8 +1,8 @@
 package com.grepp.spring.infra.config.Chat.WebSocket.Participants;
 
 
-import com.grepp.spring.app.controller.api.chat.ParticipantResponse;
-import com.grepp.spring.app.controller.api.chat.SessionUserInfo;
+import com.grepp.spring.app.model.chat.dto.response.ParticipantResponse;
+import com.grepp.spring.app.model.chat.dto.response.SessionUserInfo;
 import com.grepp.spring.app.model.auth.domain.Principal;
 import com.grepp.spring.app.model.chat.service.ChatService;
 import com.grepp.spring.app.model.member.repository.MemberRepository;
