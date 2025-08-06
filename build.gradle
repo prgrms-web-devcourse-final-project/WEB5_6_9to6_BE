@@ -80,9 +80,6 @@ dependencies {
     // 메일 서비스
     implementation 'org.springframework.boot:spring-boot-starter-mail' // 메일 전송을 위한 스타터
 
-    // Spring Cloud GCP Secret Manager 통합
-    implementation 'com.google.cloud:spring-cloud-gcp-starter-secretmanager:5.3.0'
-
     // 개발 도구 (선택 사항, 주석 처리됨)
     // developmentOnly('org.springframework.boot:spring-boot-docker-compose') // Docker Compose 통합
 
