@@ -1,46 +1,43 @@
 <div id="top"></div>
 
+<div align='center'>
 
-## 0. 목차
-
-1. [프로젝트 소개](#1)
-2. [팀원 소개](#2)
-3. [개발 일정](#3)
-4. [기술 스택](#4)
-5. [라이브러리 사용 이유](#5)
-6. [컨벤션](#6)
-7. [브랜치 및 디렉토리 구조](#7)
-8. [주요 기능 소개](#8)
-9. [상세 담당 업무](#9)
-10. [주요 코드 ](#10)
-11. [트러블 슈팅](#11)
-12. [프로젝트 회고](#12)
-13. [시작 가이드](#13)
-
-<br />
-
-## <span id="1">🚩 1. 프로젝트 소개</span>
+<h1>
+  <b>Studium</b>
+</h1>
+<h3>
+  <b>Studium(창의력이 참담해서 생각이 안나네요 변경해주시에요)</b>
+</h3>
 
 Notion: [프로젝트 노션 링크](https://)
 
-프로젝트에 대한 전반적인 소개를 여기에 적어주세요.
+</div>
 
 <br>
 
-<!-- Top Button -->
-<p style='background: black; width: 32px; height: 32px; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin-left: auto;'><a href="#top" style='color: white; '>▲</a></p>
+## 0. 목차
 
-<br>
+1.  [팀원 소개](#1)
+2. [브랜치 및 디렉토리 구조](#2)
+3. [개발 일정](#3)
+4. [기술 스택](#4)
+5.  [커밋 컨벤션](#5)
+6.  [주요 기능 소개](#6)
+7.  [트러블 슈팅](#7)
+8. [프로젝트 회고](#8)
+9. [기타](#9)
 
-## <span id="2">🏃 2. 팀원 소개</span>
+<br >
+
+## <span id="1">🏃 1. 팀원 소개</span>
 
 <div align="center">
 
-| <img src="https://img.shields.io/badge/BE_Team_member-4CAF50" /> | <img src="https://img.shields.io/badge/BE_Team_member-4CAF50" /> | <img src="https://img.shields.io/badge/BE_Team_member-4CAF50" /> | <img src="https://img.shields.io/badge/BE_Team_member-4CAF50" /> | <img src="https://img.shields.io/badge/BE_Team_Leader-0073B7" /> |
-| :--------------------------------------------------------------: | :--------------------------------------------------------------: | :--------------------------------------------------------------: | :--------------------------------------------------------------------------: | :-----------------------------------------------------------: |
-|      <img src="https://avatars.githubusercontent.com/u/155226507?s=400&v=4" width="120px;" alt=""/>      |       <img src="https://avatars.githubusercontent.com/u/128045455?v=4" width="120px;" alt=""/>      |      <img src="https://avatars.githubusercontent.com/u/203406555?v=4" width="120px;" alt=""/>      |            <img src="https://avatars.githubusercontent.com/u/165629851?v=4" width="120px;" alt=""/>            |    <img src="https://avatars.githubusercontent.com/u/107977530?v=4" width="120px;" alt=""/>     |
-|           [김준형](https://github.com/NoviceWyatt19)           |           [이인선](https://github.com/Inseoni)           |                 [최종우](https://github.com/lnvisibledragon)                 |                  [황영준](https://github.com/youngjun222)                 |         [남다빈](https://github.com/namdragonkiller)          |
-|                            기능1 설명                            |                            기능2 설명                            |                                  기능3 설명                                  |                                  기능4 설명                                  |                          기능4 설명                           |
+|                <img src="https://img.shields.io/badge/BE_Team_member-4CAF50" />                |             <img src="https://img.shields.io/badge/BE_Team_member-4CAF50" />             |             <img src="https://img.shields.io/badge/BE_Team_member-4CAF50" />             |             <img src="https://img.shields.io/badge/BE_Team_member-4CAF50" />             |             <img src="https://img.shields.io/badge/BE_Team_Leader-0073B7" />             |
+|:----------------------------------------------------------------------------------------------:|:----------------------------------------------------------------------------------------:|:----------------------------------------------------------------------------------------:|:----------------------------------------------------------------------------------------:|:----------------------------------------------------------------------------------------:|
+| <img src="https://avatars.githubusercontent.com/u/155226507?s=400&v=4" width="120px;" alt=""/> | <img src="https://avatars.githubusercontent.com/u/128045455?v=4" width="120px;" alt=""/> | <img src="https://avatars.githubusercontent.com/u/203406555?v=4" width="120px;" alt=""/> | <img src="https://avatars.githubusercontent.com/u/165629851?v=4" width="120px;" alt=""/> | <img src="https://avatars.githubusercontent.com/u/107977530?v=4" width="120px;" alt=""/> |
+|                            [김준형](https://github.com/NoviceWyatt19)                             |                            [이인선](https://github.com/Inseoni)                             |                        [최종우](https://github.com/lnvisibledragon)                         |                          [황영준](https://github.com/youngjun222)                           |                        [남다빈](https://github.com/namdragonkiller)                         |
+|                                        인증/인가, 타이머, 스터디                                         |                                          맴버, 알람                                          |                                       채팅, 리워드 아이템                                        |                                         퀴즈(LLM)                                          |                                         배포, 스터디                                          |
 
 </div>
 
@@ -51,9 +48,65 @@ Notion: [프로젝트 노션 링크](https://)
 
 <br>
 
+## 2. <span id="2">🗂️ 2. 브랜치 및 디렉토리 구조</span>
+
+> 브랜치
+
+- `main`
+- `dev`
+- `featuer/login`
+
+<br>
+
+> 디렉토리 구조
+
+```shell
+app
+├── controller
+│   ├── api
+│   └── websocket
+├── model
+│   ├── alarm
+│   │   ├── code
+│   │   ├── dto
+│   │   ├── entity
+│   │   ├── repository
+│   │   ├── service
+│   │   └── sse
+│   └── ...
+infra
+├── auth
+├── config
+└── ...
+Application
+
+```
+
+<br>
+
+<!-- Top Button -->
+<p style='background: black; width: 32px; height: 32px; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin-left: auto;'><a href="#top" style='color: white; '>▲</a></p>
+
+<br>
+
 ## <span id="3">📅 3. 개발 일정</span>
 
-> 프로젝트 개발 기간: 202n.00.00 - 202n.00.00 (n일)
+> 프로젝트 개발 기간: 2025.06.27 - 2025.07.31 (35일)
+> 
+| 구분               | 기간                   | 활동                        | 비고            |
+| ---------------- | -------------------- | ------------------------- | ------------- |
+| **사전 기획**        | 06/27(금) \~ 07/01(화) | 프로젝트 기획 및 주제 선정, 기획안 작성   | 아이디어 선정       |
+| **ERD 설계**       | 07/01(화) \~ 07/03(목) | ERD 설계, 기능 논의             |               |
+| **와이어프레임 및 디자인** | 07/01(화) \~ 07/03(목) | 와이어프레임 작성                 |               |
+| **목업 서버 배포**     | 07/04(금) \~ 07/09(수) | 인증 목업 서버 배포               |               |
+| **디자인**          | 07/03(목) \~ 07/04(금) | 사용자 시나리오 기반 화면 설계         |               |
+| **기능 정의**        | 07/04(금) \~ 07/06(일) | 페이지별 기능 정의, 기능정의서 작성      |               |
+| **API 명세 작성**    | 07/04(금) \~ 07/09(수) | API 명세서 작성, 상세 기능 논의      |               |
+| **퍼블리싱**         | 07/07(월) \~ 07/10(목) | 디자인 기반 페이지별 퍼블리싱          |               |
+| **백엔드 기능 구현**    | 07/04(금) \~ 07/30(수) | 도메인별 기능 구현, 수정사항 반영       | 팀별 중간보고(7/16) |
+| **프론트 기능 구현**    | 07/10(목) \~ 07/30(수) | 페이지별 기능 구현, 수정사항 반영       | 팀별 중간보고(7/16) |
+| **최종 배포**        | 07/29(화) \~ 07/31(목) | 프론트 Vercel 배포, 백엔드 AWS 배포 | 최적화, 오류 수정    |
+
 
 <br>
 
@@ -75,7 +128,6 @@ Notion: [프로젝트 노션 링크](https://)
 | 인증/인가 | ![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens) ![OAuth2](https://img.shields.io/badge/OAuth2-24292F?style=for-the-badge&logo=oauth&logoColor=white) ![Spring Security](https://img.shields.io/badge/Spring_Security-6DB33F?style=for-the-badge&logo=spring-security&logoColor=white) |
 | 테스트 도구 | ![JUnit5](https://img.shields.io/badge/junit5-25A162?style=for-the-badge&logo=junit5&logoColor=white) ![Mockito](https://img.shields.io/badge/Mockito-373737?style=for-the-badge) ![JMeter](https://img.shields.io/badge/JMeter-D22128?style=for-the-badge&logo=apachejmeter&logoColor=white) |
 | 배포 환경 | ![Amazon AWS](https://img.shields.io/badge/AWS-%23232F3E.svg?style=for-the-badge&logo=amazon-aws&logoColor=white) ![Google Cloud](https://img.shields.io/badge/GCP-%234285F4.svg?style=for-the-badge&logo=google-cloud&logoColor=white) ![Amazon EC2](https://img.shields.io/badge/EC2-FF9900?style=for-the-badge&logo=amazon-ec2&logoColor=white) ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white) |
-<!-- | CI/CD | ![GitHub Actions](https://img.shields.io/badge/github_actions-%232671E5.svg?style=for-the-badge&logo=githubactions&logoColor=white) | -->
 
 <br>
 
@@ -84,46 +136,8 @@ Notion: [프로젝트 노션 링크](https://)
 
 <br>
 
-## <span id="5">❓ 5. 라이브러리 사용 이유</span>
+## <span id="5">🤝 5. 커밋 컨벤션</span>
 
-각 라이브러리의 사용 이유를 설명해주세요.
-
-> React
-
-<br>
-
-> Redux
-
-<br>
-
-> Axios
-
-<br>
-
-> Styled-Components
-
-<br>
-
-<!-- Top Button -->
-<p style='background: black; width: 32px; height: 32px; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin-left: auto;'><a href="#top" style='color: white; '>▲</a></p>
-
-<br>
-
-## <span id="6">🤝 6. 컨벤션</span>
-
-### prettier
-
-```json
-{
-  "printWidth": 80,
-  "tabWidth": 2,
-  "singleQuote": true,
-  "trailingComma": "all",
-  "semi": false
-}
-```
-
-### 커밋 컨벤션
 - 커밋 메세지는 소문자 시작, PR 메세지는 대문자 시작으로 적어주세요.
 
 | **타입** | **설명**                                          |
@@ -144,7 +158,6 @@ Notion: [프로젝트 노션 링크](https://)
 | BREAKING CHANGE | 커다란 API 변경의 경우 |
 | HOTFIX | 급하게 치명적인 버그를 고쳐야 하는 경우|
 
-
 <br>
 
 <!-- Top Button -->
@@ -152,41 +165,7 @@ Notion: [프로젝트 노션 링크](https://)
 
 <br>
 
-## 7.<span id="7"> 🗂️ 브랜치 및 디렉토리 구조</span>
-
-> 브랜치
-
-- `main`:
-- `dev`:
--
-
-<br>
-
-> 디렉토리 구조
-
-```
-📂 App
-├── 📂 src
-│   ├── 📂 components      # 컴포넌트 관련 파일
-│   ├── 📂 pages           # 페이지 파일
-│   ├── 📂 redux           # Redux 상태 관리 파일
-│   ├── 📂 utils           # 유틸리티 파일
-│   └── 📄 App.js          # 메인 App 컴포넌트
-├── 📂 public
-│   ├── 📄 index.html      # HTML 엔트리 파일
-│   └── 📄 favicon.ico     # 사이트 아이콘
-└── 📄 package.json        # 프로젝트 종속성 및 설정 파일
-
-```
-
-<br>
-
-<!-- Top Button -->
-<p style='background: black; width: 32px; height: 32px; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin-left: auto;'><a href="#top" style='color: white; '>▲</a></p>
-
-<br>
-
-## <span id="8">8. 💻 주요 기능 소개</span>
+## <span id="6">6. 💻 주요 기능 소개</span>
 
 프로젝트의 주요 기능을 GIF를 첨부하여 설명해주세요.
 
@@ -215,100 +194,7 @@ Notion: [프로젝트 노션 링크](https://)
 
 <br>
 
-## <span id="9">9. 📄 상세 담당 업무</span>
-
-### 1) 팀원1 이름
-
-- **🎨 디자인**
-
-  - 로고 디자인 및 이미지 제작
-
-- **💻 화면 개발**
-
-  - 로그인 화면
-  - 검색 화면
-  - 채팅 화면
-
-- **🧑‍💻 구현 기능**
-
-  - 로딩 페이지
-    - 회원가입 후 로그인 모달이 올라오는 로딩페이지
-  - 팔로워 목록 및 팔로워 취소&팔로우
-    - 팔로워 목록을 getFollowerList로 서버에 요청하여 리스트 출력
-
-- **♻️ 리팩토링**
-  - 관련 설명
-
-### 2) 팀원2 이름
-
-- **🎨 디자인**
-
-  - 전체적인 UI 디자인
-
-- **💻 화면 개발**
-
-  - 공통 헤더 네브바
-  - 공통 푸터 네브바
-  - 삭제 / 신고 모달창
-
-- **👩‍💻 구현 기능**
-
-  - 라우터 초기 셋팅
-  - 게시물 등록
-    - 토글 Open, Close에 따라 인풋창 높이 자동 조절
-    - api 전송 한계로 인해 한 공간에 저장하여 보낼 수 있게, 데이터를 연산자로 구분하여 한줄로 전송
-      이미지 추가 및 삭제 가능
-  - 게시글 삭제 / 신고
-    - userId를 통해 유저를 구별하여 타인의 경우 신고 기능, 본인일 경우 삭제 기능 구현
-
-- **♻️ 리팩토링**
-  - 관련 설명
-
-<br>
-
-<!-- Top Button -->
-<p style='background: black; width: 32px; height: 32px; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin-left: auto;'><a href="#top" style='color: white; '>▲</a></p>
-
-<br>
-
-## <span id="10">✨ 10. 주요 코드</span>
-
-<details>
-<summary> 주요 코드에 대한 설명을 입력하세요. </summary>
-
-<div>
-설명
-
-```jsx
-
-```
-
-</div>
-</details>
-
-<br>
-
-<details>
-<summary> 주요 코드에 대한 설명을 입력하세요. </summary>
-
-<div>
-설명
-
-```jsx
-
-```
-
-</div>
-</details>
-
-<br>
-
-<!-- Top Button -->
-<p style='background: black; width: 32px; height: 32px; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin-left: auto;'><a href="#top" style='color: white; '>▲</a></p>
-
-<br>
-
-## <span id="11">🚦 11. 트러블 슈팅</span>
+## <span id="7">🚦 7. 트러블 슈팅</span>
 
 <details>
 <summary> 트러블 슈팅을 입력하세요. </summary>
@@ -331,7 +217,7 @@ Notion: [프로젝트 노션 링크](https://)
 
 <br>
 
-## <span id="12">12. 📝 프로젝트 회고</span>
+## <span id="8">8. 📝 프로젝트 회고</span>
 
 프로젝트 진행 후 느낀 점과 개선할 점을 적어주세요. 블로그에 작성하셨다면 블로그 링크를 첨부해주세요.
 
@@ -345,3 +231,17 @@ Notion: [프로젝트 노션 링크](https://)
 
 <!-- Top Button -->
 <p style='background: black; width: 32px; height: 32px; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin-left: auto;'><a href="#top" style='color: white; '>▲</a></p>
+
+
+## <span id="9">9. 기타</span>
+
+<br>
+
+<!-- Top Button -->
+<p style='background: black; width: 32px; height: 32px; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin-left: auto;'><a href="#top" style='color: white; '>▲</a></p>
+
+<br>
+
+
+
+
