@@ -54,7 +54,7 @@ Notion: [프로젝트 노션 링크](https://)
 
 - `main`
 - `dev`
-- `featuer/login`
+- `featuer/login`, (`커밋 컨벤션 / 상세 내용` 으로 작성)
 
 <br>
 
@@ -222,12 +222,6 @@ Application
   - id의 생성 전략이 IDENTITY이므로 id 값 자체에 생성 순서가 내포되어 있어, id만으로 정렬하는 방안도 고려하였으나 id만으로 정렬할 경우, '최신순으로 정렬한다'는 핵심적인 비즈니스 요구사항을 코드로 명확하게 표현하기 어렵다고 생각했다. 따라서 가독성과 의도 전달을 위해 생성 시간을 1차 기준으로 명시하고, id는 정렬 안정성을 보장하는 보조적인 역할로 사용하는 것이 최선이라고 결론 내림
 <div>
 
-1. 문제 상황 <br />
-
-2. 시도 <br />
-
-3. 해결방안 <br />
-
 </div>
 </details>
 
@@ -242,19 +236,15 @@ Application
 
 프로젝트 진행 후 느낀 점과 개선할 점을 적어주세요. 블로그에 작성하셨다면 블로그 링크를 첨부해주세요.
 
-<br>
+#### 남다빈 (백엔드팀 리더)
 
-<!-- Top Button -->
-<p style='background: black; width: 32px; height: 32px; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin-left: auto;'><a href="#top" style='color: white; '>▲</a></p>
+#### 김준형
 
-<br>
+#### 이인선
 
+#### 최종우
 
-<!-- Top Button -->
-<p style='background: black; width: 32px; height: 32px; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin-left: auto;'><a href="#top" style='color: white; '>▲</a></p>
-
-
-## <span id="9">9. 기타</span>
+#### 황영준
 
 <br>
 
@@ -262,6 +252,11 @@ Application
 <p style='background: black; width: 32px; height: 32px; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin-left: auto;'><a href="#top" style='color: white; '>▲</a></p>
 
 <br>
+
+
+<!-- Top Button -->
+<p style='background: black; width: 32px; height: 32px; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin-left: auto;'><a href="#top" style='color: white; '>▲</a></p>
+
 
 
 
